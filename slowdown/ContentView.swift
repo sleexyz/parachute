@@ -7,10 +7,68 @@
 
 import SwiftUI
 
+import Foundation
+
+
 struct ContentView: View {
+    @ObservedObject var service: VPNConfigurationService = .shared
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        if !service.isStarted {
+            return AnyView(SplashView())
+        }
+        
+        if let tunnel = service.tunnel {
+            let model = AppViewModel(tunnel: tunnel)
+            return AnyView(AppView(model:model))
+        } else {
+            return AnyView(SetupView())
+        }
+    }
+}
+
+
+struct SetupView: View {
+    let service: VPNConfigurationService = .shared
+
+    @State private var isLoading = false
+    @State private var isShowingError = false
+    @State private var errorMessage = ""
+
+    var body: some View {
+        NavigationView {
+            VStack {
+                buttonInstall
+            }.padding()
+        }
+    }
+
+    private var buttonInstall: some View {
+        PrimaryButton(
+            title: "Install VPN Profile",
+            action: self.installProfile,
+            isLoading: $isLoading
+        ).alert(isPresented: $isShowingError) {
+            Alert(
+                title: Text("Failed to install a profile"),
+                message: Text(errorMessage),
+                dismissButton: .cancel()
+            )
+        }
+    }
+
+    private func installProfile() {
+        isLoading = true
+
+        service.installProfile { result in
+            self.isLoading = false
+            switch result {
+            case .success:
+                break // Do nothing, router will show what's next
+            case let .failure(error):
+                self.errorMessage = error.localizedDescription
+                self.isShowingError = true
+            }
+        }
     }
 }
 

@@ -14,6 +14,20 @@
 		A02F58F127A6F14600D3330F /* slowdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58F027A6F14600D3330F /* slowdownTests.swift */; };
 		A02F58FB27A6F14600D3330F /* slowdownUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58FA27A6F14600D3330F /* slowdownUITests.swift */; };
 		A02F58FD27A6F14600D3330F /* slowdownUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58FC27A6F14600D3330F /* slowdownUITestsLaunchTests.swift */; };
+		A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
+		A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A0458BF9285FB5A300CE4CCB /* Logging */; };
+		A05AD0B3285D0CD100878904 /* NIO in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B2285D0CD100878904 /* NIO */; };
+		A05AD0B5285D0CD100878904 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B4285D0CD100878904 /* NIOCore */; };
+		A05AD0B7285D0CD100878904 /* NIOFoundationCompat in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B6285D0CD100878904 /* NIOFoundationCompat */; };
+		A05AD0B9285D0CD100878904 /* NIOHTTP1 in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B8285D0CD100878904 /* NIOHTTP1 */; };
+		A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D5281A4BF900113F3F /* PrimaryButton.swift */; };
+		A08719D8281A4CE500113F3F /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D7281A4CE500113F3F /* SplashView.swift */; };
+		A08719DA281A4E1100113F3F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D9281A4E1100113F3F /* AppView.swift */; };
+		A08719DC281A513200113F3F /* VPNConfigurationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719DB281A513200113F3F /* VPNConfigurationService.swift */; };
+		A08719DE281A54A900113F3F /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719DD281A54A900113F3F /* Spinner.swift */; };
+		A08719E4281A617500113F3F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
+		A08719E7281A617500113F3F /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719E6281A617500113F3F /* PacketTunnelProvider.swift */; };
+		A08719EC281A617500113F3F /* tunnel.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A08719E3281A617500113F3F /* tunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,7 +45,28 @@
 			remoteGlobalIDString = A02F58DB27A6F14500D3330F;
 			remoteInfo = slowdown;
 		};
+		A08719EA281A617500113F3F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A02F58D427A6F14500D3330F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A08719E2281A617500113F3F;
+			remoteInfo = tunnel;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A08719F0281A617500113F3F /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A08719EC281A617500113F3F /* tunnel.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A02F58DC27A6F14500D3330F /* slowdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = slowdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +79,17 @@
 		A02F58F627A6F14600D3330F /* slowdownUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = slowdownUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02F58FA27A6F14600D3330F /* slowdownUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownUITests.swift; sourceTree = "<group>"; };
 		A02F58FC27A6F14600D3330F /* slowdownUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		A02F590927B09A7A00D3330F /* slowdown.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = slowdown.entitlements; sourceTree = "<group>"; };
+		A02F590B27B09A7A00D3330F /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		A08719D5281A4BF900113F3F /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
+		A08719D7281A4CE500113F3F /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		A08719D9281A4E1100113F3F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
+		A08719DB281A513200113F3F /* VPNConfigurationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNConfigurationService.swift; sourceTree = "<group>"; };
+		A08719DD281A54A900113F3F /* Spinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spinner.swift; sourceTree = "<group>"; };
+		A08719E3281A617500113F3F /* tunnel.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = tunnel.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A08719E6281A617500113F3F /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
+		A08719E8281A617500113F3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A08719E9281A617500113F3F /* tunnel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tunnel.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +97,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */,
+				A05AD0B3285D0CD100878904 /* NIO in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +116,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A08719E0281A617500113F3F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A05AD0B5285D0CD100878904 /* NIOCore in Frameworks */,
+				A05AD0B7285D0CD100878904 /* NIOFoundationCompat in Frameworks */,
+				A08719E4281A617500113F3F /* NetworkExtension.framework in Frameworks */,
+				A05AD0B9285D0CD100878904 /* NIOHTTP1 in Frameworks */,
+				A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -77,7 +137,9 @@
 				A02F58DE27A6F14500D3330F /* slowdown */,
 				A02F58EF27A6F14600D3330F /* slowdownTests */,
 				A02F58F927A6F14600D3330F /* slowdownUITests */,
+				A08719E5281A617500113F3F /* tunnel */,
 				A02F58DD27A6F14500D3330F /* Products */,
+				A02F590A27B09A7A00D3330F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -87,6 +149,7 @@
 				A02F58DC27A6F14500D3330F /* slowdown.app */,
 				A02F58EC27A6F14600D3330F /* slowdownTests.xctest */,
 				A02F58F627A6F14600D3330F /* slowdownUITests.xctest */,
+				A08719E3281A617500113F3F /* tunnel.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,10 +157,16 @@
 		A02F58DE27A6F14500D3330F /* slowdown */ = {
 			isa = PBXGroup;
 			children = (
+				A02F590927B09A7A00D3330F /* slowdown.entitlements */,
 				A02F58DF27A6F14500D3330F /* slowdownApp.swift */,
 				A02F58E127A6F14500D3330F /* ContentView.swift */,
 				A02F58E327A6F14500D3330F /* Assets.xcassets */,
 				A02F58E527A6F14500D3330F /* Preview Content */,
+				A08719D5281A4BF900113F3F /* PrimaryButton.swift */,
+				A08719D7281A4CE500113F3F /* SplashView.swift */,
+				A08719D9281A4E1100113F3F /* AppView.swift */,
+				A08719DB281A513200113F3F /* VPNConfigurationService.swift */,
+				A08719DD281A54A900113F3F /* Spinner.swift */,
 			);
 			path = slowdown;
 			sourceTree = "<group>";
@@ -127,6 +196,24 @@
 			path = slowdownUITests;
 			sourceTree = "<group>";
 		};
+		A02F590A27B09A7A00D3330F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A02F590B27B09A7A00D3330F /* NetworkExtension.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A08719E5281A617500113F3F /* tunnel */ = {
+			isa = PBXGroup;
+			children = (
+				A08719E6281A617500113F3F /* PacketTunnelProvider.swift */,
+				A08719E8281A617500113F3F /* Info.plist */,
+				A08719E9281A617500113F3F /* tunnel.entitlements */,
+			);
+			path = tunnel;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -137,12 +224,17 @@
 				A02F58D827A6F14500D3330F /* Sources */,
 				A02F58D927A6F14500D3330F /* Frameworks */,
 				A02F58DA27A6F14500D3330F /* Resources */,
+				A08719F0281A617500113F3F /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A08719EB281A617500113F3F /* PBXTargetDependency */,
 			);
 			name = slowdown;
+			packageProductDependencies = (
+				A05AD0B2285D0CD100878904 /* NIO */,
+			);
 			productName = slowdown;
 			productReference = A02F58DC27A6F14500D3330F /* slowdown.app */;
 			productType = "com.apple.product-type.application";
@@ -183,6 +275,29 @@
 			productReference = A02F58F627A6F14600D3330F /* slowdownUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		A08719E2281A617500113F3F /* tunnel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A08719ED281A617500113F3F /* Build configuration list for PBXNativeTarget "tunnel" */;
+			buildPhases = (
+				A08719DF281A617500113F3F /* Sources */,
+				A08719E0281A617500113F3F /* Frameworks */,
+				A08719E1281A617500113F3F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tunnel;
+			packageProductDependencies = (
+				A05AD0B4285D0CD100878904 /* NIOCore */,
+				A05AD0B6285D0CD100878904 /* NIOFoundationCompat */,
+				A05AD0B8285D0CD100878904 /* NIOHTTP1 */,
+				A0458BF9285FB5A300CE4CCB /* Logging */,
+			);
+			productName = tunnel;
+			productReference = A08719E3281A617500113F3F /* tunnel.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -190,7 +305,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1320;
+				LastSwiftUpdateCheck = 1330;
 				LastUpgradeCheck = 1320;
 				TargetAttributes = {
 					A02F58DB27A6F14500D3330F = {
@@ -204,6 +319,9 @@
 						CreatedOnToolsVersion = 13.2.1;
 						TestTargetID = A02F58DB27A6F14500D3330F;
 					};
+					A08719E2281A617500113F3F = {
+						CreatedOnToolsVersion = 13.3.1;
+					};
 				};
 			};
 			buildConfigurationList = A02F58D727A6F14500D3330F /* Build configuration list for PBXProject "slowdown" */;
@@ -215,6 +333,10 @@
 				Base,
 			);
 			mainGroup = A02F58D327A6F14500D3330F;
+			packageReferences = (
+				A05AD0B1285D0CD100878904 /* XCRemoteSwiftPackageReference "swift-nio" */,
+				A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */,
+			);
 			productRefGroup = A02F58DD27A6F14500D3330F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -222,6 +344,7 @@
 				A02F58DB27A6F14500D3330F /* slowdown */,
 				A02F58EB27A6F14600D3330F /* slowdownTests */,
 				A02F58F527A6F14600D3330F /* slowdownUITests */,
+				A08719E2281A617500113F3F /* tunnel */,
 			);
 		};
 /* End PBXProject section */
@@ -250,6 +373,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A08719E1281A617500113F3F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -257,8 +387,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */,
+				A08719D8281A4CE500113F3F /* SplashView.swift in Sources */,
 				A02F58E227A6F14500D3330F /* ContentView.swift in Sources */,
+				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,
+				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
 				A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */,
+				A08719DC281A513200113F3F /* VPNConfigurationService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,6 +414,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A08719DF281A617500113F3F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A08719E7281A617500113F3F /* PacketTunnelProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -291,6 +434,11 @@
 			isa = PBXTargetDependency;
 			target = A02F58DB27A6F14500D3330F /* slowdown */;
 			targetProxy = A02F58F727A6F14600D3330F /* PBXContainerItemProxy */;
+		};
+		A08719EB281A617500113F3F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A08719E2281A617500113F3F /* tunnel */;
+			targetProxy = A08719EA281A617500113F3F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -414,11 +562,14 @@
 		A02F590127A6F14600D3330F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = slowdown/slowdown.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"slowdown/Preview Content\"";
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -442,11 +593,14 @@
 		A02F590227A6F14600D3330F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = slowdown/slowdown.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"slowdown/Preview Content\"";
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -539,6 +693,60 @@
 			};
 			name = Release;
 		};
+		A08719EE281A617500113F3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = tunnel/tunnel.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = tunnel/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = tunnel;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = strangeindustries.slowdown.tunnel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A08719EF281A617500113F3F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = tunnel/tunnel.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = tunnel/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = tunnel;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = strangeindustries.slowdown.tunnel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -578,7 +786,63 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		A08719ED281A617500113F3F /* Build configuration list for PBXNativeTarget "tunnel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A08719EE281A617500113F3F /* Debug */,
+				A08719EF281A617500113F3F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		A05AD0B1285D0CD100878904 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A0458BF9285FB5A300CE4CCB /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+		A05AD0B2285D0CD100878904 /* NIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A05AD0B1285D0CD100878904 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIO;
+		};
+		A05AD0B4285D0CD100878904 /* NIOCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A05AD0B1285D0CD100878904 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOCore;
+		};
+		A05AD0B6285D0CD100878904 /* NIOFoundationCompat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A05AD0B1285D0CD100878904 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOFoundationCompat;
+		};
+		A05AD0B8285D0CD100878904 /* NIOHTTP1 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A05AD0B1285D0CD100878904 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOHTTP1;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A02F58D427A6F14500D3330F /* Project object */;
 }
