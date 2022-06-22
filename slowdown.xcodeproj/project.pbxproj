@@ -16,6 +16,10 @@
 		A02F58FD27A6F14600D3330F /* slowdownUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58FC27A6F14600D3330F /* slowdownUITestsLaunchTests.swift */; };
 		A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
 		A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A0458BF9285FB5A300CE4CCB /* Logging */; };
+		A0458BFC286143FC00CE4CCB /* ProxyServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0458BFB286143FC00CE4CCB /* ProxyServer.swift */; };
+		A0458BFE28614C3D00CE4CCB /* ConnectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0458BFD28614C3D00CE4CCB /* ConnectHandler.swift */; };
+		A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A0458C0028614D6500CE4CCB /* LoggingOSLog */; };
+		A0458C0328614E5400CE4CCB /* GlueHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0458C0228614E5400CE4CCB /* GlueHandler.swift */; };
 		A05AD0B3285D0CD100878904 /* NIO in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B2285D0CD100878904 /* NIO */; };
 		A05AD0B5285D0CD100878904 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B4285D0CD100878904 /* NIOCore */; };
 		A05AD0B7285D0CD100878904 /* NIOFoundationCompat in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B6285D0CD100878904 /* NIOFoundationCompat */; };
@@ -81,6 +85,9 @@
 		A02F58FC27A6F14600D3330F /* slowdownUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A02F590927B09A7A00D3330F /* slowdown.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = slowdown.entitlements; sourceTree = "<group>"; };
 		A02F590B27B09A7A00D3330F /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		A0458BFB286143FC00CE4CCB /* ProxyServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyServer.swift; sourceTree = "<group>"; };
+		A0458BFD28614C3D00CE4CCB /* ConnectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectHandler.swift; sourceTree = "<group>"; };
+		A0458C0228614E5400CE4CCB /* GlueHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlueHandler.swift; sourceTree = "<group>"; };
 		A08719D5281A4BF900113F3F /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
 		A08719D7281A4CE500113F3F /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		A08719D9281A4E1100113F3F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
@@ -123,6 +130,7 @@
 				A05AD0B5285D0CD100878904 /* NIOCore in Frameworks */,
 				A05AD0B7285D0CD100878904 /* NIOFoundationCompat in Frameworks */,
 				A08719E4281A617500113F3F /* NetworkExtension.framework in Frameworks */,
+				A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */,
 				A05AD0B9285D0CD100878904 /* NIOHTTP1 in Frameworks */,
 				A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */,
 			);
@@ -208,8 +216,11 @@
 			isa = PBXGroup;
 			children = (
 				A08719E6281A617500113F3F /* PacketTunnelProvider.swift */,
+				A0458BFB286143FC00CE4CCB /* ProxyServer.swift */,
 				A08719E8281A617500113F3F /* Info.plist */,
 				A08719E9281A617500113F3F /* tunnel.entitlements */,
+				A0458BFD28614C3D00CE4CCB /* ConnectHandler.swift */,
+				A0458C0228614E5400CE4CCB /* GlueHandler.swift */,
 			);
 			path = tunnel;
 			sourceTree = "<group>";
@@ -293,6 +304,7 @@
 				A05AD0B6285D0CD100878904 /* NIOFoundationCompat */,
 				A05AD0B8285D0CD100878904 /* NIOHTTP1 */,
 				A0458BF9285FB5A300CE4CCB /* Logging */,
+				A0458C0028614D6500CE4CCB /* LoggingOSLog */,
 			);
 			productName = tunnel;
 			productReference = A08719E3281A617500113F3F /* tunnel.appex */;
@@ -336,6 +348,7 @@
 			packageReferences = (
 				A05AD0B1285D0CD100878904 /* XCRemoteSwiftPackageReference "swift-nio" */,
 				A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */,
+				A0458BFF28614D6500CE4CCB /* XCRemoteSwiftPackageReference "swift-log-oslog" */,
 			);
 			productRefGroup = A02F58DD27A6F14500D3330F /* Products */;
 			projectDirPath = "";
@@ -418,7 +431,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0458BFE28614C3D00CE4CCB /* ConnectHandler.swift in Sources */,
 				A08719E7281A617500113F3F /* PacketTunnelProvider.swift in Sources */,
+				A0458BFC286143FC00CE4CCB /* ProxyServer.swift in Sources */,
+				A0458C0328614E5400CE4CCB /* GlueHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -806,6 +822,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		A0458BFF28614D6500CE4CCB /* XCRemoteSwiftPackageReference "swift-log-oslog" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/chrisaljoudi/swift-log-oslog.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.2;
+			};
+		};
 		A05AD0B1285D0CD100878904 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-nio.git";
@@ -821,6 +845,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */;
 			productName = Logging;
+		};
+		A0458C0028614D6500CE4CCB /* LoggingOSLog */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A0458BFF28614D6500CE4CCB /* XCRemoteSwiftPackageReference "swift-log-oslog" */;
+			productName = LoggingOSLog;
 		};
 		A05AD0B2285D0CD100878904 /* NIO */ = {
 			isa = XCSwiftPackageProductDependency;

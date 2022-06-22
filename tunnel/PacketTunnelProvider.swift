@@ -5,9 +5,11 @@
 //  Created by Sean Lee on 4/28/22.
 //
 
+import Foundation
 import NetworkExtension
 import Logging
-import os.log
+import LoggingOSLog
+
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
 
@@ -15,7 +17,14 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     private var connection: NWTCPConnection?
     
-    private var logger = Logger(subsystem: "strangeindustries.slowdown", category: "main")
+    private var logger = Logger(label: "com.strangeindustries.slowdown.tunnel")
+    
+    private var proxyServer: ProxyServer
+    
+    override init() {
+        LoggingSystem.bootstrap(LoggingOSLog.init)
+        self.proxyServer = ProxyServer(logger: self.logger)
+    }
 
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
         self.logger.info("tunnel started.")
@@ -23,8 +32,10 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             completionHandler(NEVPNError(.connectionFailed))
         }
         
-        let proxyIP = "192.168.1.225"
+        let proxyIP = "127.0.0.1"
         let proxyPort = 8080
+        
+        self.proxyServer.start()
         
         let settings = self.initTunnelSettings(proxyHost: proxyIP, proxyPort: proxyPort)
         
