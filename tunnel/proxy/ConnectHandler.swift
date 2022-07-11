@@ -35,8 +35,8 @@ extension ConnectHandler {
 
 
 extension ConnectHandler: ChannelInboundHandler {
-    typealias InboundIn = HTTPServerRequestPart
-    typealias OutboundOut = HTTPServerResponsePart
+    typealias InboundIn = HTTPServerRequestPart // inbound out is handled by gluehandler
+    typealias OutboundOut = HTTPServerResponsePart // outbound in is handled by gluehandler
 
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         switch self.upgradeState {

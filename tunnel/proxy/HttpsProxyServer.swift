@@ -1,5 +1,5 @@
 //
-//  ProxyServer.swift
+//  HttpsProxyServer.swift
 //  tunnel
 //
 //  Created by Sean Lee on 6/20/22.
@@ -14,13 +14,14 @@ import Logging
 
 
 
-class ProxyServer {
+class HttpsProxyServer {
     private var logger: Logger
     private var group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
     private var bootstrap: ServerBootstrap
     
     init(logger: Logger) {
         self.logger = logger
+        // Bootstraps listening channels
         self.bootstrap = ServerBootstrap(group: group)
             .serverChannelOption(ChannelOptions.socket(SOL_SOCKET, SO_REUSEADDR), value: 1)
             .childChannelOption(ChannelOptions.socket(SOL_SOCKET, SO_REUSEADDR), value: 1)
@@ -33,11 +34,9 @@ class ProxyServer {
     }
     
     func start() {
-
         self.bootstrap.bind(to: try! SocketAddress(ipAddress: "127.0.0.1", port: 8080)).whenComplete { result in
             // Need to create this here for thread-safety purposes
-            let logger = Logger(label: "com.strangeindustries.slowdown.ProxyServer")
-
+            let logger = Logger(label: "com.strangeindustries.slowdown.HttpsProxyServer")
             switch result {
             case .success(let channel):
                 logger.info("Listening on \(String(describing: channel.localAddress))")
@@ -48,8 +47,7 @@ class ProxyServer {
 
         self.bootstrap.bind(to: try! SocketAddress(ipAddress: "::1", port: 8080)).whenComplete { result in
             // Need to create this here for thread-safety purposes
-            let logger = Logger(label: "com.strangeindustries.slowdown.ProxyServer")
-
+            let logger = Logger(label: "com.strangeindustries.slowdown.HttpsProxyServer")
             switch result {
             case .success(let channel):
                 logger.info("Listening on \(String(describing: channel.localAddress))")

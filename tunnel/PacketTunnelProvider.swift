@@ -19,11 +19,13 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     private var logger = Logger(label: "com.strangeindustries.slowdown.tunnel")
     
-    private var proxyServer: ProxyServer
+    //private var httpsProxyServer: HttpsProxyServer
+    private var httpProxyServer: HttpProxyServer
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
-        self.proxyServer = ProxyServer(logger: self.logger)
+        //self.httpsProxyServer = HttpsProxyServer(logger: self.logger)
+        self.httpProxyServer = HttpProxyServer(logger: self.logger)
     }
 
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
@@ -35,7 +37,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         let proxyIP = "127.0.0.1"
         let proxyPort = 8080
         
-        self.proxyServer.start()
+        self.httpProxyServer.start()
         
         let settings = self.initTunnelSettings(proxyHost: proxyIP, proxyPort: proxyPort)
         
@@ -49,6 +51,10 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
     
     private func readPackets() {
+        // packet flow is essentially TUN interface.
+        // request packest from it
+        // receive packets from it
+        // reading packets from the OS, not from the network.	
         self.packetFlow.readPackets {[weak self] (packets, protocols) in
             guard let strongSelf = self else { return }
             for packet in packets {
@@ -66,13 +72,13 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
 
         /* proxy settings */
         let proxySettings: NEProxySettings = NEProxySettings()
-        proxySettings.httpsServer = NEProxyServer(
+        proxySettings.httpServer = NEProxyServer(
             address: proxyHost,
             port: proxyPort
         )
         proxySettings.autoProxyConfigurationEnabled = false
         proxySettings.httpEnabled = true
-        proxySettings.httpsEnabled = true
+        proxySettings.httpsEnabled = false
         proxySettings.excludeSimpleHostnames = true
         proxySettings.exceptionList = [
             "192.168.0.0/16",
