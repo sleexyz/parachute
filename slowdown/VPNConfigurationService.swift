@@ -42,7 +42,7 @@ final class VPNConfigurationService: ObservableObject {
 
         let proto = NETunnelProviderProtocol()
         proto.providerBundleIdentifier = "strangeindustries.slowdown.tunnel"
-        proto.serverAddress = "127.0.0.1:4009"
+        proto.serverAddress = "127.0.0.1:8080"
         proto.providerConfiguration = [:]
         
         tunnel.protocolConfiguration = proto

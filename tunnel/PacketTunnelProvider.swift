@@ -9,23 +9,19 @@ import Foundation
 import NetworkExtension
 import Logging
 import LoggingOSLog
-
+import func os.os_log
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
-
     private weak var timeoutTimer: Timer?
-    
-    private var connection: NWTCPConnection?
-    
-    private var logger = Logger(label: "com.strangeindustries.slowdown.tunnel")
-    
-    //private var httpsProxyServer: HttpsProxyServer
-    private var httpProxyServer: HttpProxyServer
+    private var session: NWUDPSession?
+    private var observer: AnyObject?
+    private var logger: Logger
+    private var proxyServer: ProxyServer
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
-        //self.httpsProxyServer = HttpsProxyServer(logger: self.logger)
-        self.httpProxyServer = HttpProxyServer(logger: self.logger)
+        self.logger = Logger(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
+        self.proxyServer = ProxyServer(logger: self.logger)
     }
 
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
@@ -37,60 +33,44 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         let proxyIP = "127.0.0.1"
         let proxyPort = 8080
         
-        self.httpProxyServer.start()
+        self.proxyServer.start()
         
         let settings = self.initTunnelSettings(proxyHost: proxyIP, proxyPort: proxyPort)
         
-        setTunnelNetworkSettings(settings) { error in
+        self.setTunnelNetworkSettings(settings) { error in
             completionHandler(error)
             let endpoint = NWHostEndpoint(hostname: proxyIP, port: String(proxyPort))
-            self.connection = self.createTCPConnection(to: endpoint, enableTLS: false, tlsParameters: nil, delegate: nil)
-            self.readPackets()
+            self.session = self.createUDPSession(to: endpoint, from: nil)
+            self.observer = self.session?.observe(\.state, options: [.new]) { session, _ in
+                if session.state == .ready {
+                    // The session is ready to exchange UDP datagrams with the server
+                    self.readPackets()
+                }
+            }
         }
-        
     }
     
     private func readPackets() {
-        // packet flow is essentially TUN interface.
-        // request packest from it
-        // receive packets from it
-        // reading packets from the OS, not from the network.	
-        self.packetFlow.readPackets {[weak self] (packets, protocols) in
+        self.logger.info("reading packets")
+        self.packetFlow.readPacketObjects {[weak self] packets in
             guard let strongSelf = self else { return }
             for packet in packets {
-                strongSelf.connection?.write(packet, completionHandler: { (error) in
-                })
+//                strongSelf.logger.info("Sending packet: \(packet.data.base64EncodedString())")
+                strongSelf.session?.writeDatagram(packet.data) { error in
+                }
             }
-            
-            // Repeat
             strongSelf.readPackets()
         }
     }
     
     private func initTunnelSettings(proxyHost: String, proxyPort: Int) -> NEPacketTunnelNetworkSettings {
         let settings: NEPacketTunnelNetworkSettings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: "127.0.0.1")
-
-        /* proxy settings */
-        let proxySettings: NEProxySettings = NEProxySettings()
-        proxySettings.httpServer = NEProxyServer(
-            address: proxyHost,
-            port: proxyPort
+        let ipv6Settings: NEIPv6Settings = NEIPv6Settings(
+            addresses: ["::1"],
+            networkPrefixLengths: [128]
         )
-        proxySettings.autoProxyConfigurationEnabled = false
-        proxySettings.httpEnabled = true
-        proxySettings.httpsEnabled = false
-        proxySettings.excludeSimpleHostnames = true
-        proxySettings.exceptionList = [
-            "192.168.0.0/16",
-            "10.0.0.0/8",
-            "172.16.0.0/12",
-            "127.0.0.1",
-            "localhost",
-            "*.local"
-        ]
-        settings.proxySettings = proxySettings
-        
-        /* ipv4 settings */
+        ipv6Settings.includedRoutes = [NEIPv6Route.default()]
+        settings.ipv6Settings = ipv6Settings
         let ipv4Settings: NEIPv4Settings = NEIPv4Settings(
             addresses: [settings.tunnelRemoteAddress],
             subnetMasks: ["255.255.255.255"]
@@ -102,10 +82,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             NEIPv4Route(destinationAddress: "172.16.0.0", subnetMask: "255.240.0.0")
         ]
         settings.ipv4Settings = ipv4Settings
-        
-        /* MTU */
         settings.mtu = 1500
-        
         return settings
     }
     

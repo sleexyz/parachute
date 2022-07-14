@@ -26,6 +26,7 @@
 		A05AD0B5285D0CD100878904 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B4285D0CD100878904 /* NIOCore */; };
 		A05AD0B7285D0CD100878904 /* NIOFoundationCompat in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B6285D0CD100878904 /* NIOFoundationCompat */; };
 		A05AD0B9285D0CD100878904 /* NIOHTTP1 in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B8285D0CD100878904 /* NIOHTTP1 */; };
+		A073E861287FD74700F7DE99 /* ProxyServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A073E860287FD74700F7DE99 /* ProxyServer.swift */; };
 		A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D5281A4BF900113F3F /* PrimaryButton.swift */; };
 		A08719D8281A4CE500113F3F /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D7281A4CE500113F3F /* SplashView.swift */; };
 		A08719DA281A4E1100113F3F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D9281A4E1100113F3F /* AppView.swift */; };
@@ -92,6 +93,7 @@
 		A0458C0228614E5400CE4CCB /* GlueHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlueHandler.swift; sourceTree = "<group>"; };
 		A05730E6287BD7F500495909 /* HttpProxyServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpProxyServer.swift; sourceTree = "<group>"; };
 		A05730E8287BD85300495909 /* HttpHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpHandler.swift; sourceTree = "<group>"; };
+		A073E860287FD74700F7DE99 /* ProxyServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyServer.swift; sourceTree = "<group>"; };
 		A08719D5281A4BF900113F3F /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
 		A08719D7281A4CE500113F3F /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		A08719D9281A4E1100113F3F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 				A0458C0228614E5400CE4CCB /* GlueHandler.swift */,
 				A05730E6287BD7F500495909 /* HttpProxyServer.swift */,
 				A05730E8287BD85300495909 /* HttpHandler.swift */,
+				A073E860287FD74700F7DE99 /* ProxyServer.swift */,
 			);
 			path = proxy;
 			sourceTree = "<group>";
@@ -448,6 +451,7 @@
 				A0458BFE28614C3D00CE4CCB /* ConnectHandler.swift in Sources */,
 				A08719E7281A617500113F3F /* PacketTunnelProvider.swift in Sources */,
 				A0458BFC286143FC00CE4CCB /* HttpsProxyServer.swift in Sources */,
+				A073E861287FD74700F7DE99 /* ProxyServer.swift in Sources */,
 				A05730E7287BD7F500495909 /* HttpProxyServer.swift in Sources */,
 				A05730E9287BD85300495909 /* HttpHandler.swift in Sources */,
 				A0458C0328614E5400CE4CCB /* GlueHandler.swift in Sources */,
