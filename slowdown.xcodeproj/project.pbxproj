@@ -26,7 +26,6 @@
 		A05AD0B5285D0CD100878904 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B4285D0CD100878904 /* NIOCore */; };
 		A05AD0B7285D0CD100878904 /* NIOFoundationCompat in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B6285D0CD100878904 /* NIOFoundationCompat */; };
 		A05AD0B9285D0CD100878904 /* NIOHTTP1 in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B8285D0CD100878904 /* NIOHTTP1 */; };
-		A073E861287FD74700F7DE99 /* ProxyServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A073E860287FD74700F7DE99 /* ProxyServer.swift */; };
 		A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D5281A4BF900113F3F /* PrimaryButton.swift */; };
 		A08719D8281A4CE500113F3F /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D7281A4CE500113F3F /* SplashView.swift */; };
 		A08719DA281A4E1100113F3F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D9281A4E1100113F3F /* AppView.swift */; };
@@ -35,6 +34,8 @@
 		A08719E4281A617500113F3F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
 		A08719E7281A617500113F3F /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719E6281A617500113F3F /* PacketTunnelProvider.swift */; };
 		A08719EC281A617500113F3F /* tunnel.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A08719E3281A617500113F3F /* tunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A0933645289DCD0000D57F22 /* ProxyServer in Resources */ = {isa = PBXBuildFile; fileRef = A0933644289DCD0000D57F22 /* ProxyServer */; };
+		A0933649289DCD2300D57F22 /* ProxyServer in Frameworks */ = {isa = PBXBuildFile; productRef = A0933648289DCD2300D57F22 /* ProxyServer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,7 +94,6 @@
 		A0458C0228614E5400CE4CCB /* GlueHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlueHandler.swift; sourceTree = "<group>"; };
 		A05730E6287BD7F500495909 /* HttpProxyServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpProxyServer.swift; sourceTree = "<group>"; };
 		A05730E8287BD85300495909 /* HttpHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpHandler.swift; sourceTree = "<group>"; };
-		A073E860287FD74700F7DE99 /* ProxyServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyServer.swift; sourceTree = "<group>"; };
 		A08719D5281A4BF900113F3F /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
 		A08719D7281A4CE500113F3F /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		A08719D9281A4E1100113F3F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
@@ -103,6 +103,7 @@
 		A08719E6281A617500113F3F /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
 		A08719E8281A617500113F3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A08719E9281A617500113F3F /* tunnel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tunnel.entitlements; sourceTree = "<group>"; };
+		A0933644289DCD0000D57F22 /* ProxyServer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ProxyServer; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +137,7 @@
 				A05AD0B5285D0CD100878904 /* NIOCore in Frameworks */,
 				A05AD0B7285D0CD100878904 /* NIOFoundationCompat in Frameworks */,
 				A08719E4281A617500113F3F /* NetworkExtension.framework in Frameworks */,
+				A0933649289DCD2300D57F22 /* ProxyServer in Frameworks */,
 				A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */,
 				A05AD0B9285D0CD100878904 /* NIOHTTP1 in Frameworks */,
 				A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */,
@@ -148,6 +150,7 @@
 		A02F58D327A6F14500D3330F = {
 			isa = PBXGroup;
 			children = (
+				A0933644289DCD0000D57F22 /* ProxyServer */,
 				A02F58DE27A6F14500D3330F /* slowdown */,
 				A02F58EF27A6F14600D3330F /* slowdownTests */,
 				A02F58F927A6F14600D3330F /* slowdownUITests */,
@@ -218,28 +221,27 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		A05730DC287B9ED000495909 /* proxy */ = {
-			isa = PBXGroup;
-			children = (
-				A0458BFB286143FC00CE4CCB /* HttpsProxyServer.swift */,
-				A0458BFD28614C3D00CE4CCB /* ConnectHandler.swift */,
-				A0458C0228614E5400CE4CCB /* GlueHandler.swift */,
-				A05730E6287BD7F500495909 /* HttpProxyServer.swift */,
-				A05730E8287BD85300495909 /* HttpHandler.swift */,
-				A073E860287FD74700F7DE99 /* ProxyServer.swift */,
-			);
-			path = proxy;
-			sourceTree = "<group>";
-		};
 		A08719E5281A617500113F3F /* tunnel */ = {
 			isa = PBXGroup;
 			children = (
-				A05730DC287B9ED000495909 /* proxy */,
+				A0B9BC71289DC1B100D55128 /* http */,
 				A08719E6281A617500113F3F /* PacketTunnelProvider.swift */,
 				A08719E8281A617500113F3F /* Info.plist */,
 				A08719E9281A617500113F3F /* tunnel.entitlements */,
 			);
 			path = tunnel;
+			sourceTree = "<group>";
+		};
+		A0B9BC71289DC1B100D55128 /* http */ = {
+			isa = PBXGroup;
+			children = (
+				A05730E6287BD7F500495909 /* HttpProxyServer.swift */,
+				A0458BFD28614C3D00CE4CCB /* ConnectHandler.swift */,
+				A05730E8287BD85300495909 /* HttpHandler.swift */,
+				A0458C0228614E5400CE4CCB /* GlueHandler.swift */,
+				A0458BFB286143FC00CE4CCB /* HttpsProxyServer.swift */,
+			);
+			path = http;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,6 +316,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A0933647289DCD1800D57F22 /* PBXTargetDependency */,
 			);
 			name = tunnel;
 			packageProductDependencies = (
@@ -322,6 +325,7 @@
 				A05AD0B8285D0CD100878904 /* NIOHTTP1 */,
 				A0458BF9285FB5A300CE4CCB /* Logging */,
 				A0458C0028614D6500CE4CCB /* LoggingOSLog */,
+				A0933648289DCD2300D57F22 /* ProxyServer */,
 			);
 			productName = tunnel;
 			productReference = A08719E3281A617500113F3F /* tunnel.appex */;
@@ -407,6 +411,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0933645289DCD0000D57F22 /* ProxyServer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -451,7 +456,6 @@
 				A0458BFE28614C3D00CE4CCB /* ConnectHandler.swift in Sources */,
 				A08719E7281A617500113F3F /* PacketTunnelProvider.swift in Sources */,
 				A0458BFC286143FC00CE4CCB /* HttpsProxyServer.swift in Sources */,
-				A073E861287FD74700F7DE99 /* ProxyServer.swift in Sources */,
 				A05730E7287BD7F500495909 /* HttpProxyServer.swift in Sources */,
 				A05730E9287BD85300495909 /* HttpHandler.swift in Sources */,
 				A0458C0328614E5400CE4CCB /* GlueHandler.swift in Sources */,
@@ -475,6 +479,10 @@
 			isa = PBXTargetDependency;
 			target = A08719E2281A617500113F3F /* tunnel */;
 			targetProxy = A08719EA281A617500113F3F /* PBXContainerItemProxy */;
+		};
+		A0933647289DCD1800D57F22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = A0933646289DCD1800D57F22 /* ProxyServer */;
 		};
 /* End PBXTargetDependency section */
 
@@ -890,6 +898,14 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A05AD0B1285D0CD100878904 /* XCRemoteSwiftPackageReference "swift-nio" */;
 			productName = NIOHTTP1;
+		};
+		A0933646289DCD1800D57F22 /* ProxyServer */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProxyServer;
+		};
+		A0933648289DCD2300D57F22 /* ProxyServer */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProxyServer;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -9,6 +9,7 @@ import Foundation
 import NetworkExtension
 import Logging
 import LoggingOSLog
+import ProxyServer
 import func os.os_log
 
 class PacketTunnelProvider: NEPacketTunnelProvider {

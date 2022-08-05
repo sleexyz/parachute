@@ -1,0 +1,32 @@
+{
+  "pins" : [
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
+        "version" : "1.4.2"
+      }
+    },
+    {
+      "identity" : "swift-log-oslog",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/chrisaljoudi/swift-log-oslog.git",
+      "state" : {
+        "revision" : "176d41d46429e79c806333025b226e0c50a0c602",
+        "version" : "0.2.2"
+      }
+    },
+    {
+      "identity" : "swift-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio.git",
+      "state" : {
+        "revision" : "124119f0bb12384cef35aa041d7c3a686108722d",
+        "version" : "2.40.0"
+      }
+    }
+  ],
+  "version" : 2
+}

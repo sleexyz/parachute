@@ -7,7 +7,6 @@
 
 import Foundation
 import NIO
-import NIOHTTP1
 import Dispatch
 import Logging
 
@@ -25,18 +24,26 @@ class ProxyHandler : ChannelInboundHandler {
     public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         let inputEnvelope = unwrapInboundIn(data)
         let inputData = Data(inputEnvelope.data.readableBytesView)
-        
         logger.info("packet received: \(inputData.base64EncodedString())")
+    }
+    
+    public func channelReadComplete(context: ChannelHandlerContext) {
+        context.flush()
+    }
+    
+    public func errorCaught(context: ChannelHandlerContext, error: Error) {
+        self.logger.error("error: \(error)")
+        context.close(promise: nil)
     }
     
 }
 
-class ProxyServer {
+public class ProxyServer {
     private var logger: Logger
     private var group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
     private var bootstrap: DatagramBootstrap
     
-    init(logger: Logger) {
+    public init(logger: Logger) {
         self.logger = logger
         // Bootstraps listening channels
         self.bootstrap = DatagramBootstrap(group: group)
@@ -47,7 +54,7 @@ class ProxyServer {
         logger.info("Initialized ProxyServer.")
     }
     
-    func start() {
+    public func start() {
         logger.info("Starting ProxyServer.")
         self.bootstrap.bind(to: try! SocketAddress(ipAddress: "127.0.0.1", port: 8080)).whenComplete { result in
             // Need to create this here for thread-safety purposes
