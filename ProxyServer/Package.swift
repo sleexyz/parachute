@@ -25,6 +25,9 @@ let package = Package(
                     .product(name: "NIO", package: "swift-nio"),
                     .product(name: "Logging", package: "swift-log"),
             ]),
+        .executableTarget(
+            name: "DevProxyServer",
+            dependencies: ["ProxyServer"]),
         .testTarget(
             name: "ProxyServerTests",
             dependencies: ["ProxyServer"]),

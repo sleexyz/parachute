@@ -11,6 +11,19 @@ import Dispatch
 import Logging
 
 
+public struct ProxyServerOptions {
+    public let ipv4Address: String
+    public let ipv4Port: Int
+    public let ipv6Address: String
+    public let ipv6Port: Int
+    public init(ipv4Address: String, ipv4Port: Int, ipv6Address: String, ipv6Port: Int) {
+        self.ipv4Address = ipv4Address
+        self.ipv4Port = ipv4Port
+        self.ipv6Address = ipv6Address
+        self.ipv6Port = ipv6Port
+    }
+}
+
 class ProxyHandler : ChannelInboundHandler {
     public typealias InboundIn = AddressedEnvelope<ByteBuffer>
     public typealias OutboundOut = AddressedEnvelope<ByteBuffer>
@@ -42,9 +55,11 @@ public class ProxyServer {
     private var logger: Logger
     private var group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
     private var bootstrap: DatagramBootstrap
+    private var options: ProxyServerOptions
     
-    public init(logger: Logger) {
+    public init(logger: Logger, options: ProxyServerOptions) {
         self.logger = logger
+        self.options = options
         // Bootstraps listening channels
         self.bootstrap = DatagramBootstrap(group: group)
             .channelOption(ChannelOptions.socket(SOL_SOCKET, SO_REUSEADDR), value: 1)
@@ -56,25 +71,25 @@ public class ProxyServer {
     
     public func start() {
         logger.info("Starting ProxyServer.")
-        self.bootstrap.bind(to: try! SocketAddress(ipAddress: "127.0.0.1", port: 8080)).whenComplete { result in
+        self.bootstrap.bind(to: try! SocketAddress(ipAddress: options.ipv4Address, port: options.ipv4Port)).whenComplete { result in
             // Need to create this here for thread-safety purposes
             let logger = Logger(label: "com.strangeindustries.slowdown.ProxyServer")
             switch result {
             case .success(let channel):
                 logger.info("Listening on \(String(describing: channel.localAddress))")
             case .failure(let error):
-                logger.error("Failed to bind 127.0.0.1:8080 \(String(describing: error))")
+                logger.error("Failed to bind \(self.options.ipv6Address):\(self.options.ipv6Port), \(String(describing: error))")
             }
         }
 
-        self.bootstrap.bind(to: try! SocketAddress(ipAddress: "::1", port: 8080)).whenComplete { result in
+        self.bootstrap.bind(to: try! SocketAddress(ipAddress: options.ipv6Address, port: options.ipv6Port)).whenComplete { result in
             // Need to create this here for thread-safety purposes
             let logger = Logger(label: "com.strangeindustries.slowdown.ProxyServer")
             switch result {
             case .success(let channel):
                 logger.info("Listening on \(String(describing: channel.localAddress))")
             case .failure(let error):
-                logger.error("Failed to bind [::1]:8080, \(String(describing: error))")
+                logger.error("Failed to bind \(self.options.ipv6Address):\(self.options.ipv6Port), \(String(describing: error))")
             }
         }
     }

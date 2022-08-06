@@ -16,31 +16,33 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private weak var timeoutTimer: Timer?
     private var session: NWUDPSession?
     private var observer: AnyObject?
-    private var logger: Logger
-    private var proxyServer: ProxyServer
+    private let logger: Logger
+    private let proxyServer: ProxyServer
+    
+    private let proxyIP = "192.168.1.225"
+    private let proxyPort = 8080
+    private let options = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080, ipv6Address: "2603:7000:9200:1a31:846:8a47:6fe:f009", ipv6Port: 8080)
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
         self.logger = Logger(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
-        self.proxyServer = ProxyServer(logger: self.logger)
+        
+        
+        self.proxyServer = ProxyServer(logger: self.logger, options: self.options)
     }
-
+    
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
         self.logger.info("tunnel started.")
         self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
             completionHandler(NEVPNError(.connectionFailed))
         }
-        
-        let proxyIP = "127.0.0.1"
-        let proxyPort = 8080
-        
         self.proxyServer.start()
         
         let settings = self.initTunnelSettings(proxyHost: proxyIP, proxyPort: proxyPort)
         
         self.setTunnelNetworkSettings(settings) { error in
             completionHandler(error)
-            let endpoint = NWHostEndpoint(hostname: proxyIP, port: String(proxyPort))
+            let endpoint = NWHostEndpoint(hostname: self.options.ipv4Address, port: String(self.options.ipv4Port))
             self.session = self.createUDPSession(to: endpoint, from: nil)
             self.observer = self.session?.observe(\.state, options: [.new]) { session, _ in
                 if session.state == .ready {
@@ -56,7 +58,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         self.packetFlow.readPacketObjects {[weak self] packets in
             guard let strongSelf = self else { return }
             for packet in packets {
-//                strongSelf.logger.info("Sending packet: \(packet.data.base64EncodedString())")
+                //                strongSelf.logger.info("Sending packet: \(packet.data.base64EncodedString())")
                 strongSelf.session?.writeDatagram(packet.data) { error in
                 }
             }
