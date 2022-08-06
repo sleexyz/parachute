@@ -37,7 +37,8 @@ class ProxyHandler : ChannelInboundHandler {
     public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         let inputEnvelope = unwrapInboundIn(data)
         let inputData = Data(inputEnvelope.data.readableBytesView)
-        logger.info("packet received: \(inputData.base64EncodedString())")
+        let protocolNumber = self.protocolNumber(for: inputData) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
+        logger.info("\(protocolNumber) packet received: \(inputData.base64EncodedString())")
     }
     
     public func channelReadComplete(context: ChannelHandlerContext) {
@@ -47,6 +48,17 @@ class ProxyHandler : ChannelInboundHandler {
     public func errorCaught(context: ChannelHandlerContext, error: Error) {
         self.logger.error("error: \(error)")
         context.close(promise: nil)
+    }
+    
+    private func protocolNumber(for packet: Data) -> NSNumber {
+        guard !packet.isEmpty else {
+            return AF_INET as NSNumber
+        }
+
+        // 'packet' contains the decrypted incoming IP packet data
+        // The first 4 bits identify the IP version
+        let ipVersion = (packet[0] & 0xf0) >> 4
+        return (ipVersion == 6) ? AF_INET6 as NSNumber : AF_INET as NSNumber
     }
     
 }

@@ -11,6 +11,7 @@ import Logging
 import LoggingOSLog
 import ProxyServer
 import func os.os_log
+import UIKit
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
     private weak var timeoutTimer: Timer?
@@ -50,6 +51,12 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                     self.readPackets()
                 }
             }
+            self.session?.setReadHandler({ [weak self] datagrams, error in
+                guard let self = self else { return }
+                for datagram in datagrams ?? [] {
+                    self.packetFlow.writePackets([datagram], withProtocols: [self.protocolNumber(for: datagram)])
+                }
+            }, maxDatagrams: Int.max)
         }
     }
     
@@ -110,6 +117,17 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     override func wake() {
         // Add code here to wake up.
+    }
+    
+    private func protocolNumber(for packet: Data) -> NSNumber {
+        guard !packet.isEmpty else {
+            return AF_INET as NSNumber
+        }
+
+        // 'packet' contains the decrypted incoming IP packet data
+        // The first 4 bits identify the IP version
+        let ipVersion = (packet[0] & 0xf0) >> 4
+        return (ipVersion == 6) ? AF_INET6 as NSNumber : AF_INET as NSNumber
     }
 }
 
