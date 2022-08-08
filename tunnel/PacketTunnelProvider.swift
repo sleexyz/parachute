@@ -18,10 +18,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private var session: NWUDPSession?
     private var observer: AnyObject?
     private let logger: Logger
-    private let proxyServer: ProxyServer
+//    private let proxyServer: ProxyServer
     
-    private let proxyIP = "192.168.1.225"
-    private let proxyPort = 8080
     private let options = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080, ipv6Address: "2603:7000:9200:1a31:846:8a47:6fe:f009", ipv6Port: 8080)
     
     override init() {
@@ -29,7 +27,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         self.logger = Logger(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
         
         
-        self.proxyServer = ProxyServer(logger: self.logger, options: self.options)
+//        self.proxyServer = ProxyServer(logger: self.logger, options: self.options)
     }
     
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
@@ -37,9 +35,9 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
             completionHandler(NEVPNError(.connectionFailed))
         }
-        self.proxyServer.start()
+//        self.proxyServer.start()
         
-        let settings = self.initTunnelSettings(proxyHost: proxyIP, proxyPort: proxyPort)
+        let settings = self.initTunnelSettings(proxyHost: self.options.ipv4Address, proxyPort: self.options.ipv4Port)
         
         self.setTunnelNetworkSettings(settings) { error in
             completionHandler(error)
@@ -63,27 +61,24 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private func readPackets() {
         self.logger.info("reading packets")
         self.packetFlow.readPacketObjects {[weak self] packets in
-            guard let strongSelf = self else { return }
+            guard let self = self else { return }
             for packet in packets {
-                //                strongSelf.logger.info("Sending packet: \(packet.data.base64EncodedString())")
-                strongSelf.session?.writeDatagram(packet.data) { error in
+                let protocolNumber = self.protocolNumber(for: packet.data) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
+                self.logger.info("Sending \(protocolNumber) packet: \(packet.data.base64EncodedString())")
+                self.session?.writeDatagram(packet.data) { error in
+                    guard let error = error else { return }
+                    self.logger.error("Error: \(String(describing: error))")
                 }
             }
-            strongSelf.readPackets()
+            self.readPackets()
         }
     }
     
     private func initTunnelSettings(proxyHost: String, proxyPort: Int) -> NEPacketTunnelNetworkSettings {
-        let settings: NEPacketTunnelNetworkSettings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: "127.0.0.1")
-        let ipv6Settings: NEIPv6Settings = NEIPv6Settings(
-            addresses: ["::1"],
-            networkPrefixLengths: [128]
-        )
-        ipv6Settings.includedRoutes = [NEIPv6Route.default()]
-        settings.ipv6Settings = ipv6Settings
+        let settings: NEPacketTunnelNetworkSettings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: self.options.ipv4Address)
         let ipv4Settings: NEIPv4Settings = NEIPv4Settings(
-            addresses: [settings.tunnelRemoteAddress],
-            subnetMasks: ["255.255.255.255"]
+            addresses: ["10.0.0.8"],
+            subnetMasks: ["255.255.255.0"]
         )
         ipv4Settings.includedRoutes = [NEIPv4Route.default()]
         ipv4Settings.excludedRoutes = [
@@ -92,6 +87,12 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             NEIPv4Route(destinationAddress: "172.16.0.0", subnetMask: "255.240.0.0")
         ]
         settings.ipv4Settings = ipv4Settings
+        let ipv6Settings: NEIPv6Settings = NEIPv6Settings(
+            addresses: ["fe80:1ca8:5ee3:4d6d:aaf5"],
+            networkPrefixLengths: [64]
+        )
+        ipv6Settings.includedRoutes = [NEIPv6Route.default()]
+        settings.ipv6Settings = ipv6Settings
         settings.mtu = 1500
         return settings
     }

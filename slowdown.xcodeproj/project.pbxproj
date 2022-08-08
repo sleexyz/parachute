@@ -34,7 +34,6 @@
 		A08719E4281A617500113F3F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
 		A08719E7281A617500113F3F /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719E6281A617500113F3F /* PacketTunnelProvider.swift */; };
 		A08719EC281A617500113F3F /* tunnel.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A08719E3281A617500113F3F /* tunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		A0933645289DCD0000D57F22 /* ProxyServer in Resources */ = {isa = PBXBuildFile; fileRef = A0933644289DCD0000D57F22 /* ProxyServer */; };
 		A0933649289DCD2300D57F22 /* ProxyServer in Frameworks */ = {isa = PBXBuildFile; productRef = A0933648289DCD2300D57F22 /* ProxyServer */; };
 /* End PBXBuildFile section */
 
@@ -411,7 +410,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0933645289DCD0000D57F22 /* ProxyServer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

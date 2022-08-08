@@ -5,41 +5,21 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/netip"
 	"os"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 )
 
-func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+type Server struct {
+	conn *net.UDPConn
+}
 
-	// tun, tnet, err := netstack.CreateNetTUN(
-	// 	[]netip.Addr{netip.MustParseAddr("0.0.0.0")},
-	// 	[]netip.Addr{netip.MustParseAddr("8.8.8.8")},
-	// 	8080)
-	// if err != nil {
-	// 	log.Panicln(err)
-	// }
-	// tun.write
-	// listener, err := tnet.ListenUDP(&net.UDPAddr{Port: port})
-	// if err != nil {
-	// 	log.Panicln(err)
-	// }
-
-	conn, err := net.ListenUDP("udp", &net.UDPAddr{Port: 8080})
-	if err != nil {
-		log.Fatalf("Udp Service listen report udp fail:%v", err)
-	}
-	defer conn.Close()
-	log.Printf("Listening on port %s", port)
-
+func (c *Server) Listen() {
 	for {
 		data := make([]byte, 1024*4)
-		n, _, err := conn.ReadFromUDP(data)
+		n, _, err := c.conn.ReadFromUDP(data)
 		if err == nil {
 			sEnc := b64.StdEncoding.EncodeToString([]byte(data[:n]))
 			fmt.Println(sEnc)
@@ -64,4 +44,34 @@ func main() {
 			// conn.WriteToUDP(data[:n], remoteAddr)
 		}
 	}
+}
+
+func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	// tun, tnet, err := netstack.CreateNetTUN(
+	// 	[]netip.Addr{netip.MustParseAddr("0.0.0.0")},
+	// 	[]netip.Addr{netip.MustParseAddr("8.8.8.8")},
+	// 	8080)
+	// if err != nil {
+	// 	log.Panicln(err)
+	// }
+	// tun.write
+	// listener, err := tnet.ListenUDP(&net.UDPAddr{Port: port})
+	// if err != nil {
+	// 	log.Panicln(err)
+	// }
+
+	conn, err := net.ListenUDP("udp", &net.UDPAddr{IP: netip.MustParseAddr("0.0.0.0").AsSlice(), Port: 8080})
+	if err != nil {
+		log.Fatalf("Udp Service listen report udp fail:%v", err)
+	}
+	defer conn.Close()
+
+	log.Printf("Listening on port %s", port)
+	server := Server{conn: conn}
+	server.Listen()
 }
