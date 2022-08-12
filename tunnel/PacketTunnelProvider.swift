@@ -88,7 +88,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         ]
         settings.ipv4Settings = ipv4Settings
         let ipv6Settings: NEIPv6Settings = NEIPv6Settings(
-            addresses: ["fe80:1ca8:5ee3:4d6d:aaf5"],
+//            addresses: ["fe80:1ca8:5ee3:4d6d:aaf5"],
+            addresses: ["fd00::2"],
             networkPrefixLengths: [64]
         )
         ipv6Settings.includedRoutes = [NEIPv6Route.default()]
