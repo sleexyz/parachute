@@ -5,10 +5,16 @@ import (
 	"log"
 	"net"
 	"time"
+	"errors"
+	"context"
 
 	"os"
 
+	M "strange.industries/go-proxy/metadata"
+	"strange.industries/go-proxy/forwarder"
+	"strange.industries/go-proxy/adapter"
 	"golang.zx2c4.com/go118/netip"
+
 	"gvisor.dev/gvisor/pkg/tcpip"
 	"gvisor.dev/gvisor/pkg/tcpip/adapters/gonet"
 	"gvisor.dev/gvisor/pkg/tcpip/buffer"
@@ -21,11 +27,12 @@ import (
 	"gvisor.dev/gvisor/pkg/tcpip/transport/tcp"
 	"gvisor.dev/gvisor/pkg/tcpip/transport/udp"
 	"gvisor.dev/gvisor/pkg/waiter"
+
 )
 
 type Deps struct {
-	tcpQueue chan<- TCPConn
-	udpQueue chan<- UDPConn
+	tcpQueue chan adapter.TCPConn
+	udpQueue chan adapter.UDPConn
 	ep       *channel.Endpoint
 }
 
@@ -35,13 +42,37 @@ type Server struct {
 	deps  *Deps
 }
 
-// TCPConn implements the net.Conn interface.
-type TCPConn interface {
-	net.Conn
-
-	// ID returns the transport endpoint id of TCPConn.
-	ID() *stack.TransportEndpointID
+type Proxy struct {
+	addr string
+	dialer *net.Dialer
 }
+
+func (b *Proxy) DialContext(ctx context.Context, metadata *M.Metadata) (net.Conn, error) {
+	c, err := b.dialer.DialContext(ctx, "tcp", metadata.DestinationAddress())
+	if err != nil {
+		return nil, err
+	}
+	setKeepAlive(c)
+	return c, nil
+}
+
+const (
+	tcpKeepAlivePeriod = 30 * time.Second
+)
+
+// setKeepAlive sets tcp keepalive option for tcp connection.
+func setKeepAlive(c net.Conn) {
+	if tcp, ok := c.(*net.TCPConn); ok {
+		tcp.SetKeepAlive(true)
+		tcp.SetKeepAlivePeriod(tcpKeepAlivePeriod)
+	}
+}
+
+
+func (b *Proxy) DialUDP(*M.Metadata) (net.PacketConn, error) {
+	return nil, errors.New("not supported")
+}
+
 type tcpConn struct {
 	*gonet.TCPConn
 	id stack.TransportEndpointID
@@ -51,13 +82,18 @@ func (c *tcpConn) ID() *stack.TransportEndpointID {
 	return &c.id
 }
 
-// UDPConn implements net.Conn and net.PacketConn.
-type UDPConn interface {
-	net.Conn
-	net.PacketConn
 
-	// ID returns the transport endpoint id of UDPConn.
-	ID() *stack.TransportEndpointID
+func (c *Server) Init() {
+	go func () {
+		for {
+			select {
+			case conn := <- c.deps.tcpQueue:
+				go forwarder.HandleTCPConn(conn)
+			case conn := <- c.deps.udpQueue:
+				go forwarder.HandleUDPConn(conn)
+			}
+		}
+	}()
 }
 
 func (c *Server) Write(buf []byte, offset int) (int, error) {
@@ -247,39 +283,13 @@ func createStack(deps *Deps, rcvBufferSize int, sndBufferSize int) (*stack.Stack
 			UDPConn: gonet.NewUDPConn(s, &wq, ep),
 			id:      id,
 		}
+
 		deps.udpQueue <- conn
 		// TODO: What goes here?
 	})
 
 	s.SetTransportProtocolHandler(tcp.ProtocolNumber, tcpForwarder.HandlePacket)
 	s.SetTransportProtocolHandler(udp.ProtocolNumber, udpForwarder.HandlePacket)
-
-	// for _, ip := range deps.localAddresses {
-	// 	var protoNumber tcpip.NetworkProtocolNumber
-	// 	if ip.Is4() {
-	// 		protoNumber = ipv4.ProtocolNumber
-	// 	} else if ip.Is6() {
-	// 		protoNumber = ipv6.ProtocolNumber
-	// 	}
-	// 	tcpipErr := s.AddProtocolAddress(1, tcpip.ProtocolAddress{
-	// 		Protocol:          protoNumber,
-	// 		AddressWithPrefix: tcpip.Address(ip.AsSlice()).WithPrefix(),
-	// 	}, stack.AddressProperties{})
-
-	// 	if tcpipErr != nil {
-	// 		return nil, fmt.Errorf("AddProtocolAddress(%v): %v", ip, tcpipErr)
-	// 	}
-	// }
-	// s.SetRouteTable([]tcpip.Route{
-	// 	{
-	// 		Destination: header.IPv4EmptySubnet,
-	// 		NIC:         1,
-	// 	},
-	// 	{
-	// 		Destination: header.IPv6EmptySubnet,
-	// 		NIC:         1,
-	// 	},
-	// })
 
 	StackRoutingSetup(s, 1, "10.0.0.8/24")
 	StackRoutingSetup(s, 1, "fd00::2/64")
@@ -375,8 +385,8 @@ func main() {
 
 	deps := &Deps{
 		ep:       ep,
-		tcpQueue: make(chan TCPConn), // TODO: unused
-		udpQueue: make(chan UDPConn), // TODO: unused
+		tcpQueue: make(chan adapter.TCPConn), // TODO: unused
+		udpQueue: make(chan adapter.UDPConn), // TODO: unused
 	}
 
 	// With high mtu, low packet loss and low latency over tuntap,
@@ -398,5 +408,6 @@ func main() {
 	log.Printf("Listening on port %s", port)
 
 	server := Server{conn: conn, stack: s, deps: deps}
+	server.Init()
 	server.Listen()
 }
