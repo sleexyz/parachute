@@ -17,6 +17,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private weak var timeoutTimer: Timer?
     private var session: NWUDPSession?
     private var observer: AnyObject?
+    private let queue = DispatchQueue(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
     private let logger: Logger
 //    private let proxyServer: ProxyServer
     
@@ -45,32 +46,38 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             self.session = self.createUDPSession(to: endpoint, from: nil)
             self.observer = self.session?.observe(\.state, options: [.new]) { session, _ in
                 if session.state == .ready {
+                    session.setReadHandler({ [weak self] datagrams, error in
+                        guard let self = self else { return }
+                        self.queue.async {
+                            for datagram in datagrams ?? [] {
+                                let protocolNumber = self.protocolNumber(for: datagram) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
+                                self.logger.info("Inbound \(protocolNumber) packet: \(datagram.base64EncodedData())")
+                                self.packetFlow.writePackets([datagram], withProtocols: [self.protocolNumber(for: datagram)])
+                            }
+                        }
+                    }, maxDatagrams: Int.max)
+                    
                     // The session is ready to exchange UDP datagrams with the server
-                    self.readPackets()
+                    self.readOutboundPackets()
                 }
             }
-            self.session?.setReadHandler({ [weak self] datagrams, error in
-                guard let self = self else { return }
-                for datagram in datagrams ?? [] {
-                    self.packetFlow.writePackets([datagram], withProtocols: [self.protocolNumber(for: datagram)])
-                }
-            }, maxDatagrams: Int.max)
         }
     }
     
-    private func readPackets() {
-        self.logger.info("reading packets")
+    private func readOutboundPackets() {
         self.packetFlow.readPacketObjects {[weak self] packets in
             guard let self = self else { return }
             for packet in packets {
                 let protocolNumber = self.protocolNumber(for: packet.data) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
-                self.logger.info("Sending \(protocolNumber) packet: \(packet.data.base64EncodedString())")
+                self.logger.info("Outbound \(protocolNumber) packet: \(packet.data.base64EncodedString())")
                 self.session?.writeDatagram(packet.data) { error in
                     guard let error = error else { return }
                     self.logger.error("Error: \(String(describing: error))")
                 }
             }
-            self.readPackets()
+            self.queue.async {
+                self.readOutboundPackets()
+            }
         }
     }
     
