@@ -2,22 +2,22 @@ package forwarder
 
 import (
 	"context"
-	"io"
 	"fmt"
+	"io"
 	"net"
 	"sync"
 	"time"
 
-	"strange.industries/go-proxy/common/pool"
 	"strange.industries/go-proxy/adapter"
+	"strange.industries/go-proxy/common/pool"
 	"strange.industries/go-proxy/dialer"
 	M "strange.industries/go-proxy/metadata"
 )
 
 const (
-	tcpWaitTimeout = 5 * time.Second
+	tcpWaitTimeout     = 5 * time.Second
 	tcpKeepAlivePeriod = 30 * time.Second
-	tcpConnectTimeout = 5 * time.Second
+	tcpConnectTimeout  = 5 * time.Second
 )
 
 // setKeepAlive sets tcp keepalive option for tcp connection.
@@ -35,8 +35,6 @@ func safeConnClose(c net.Conn, err error) {
 	}
 }
 
-
-
 func DialContext(ctx context.Context, metadata *M.Metadata) (net.Conn, error) {
 	c, err := dialer.DialContext(ctx, "tcp", metadata.DestinationAddress())
 	if err != nil {
@@ -46,7 +44,6 @@ func DialContext(ctx context.Context, metadata *M.Metadata) (net.Conn, error) {
 	return c, nil
 }
 
-// Dial uses default Dialer to dial TCP.
 func Dial(metadata *M.Metadata) (net.Conn, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), tcpConnectTimeout)
 	defer cancel()
@@ -74,7 +71,7 @@ func HandleTCPConn(localConn adapter.TCPConn) {
 
 	defer targetConn.Close()
 
-	fmt.Printf("[TCP] %s <-> %s", metadata.SourceAddress(), metadata.DestinationAddress())
+	fmt.Printf("[TCP] %s <-> %s\n", metadata.SourceAddress(), metadata.DestinationAddress())
 	relay(localConn, targetConn) /* relay connections */
 }
 

@@ -1,23 +1,24 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
+	"sync"
 	"time"
-	"errors"
-	"context"
 
 	"os"
 
-	M "strange.industries/go-proxy/metadata"
-	"strange.industries/go-proxy/forwarder"
-	"strange.industries/go-proxy/adapter"
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
 	"golang.zx2c4.com/go118/netip"
+	"strange.industries/go-proxy/adapter"
+	"strange.industries/go-proxy/forwarder"
 
+	"gvisor.dev/gvisor/pkg/bufferv2"
 	"gvisor.dev/gvisor/pkg/tcpip"
 	"gvisor.dev/gvisor/pkg/tcpip/adapters/gonet"
-	"gvisor.dev/gvisor/pkg/tcpip/buffer"
 	"gvisor.dev/gvisor/pkg/tcpip/header"
 	"gvisor.dev/gvisor/pkg/tcpip/link/channel"
 	"gvisor.dev/gvisor/pkg/tcpip/network/ipv4"
@@ -27,51 +28,7 @@ import (
 	"gvisor.dev/gvisor/pkg/tcpip/transport/tcp"
 	"gvisor.dev/gvisor/pkg/tcpip/transport/udp"
 	"gvisor.dev/gvisor/pkg/waiter"
-
 )
-
-type Deps struct {
-	tcpQueue chan adapter.TCPConn
-	udpQueue chan adapter.UDPConn
-	ep       *channel.Endpoint
-}
-
-type Server struct {
-	conn  *net.UDPConn
-	stack *stack.Stack
-	deps  *Deps
-}
-
-type Proxy struct {
-	addr string
-	dialer *net.Dialer
-}
-
-func (b *Proxy) DialContext(ctx context.Context, metadata *M.Metadata) (net.Conn, error) {
-	c, err := b.dialer.DialContext(ctx, "tcp", metadata.DestinationAddress())
-	if err != nil {
-		return nil, err
-	}
-	setKeepAlive(c)
-	return c, nil
-}
-
-const (
-	tcpKeepAlivePeriod = 30 * time.Second
-)
-
-// setKeepAlive sets tcp keepalive option for tcp connection.
-func setKeepAlive(c net.Conn) {
-	if tcp, ok := c.(*net.TCPConn); ok {
-		tcp.SetKeepAlive(true)
-		tcp.SetKeepAlivePeriod(tcpKeepAlivePeriod)
-	}
-}
-
-
-func (b *Proxy) DialUDP(*M.Metadata) (net.PacketConn, error) {
-	return nil, errors.New("not supported")
-}
 
 type tcpConn struct {
 	*gonet.TCPConn
@@ -82,78 +39,161 @@ func (c *tcpConn) ID() *stack.TransportEndpointID {
 	return &c.id
 }
 
+type udpConn struct {
+	*gonet.UDPConn
+	id stack.TransportEndpointID
+}
 
-func (c *Server) Init() {
-	go func () {
+func (c *udpConn) ID() *stack.TransportEndpointID {
+	return &c.id
+}
+
+type Server struct {
+	tcpQueue       chan adapter.TCPConn
+	udpQueue       chan adapter.UDPConn
+	inboundUDPAddr *net.UDPAddr
+	ep             *channel.Endpoint
+	cConn          *net.UDPConn
+	stack          *stack.Stack
+}
+
+// Initializes outbound channel handlers
+func (c *Server) InitOutboundHandlers() {
+	go func() {
 		for {
 			select {
-			case conn := <- c.deps.tcpQueue:
+			case conn := <-c.tcpQueue:
 				go forwarder.HandleTCPConn(conn)
-			case conn := <- c.deps.udpQueue:
+			case conn := <-c.udpQueue:
 				go forwarder.HandleUDPConn(conn)
 			}
 		}
 	}()
 }
 
-func (c *Server) Write(buf []byte, offset int) (int, error) {
+func (c *Server) WriteOutboundData(buf []byte, offset int) (int, error) {
 	packet := buf[offset:]
 	if len(packet) == 0 {
 		return 0, nil
 	}
-	pkb := stack.NewPacketBuffer(stack.PacketBufferOptions{Data: buffer.NewVectorisedView(len(packet), []buffer.View{buffer.NewViewFromBytes(packet)})})
-	// c.deps.ep.WriteRawPacket(pkb)
+	pkb := stack.NewPacketBuffer(stack.PacketBufferOptions{
+		Payload: bufferv2.MakeWithData(packet),
+	})
+	// c.ep.WriteRawPacket(pkb)
 	switch packet[0] >> 4 {
 	case 4:
-		c.deps.ep.InjectInbound(ipv4.ProtocolNumber, pkb)
+		c.ep.InjectInbound(ipv4.ProtocolNumber, pkb)
 	case 6:
-		c.deps.ep.InjectInbound(ipv6.ProtocolNumber, pkb)
+		c.ep.InjectInbound(ipv6.ProtocolNumber, pkb)
 	}
+	pkb.DecRef()
 	return len(buf), nil
 }
 
 func (c *Server) Listen() {
+	// for {
+	// Use wait groups to alternative between inbound and outbound loops.
+	wg := new(sync.WaitGroup)
+	wg.Add(2)
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		c.InboundLoop(ctx)
+		wg.Done()
+	}()
+	go func() {
+		c.OutboundLoop(cancel)
+		wg.Done()
+	}()
+	wg.Wait()
+	// }
+}
+
+func (c *Server) InboundLoop(ctx context.Context) {
+	for {
+		pkt := c.ep.ReadContext(ctx)
+		if pkt == nil {
+			break
+		}
+		if c.inboundUDPAddr != nil {
+			c.WriteInboundPacket(pkt, c.inboundUDPAddr)
+		}
+	}
+}
+
+func (c *Server) WriteInboundPacket(pkt *stack.PacketBuffer, addr *net.UDPAddr) tcpip.Error {
+	defer pkt.DecRef()
+	buf := pkt.ToBuffer()
+	defer buf.Release()
+	data := buf.Flatten()
+	debugString := makeDebugString(data)
+	bw, err := c.cConn.WriteTo(data, addr)
+	if err != nil {
+		fmt.Printf("<= %s, error:%s\n", debugString, err)
+		return &tcpip.ErrInvalidEndpointState{}
+	}
+	fmt.Printf("<= %s, bytes written:%d\n", debugString, bw)
+	return nil
+}
+
+func makeDebugString(data []byte) string {
+	// sEnc := base64.StdEncoding.EncodeToString([]byte(data[:n]))
+	// fmt.Printf("-------- %s\n", sEnc)
+	// if true {
+	// 	return ""
+	// }
+	ipVersion := (data[0] & 0xf0) >> 4
+	var packet gopacket.Packet
+	if ipVersion == 6 {
+		packet = gopacket.NewPacket(data, layers.LayerTypeIPv6, gopacket.Default)
+	} else {
+		packet = gopacket.NewPacket(data, layers.LayerTypeIPv4, gopacket.Default)
+	}
+	var srcAddr, dstAddr, srcPort, dstPort, protocol string
+	if ipv4Layer := packet.Layer(layers.LayerTypeIPv4); ipv4Layer != nil {
+		ipv4, _ := ipv4Layer.(*layers.IPv4)
+		srcAddr = ipv4.SrcIP.String()
+		dstAddr = ipv4.DstIP.String()
+	}
+	if ipv6Layer := packet.Layer(layers.LayerTypeIPv6); ipv6Layer != nil {
+		ipv6, _ := ipv6Layer.(*layers.IPv6)
+		srcAddr = ipv6.SrcIP.String()
+		dstAddr = ipv6.DstIP.String()
+	}
+	if tcpLayer := packet.Layer(layers.LayerTypeTCP); tcpLayer != nil {
+		tcp, _ := tcpLayer.(*layers.TCP)
+		srcPort = tcp.SrcPort.String()
+		dstPort = tcp.DstPort.String()
+		protocol = "tcp"
+	}
+	if udpLayer := packet.Layer(layers.LayerTypeUDP); udpLayer != nil {
+		udp, _ := udpLayer.(*layers.UDP)
+		srcPort = udp.SrcPort.String()
+		dstPort = udp.DstPort.String()
+		protocol = "udp"
+	}
+	if protocol != "" {
+		return fmt.Sprintf("%s -- %s:%s->%s:%s", protocol, srcAddr, srcPort, dstAddr, dstPort)
+	}
+	return ""
+}
+
+func (c *Server) OutboundLoop(cancel context.CancelFunc) {
+	defer cancel()
 	for {
 		data := make([]byte, 1024*4)
-		n, _, err := c.conn.ReadFromUDP(data)
-		if err == nil {
-			// sEnc := b64.StdEncoding.EncodeToString([]byte(data[:n]))
-			// fmt.Println(sEnc)
-
-			// ipVersion := (data[0] & 0xf0) >> 4
-			// var packet gopacket.Packet
-			// if ipVersion == 6 {
-			// 	packet = gopacket.NewPacket(data[:n], layers.LayerTypeIPv6, gopacket.Default)
-			// } else {
-			// 	packet = gopacket.NewPacket(data[:n], layers.LayerTypeIPv4, gopacket.Default)
-			// }
-			// if ipv4Layer := packet.Layer(layers.LayerTypeIPv4); ipv4Layer != nil {
-			// 	fmt.Println("This is a ipv4 packet!")
-			// 	ipv4, _ := ipv4Layer.(*layers.IPv4)
-			// 	fmt.Printf("From src address %d to dst address %d\n", ipv4.SrcIP, ipv4.DstIP)
-			// }
-			// if ipv6Layer := packet.Layer(layers.LayerTypeIPv6); ipv6Layer != nil {
-			// 	fmt.Println("This is a ipv6 packet!")
-			// 	ipv6, _ := ipv6Layer.(*layers.IPv6)
-			// 	fmt.Printf("From src address %d to dst address %d\n", ipv6.SrcIP, ipv6.DstIP)
-			// }
-			// if tcpLayer := packet.Layer(layers.LayerTypeTCP); tcpLayer != nil {
-			// 	fmt.Println("This is a TCP packet!")
-			// 	// Get actual TCP data from this layer
-			// 	tcp, _ := tcpLayer.(*layers.TCP)
-			// 	fmt.Printf("From src port %d to dst port %d\n", tcp.SrcPort, tcp.DstPort)
-			// }
-			// Iterate over all layers, printing out each layer type
-			// for _, layer := range packet.Layers() {
-			// 	fmt.Println("PACKET LAYER:", layer.LayerType())
-			// }
-			_, err := c.Write(data[:n], 0)
-			if err != nil {
-				fmt.Printf("bad write: %s\n", err)
-			} else {
-				// fmt.Printf("bytes written: %d\n", n)
-			}
+		n, addr, err := c.cConn.ReadFromUDP(data)
+		if err != nil {
+			fmt.Printf("=> bad write: %s\n", err)
+			break
 		}
+		c.inboundUDPAddr = addr
+		_, err = c.WriteOutboundData(data[:n], 0)
+		if err != nil {
+			fmt.Printf("=> bad write: %s\n", err)
+			break
+		}
+		// debugString := makeDebugString(data[:n])
+		// fmt.Printf("=> %s, bytes written: %d\n", debugString, bw)
 	}
 }
 
@@ -166,8 +206,8 @@ const (
 
 	// maxConnAttempts specifies the maximum number
 	// of in-flight tcp connection attempts.
-	maxConnAttempts = 10
-	// maxConnAttempts = 2 << 10
+	// maxConnAttempts = 10
+	maxConnAttempts = 2 << 10
 
 	// tcpKeepaliveCount is the maximum number of
 	// TCP keep-alive probes to send before giving up
@@ -179,14 +219,18 @@ const (
 	// must remain idle before the first TCP keepalive
 	// packet is sent. Once this time is reached,
 	// tcpKeepaliveInterval option is used instead.
+	// tcpKeepaliveIdle = 60 * time.Second
 	tcpKeepaliveIdle = 60 * time.Second
 
 	// tcpKeepaliveInterval specifies the interval
 	// time between sending TCP keepalive packets.
 	tcpKeepaliveInterval = 30 * time.Second
+
+	// defaultTimeToLive specifies the default TTL used by stack.
+	defaultTimeToLive uint8 = 64
 )
 
-func createStack(deps *Deps, rcvBufferSize int, sndBufferSize int) (*stack.Stack, error) {
+func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue chan adapter.UDPConn, rcvBufferSize int, sndBufferSize int) (*stack.Stack, error) {
 	s := stack.New(stack.Options{
 		NetworkProtocols:   []stack.NetworkProtocolFactory{ipv4.NewProtocol, ipv6.NewProtocol},
 		TransportProtocols: []stack.TransportProtocolFactory{tcp.NewProtocol, udp.NewProtocol, icmp.NewProtocol6, icmp.NewProtocol4},
@@ -199,7 +243,7 @@ func createStack(deps *Deps, rcvBufferSize int, sndBufferSize int) (*stack.Stack
 		s.SetTransportProtocolOption(tcp.ProtocolNumber, &opt)
 	}
 	{
-		opt := tcpip.DefaultTTLOption(64)
+		opt := tcpip.DefaultTTLOption(defaultTimeToLive)
 		s.SetNetworkProtocolOption(ipv4.ProtocolNumber, &opt)
 		s.SetNetworkProtocolOption(ipv6.ProtocolNumber, &opt)
 	}
@@ -223,13 +267,15 @@ func createStack(deps *Deps, rcvBufferSize int, sndBufferSize int) (*stack.Stack
 			&opt)
 	}
 
-	tcpipErr := s.CreateNICWithOptions(1, deps.ep, stack.NICOptions{Disabled: false})
+	nicID := tcpip.NICID(s.UniqueID())
+
+	tcpipErr := s.CreateNICWithOptions(nicID, ep, stack.NICOptions{Disabled: false})
 	if tcpipErr != nil {
 		return nil, fmt.Errorf("CreateNIC: %v", tcpipErr)
 	}
 
-	s.SetSpoofing(1, true)
-	s.SetPromiscuousMode(1, true)
+	s.SetSpoofing(nicID, true)
+	s.SetPromiscuousMode(nicID, true)
 
 	tcpForwarder := tcp.NewForwarder(s, defaultWndSize, maxConnAttempts, func(r *tcp.ForwarderRequest) {
 		var (
@@ -238,24 +284,26 @@ func createStack(deps *Deps, rcvBufferSize int, sndBufferSize int) (*stack.Stack
 			err tcpip.Error
 			id  = r.ID()
 		)
-		// TODO: why doesn't this log?
-		fmt.Printf("forward tcp request %s:%d->%s:%d\n",
+		fmt.Printf("outbound tcp request %s:%d->%s:%d\n",
 			id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort)
-
-		defer func() {
-			if err != nil {
-				fmt.Printf("error: %s\n", err)
-			}
-		}()
 
 		// Perform a TCP three-way handshake.
 		ep, err = r.CreateEndpoint(&wq)
 		if err != nil {
 			// RST: prevent potential half-open TCP connection leak.
 			r.Complete(true)
+
+			fmt.Printf("error forwarding tcp request %s:%d->%s:%d, could not create endpoint: %s\n",
+				id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort, err)
 			return
 		}
 		defer r.Complete(false)
+		defer func() {
+			if err != nil {
+				fmt.Printf("error forwarding tcp request %s:%d->%s:%d: %s\n",
+					id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort, err)
+			}
+		}()
 
 		err = setSocketOptions(s, ep)
 
@@ -263,8 +311,7 @@ func createStack(deps *Deps, rcvBufferSize int, sndBufferSize int) (*stack.Stack
 			TCPConn: gonet.NewTCPConn(&wq, ep),
 			id:      id,
 		}
-		deps.tcpQueue <- conn
-		// TODO: What goes here?
+		tcpQueue <- conn
 	})
 
 	udpForwarder := udp.NewForwarder(s, func(r *udp.ForwarderRequest) {
@@ -272,7 +319,7 @@ func createStack(deps *Deps, rcvBufferSize int, sndBufferSize int) (*stack.Stack
 			wq waiter.Queue
 			id = r.ID()
 		)
-		fmt.Printf("udp forwarder request %s:%d->%s:%d\n",
+		fmt.Printf("forward udp request %s:%d->%s:%d\n",
 			id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort)
 		ep, err := r.CreateEndpoint(&wq)
 		if err != nil {
@@ -284,15 +331,25 @@ func createStack(deps *Deps, rcvBufferSize int, sndBufferSize int) (*stack.Stack
 			id:      id,
 		}
 
-		deps.udpQueue <- conn
+		udpQueue <- conn
 		// TODO: What goes here?
 	})
 
 	s.SetTransportProtocolHandler(tcp.ProtocolNumber, tcpForwarder.HandlePacket)
 	s.SetTransportProtocolHandler(udp.ProtocolNumber, udpForwarder.HandlePacket)
 
-	StackRoutingSetup(s, 1, "10.0.0.8/24")
-	StackRoutingSetup(s, 1, "fd00::2/64")
+	// slirpnetstack method
+	// StackRoutingSetup(s, nicID, "10.0.0.8/24")
+	// StackRoutingSetup(s, nicID, "fd00::2/64")
+
+	// Tun2socks method
+	s.SetRouteTable([]tcpip.Route{{
+		Destination: header.IPv4EmptySubnet,
+		NIC:         nicID,
+	}, {
+		Destination: header.IPv6EmptySubnet,
+		NIC:         nicID,
+	}})
 
 	return s, nil
 }
@@ -329,15 +386,6 @@ func MustSubnet(ipNet *net.IPNet) *tcpip.Subnet {
 		panic(fmt.Sprintf("Unable to MustSubnet(%s): %s", ipNet, errx))
 	}
 	return &subnet
-}
-
-type udpConn struct {
-	*gonet.UDPConn
-	id stack.TransportEndpointID
-}
-
-func (c *udpConn) ID() *stack.TransportEndpointID {
-	return &c.id
 }
 
 func setSocketOptions(s *stack.Stack, ep tcpip.Endpoint) tcpip.Error {
@@ -379,35 +427,33 @@ func main() {
 	}
 
 	ep := channel.New(10, defaultMTU, "10.0.0.8")
-	// ep.LinkEPCapabilities = stack.CapabilityLoopback
-	// fmt.Println(ep.LinkEPCapabilities)
-	// ep := loopback.New()
-
-	deps := &Deps{
-		ep:       ep,
-		tcpQueue: make(chan adapter.TCPConn), // TODO: unused
-		udpQueue: make(chan adapter.UDPConn), // TODO: unused
-	}
+	tcpQueue := make(chan adapter.TCPConn)
+	udpQueue := make(chan adapter.UDPConn)
 
 	// With high mtu, low packet loss and low latency over tuntap,
 	// the specific value isn't that important. The only important
 	// bit is that it should be at least a couple times MSS.
 	bufSize := 4 * 1024 * 1024
 
-	s, err := createStack(deps, bufSize, bufSize)
+	s, err := createStack(ep, tcpQueue, udpQueue, bufSize, bufSize)
 	if err != nil {
 		log.Panicln(err)
 	}
 
-	conn, err := net.ListenUDP("udp", &net.UDPAddr{IP: netip.MustParseAddr("0.0.0.0").AsSlice(), Port: 8080})
+	cConn, err := net.ListenUDP("udp", &net.UDPAddr{IP: netip.MustParseAddr("0.0.0.0").AsSlice(), Port: 8080})
 	if err != nil {
 		log.Fatalf("Udp Service listen report udp fail:%v", err)
 	}
-	defer conn.Close()
-
+	defer cConn.Close()
 	log.Printf("Listening on port %s", port)
 
-	server := Server{conn: conn, stack: s, deps: deps}
-	server.Init()
+	server := Server{
+		cConn:    cConn,
+		stack:    s,
+		ep:       ep,
+		tcpQueue: tcpQueue,
+		udpQueue: udpQueue,
+	}
+	server.InitOutboundHandlers()
 	server.Listen()
 }
