@@ -1,14 +1,15 @@
 package forwarder
 
 import (
-	"log"
 	"fmt"
-	"time"
-	"net"
 	"io"
+	"log"
+	"net"
 	"sync"
-	"strange.industries/go-proxy/common/pool"
+	"time"
+
 	"strange.industries/go-proxy/adapter"
+	"strange.industries/go-proxy/common/pool"
 	"strange.industries/go-proxy/dialer"
 	M "strange.industries/go-proxy/metadata"
 )
