@@ -2,28 +2,32 @@ package main
 
 import (
 	"log"
-	"net"
+	"strconv"
 
 	"os"
 
-	"golang.zx2c4.com/go118/netip"
+	"strange.industries/go-proxy/internal"
 	"strange.industries/go-proxy/server"
 )
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	portStr := os.Getenv("PORT")
+	if portStr == "" {
+		portStr = "8080"
 	}
-
-	iConn, err := net.ListenUDP("udp", &net.UDPAddr{IP: netip.MustParseAddr("0.0.0.0").AsSlice(), Port: 8080})
+	port, err := strconv.Atoi(portStr)
 	if err != nil {
-		log.Fatalf("Udp Service listen report udp fail:%v", err)
+		log.Panicln("could not parse $PORT")
 	}
-	defer iConn.Close()
-	log.Printf("Listening on port %s", port)
 
-	c := server.Init("10.0.0.8", iConn)
+	i, err := internal.InitDirectInternal(port)
+	if err != nil {
+		log.Fatalf("Could not initialize internal connection:%v", err)
+	}
+	defer i.Close()
+	log.Printf("Listening on port %s", portStr)
+
+	c := server.Init("10.0.0.8", i)
 	c.ListenExternal()
 	c.ListenInternal()
 }

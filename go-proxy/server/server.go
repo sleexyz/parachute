@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net"
 	"sync"
 
 	"github.com/google/gopacket"
@@ -12,6 +11,7 @@ import (
 	"strange.industries/go-proxy/adapter"
 	"strange.industries/go-proxy/external"
 	"strange.industries/go-proxy/forwarder"
+	"strange.industries/go-proxy/internal"
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"gvisor.dev/gvisor/pkg/tcpip"
@@ -27,8 +27,7 @@ const (
 
 type Server struct {
 	// internal (device <=> proxy)
-	iConn    *net.UDPConn
-	iUDPAddr *net.UDPAddr
+	i internal.Internal
 
 	// external (proxy <=> internet)
 	stack    *stack.Stack
@@ -37,7 +36,7 @@ type Server struct {
 	ep       *channel.Endpoint
 }
 
-func Init(address string, iConn *net.UDPConn) *Server {
+func Init(address string, i internal.Internal) *Server {
 	ep := channel.New(10, defaultMTU, "10.0.0.8")
 	tcpQueue := make(chan adapter.TCPConn)
 	udpQueue := make(chan adapter.UDPConn)
@@ -60,7 +59,7 @@ func Init(address string, iConn *net.UDPConn) *Server {
 		ep:       ep,
 
 		// internal
-		iConn: iConn,
+		i: i,
 	}
 
 	return &server
@@ -82,28 +81,24 @@ func (c *Server) ListenInternal() {
 	fmt.Println("done waiting")
 }
 
-// Forwards packets from netstack to client
+// Forwards packets from stack to client
 func (c *Server) InboundLoop(ctx context.Context) {
 	for {
 		pkt := c.ep.ReadContext(ctx)
 		if pkt == nil {
 			break
 		}
-		if c.iUDPAddr == nil {
-			fmt.Println("Error: downstream UDP connection not initialized.")
-			break
-		}
-		c.WriteInboundPacket(pkt, c.iUDPAddr)
+		c.WriteInboundPacket(pkt)
 	}
 }
 
-func (c *Server) WriteInboundPacket(pkt *stack.PacketBuffer, addr *net.UDPAddr) tcpip.Error {
+func (c *Server) WriteInboundPacket(pkt *stack.PacketBuffer) tcpip.Error {
 	defer pkt.DecRef()
 	buf := pkt.ToBuffer()
 	defer buf.Release()
 	data := buf.Flatten()
 	debugString := makeDebugString(data)
-	bw, err := c.iConn.WriteTo(data, addr)
+	bw, err := c.i.Write(data)
 	if err != nil {
 		fmt.Printf("<= %s, error:%s\n", debugString, err)
 		return &tcpip.ErrInvalidEndpointState{}
@@ -114,19 +109,18 @@ func (c *Server) WriteInboundPacket(pkt *stack.PacketBuffer, addr *net.UDPAddr) 
 	return nil
 }
 
-// Forward data from client to netstack
+// Forward data from client to stack
 func (c *Server) OutboundLoop(cancel context.CancelFunc) {
 	// TODO: why cancel?
 	defer cancel()
 	for {
 		data := make([]byte, 1024*4)
-		n, addr, err := c.iConn.ReadFromUDP(data)
+		n, err := c.i.Read(data)
 		if err != nil {
 			fmt.Printf("=> bad write: %s\n", err)
 			break
 		}
-		c.iUDPAddr = addr
-		bw, err := c.WriteOutboundPacket(data[:n], 0)
+		bw, err := c.WriteToStack(data[:n], 0)
 		if err != nil {
 			fmt.Printf("=> bad write: %s\n", err)
 			break
@@ -138,7 +132,7 @@ func (c *Server) OutboundLoop(cancel context.CancelFunc) {
 	}
 }
 
-func (c *Server) WriteOutboundPacket(buf []byte, offset int) (int, error) {
+func (c *Server) WriteToStack(buf []byte, offset int) (int, error) {
 	packet := buf[offset:]
 	if len(packet) == 0 {
 		return 0, nil
