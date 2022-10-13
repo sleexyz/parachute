@@ -1,46 +1,132 @@
 package internal
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"net"
 	"net/netip"
+	"os"
+	"time"
+
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
+	"github.com/google/gopacket/pcapgo"
 )
 
-type Internal interface {
+type IConn interface {
 	Write(b []byte) (int, error)
 	Read(b []byte) (int, error)
 }
 
-type DirectInternal struct {
+type UDPIConn struct {
 	conn    *net.UDPConn
 	udpAddr *net.UDPAddr
 }
 
-func InitDirectInternal(port int) (*DirectInternal, error) {
+func InitUDPIConn(port int) (*UDPIConn, error) {
 	conn, err := net.ListenUDP("udp", &net.UDPAddr{IP: netip.MustParseAddr("0.0.0.0").AsSlice(), Port: port})
 	if err != nil {
 		return nil, err
 	}
-	return &DirectInternal{
+	return &UDPIConn{
 		conn: conn,
 	}, nil
 }
 
-func (d *DirectInternal) Close() {
-	d.conn.Close()
+func (i *UDPIConn) Close() {
+	i.conn.Close()
 }
 
-func (d *DirectInternal) Read(b []byte) (int, error) {
-	n, addr, err := d.conn.ReadFromUDP(b)
+func (i *UDPIConn) Read(b []byte) (int, error) {
+	n, addr, err := i.conn.ReadFromUDP(b)
 	if addr != nil {
-		d.udpAddr = addr
+		i.udpAddr = addr
 	}
 	return n, err
 }
 
-func (d *DirectInternal) Write(b []byte) (int, error) {
-	if d.udpAddr == nil {
-		return 0, fmt.Errorf("Error: downstream UDP connection not initialized.")
+func (i *UDPIConn) Write(b []byte) (int, error) {
+	if i.udpAddr == nil {
+		return 0, fmt.Errorf("error: downstream UDP connection not initialized")
 	}
-	return d.conn.WriteTo(b, d.udpAddr)
+	return i.conn.WriteTo(b, i.udpAddr)
+}
+
+type UdpIConnWithPcapPipe struct {
+	UDPIConn
+	f     *os.File
+	pcapw *pcapgo.NgWriter
+	ch    chan []byte
+}
+
+func InitUDPIConnWithPcapPipe(port int, pipeFile string) (*UdpIConnWithPcapPipe, error) {
+	i, err := InitUDPIConn(port)
+	if err != nil {
+		return nil, err
+	}
+	f, err := os.OpenFile(pipeFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, os.ModeNamedPipe)
+	if errors.Is(err, os.ErrExist) {
+		f, err = os.OpenFile(pipeFile, os.O_RDWR, os.ModeNamedPipe)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("could not open named pipe: %v", err)
+	}
+	pcapw, err := pcapgo.NewNgWriter(f, layers.LinkTypeRaw)
+	if err != nil {
+		return nil, fmt.Errorf("could not create pcapw: %v", err)
+	}
+
+	ch := make(chan []byte)
+	return &UdpIConnWithPcapPipe{
+		UDPIConn: *i,
+		f:        f,
+		pcapw:    pcapw,
+		ch:       ch,
+	}, nil
+}
+
+func (i *UdpIConnWithPcapPipe) WriteLoop() {
+	go func() {
+		for {
+			b := <-i.ch
+			err := i.writePacket(b)
+			if err != nil {
+				log.Printf("(pcap): error writing pcap packet: %v\n", err)
+			}
+		}
+	}()
+}
+
+func (i *UdpIConnWithPcapPipe) Close() {
+	i.UDPIConn.Close()
+	i.f.Close()
+}
+
+func (i *UdpIConnWithPcapPipe) writePacket(b []byte) error {
+	defer i.pcapw.Flush()
+	err := i.pcapw.WritePacket(gopacket.CaptureInfo{
+		Timestamp:     time.Now(),
+		CaptureLength: len(b),
+		Length:        len(b),
+	}, b)
+	return err
+}
+
+func (i *UdpIConnWithPcapPipe) Read(b []byte) (int, error) {
+	n, err := i.UDPIConn.Read(b)
+	if err != nil {
+		return n, err
+	}
+	i.ch <- b
+	return n, nil
+}
+
+func (i *UdpIConnWithPcapPipe) Write(b []byte) (int, error) {
+	n, err := i.UDPIConn.Write(b)
+	if err != nil {
+		return n, err
+	}
+	i.ch <- b
+	return n, nil
 }
