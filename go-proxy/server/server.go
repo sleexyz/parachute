@@ -70,10 +70,12 @@ func (c *Server) ListenInternal() {
 	wg.Add(2)
 	ctx, cancel := context.WithCancel(context.Background())
 	go func() {
+		// forward packet from stack to client
 		c.InboundLoop(ctx)
 		wg.Done()
 	}()
 	go func() {
+		// forward packet from client to stack
 		c.OutboundLoop(cancel)
 		wg.Done()
 	}()
@@ -97,15 +99,15 @@ func (c *Server) WriteInboundPacket(pkt *stack.PacketBuffer) tcpip.Error {
 	buf := pkt.ToBuffer()
 	defer buf.Release()
 	data := buf.Flatten()
-	debugString := makeDebugString(data)
-	bw, err := c.i.Write(data)
+	debugString := MakeDebugString(data)
+	_, err := c.i.Write(data)
 	if err != nil {
-		fmt.Printf("<= %s, error:%s\n", debugString, err)
+		fmt.Printf("(inbound) %s, error:%s\n", debugString, err)
 		return &tcpip.ErrInvalidEndpointState{}
 	}
-	if debugString != "" {
-		fmt.Printf("<= %s, bytes written:%d\n", debugString, bw)
-	}
+	// if debugString != "" {
+	// 	fmt.Printf("<= %s, bytes written:%d\n", debugString, bw)
+	// }
 	return nil
 }
 
@@ -114,21 +116,23 @@ func (c *Server) OutboundLoop(cancel context.CancelFunc) {
 	// TODO: why cancel?
 	defer cancel()
 	for {
+		// TODO: is this the MTU?
+		// Should this value match up with anything?
 		data := make([]byte, 1024*4)
 		n, err := c.i.Read(data)
 		if err != nil {
-			fmt.Printf("=> bad write: %s\n", err)
+			fmt.Printf("(outbound) bad read: %s\n", err)
 			break
 		}
-		bw, err := c.WriteToStack(data[:n], 0)
+		_, err = c.WriteToStack(data[:n], 0)
 		if err != nil {
-			fmt.Printf("=> bad write: %s\n", err)
+			fmt.Printf("(outbound) bad write: %s\n", err)
 			break
 		}
-		debugString := makeDebugString(data[:n])
-		if debugString != "" {
-			fmt.Printf("=> %s, bytes written: %d\n", debugString, bw)
-		}
+		// debugString := MakeDebugString(data[:n])
+		// if debugString != "" {
+		// 	fmt.Printf("=> %s, bytes written: %d\n", debugString, bw)
+		// }
 	}
 }
 
@@ -164,12 +168,9 @@ func (c *Server) ListenExternal() {
 	}()
 }
 
-func makeDebugString(data []byte) string {
+func MakeDebugString(data []byte) string {
 	// sEnc := base64.StdEncoding.EncodeToString([]byte(data[:n]))
 	// fmt.Printf("-------- %s\n", sEnc)
-	if true {
-		return ""
-	}
 	ipVersion := (data[0] & 0xf0) >> 4
 	var packet gopacket.Packet
 	if ipVersion == 6 {

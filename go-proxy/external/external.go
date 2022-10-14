@@ -2,6 +2,7 @@ package external
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"time"
 
@@ -122,7 +123,7 @@ func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 			err tcpip.Error
 			id  = r.ID()
 		)
-		fmt.Printf("upstream tcp request %s:%d->%s:%d\n",
+		log.Printf("(stack) tcp %s:%d->%s:%d\n",
 			id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort)
 
 		// Perform a TCP three-way handshake.
@@ -131,14 +132,14 @@ func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 			// RST: prevent potential half-open TCP connection leak.
 			r.Complete(true)
 
-			fmt.Printf("error forwarding tcp request %s:%d->%s:%d, could not create endpoint: %s\n",
+			log.Printf("error forwarding tcp request %s:%d->%s:%d, could not create endpoint: %s\n",
 				id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort, err)
 			return
 		}
 		defer r.Complete(false)
 		defer func() {
 			if err != nil {
-				fmt.Printf("error forwarding tcp request %s:%d->%s:%d: %s\n",
+				log.Printf("error forwarding tcp request %s:%d->%s:%d: %s\n",
 					id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort, err)
 			}
 		}()
@@ -157,7 +158,7 @@ func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 			wq waiter.Queue
 			id = r.ID()
 		)
-		fmt.Printf("upstream udp request %s:%d->%s:%d\n",
+		log.Printf("(stack) udp %s:%d->%s:%d\n",
 			id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort)
 		ep, err := r.CreateEndpoint(&wq)
 		if err != nil {

@@ -20,11 +20,11 @@ func main() {
 		log.Panicln("could not parse $PORT")
 	}
 
-	i, err := internal.InitUDPIConnWithPcapPipe(port, "/tmp/goproxy.pcapng")
+	i, err := internal.InitUDPIConn(port)
 	if err != nil {
 		log.Fatalf("Could not initialize internal connection: %v", err)
 	}
-	i.WriteLoop()
+	// i.WriteLoop()
 	defer i.Close()
 	log.Printf("Listening on port %s", portStr)
 
