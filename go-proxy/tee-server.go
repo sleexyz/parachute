@@ -23,7 +23,6 @@ func initTee(i internal.IConn, iport int, oAddress string) (*tee, error) {
 	if err != nil {
 		return nil, err
 	}
-	// TODO: keep this alive...
 	return &tee{i: i, oConn: conn, oAddress: oAddress}, nil
 }
 
@@ -93,7 +92,11 @@ func main() {
 		log.Panicln("could not parse $PORT")
 	}
 
-	i, err := internal.InitUDPIConnWithPcapPipe(port, "/tmp/goproxy.pcapng")
+	i1, err := internal.InitUDPIConn(port)
+	if err != nil {
+		log.Fatalf("Could not initialize internal connection: %v", err)
+	}
+	i, err := internal.InitWithPcapPipe(i1, "/tmp/goproxy.pcapng")
 	if err != nil {
 		log.Fatalf("Could not initialize internal connection: %v", err)
 	}
