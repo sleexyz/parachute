@@ -9,7 +9,7 @@ require (
 
 require (
 	go.uber.org/atomic v1.7.0
-	golang.org/x/sys v0.0.0-20211019181941-9d821ace8654
+	golang.org/x/sys v0.0.0-20221013171732-95e765b1cc43
 	golang.zx2c4.com/go118/netip v0.0.0-20211105124833-002a02cb0e53
 	gvisor.dev/gvisor v0.0.0-20220925003544-1e2f1a11bf64
 

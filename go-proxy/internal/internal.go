@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -12,6 +11,7 @@ import (
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcapgo"
+	"golang.org/x/sys/unix"
 )
 
 type IConn interface {
@@ -65,10 +65,9 @@ func InitUDPIConnWithPcapPipe(port int, pipeFile string) (*UdpIConnWithPcapPipe,
 	if err != nil {
 		return nil, err
 	}
-	f, err := os.OpenFile(pipeFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, os.ModeNamedPipe)
-	if errors.Is(err, os.ErrExist) {
-		f, err = os.OpenFile(pipeFile, os.O_RDWR, os.ModeNamedPipe)
-	}
+	os.Remove(pipeFile)
+	unix.Mkfifo(pipeFile, 0755)
+	f, err := os.OpenFile(pipeFile, os.O_RDWR, os.ModeNamedPipe)
 	if err != nil {
 		return nil, fmt.Errorf("could not open named pipe: %v", err)
 	}
