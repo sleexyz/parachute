@@ -11,14 +11,15 @@ import (
 	"strange.industries/go-proxy/internal"
 )
 
+// proxies a packet along
 type tee struct {
-	i internal.IConn
+	i internal.Conn
 
 	oConn    net.Conn
 	oAddress string
 }
 
-func initTee(i internal.IConn, iport int, oAddress string) (*tee, error) {
+func initTee(i internal.Conn, iport int, oAddress string) (*tee, error) {
 	conn, err := net.Dial("udp", oAddress)
 	if err != nil {
 		return nil, err
@@ -82,6 +83,10 @@ func (t *tee) initOConn() {
 	t.oConn = conn
 }
 
+const (
+	sinkPort = 8082
+)
+
 func main() {
 	portStr := os.Getenv("PORT")
 	if portStr == "" {
@@ -92,17 +97,26 @@ func main() {
 		log.Panicln("could not parse $PORT")
 	}
 
-	i1, err := internal.InitUDPIConn(port)
+	i1, err := internal.InitUDPServerConn(port)
 	if err != nil {
 		log.Fatalf("Could not initialize internal connection: %v", err)
 	}
-	i, err := internal.InitWithPcapPipe(i1, "/tmp/goproxy.pcapng")
-	if err != nil {
-		log.Fatalf("Could not initialize internal connection: %v", err)
-	}
-	i.WriteLoop()
-	defer i.Close()
+	defer i1.Close()
 	log.Printf("Listening for inbound packets port %s", portStr)
+
+	sink, err := internal.InitTCPServerSink(sinkPort)
+	if err != nil {
+		log.Fatalf("Could not initialize TCPServerSink: %v", err)
+	}
+	sink.Listen()
+	log.Printf("Listening for sink connections at port %v", sinkPort)
+	i := internal.InitDuplexTee(i1, sink)
+	i.WriteLoop()
+
+	// i, err := internal.InitWithPcapPipe(i1, "/tmp/goproxy.pcapng")
+	// if err != nil {
+	// 	log.Fatalf("Could not initialize internal connection: %v", err)
+	// }
 
 	const outboundAddress = "0.0.0.0:8081"
 	t, err := initTee(i, port, outboundAddress)

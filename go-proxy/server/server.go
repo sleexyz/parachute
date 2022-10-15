@@ -27,7 +27,7 @@ const (
 
 type Server struct {
 	// internal (device <=> proxy)
-	i internal.IConn
+	i internal.Conn
 
 	// external (proxy <=> internet)
 	stack    *stack.Stack
@@ -36,7 +36,7 @@ type Server struct {
 	ep       *channel.Endpoint
 }
 
-func Init(address string, i internal.IConn) *Server {
+func Init(address string, i internal.Conn) *Server {
 	ep := channel.New(10, defaultMTU, "10.0.0.8")
 	tcpQueue := make(chan adapter.TCPConn)
 	udpQueue := make(chan adapter.UDPConn)
