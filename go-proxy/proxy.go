@@ -20,7 +20,7 @@ func main() {
 		log.Panicln("could not parse $PORT")
 	}
 
-	i, err := internal.InitUDPIConn(port)
+	i, err := internal.InitUDPServerConn(port)
 	if err != nil {
 		log.Fatalf("Could not initialize internal connection: %v", err)
 	}
