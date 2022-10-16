@@ -69,29 +69,36 @@ func (c *Server) ListenInternal() {
 	wg := new(sync.WaitGroup)
 	wg.Add(2)
 	ctx, cancel := context.WithCancel(context.Background())
+	// forward packet from client to stack
 	go func() {
-		// forward packet from stack to client
-		c.InboundLoop(ctx)
-		wg.Done()
+		defer wg.Done()
+		defer cancel()
+		for {
+			data := make([]byte, 1024*4)
+			n, err := c.i.Read(data)
+			if err != nil {
+				fmt.Printf("(outbound) bad read: %s\n", err)
+				break
+			}
+			_, err = c.WriteToStack(data[:n])
+			if err != nil {
+				fmt.Printf("(outbound) bad write: %s\n", err)
+				break
+			}
+		}
 	}()
+	// forward packet from stack to client
 	go func() {
-		// forward packet from client to stack
-		c.OutboundLoop(cancel)
-		wg.Done()
+		defer wg.Done()
+		for {
+			pkt := c.ep.ReadContext(ctx)
+			if pkt == nil {
+				break
+			}
+			c.WriteInboundPacket(pkt)
+		}
 	}()
 	wg.Wait()
-	fmt.Println("done waiting")
-}
-
-// Forwards packets from stack to client
-func (c *Server) InboundLoop(ctx context.Context) {
-	for {
-		pkt := c.ep.ReadContext(ctx)
-		if pkt == nil {
-			break
-		}
-		c.WriteInboundPacket(pkt)
-	}
 }
 
 func (c *Server) WriteInboundPacket(pkt *stack.PacketBuffer) tcpip.Error {
@@ -105,53 +112,24 @@ func (c *Server) WriteInboundPacket(pkt *stack.PacketBuffer) tcpip.Error {
 		fmt.Printf("(inbound) %s, error:%s\n", debugString, err)
 		return &tcpip.ErrInvalidEndpointState{}
 	}
-	// if debugString != "" {
-	// 	fmt.Printf("<= %s, bytes written:%d\n", debugString, bw)
-	// }
 	return nil
 }
 
-// Forward data from client to stack
-func (c *Server) OutboundLoop(cancel context.CancelFunc) {
-	// TODO: why cancel?
-	defer cancel()
-	for {
-		// TODO: is this the MTU?
-		// Should this value match up with anything?
-		data := make([]byte, 1024*4)
-		n, err := c.i.Read(data)
-		if err != nil {
-			fmt.Printf("(outbound) bad read: %s\n", err)
-			break
-		}
-		_, err = c.WriteToStack(data[:n], 0)
-		if err != nil {
-			fmt.Printf("(outbound) bad write: %s\n", err)
-			break
-		}
-		// debugString := MakeDebugString(data[:n])
-		// if debugString != "" {
-		// 	fmt.Printf("=> %s, bytes written: %d\n", debugString, bw)
-		// }
-	}
-}
-
-func (c *Server) WriteToStack(buf []byte, offset int) (int, error) {
-	packet := buf[offset:]
-	if len(packet) == 0 {
+func (c *Server) WriteToStack(b []byte) (int, error) {
+	if len(b) == 0 {
 		return 0, nil
 	}
 	pkb := stack.NewPacketBuffer(stack.PacketBufferOptions{
-		Payload: bufferv2.MakeWithData(packet),
+		Payload: bufferv2.MakeWithData(b),
 	})
-	switch packet[0] >> 4 {
+	switch b[0] >> 4 {
 	case 4:
 		c.ep.InjectInbound(ipv4.ProtocolNumber, pkb)
 	case 6:
 		c.ep.InjectInbound(ipv6.ProtocolNumber, pkb)
 	}
 	pkb.DecRef()
-	return len(buf), nil
+	return len(b), nil
 }
 
 // Initializes channel handlers

@@ -123,9 +123,6 @@ func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 			err tcpip.Error
 			id  = r.ID()
 		)
-		log.Printf("(stack) tcp %s:%d->%s:%d\n",
-			id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort)
-
 		// Perform a TCP three-way handshake.
 		ep, err = r.CreateEndpoint(&wq)
 		if err != nil {
@@ -158,8 +155,6 @@ func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 			wq waiter.Queue
 			id = r.ID()
 		)
-		log.Printf("(stack) udp %s:%d->%s:%d\n",
-			id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort)
 		ep, err := r.CreateEndpoint(&wq)
 		if err != nil {
 			fmt.Printf("error: %s\n", err)
@@ -169,9 +164,7 @@ func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 			UDPConn: gonet.NewUDPConn(s, &wq, ep),
 			id:      id,
 		}
-
 		udpQueue <- conn
-		// TODO: What goes here?
 	})
 
 	s.SetTransportProtocolHandler(tcp.ProtocolNumber, tcpForwarder.HandlePacket)

@@ -1,7 +1,6 @@
 package forwarder
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net"
@@ -37,7 +36,7 @@ func HandleUDPConn(uc adapter.UDPConn) {
 
 	pc, err := DialUDP(metadata)
 	if err != nil {
-		fmt.Errorf("[UDP] dial %s error: %v", metadata.DestinationAddress(), err)
+		log.Printf("[UDP] dial %s error: %v", metadata.DestinationAddress(), err)
 		return
 	}
 	metadata.MidIP, metadata.MidPort = parseAddr(pc.LocalAddr())
@@ -118,7 +117,6 @@ func newSymmetricNATPacketConn(pc net.PacketConn, metadata *M.Metadata) *symmetr
 func (pc *symmetricNATPacketConn) ReadFrom(p []byte) (int, net.Addr, error) {
 	for {
 		n, from, err := pc.PacketConn.ReadFrom(p)
-
 		if from != nil && from.String() != pc.dst {
 			log.Printf("[UDP] symmetric NAT %s->%s: drop packet from %s", pc.src, pc.dst, from)
 			continue

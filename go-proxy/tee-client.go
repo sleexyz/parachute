@@ -27,7 +27,6 @@ func main() {
 		if err != nil {
 			log.Panicf("could not initialize wireshark: %v\n", err)
 		}
-
 	}()
 
 	for {

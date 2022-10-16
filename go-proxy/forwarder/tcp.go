@@ -2,8 +2,8 @@ package forwarder
 
 import (
 	"context"
-	"fmt"
 	"io"
+	"log"
 	"net"
 	"sync"
 	"time"
@@ -64,14 +64,14 @@ func HandleTCPConn(localConn adapter.TCPConn) {
 
 	targetConn, err := Dial(metadata)
 	if err != nil {
-		fmt.Errorf("[TCP] dial %s error: %v", metadata.DestinationAddress(), err)
+		log.Printf("[TCP] dial %s error: %v", metadata.DestinationAddress(), err)
 		return
 	}
 	metadata.MidIP, metadata.MidPort = parseAddr(targetConn.LocalAddr())
 
 	defer targetConn.Close()
 
-	fmt.Printf("[TCP] %s <-> %s\n", metadata.SourceAddress(), metadata.DestinationAddress())
+	log.Printf("[TCP] %s <-> %s\n", metadata.SourceAddress(), metadata.DestinationAddress())
 	relay(localConn, targetConn) /* relay connections */
 }
 
