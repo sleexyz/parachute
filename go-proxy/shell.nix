@@ -7,11 +7,15 @@ let
 in
 pkgs.stdenv.mkDerivation {
   name = "go-proxy-shell";
-  shellHook = ''
-    export PATH=${xcodewrapper}/bin:$PATH
-  '';
   nativeBuildInputs = with pkgs; [ 
     go_1_19
     entr
   ];
+  shellHook = ''
+    export PATH=${xcodewrapper}/bin:$PATH
+    
+    export GOPATH=$(pwd)/.gopath
+    export PATH=$PATH:$GOPATH/bin
+    export CGO_ENABLED=1
+  '';
 }
