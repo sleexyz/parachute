@@ -51,7 +51,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         
         self.logger.info("starting server")
         DispatchQueue.global(qos: .background).async {
-            Singleton.SingletonStart(self.options.ipv4Port, "192.168.1.225:8081")
+//            Singleton.SingletonStart(self.options.ipv4Port, "192.168.1.225:8081")
+            Singleton.SingletonStart(self.options.ipv4Port)
         }
         self.logger.info("server started")
         
