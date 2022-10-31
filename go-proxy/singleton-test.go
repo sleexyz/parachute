@@ -1,4 +1,3 @@
-// Local proxy
 package main
 
 import (
@@ -7,7 +6,7 @@ import (
 
 	"os"
 
-	"strange.industries/go-proxy/proxy"
+	"strange.industries/go-proxy/singleton"
 )
 
 func main() {
@@ -19,7 +18,6 @@ func main() {
 	if err != nil {
 		log.Panicln("could not parse $PORT")
 	}
-	p := &proxy.ServerProxy{}
-	p.Start(port)
-	defer p.Close()
+	singleton.Start(port, "[::1]:8079")
+	defer singleton.Close()
 }

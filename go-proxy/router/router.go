@@ -28,6 +28,8 @@ const (
 )
 
 type Router struct {
+	cancel func()
+
 	// internal (device <=> proxy)
 	i tunconn.TunConn
 
@@ -67,10 +69,11 @@ func Init(address string, i tunconn.TunConn) *Router {
 	return &router
 }
 
-func (c *Router) listenInternal() {
+func (c *Router) listenInternal(ctx context.Context) {
+	defer log.Println("closing internal handlers")
 	wg := new(sync.WaitGroup)
 	wg.Add(2)
-	childCtx, cancel := context.WithCancel(context.Background())
+	childCtx, cancel := context.WithCancel(ctx)
 	// forward packet from client to stack
 	go func() {
 		defer wg.Done()
@@ -135,10 +138,13 @@ func (c *Router) WriteToStack(b []byte) (int, error) {
 }
 
 // Initializes channel handlers
-func (c *Router) listenExternal() {
+func (c *Router) listenExternal(ctx context.Context) {
 	go func() {
+		defer log.Println("closing external handlers")
 		for {
 			select {
+			case <-ctx.Done():
+				return
 			case conn := <-c.tcpQueue:
 				go forwarder.HandleTCPConn(conn)
 			case conn := <-c.udpQueue:
@@ -149,6 +155,14 @@ func (c *Router) listenExternal() {
 }
 
 func (c *Router) Start() {
-	c.listenExternal()
-	c.listenInternal()
+	ctx, cancel := context.WithCancel(context.Background())
+	c.cancel = cancel
+	c.listenExternal(ctx)
+	c.listenInternal(ctx)
+}
+
+func (c *Router) Close() {
+	if c.cancel != nil {
+		c.cancel()
+	}
 }

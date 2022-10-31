@@ -16,7 +16,7 @@ public struct ProxyServerOptions {
     public let ipv4Port: Int
     public let ipv6Address: String
     public let ipv6Port: Int
-    public init(ipv4Address: String, ipv4Port: Int, ipv6Address: String, ipv6Port: Int) {
+    public init(ipv4Address: String, ipv4Port: Int, ipv6Address: String, ipv6Port: Int, outboundAddress: String, outboundPort: Int) {
         self.ipv4Address = ipv4Address
         self.ipv4Port = ipv4Port
         self.ipv6Address = ipv6Address
@@ -60,23 +60,33 @@ class ProxyHandler : ChannelInboundHandler {
         let ipVersion = (packet[0] & 0xf0) >> 4
         return (ipVersion == 6) ? AF_INET6 as NSNumber : AF_INET as NSNumber
     }
-    
 }
 
 public class ProxyServer {
     private var logger: Logger
     private var group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
     private var bootstrap: DatagramBootstrap
+    private var peerBootstrap: DatagramBootstrap
     private var options: ProxyServerOptions
     
     public init(logger: Logger, options: ProxyServerOptions) {
         self.logger = logger
         self.options = options
         // Bootstraps listening channels
+        let (localGlue, peerGlue) = GlueHandler.matchedPair()
+        
+        self.peerBootstrap = DatagramBootstrap(group: group)
+            .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
+            .channelInitializer { channel in
+                channel.pipeline.addHandler(peerGlue)
+            }
+        
+        
         self.bootstrap = DatagramBootstrap(group: group)
             .channelOption(ChannelOptions.socket(SOL_SOCKET, SO_REUSEADDR), value: 1)
             .channelInitializer { channel in
-                channel.pipeline.addHandler(ProxyHandler(logger: Logger(label: "com.strangeindustries.slowdown.ProxyHandler")))
+                channel.pipeline.addHandler(localGlue)
+//                channel.pipeline.addHandler(ProxyHandler(logger: Logger(label: "com.strangeindustries.slowdown.ProxyHandler")))
             }
         logger.info("Initialized ProxyServer.")
     }
@@ -104,5 +114,16 @@ public class ProxyServer {
                 logger.error("Failed to bind \(self.options.ipv6Address):\(self.options.ipv6Port), \(String(describing: error))")
             }
         }
+        logger.info("Connecting to downstream server.")
+//        self.peerBootstrap.bind(host: self.options.outboundAddress, port: self.options.outboundPort).whenComplete { result in
+//            // Need to create this here for thread-safety purposes
+//            let logger = Logger(label: "com.strangeindustries.slowdown.ProxyServer")
+//            switch result {
+//            case .success(let channel):
+//                logger.info("Connected to server \(String(describing: channel.localAddress))")
+//            case .failure(let error):
+//                logger.error("Failed to bind \(self.options.outboundAddress):\(self.options.outboundPort), \(String(describing: error))")
+//            }
+//        }
     }
 }

@@ -1,3 +1,4 @@
 build/
 .gopath/
 go-proxy
+*.xcframework/
