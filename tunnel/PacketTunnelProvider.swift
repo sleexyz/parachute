@@ -9,9 +9,22 @@ import Foundation
 import NetworkExtension
 import Logging
 import LoggingOSLog
-import ProxyServer
 import func os.os_log
 import UIKit
+import Singleton
+
+public struct ProxyServerOptions {
+    public let ipv4Address: String
+    public let ipv4Port: Int
+    public let ipv6Address: String
+    public let ipv6Port: Int
+    public init(ipv4Address: String, ipv4Port: Int, ipv6Address: String, ipv6Port: Int) {
+        self.ipv4Address = ipv4Address
+        self.ipv4Port = ipv4Port
+        self.ipv6Address = ipv6Address
+        self.ipv6Port = ipv6Port
+    }
+}
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
     private weak var timeoutTimer: Timer?
@@ -21,21 +34,27 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private let logger: Logger
 //    private let proxyServer: ProxyServer
     
-    private let options = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080, ipv6Address: "2603:7000:9200:1a31:846:8a47:6fe:f009", ipv6Port: 8080)
+    private let options = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080, ipv6Address: "::1", ipv6Port: 8080)
+//    private let options = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080, ipv6Address: "2603:7000:9200:1a31:846:8a47:6fe:f009", ipv6Port: 8080)
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
         self.logger = Logger(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
-        
-        
 //        self.proxyServer = ProxyServer(logger: self.logger, options: self.options)
     }
     
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
-        self.logger.info("tunnel started.")
+        self.logger.info("starting tunnel")
         self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
             completionHandler(NEVPNError(.connectionFailed))
         }
+        
+        self.logger.info("starting server")
+        DispatchQueue.global(qos: .background).async {
+            Singleton.SingletonStart(self.options.ipv4Port, "192.168.1.225:8081")
+        }
+        self.logger.info("server started")
+        
 //        self.proxyServer.start()
         
         let settings = self.initTunnelSettings(proxyHost: self.options.ipv4Address, proxyPort: self.options.ipv4Port)
@@ -56,6 +75,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                             }
                         }
                     }, maxDatagrams: Int.max)
+                    self.logger.info("tunnel started")
                     
                     // The session is ready to exchange UDP datagrams with the server
                     self.readOutboundPackets()
@@ -109,6 +129,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     override func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
         self.logger.info("tunnel stopped")
         // Add code here to start the process of stopping the tunnel.
+        Singleton.SingletonClose()
         completionHandler()
     }
     
