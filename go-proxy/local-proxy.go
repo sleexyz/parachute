@@ -1,3 +1,4 @@
+// Local proxy
 package main
 
 import (
@@ -6,8 +7,8 @@ import (
 
 	"os"
 
-	"strange.industries/go-proxy/internal"
-	"strange.industries/go-proxy/server"
+	"strange.industries/go-proxy/router"
+	"strange.industries/go-proxy/tunconn"
 )
 
 func main() {
@@ -20,16 +21,14 @@ func main() {
 		log.Panicln("could not parse $PORT")
 	}
 
-	i, err := internal.InitUDPServerConn(port)
+	i, err := tunconn.InitUDPServerConn(port)
 	if err != nil {
 		log.Fatalf("Could not initialize internal connection: %v", err)
 	}
-	// i.WriteLoop()
 	defer i.Close()
 	log.Printf("Listening on port %s", portStr)
 
-	c := server.Init("10.0.0.8", i)
+	c := router.Init("10.0.0.8", i)
 
-	c.ListenExternal()
-	c.ListenInternal()
+	c.Start()
 }

@@ -108,7 +108,7 @@ func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 
 	nicID := tcpip.NICID(s.UniqueID())
 
-	tcpipErr := s.CreateNICWithOptions(nicID, ep, stack.NICOptions{Disabled: false})
+	tcpipErr := s.CreateNICWithOptions(nicID, ep, stack.NICOptions{Name: "userTUN", Disabled: false})
 	if tcpipErr != nil {
 		return nil, fmt.Errorf("CreateNIC: %v", tcpipErr)
 	}
