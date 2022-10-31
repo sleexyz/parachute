@@ -4,11 +4,11 @@ import (
 	proxy "strange.industries/go-proxy/proxy"
 )
 
-var p *proxy.TeeProxy
+var p proxy.Proxy
 
-func Start(port int, oaddress string) {
-	p = &proxy.TeeProxy{}
-	p.Start(port, oaddress)
+func Start(port int) {
+	p = &proxy.ServerProxy{}
+	p.Start(port)
 }
 
 func Close() {
