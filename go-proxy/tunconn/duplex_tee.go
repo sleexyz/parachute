@@ -1,4 +1,4 @@
-package internal
+package tunconn
 
 import (
 	"fmt"
@@ -15,19 +15,24 @@ import (
 	"golang.org/x/sys/unix"
 )
 
+// Where packets get dumped.
+type Sink interface {
+	Write(b []byte) (int, error)
+}
+
 // Tees both inbound and outbound packets to a sink.
 type DuplexTee struct {
-	Conn
+	TunConn
 	sink Sink
 	ch   chan []byte
 }
 
-func InitDuplexTee(i Conn, sink Sink) *DuplexTee {
+func InitDuplexTee(i TunConn, sink Sink) *DuplexTee {
 	ch := make(chan []byte)
 	return &DuplexTee{
-		Conn: i,
-		sink: sink,
-		ch:   ch,
+		TunConn: i,
+		sink:    sink,
+		ch:      ch,
 	}
 }
 
@@ -44,7 +49,7 @@ func (i *DuplexTee) WriteLoop() {
 }
 
 func (i *DuplexTee) Write(b []byte) (int, error) {
-	n, err := i.Conn.Write(b)
+	n, err := i.TunConn.Write(b)
 	if err != nil {
 		return n, err
 	}
@@ -53,7 +58,7 @@ func (i *DuplexTee) Write(b []byte) (int, error) {
 }
 
 func (i *DuplexTee) Read(b []byte) (int, error) {
-	n, err := i.Conn.Read(b)
+	n, err := i.TunConn.Read(b)
 	if err != nil {
 		return n, err
 	}

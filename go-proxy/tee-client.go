@@ -5,8 +5,8 @@ import (
 	"net"
 	"os/exec"
 
-	"strange.industries/go-proxy/internal"
-	"strange.industries/go-proxy/server"
+	"strange.industries/go-proxy/tunconn"
+	"strange.industries/go-proxy/util"
 )
 
 const (
@@ -15,7 +15,7 @@ const (
 )
 
 func main() {
-	pcapSink, err := internal.InitPcapSink(pcapFile)
+	pcapSink, err := tunconn.InitPcapSink(pcapFile)
 	if err != nil {
 		log.Panicf("could not create pcap sink: %v\n", err)
 	}
@@ -42,7 +42,7 @@ func main() {
 				log.Printf("error reading: %v\n", err)
 				break
 			}
-			str := server.MakeDebugString(data[:n])
+			str := util.MakeDebugString(data[:n])
 			log.Println(str)
 			err = pcapSink.Write(data[:n])
 			if err != nil {

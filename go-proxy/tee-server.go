@@ -8,18 +8,18 @@ import (
 	"strconv"
 	"sync"
 
-	"strange.industries/go-proxy/internal"
+	"strange.industries/go-proxy/tunconn"
 )
 
 // proxies a packet along
 type tee struct {
-	i internal.Conn
+	i tunconn.TunConn
 
 	oConn    net.Conn
 	oAddress string
 }
 
-func initTee(i internal.Conn, iport int, oAddress string) (*tee, error) {
+func initTee(i tunconn.TunConn, iport int, oAddress string) (*tee, error) {
 	conn, err := net.Dial("udp", oAddress)
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (t *tee) listen() {
 					fmt.Printf("bad write to client: %s\n", err)
 				}
 			}
-			// fmt.Printf("outbound: %s\n", server.MakeDebugString(data[:n]))
+			// fmt.Printf("outbound: %s\n", util.MakeDebugString(data[:n]))
 		}
 		wg.Done()
 	}()
@@ -66,7 +66,7 @@ func (t *tee) listen() {
 			if err != nil {
 				fmt.Printf("bad write to client: %s\n", err)
 			}
-			// fmt.Printf("inbound: %s\n", server.MakeDebugString(data[:n]))
+			// fmt.Printf("inbound: %s\n", util.MakeDebugString(data[:n]))
 		}
 		wg.Done()
 	}()
@@ -97,23 +97,23 @@ func main() {
 		log.Panicln("could not parse $PORT")
 	}
 
-	i1, err := internal.InitUDPServerConn(port)
+	i1, err := tunconn.InitUDPServerConn(port)
 	if err != nil {
 		log.Fatalf("Could not initialize internal connection: %v", err)
 	}
 	defer i1.Close()
 	log.Printf("Listening for inbound packets port %s", portStr)
 
-	sink, err := internal.InitTCPServerSink(sinkPort)
+	sink, err := tunconn.InitTCPServerSink(sinkPort)
 	if err != nil {
 		log.Fatalf("Could not initialize TCPServerSink: %v", err)
 	}
 	sink.Listen()
 	log.Printf("Listening for sink connections at port %v", sinkPort)
-	i := internal.InitDuplexTee(i1, sink)
+	i := tunconn.InitDuplexTee(i1, sink)
 	i.WriteLoop()
 
-	// i, err := internal.InitWithPcapPipe(i1, "/tmp/goproxy.pcapng")
+	// i, err := tunconn.InitWithPcapPipe(i1, "/tmp/goproxy.pcapng")
 	// if err != nil {
 	// 	log.Fatalf("Could not initialize internal connection: %v", err)
 	// }

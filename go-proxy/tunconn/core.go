@@ -1,12 +1,10 @@
-package internal
+// Abstraction for connection layer to TUN
+
+package tunconn
 
 // Defines a leg of a duplex connection
-type Conn interface {
+type TunConn interface {
 	Write(b []byte) (int, error)
 	Read(b []byte) (int, error)
 	Close()
-}
-
-type Sink interface {
-	Write(b []byte) (int, error)
 }

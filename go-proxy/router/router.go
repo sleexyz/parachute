@@ -1,4 +1,7 @@
-package server
+// 1) Initializes userTUN.
+// 2) Glues TUN and userTUN via Port NAT.
+
+package router
 
 import (
 	"context"
@@ -6,12 +9,11 @@ import (
 	"log"
 	"sync"
 
-	"github.com/google/gopacket"
-	"github.com/google/gopacket/layers"
 	"strange.industries/go-proxy/adapter"
 	"strange.industries/go-proxy/external"
 	"strange.industries/go-proxy/forwarder"
-	"strange.industries/go-proxy/internal"
+	"strange.industries/go-proxy/tunconn"
+	"strange.industries/go-proxy/util"
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"gvisor.dev/gvisor/pkg/tcpip"
@@ -25,9 +27,9 @@ const (
 	defaultMTU = 1500
 )
 
-type Server struct {
+type Router struct {
 	// internal (device <=> proxy)
-	i internal.Conn
+	i tunconn.TunConn
 
 	// external (proxy <=> internet)
 	stack    *stack.Stack
@@ -36,7 +38,7 @@ type Server struct {
 	ep       *channel.Endpoint
 }
 
-func Init(address string, i internal.Conn) *Server {
+func Init(address string, i tunconn.TunConn) *Router {
 	ep := channel.New(10, defaultMTU, "10.0.0.8")
 	tcpQueue := make(chan adapter.TCPConn)
 	udpQueue := make(chan adapter.UDPConn)
@@ -51,7 +53,7 @@ func Init(address string, i internal.Conn) *Server {
 		log.Panicln(err)
 	}
 
-	server := Server{
+	router := Router{
 		// external
 		stack:    s,
 		tcpQueue: tcpQueue,
@@ -62,13 +64,13 @@ func Init(address string, i internal.Conn) *Server {
 		i: i,
 	}
 
-	return &server
+	return &router
 }
 
-func (c *Server) ListenInternal() {
+func (c *Router) listenInternal() {
 	wg := new(sync.WaitGroup)
 	wg.Add(2)
-	ctx, cancel := context.WithCancel(context.Background())
+	childCtx, cancel := context.WithCancel(context.Background())
 	// forward packet from client to stack
 	go func() {
 		defer wg.Done()
@@ -91,7 +93,7 @@ func (c *Server) ListenInternal() {
 	go func() {
 		defer wg.Done()
 		for {
-			pkt := c.ep.ReadContext(ctx)
+			pkt := c.ep.ReadContext(childCtx)
 			if pkt == nil {
 				break
 			}
@@ -101,12 +103,12 @@ func (c *Server) ListenInternal() {
 	wg.Wait()
 }
 
-func (c *Server) WriteInboundPacket(pkt *stack.PacketBuffer) tcpip.Error {
+func (c *Router) WriteInboundPacket(pkt *stack.PacketBuffer) tcpip.Error {
 	defer pkt.DecRef()
 	buf := pkt.ToBuffer()
 	defer buf.Release()
 	data := buf.Flatten()
-	debugString := MakeDebugString(data)
+	debugString := util.MakeDebugString(data)
 	_, err := c.i.Write(data)
 	if err != nil {
 		fmt.Printf("(inbound) %s, error:%s\n", debugString, err)
@@ -115,7 +117,7 @@ func (c *Server) WriteInboundPacket(pkt *stack.PacketBuffer) tcpip.Error {
 	return nil
 }
 
-func (c *Server) WriteToStack(b []byte) (int, error) {
+func (c *Router) WriteToStack(b []byte) (int, error) {
 	if len(b) == 0 {
 		return 0, nil
 	}
@@ -133,7 +135,7 @@ func (c *Server) WriteToStack(b []byte) (int, error) {
 }
 
 // Initializes channel handlers
-func (c *Server) ListenExternal() {
+func (c *Router) listenExternal() {
 	go func() {
 		for {
 			select {
@@ -146,41 +148,7 @@ func (c *Server) ListenExternal() {
 	}()
 }
 
-func MakeDebugString(data []byte) string {
-	// sEnc := base64.StdEncoding.EncodeToString([]byte(data[:n]))
-	// fmt.Printf("-------- %s\n", sEnc)
-	ipVersion := (data[0] & 0xf0) >> 4
-	var packet gopacket.Packet
-	if ipVersion == 6 {
-		packet = gopacket.NewPacket(data, layers.LayerTypeIPv6, gopacket.Default)
-	} else {
-		packet = gopacket.NewPacket(data, layers.LayerTypeIPv4, gopacket.Default)
-	}
-	var srcAddr, dstAddr, srcPort, dstPort, protocol string
-	if ipv4Layer := packet.Layer(layers.LayerTypeIPv4); ipv4Layer != nil {
-		ipv4, _ := ipv4Layer.(*layers.IPv4)
-		srcAddr = ipv4.SrcIP.String()
-		dstAddr = ipv4.DstIP.String()
-	}
-	if ipv6Layer := packet.Layer(layers.LayerTypeIPv6); ipv6Layer != nil {
-		ipv6, _ := ipv6Layer.(*layers.IPv6)
-		srcAddr = ipv6.SrcIP.String()
-		dstAddr = ipv6.DstIP.String()
-	}
-	if tcpLayer := packet.Layer(layers.LayerTypeTCP); tcpLayer != nil {
-		tcp, _ := tcpLayer.(*layers.TCP)
-		srcPort = tcp.SrcPort.String()
-		dstPort = tcp.DstPort.String()
-		protocol = "tcp"
-	}
-	if udpLayer := packet.Layer(layers.LayerTypeUDP); udpLayer != nil {
-		udp, _ := udpLayer.(*layers.UDP)
-		srcPort = udp.SrcPort.String()
-		dstPort = udp.DstPort.String()
-		protocol = "udp"
-	}
-	if protocol != "" {
-		return fmt.Sprintf("%s -- %s:%s->%s:%s", protocol, srcAddr, srcPort, dstAddr, dstPort)
-	}
-	return ""
+func (c *Router) Start() {
+	c.listenExternal()
+	c.listenInternal()
 }
