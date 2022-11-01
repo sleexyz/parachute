@@ -41,9 +41,6 @@ func HandleUDPConn(uc adapter.UDPConn) {
 	}
 	metadata.MidIP, metadata.MidPort = parseAddr(pc.LocalAddr())
 
-	// pc = newUDPTracker(pc, metadata)
-	// defer pc.Close()
-
 	var remote net.Addr
 	if udpAddr := metadata.UDPAddr(); udpAddr != nil {
 		remote = udpAddr
@@ -53,7 +50,7 @@ func HandleUDPConn(uc adapter.UDPConn) {
 
 	pcs := newSymmetricNATPacketConn(pc, metadata)
 
-	log.Printf("[UDP] %s <-> %s", metadata.SourceAddress(), metadata.DestinationAddress())
+	// log.Printf("[UDP] %s <-> %s", metadata.SourceAddress(), metadata.DestinationAddress())
 	relayPacket(uc, pcs, remote)
 }
 

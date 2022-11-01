@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"sync"
 
 	"strange.industries/go-proxy/adapter"
 	"strange.industries/go-proxy/external"
@@ -71,39 +70,46 @@ func Init(address string, i tunconn.TunConn) *Router {
 
 func (c *Router) listenInternal(ctx context.Context) {
 	defer log.Println("closing internal handlers")
-	wg := new(sync.WaitGroup)
-	wg.Add(2)
 	childCtx, cancel := context.WithCancel(ctx)
 	// forward packet from client to stack
 	go func() {
-		defer wg.Done()
 		defer cancel()
 		for {
-			data := make([]byte, 1024*4)
-			n, err := c.i.Read(data)
-			if err != nil {
-				fmt.Printf("(outbound) bad read: %s\n", err)
-				break
-			}
-			_, err = c.WriteToStack(data[:n])
-			if err != nil {
-				fmt.Printf("(outbound) bad write: %s\n", err)
-				break
+			select {
+			case <-childCtx.Done():
+				return
+			default:
+				data := make([]byte, 1024*4)
+				n, err := c.i.Read(data)
+				if err != nil {
+					fmt.Printf("(outbound) bad read: %s\n", err)
+					return
+				}
+				_, err = c.WriteToStack(data[:n])
+				if err != nil {
+					fmt.Printf("(outbound) bad write: %s\n", err)
+					return
+				}
 			}
 		}
 	}()
 	// forward packet from stack to client
 	go func() {
-		defer wg.Done()
+		defer cancel()
 		for {
-			pkt := c.ep.ReadContext(childCtx)
-			if pkt == nil {
-				break
+			select {
+			case <-childCtx.Done():
+				return
+			default:
+				pkt := c.ep.ReadContext(childCtx)
+				if pkt == nil {
+					return
+				}
+				c.WriteInboundPacket(pkt)
 			}
-			c.WriteInboundPacket(pkt)
 		}
 	}()
-	wg.Wait()
+	<-childCtx.Done()
 }
 
 func (c *Router) WriteInboundPacket(pkt *stack.PacketBuffer) tcpip.Error {
@@ -139,26 +145,24 @@ func (c *Router) WriteToStack(b []byte) (int, error) {
 
 // Initializes channel handlers
 func (c *Router) listenExternal(ctx context.Context) {
-	go func() {
-		defer log.Println("closing external handlers")
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case conn := <-c.tcpQueue:
-				go forwarder.HandleTCPConn(conn)
-			case conn := <-c.udpQueue:
-				go forwarder.HandleUDPConn(conn)
-			}
+	defer log.Println("closing external handlers")
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case conn := <-c.tcpQueue:
+			go forwarder.HandleTCPConn(conn)
+		case conn := <-c.udpQueue:
+			go forwarder.HandleUDPConn(conn)
 		}
-	}()
+	}
 }
 
 func (c *Router) Start() {
 	ctx, cancel := context.WithCancel(context.Background())
 	c.cancel = cancel
-	c.listenExternal(ctx)
-	c.listenInternal(ctx)
+	go c.listenExternal(ctx)
+	go c.listenInternal(ctx)
 }
 
 func (c *Router) Close() {
