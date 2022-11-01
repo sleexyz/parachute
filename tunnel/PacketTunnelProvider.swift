@@ -34,8 +34,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private let logger: Logger
 //    private let proxyServer: ProxyServer
     
-//    private let options = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080, ipv6Address: "::1", ipv6Port: 8080)
-    private let options = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080, ipv6Address: "2603:7000:9200:1a31:846:8a47:6fe:f009", ipv6Port: 8080)
+    private let options = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080, ipv6Address: "::1", ipv6Port: 8080)
+//    private let options = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080, ipv6Address: "2603:7000:9200:1a31:846:8a47:6fe:f009", ipv6Port: 8080)
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)

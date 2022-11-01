@@ -13,9 +13,9 @@ import (
 	M "strange.industries/go-proxy/metadata"
 )
 
-var _udpSessionTimeout = 60 * time.Second
+var _udpSessionTimeout = 30 * time.Second
 
-func DialUDP(metadata *M.Metadata) (net.PacketConn, error) {
+func DialUDP() (net.PacketConn, error) {
 	pc, err := dialer.ListenPacket("udp", "")
 	if err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func HandleUDPConn(uc adapter.UDPConn) {
 		DstPort: id.LocalPort,
 	}
 
-	pc, err := DialUDP(metadata)
+	pc, err := DialUDP()
 	if err != nil {
 		log.Printf("[UDP] dial %s error: %v", metadata.DestinationAddress(), err)
 		return
