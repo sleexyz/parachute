@@ -55,7 +55,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             completionHandler(NEVPNError(.connectionFailed))
         }
         
-        if self.options.ipv6Address == "127.0.0.0.1" {
+        if self.options.ipv4Address == "127.0.0.0.1" {
             self.logger.info("starting server")
             DispatchQueue.global(qos: .background).async {
                 Singleton.SingletonStart(self.options.ipv4Port)
