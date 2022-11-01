@@ -7,7 +7,10 @@ import (
 
 	"os"
 
-	"strange.industries/go-proxy/proxy"
+	"net/http"
+	_ "net/http/pprof"
+
+	"strange.industries/go-proxy/singleton"
 )
 
 func main() {
@@ -19,7 +22,12 @@ func main() {
 	if err != nil {
 		log.Panicln("could not parse $PORT")
 	}
-	p := &proxy.ServerProxy{}
-	p.Start(port)
-	defer p.Close()
+	singleton.MaxProcs(1)
+	singleton.SetMemoryLimit(10 << 20)
+	singleton.SetGCPercent(20)
+	defer singleton.Close()
+	go func() {
+		singleton.Start(port)
+	}()
+	http.ListenAndServe("localhost:6060", nil)
 }

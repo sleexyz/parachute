@@ -71,7 +71,7 @@ func HandleTCPConn(localConn adapter.TCPConn) {
 
 	defer targetConn.Close()
 
-	log.Printf("[TCP] %s <-> %s\n", metadata.SourceAddress(), metadata.DestinationAddress())
+	// log.Printf("[TCP] %s <-> %s\n", metadata.SourceAddress(), metadata.DestinationAddress())
 	relay(localConn, targetConn) /* relay connections */
 }
 

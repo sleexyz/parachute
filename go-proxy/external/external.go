@@ -45,8 +45,8 @@ const (
 
 	// maxConnAttempts specifies the maximum number
 	// of in-flight tcp connection attempts.
-	// maxConnAttempts = 10
-	maxConnAttempts = 2 << 10
+	maxConnAttempts = 10
+	// maxConnAttempts = 2 << 10
 
 	// tcpKeepaliveCount is the maximum number of
 	// TCP keep-alive probes to send before giving up

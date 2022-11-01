@@ -13,8 +13,7 @@ require (
 
 require (
 	github.com/google/btree v1.0.1 // indirect
-	github.com/stretchr/testify v1.6.1 // indirect
-	golang.org/x/mobile v0.0.0-20221020085226-b36e6246172e // indirect
+	github.com/stretchr/testify v1.7.1 // indirect
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 )

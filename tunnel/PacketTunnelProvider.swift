@@ -34,12 +34,18 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private let logger: Logger
 //    private let proxyServer: ProxyServer
     
-    private let options = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080, ipv6Address: "::1", ipv6Port: 8080)
-//    private let options = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080, ipv6Address: "2603:7000:9200:1a31:846:8a47:6fe:f009", ipv6Port: 8080)
+//    private let options = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080, ipv6Address: "::1", ipv6Port: 8080)
+    private let options = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080, ipv6Address: "2603:7000:9200:1a31:846:8a47:6fe:f009", ipv6Port: 8080)
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
         self.logger = Logger(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
+        logger.info("go max procs: \(Singleton.SingletonMaxProcs(1))")
+        logger.info("go memory limit: \(Singleton.SingletonSetMemoryLimit(5*1<<20))")
+        logger.info("go gc percent: \(Singleton.SingletonSetGCPercent(20))")
+        logger.info("go max procs: \(Singleton.SingletonMaxProcs(1))")
+        logger.info("go memory limit: \(Singleton.SingletonSetMemoryLimit(5*1<<20))")
+        logger.info("go gc percent: \(Singleton.SingletonSetGCPercent(20))")
 //        self.proxyServer = ProxyServer(logger: self.logger, options: self.options)
     }
     
@@ -49,12 +55,13 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             completionHandler(NEVPNError(.connectionFailed))
         }
         
-        self.logger.info("starting server")
-        DispatchQueue.global(qos: .background).async {
-//            Singleton.SingletonStart(self.options.ipv4Port, "192.168.1.225:8081")
-            Singleton.SingletonStart(self.options.ipv4Port)
+        if self.options.ipv6Address == "127.0.0.0.1" {
+            self.logger.info("starting server")
+            DispatchQueue.global(qos: .background).async {
+                Singleton.SingletonStart(self.options.ipv4Port)
+            }
+            self.logger.info("server started")
         }
-        self.logger.info("server started")
         
 //        self.proxyServer.start()
         
