@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
+	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/adapter"
-	"strange.industries/go-proxy/common/pool"
 	"strange.industries/go-proxy/dialer"
 	M "strange.industries/go-proxy/metadata"
 )
@@ -18,6 +18,11 @@ const (
 	tcpWaitTimeout     = 5 * time.Second
 	tcpKeepAlivePeriod = 30 * time.Second
 	tcpConnectTimeout  = 5 * time.Second
+
+	// io.Copy default buffer size is 32 KiB, but the maximum packet
+	// size of vmess/shadowsocks is about 16 KiB, so define a buffer
+	// of 20 KiB to reduce the memory of each TCP relay.
+	_relayBufferSize = 20 << 10
 )
 
 // setKeepAlive sets tcp keepalive option for tcp connection.
@@ -89,9 +94,9 @@ func relay(left, right net.Conn) {
 }
 
 func copyBuffer(dst io.Writer, src io.Reader) error {
-	buf := pool.Get(pool.RelayBufferSize)
-	defer pool.Put(buf)
+	v := bufferv2.NewViewSize(_relayBufferSize)
+	defer v.Release()
 
-	_, err := io.CopyBuffer(dst, src, buf)
+	_, err := io.CopyBuffer(dst, src, v.AsSlice())
 	return err
 }

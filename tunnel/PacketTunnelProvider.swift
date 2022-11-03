@@ -16,13 +16,9 @@ import Singleton
 public struct ProxyServerOptions {
     public let ipv4Address: String
     public let ipv4Port: Int
-    public let ipv6Address: String
-    public let ipv6Port: Int
-    public init(ipv4Address: String, ipv4Port: Int, ipv6Address: String, ipv6Port: Int) {
+    public init(ipv4Address: String, ipv4Port: Int) {
         self.ipv4Address = ipv4Address
         self.ipv4Port = ipv4Port
-        self.ipv6Address = ipv6Address
-        self.ipv6Port = ipv6Port
     }
 }
 
@@ -32,17 +28,16 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private var observer: AnyObject?
     private let queue = DispatchQueue(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
     private let logger: Logger
-//    private let proxyServer: ProxyServer
     
-//     private let options = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080, ipv6Address: "::1", ipv6Port: 8080)
-    private let options = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080, ipv6Address: "2603:7000:9200:1a31:846:8a47:6fe:f009", ipv6Port: 8080)
+//    private let options = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080)
+    private let options = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080)
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
         self.logger = Logger(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
         logger.info("go max procs: \(Singleton.SingletonMaxProcs(1))")
-        logger.info("go memory limit: \(Singleton.SingletonSetMemoryLimit(5<<20))")
-        logger.info("go gc percent: \(Singleton.SingletonSetGCPercent(20))")
+        logger.info("go memory limit: \(Singleton.SingletonSetMemoryLimit(10<<20))")
+//        logger.info("go gc percent: \(Singleton.SingletonSetGCPercent(20))")
 //        self.proxyServer = ProxyServer(logger: self.logger, options: self.options)
     }
     
@@ -70,8 +65,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                         guard let self = self else { return }
                         self.queue.async {
                             for datagram in datagrams ?? [] {
-                                let protocolNumber = self.protocolNumber(for: datagram) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
-                                self.logger.info("Inbound \(protocolNumber) packet: \(datagram.base64EncodedData())")
+//                                let protocolNumber = self.protocolNumber(for: datagram) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
+//                                self.logger.info("Inbound \(protocolNumber) packet: \(datagram.base64EncodedData())")
                                 self.packetFlow.writePackets([datagram], withProtocols: [self.protocolNumber(for: datagram)])
                             }
                         }
@@ -89,8 +84,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         self.packetFlow.readPacketObjects {[weak self] packets in
             guard let self = self else { return }
             for packet in packets {
-                let protocolNumber = self.protocolNumber(for: packet.data) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
-                self.logger.info("Outbound \(protocolNumber) packet: \(packet.data.base64EncodedString())")
+//                let protocolNumber = self.protocolNumber(for: packet.data) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
+//                self.logger.info("Outbound \(protocolNumber) packet: \(packet.data.base64EncodedString())")
                 self.session?.writeDatagram(packet.data) { error in
                     guard let error = error else { return }
                     self.logger.error("Error: \(String(describing: error))")

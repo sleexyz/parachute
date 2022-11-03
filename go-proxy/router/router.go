@@ -12,7 +12,6 @@ import (
 	"strange.industries/go-proxy/external"
 	"strange.industries/go-proxy/forwarder"
 	"strange.industries/go-proxy/tunconn"
-	"strange.industries/go-proxy/util"
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"gvisor.dev/gvisor/pkg/tcpip"
@@ -69,7 +68,6 @@ func Init(address string, i tunconn.TunConn) *Router {
 }
 
 func (c *Router) listenInternal(ctx context.Context) {
-	defer log.Println("closing internal handlers")
 	childCtx, cancel := context.WithCancel(ctx)
 	// forward packet from client to stack
 	go func() {
@@ -79,17 +77,27 @@ func (c *Router) listenInternal(ctx context.Context) {
 			case <-childCtx.Done():
 				return
 			default:
-				data := make([]byte, 1024*4)
-				n, err := c.i.Read(data)
+				v := bufferv2.NewViewSize(1024 * 4)
+				// data := make([]byte, 1024*4)
+				n, err := c.i.Read(v.AsSlice())
 				if err != nil {
 					fmt.Printf("(outbound) bad read: %s\n", err)
 					return
 				}
-				_, err = c.WriteToStack(data[:n])
-				if err != nil {
-					fmt.Printf("(outbound) bad write: %s\n", err)
-					return
+				if n == 0 {
+					continue
 				}
+				proto := v.AsSlice()[0] >> 4
+				pkb := stack.NewPacketBuffer(stack.PacketBufferOptions{
+					Payload: bufferv2.MakeWithView(v),
+				})
+				switch proto {
+				case 4:
+					c.ep.InjectInbound(ipv4.ProtocolNumber, pkb)
+				case 6:
+					c.ep.InjectInbound(ipv6.ProtocolNumber, pkb)
+				}
+				pkb.DecRef()
 			}
 		}
 	}()
@@ -105,42 +113,22 @@ func (c *Router) listenInternal(ctx context.Context) {
 				if pkt.IsNil() {
 					return
 				}
-				c.WriteInboundPacket(pkt)
+				c.WriteToTUN(pkt)
 			}
 		}
 	}()
-	<-childCtx.Done()
+	// <-childCtx.Done()
 }
 
-func (c *Router) WriteInboundPacket(pkt stack.PacketBufferPtr) tcpip.Error {
+func (c *Router) WriteToTUN(pkt stack.PacketBufferPtr) tcpip.Error {
 	defer pkt.DecRef()
-	buf := pkt.ToBuffer()
-	defer buf.Release()
-	data := buf.Flatten()
-	debugString := util.MakeDebugString(data)
-	_, err := c.i.Write(data)
+	v := pkt.ToView()
+	defer v.Release()
+	_, err := c.i.Write(v.AsSlice())
 	if err != nil {
-		fmt.Printf("(inbound) %s, error:%s\n", debugString, err)
 		return &tcpip.ErrInvalidEndpointState{}
 	}
 	return nil
-}
-
-func (c *Router) WriteToStack(b []byte) (int, error) {
-	if len(b) == 0 {
-		return 0, nil
-	}
-	pkb := stack.NewPacketBuffer(stack.PacketBufferOptions{
-		Payload: bufferv2.MakeWithData(b),
-	})
-	switch b[0] >> 4 {
-	case 4:
-		c.ep.InjectInbound(ipv4.ProtocolNumber, pkb)
-	case 6:
-		c.ep.InjectInbound(ipv6.ProtocolNumber, pkb)
-	}
-	pkb.DecRef()
-	return len(b), nil
 }
 
 // Initializes channel handlers
@@ -163,6 +151,7 @@ func (c *Router) Start() {
 	c.cancel = cancel
 	go c.listenExternal(ctx)
 	go c.listenInternal(ctx)
+	<-ctx.Done()
 }
 
 func (c *Router) Close() {
