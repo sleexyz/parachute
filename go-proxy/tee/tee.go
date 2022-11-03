@@ -68,10 +68,12 @@ func (t *Tee) Listen() {
 				n, err := t.oConn.Read(data)
 				if err != nil {
 					fmt.Printf("bad read from proxy: %s\n", err)
+					continue
 				}
-				_, err = t.i.Write(data[:n])
+				n, err = t.i.Write(data[:n])
 				if err != nil {
 					fmt.Printf("bad write to client: %s\n", err)
+					continue
 				}
 				fmt.Printf("inbound: %s\n", util.MakeDebugString(data[:n]))
 			}
