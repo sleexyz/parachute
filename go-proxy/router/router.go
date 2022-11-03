@@ -102,7 +102,7 @@ func (c *Router) listenInternal(ctx context.Context) {
 				return
 			default:
 				pkt := c.ep.ReadContext(childCtx)
-				if pkt == nil {
+				if pkt.IsNil() {
 					return
 				}
 				c.WriteInboundPacket(pkt)
@@ -112,7 +112,7 @@ func (c *Router) listenInternal(ctx context.Context) {
 	<-childCtx.Done()
 }
 
-func (c *Router) WriteInboundPacket(pkt *stack.PacketBuffer) tcpip.Error {
+func (c *Router) WriteInboundPacket(pkt stack.PacketBufferPtr) tcpip.Error {
 	defer pkt.DecRef()
 	buf := pkt.ToBuffer()
 	defer buf.Release()

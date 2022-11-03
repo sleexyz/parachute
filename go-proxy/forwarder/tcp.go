@@ -28,13 +28,6 @@ func setKeepAlive(c net.Conn) {
 	}
 }
 
-// safeConnClose closes tcp connection safely.
-func safeConnClose(c net.Conn, err error) {
-	if c != nil && err != nil {
-		c.Close()
-	}
-}
-
 func DialContext(ctx context.Context, metadata *M.Metadata) (net.Conn, error) {
 	c, err := dialer.DialContext(ctx, "tcp", metadata.DestinationAddress())
 	if err != nil {
