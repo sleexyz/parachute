@@ -19,10 +19,7 @@ const (
 	tcpKeepAlivePeriod = 30 * time.Second
 	tcpConnectTimeout  = 5 * time.Second
 
-	// io.Copy default buffer size is 32 KiB, but the maximum packet
-	// size of vmess/shadowsocks is about 16 KiB, so define a buffer
-	// of 20 KiB to reduce the memory of each TCP relay.
-	_relayBufferSize = 20 << 10
+	_relayBufferSize = 16 << 10
 )
 
 // setKeepAlive sets tcp keepalive option for tcp connection.

@@ -13,12 +13,17 @@ import (
 
 const (
 	// TODO: lower this and see memory performance
-	_udpSessionTimeout = 10 * time.Second
+	_udpSessionTimeout = 60 * time.Second
 	// MaxSegmentSize is the largest possible UDP datagram size.
-	_maxSegmentSize = (1 << 16) - 1
+	// _maxSegmentSize = (64 << 10)
+	// _maxSegmentSize = (64 << 10)
+	_maxSegmentSize = 1500 // mtu
 )
 
-var inflight = 0
+var (
+	inflight       = 0
+	historicalMaxN = 0 // hmmm. does t seem to exceed mtu size
+)
 
 // uc: connection from
 func HandleUDPConn(uc adapter.UDPConn) {
@@ -42,8 +47,6 @@ func HandleUDPConn(uc adapter.UDPConn) {
 
 	go func() {
 		defer wg.Done()
-		// copy outbound packet from uc to pc
-		// pc.writeTo(buf[:n], remote)
 		if err := copyPacketBuffer2(pc, uc, remote, _udpSessionTimeout); err != nil {
 			log.Printf("[UDP] %v", err)
 		}
@@ -51,8 +54,6 @@ func HandleUDPConn(uc adapter.UDPConn) {
 
 	go func() {
 		defer wg.Done()
-		// copy inbound packet from pc to uc
-		// uc.writeTo(buf[:n], nil)
 		if err := copyPacketBuffer2(uc, pc, nil, _udpSessionTimeout); err != nil {
 			log.Printf("[UDP] %v", err)
 		}
@@ -66,24 +67,39 @@ func copyPacketBuffer2(dst net.PacketConn, src net.PacketConn, to net.Addr, time
 	defer v.Release()
 
 	start := time.Now()
+	br := 0
 	i := 0
+	maxN := 0
 	inflight++
 	defer func() {
 		duration := time.Since(start)
-		log.Printf("inflight: %d, iterations: %d, elapsed: %s\n", inflight, i, duration)
+		avg := -1
+		if i > 0 {
+			avg = br / i
+		}
+		if maxN > historicalMaxN {
+			historicalMaxN = maxN
+		}
+		log.Printf("inflight: %d, historicalMaxN: %d, bytes read: %d, iterations: %d, avg bytes per iteration: %d, max bytes per iteration: %d, elapsed: %s\n", inflight, historicalMaxN, br, i, avg, maxN, duration)
 		inflight--
 	}()
 	for {
-		i++
 		src.SetReadDeadline(time.Now().Add(timeout))
 		n, _, err := src.ReadFrom(v.AsSlice())
 		if ne, ok := err.(net.Error); ok && ne.Timeout() {
+			log.Println("timeout")
 			return nil /* ignore I/O timeout */
 		} else if err == io.EOF {
+			log.Println("eof")
 			return nil /* ignore EOF */
 		} else if err != nil {
 			return err
 		}
+		br += n
+		if n > maxN {
+			maxN = n
+		}
+		i++
 
 		if _, err = dst.WriteTo(v.AsSlice()[:n], to); err != nil {
 			return err

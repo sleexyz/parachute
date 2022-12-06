@@ -67,9 +67,12 @@ const (
 
 	// defaultTimeToLive specifies the default TTL used by stack.
 	defaultTimeToLive uint8 = 64
+
+	rcvBufferSize = 16 >> 10
+	sndBufferSize = 16 >> 10
 )
 
-func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue chan adapter.UDPConn, rcvBufferSize int, sndBufferSize int) (*stack.Stack, error) {
+func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue chan adapter.UDPConn) (*stack.Stack, error) {
 	s := stack.New(stack.Options{
 		NetworkProtocols:   []stack.NetworkProtocolFactory{ipv4.NewProtocol, ipv6.NewProtocol},
 		TransportProtocols: []stack.TransportProtocolFactory{tcp.NewProtocol, udp.NewProtocol, icmp.NewProtocol6, icmp.NewProtocol4},
@@ -98,13 +101,15 @@ func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 		s.SetTransportProtocolOption(tcp.ProtocolNumber, &opt)
 	}
 
+	// NOTE: Disabled for memory optimization, see:
+	// https://github.com/xjasonlyu/tun2socks/wiki/Memory-Optimization
 	// Enable Receive Buffer Auto-Tuning, see:
 	// https://github.com/google/gvisor/issues/1666
-	{
-		opt := tcpip.TCPModerateReceiveBufferOption(true)
-		s.SetTransportProtocolOption(tcp.ProtocolNumber,
-			&opt)
-	}
+	// {
+	// 	opt := tcpip.TCPModerateReceiveBufferOption(true)
+	// 	s.SetTransportProtocolOption(tcp.ProtocolNumber,
+	// 		&opt)
+	// }
 
 	nicID := tcpip.NICID(s.UniqueID())
 

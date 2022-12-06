@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> {}}:
 let
   xcodewrapper = pkgs.xcodeenv.composeXcodeWrapper {
-    version = "14.0.1";
+    version = "14.1";
     xcodeBaseDir = "/Applications/Xcode.app";
   };
 in

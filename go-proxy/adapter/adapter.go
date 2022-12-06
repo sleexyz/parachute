@@ -2,9 +2,9 @@ package adapter
 
 import (
 	"net"
+
 	"gvisor.dev/gvisor/pkg/tcpip/stack"
 )
-
 
 // UDPConn implements net.Conn and net.PacketConn.
 type UDPConn interface {
