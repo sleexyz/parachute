@@ -20,6 +20,9 @@ public struct ProxyServerOptions {
         self.ipv4Address = ipv4Address
         self.ipv4Port = ipv4Port
     }
+    static let localServer = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080)
+    
+    static let debugServer = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080)
 }
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
@@ -29,29 +32,37 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private let queue = DispatchQueue(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
     private let logger: Logger
     
-//    private let options = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080)
-    private let options = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080)
+    private var options: ProxyServerOptions = .localServer
+    
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
         self.logger = Logger(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
         logger.info("go max procs: \(Singleton.SingletonMaxProcs(1))")
-        logger.info("go memory limit: \(Singleton.SingletonSetMemoryLimit(10<<20))")
-//        logger.info("go gc percent: \(Singleton.SingletonSetGCPercent(20))")
-//        self.proxyServer = ProxyServer(logger: self.logger, options: self.options)
+        logger.info("go memory limit: \(Singleton.SingletonSetMemoryLimit(20<<20))")
+        logger.info("go gc percent: \(Singleton.SingletonSetGCPercent(50))")
     }
     
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
+        
+        let debug = options?["debug"] != nil  ? (options?["debug"]! as! NSNumber).boolValue : false
+        
         self.logger.info("starting tunnel")
         self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
             completionHandler(NEVPNError(.connectionFailed))
         }
         
-        self.logger.info("starting server")
-        DispatchQueue.global(qos: .background).async {
-            Singleton.SingletonStart(self.options.ipv4Port)
+        if (!debug) {
+            self.logger.info("starting server")
+            DispatchQueue.global(qos: .background).async {
+                Singleton.SingletonStart(self.options.ipv4Port)
+            }
+            self.logger.info("server started")
+        } else {
+            self.logger.info("server started")
         }
-        self.logger.info("server started")
+        
+        self.options = debug ? .debugServer : .localServer
         
         let settings = self.initTunnelSettings(proxyHost: self.options.ipv4Address, proxyPort: self.options.ipv4Port)
         
@@ -91,9 +102,9 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                     self.logger.error("Error: \(String(describing: error))")
                 }
             }
-            self.queue.async {
+            self.queue.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(200), execute: {
                 self.readOutboundPackets()
-            }
+            })
         }
     }
     

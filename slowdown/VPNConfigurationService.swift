@@ -9,15 +9,17 @@ import NetworkExtension
 import Foundation
 
 final class VPNConfigurationService: ObservableObject {
-    @Published private(set) var isStarted = false
+    @Published private(set) var tunnelLoaded = false
     @Published private(set) var tunnel: NETunnelProviderManager?
+    let store: SettingsStore
     
-    static let shared = VPNConfigurationService()
+    static let shared = VPNConfigurationService(store: .shared)
     
-    init() {
+    init(store: SettingsStore) {
+        self.store = store
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.tunnel = managers?.first
-            self.isStarted = true
+            self.tunnelLoaded = true
         }
     }
     
@@ -48,7 +50,7 @@ final class VPNConfigurationService: ObservableObject {
         tunnel.protocolConfiguration = proto
 
         // Enable the tunnel by default
-        tunnel.isEnabled = true
+//        tunnel.isEnabled = true
 
         return tunnel
     }

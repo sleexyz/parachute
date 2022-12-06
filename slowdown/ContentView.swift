@@ -13,7 +13,7 @@ import Foundation
 struct ContentView: View {
     @ObservedObject var service: VPNConfigurationService = .shared
     var body: some View {
-        if !service.isStarted {
+        if !service.tunnelLoaded {
             return AnyView(SplashView())
         }
         
@@ -72,8 +72,8 @@ struct SetupView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView()
+//    }
+//}
