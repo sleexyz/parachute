@@ -12,12 +12,13 @@ import Combine
 final class AppViewModel: ObservableObject {
     @Published var isStarted = false
     @Published var isEnabled = false
+    @Published var debug = false
     @Published var isLoading = false
     @Published var isShowingError = false
     @Published private(set) var errorTitle = ""
     @Published private(set) var errorMessage = ""
     
-    private let service: VPNConfigurationService
+    let service: VPNConfigurationService
     private let tunnel: NETunnelProviderManager
     
     private var bag = [AnyCancellable]()
@@ -25,23 +26,32 @@ final class AppViewModel: ObservableObject {
     init(service: VPNConfigurationService = .shared, tunnel: NETunnelProviderManager) {
         self.service = service
         self.tunnel = tunnel
-        self.refresh()
+        self.refreshState()
         
         $isEnabled.sink { [weak self] in
             self?.setEnabled($0)
         }.store(in: &bag)
+        
+//        $debug.sink { [weak self] in
+//            self?.setDebug($0)
+//        }.store(in: &bag)
     }
     
-    private func refresh() {
+    private func refreshState() {
         self.isEnabled = tunnel.isEnabled
         self.isStarted = tunnel.connection.status != .disconnected && tunnel.connection.status != .invalid
     }
     
     private func setEnabled(_ isEnabled: Bool) {
         guard isEnabled != tunnel.isEnabled else { return }
-        tunnel.isEnabled = isEnabled;
         saveToPreferences()
+        refreshState()
     }
+    
+//    private func setDebug(_ debug: Bool) {
+//        guard debug != self?.debug else { return }
+//        self.debug = debug
+//    }
     
     private func saveToPreferences() {
         isLoading = true
@@ -64,7 +74,11 @@ final class AppViewModel: ObservableObject {
     
     func startConnection() {
         do {
-            try tunnel.connection.startVPNTunnel()
+            try tunnel.connection.startVPNTunnel(options: [
+                "debug": NSNumber(booleanLiteral: self.debug)
+            ])
+            //            refreshState()
+            self.isStarted = true
         } catch {
             self.showError(
                 title: "Failed to start VPN tunnel",
@@ -74,16 +88,30 @@ final class AppViewModel: ObservableObject {
     }
     func stopConnection() {
         tunnel.connection.stopVPNTunnel()
+        self.isStarted = false
+        // refreshState()
     }
 }
 
 struct AppView: View {
     @ObservedObject var model: AppViewModel
+    @EnvironmentObject var store: SettingsStore
+    
+    @ViewBuilder
+    var Button: some View {
+        if model.isStarted {
+            PrimaryButton(title: "stop", action: model.stopConnection, isLoading: $model.isLoading)
+        } else {
+            VStack {
+                Toggle(isOn: $model.debug, label: { Text("Debug")})
+                PrimaryButton(title: "start", action: model.startConnection, isLoading: $model.isLoading)
+            }
+        }
+    }
     var body: some View {
         Form {
             Toggle(isOn: $model.isEnabled, label: { Text("Enabled")})
-            PrimaryButton(title: "start", action: model.startConnection, isLoading: $model.isLoading)
-            PrimaryButton(title: "stop", action: model.stopConnection, isLoading: $model.isLoading)
+            Button
         }
         .disabled(model.isLoading)
         .alert(isPresented: $model.isShowingError) {
@@ -94,13 +122,13 @@ struct AppView: View {
             )
         }
         .navigationBarItems(trailing:
-            Spinner(isAnimating: $model.isLoading, color: .label, style: .medium)
+                                Spinner(isAnimating: $model.isLoading, color: .label, style: .medium)
         )
     }
 }
 
 //struct AppView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        AppView()
+//        AepView()
 //    }
 //}
