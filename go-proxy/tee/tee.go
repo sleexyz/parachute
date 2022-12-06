@@ -51,7 +51,7 @@ func (t *Tee) Listen() {
 						fmt.Printf("bad write to client: %s\n", err)
 					}
 				}
-				fmt.Printf("outbound: %s\n", util.MakeDebugString(data[:n]))
+				fmt.Println(util.MakeDebugString(data[:n]))
 			}
 		}
 	}()
@@ -70,12 +70,12 @@ func (t *Tee) Listen() {
 					fmt.Printf("bad read from proxy: %s\n", err)
 					continue
 				}
-				n, err = t.i.Write(data[:n])
+				_, err = t.i.Write(data[:n])
 				if err != nil {
 					fmt.Printf("bad write to client: %s\n", err)
 					continue
 				}
-				fmt.Printf("inbound: %s\n", util.MakeDebugString(data[:n]))
+				// fmt.Printf("inbound: %s\n", util.MakeDebugString(data[:n]))
 			}
 		}
 	}()

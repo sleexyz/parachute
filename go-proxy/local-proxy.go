@@ -58,8 +58,8 @@ func main() {
 	})
 
 	singleton.MaxProcs(1)
-	singleton.SetMemoryLimit(10 << 20)
-	// singleton.SetGCPercent(20)
+	singleton.SetMemoryLimit(20 << 20)
+	singleton.SetGCPercent(50)
 	defer singleton.Close()
 	singleton.Start(port)
 	// ctx := context.Background()
