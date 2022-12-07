@@ -71,6 +71,21 @@ final class VPNConfigurationService: ObservableObject {
         }
     }
     
+    func startCheat() throws {
+        if let session = self.manager?.connection as? NETunnelProviderSession {
+            let message = "cheat".data(using: String.Encoding.utf8)
+            try session.sendProviderMessage(message!) { response in
+                if response != nil {
+                    let responseString = NSString(data: response!, encoding: String.Encoding.utf8.rawValue)
+                    os_log("Received response from the provider: \(responseString)")
+                } else {
+                    os_log("Got a nil response from the provider")
+                }
+            }
+        }
+    }
+        
+    
     func startConnection(debug: Bool) throws {
 //        if !self.manager?.isEnabled {
 //

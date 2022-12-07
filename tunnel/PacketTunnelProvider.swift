@@ -32,11 +32,29 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private let queue = DispatchQueue(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
     private let logger: Logger
     
+    private var cheatCompletion: DispatchWorkItem?
     private var options: ProxyServerOptions = .localServer
     
     // milliseconds
-    static let outboundPacketDelay: Int = 1500
-    static let inboundPacketDelay: Int = 1500
+    private var outboundPacketDelay: Int = 1200
+    private var inboundPacketDelay: Int = 1200
+    private var cheat: Bool {
+        return cheatCompletion != nil
+    };
+    
+    func getOutboundPacketDelay() -> Int {
+        if self.cheat {
+            return 0
+        }
+        return self.outboundPacketDelay;
+    }
+    
+    func getInboundPacketDelay() -> Int {
+        if self.cheat {
+            return 0
+        }
+        return self.inboundPacketDelay;
+    }
     
     
     override init() {
@@ -78,7 +96,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                 if session.state == .ready {
                     session.setReadHandler({ [weak self] datagrams, error in
                         guard let self = self else { return }
-                        self.schedule(delayMs: PacketTunnelProvider.inboundPacketDelay)  {
+                        self.schedule(delayMs: self.getInboundPacketDelay())  {
                             for datagram in datagrams ?? [] {
                                 self.packetFlow.writePackets([datagram], withProtocols: [self.protocolNumber(for: datagram)])
                             }
@@ -113,7 +131,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                     self.logger.error("Error: \(String(describing: error))")
                 }
             }
-            self.schedule(delayMs: PacketTunnelProvider.outboundPacketDelay)  {
+            self.schedule(delayMs: self.getOutboundPacketDelay())  {
                 self.readOutboundPackets()
             }
         }
@@ -152,11 +170,36 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
     
     override func handleAppMessage(_ messageData: Data, completionHandler: ((Data?) -> Void)?) {
-        // Add code here to handle the message.
-        if let handler = completionHandler {
-            handler(messageData)
+        guard let messageString = NSString(data: messageData, encoding: String.Encoding.utf8.rawValue) else {
+            completionHandler?(nil)
+            return
         }
+        
+        if messageString == "cheat" {
+            self.startCheat()
+        }
+        
+        // Add code here to handle the message.
+        let responseData = "ack".data(using: String.Encoding.utf8)
+        completionHandler?(responseData)
     }
+    
+    func startCheat() {
+        self.logger.info("cheat")
+        self.inboundPacketDelay = 0
+        self.outboundPacketDelay = 0
+        
+        self.cheatCompletion?.cancel()
+        self.cheatCompletion = DispatchWorkItem {
+            self.inboundPacketDelay = 1200
+            self.outboundPacketDelay = 1200
+            self.logger.info("cheat end")
+            self.cheatCompletion = nil
+        }
+        self.queue.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(60), execute: cheatCompletion!)
+
+    }
+    
     
     override func sleep(completionHandler: @escaping () -> Void) {
         // Add code here to get ready to sleep.

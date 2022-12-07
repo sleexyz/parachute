@@ -34,6 +34,17 @@ final class AppViewModel: ObservableObject {
         }
     }
     
+    func startCheat() {
+        do {
+            try self.service.startCheat()
+        } catch {
+            self.showError(
+                title: "Failed to start cheat",
+                message: error.localizedDescription
+            )
+        }
+    }
+    
     private func showError(title: String, message: String) {
         self.errorTitle = title
         self.errorMessage = message
@@ -51,6 +62,8 @@ struct AppView: View {
             PrimaryButton(title: service.isConnected ? "stop" : "start", action: model.toggleConnection, isLoading: service.isTransitioning)
             Toggle(isOn: $model.debug, label: { Text("Debug")})
                 .disabled(service.isConnected || service.isTransitioning)
+            Spacer()
+            PrimaryButton(title: "cheat", action: model.startCheat, isLoading: false)
         }
         .disabled(service.isTransitioning)
         .alert(isPresented: $model.isShowingError) {
