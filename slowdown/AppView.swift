@@ -66,6 +66,7 @@ final class AppViewModel: ObservableObject {
         }
     }
     
+    
     private func showError(title: String, message: String) {
         self.errorTitle = title
         self.errorMessage = message
@@ -96,15 +97,16 @@ final class AppViewModel: ObservableObject {
 struct AppView: View {
     @ObservedObject var model: AppViewModel
     @EnvironmentObject var store: SettingsStore
+    @ObservedObject var service: VPNConfigurationService = .shared
     
     @ViewBuilder
     var Button: some View {
-        if model.isStarted {
-            PrimaryButton(title: "stop", action: model.stopConnection, isLoading: $model.isLoading)
+        if service.connected {
+            PrimaryButton(title: "stop", action: model.stopConnection, isLoading: $service.isLoading)
         } else {
             VStack {
                 Toggle(isOn: $model.debug, label: { Text("Debug")})
-                PrimaryButton(title: "start", action: model.startConnection, isLoading: $model.isLoading)
+                PrimaryButton(title: "start", action: model.startConnection, isLoading: $service.isLoading)
             }
         }
     }
