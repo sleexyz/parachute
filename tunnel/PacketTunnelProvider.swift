@@ -34,6 +34,10 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     private var options: ProxyServerOptions = .localServer
     
+    // milliseconds
+    static let outboundPacketDelay: Int = 1500
+    static let inboundPacketDelay: Int = 1500
+    
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
@@ -74,10 +78,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                 if session.state == .ready {
                     session.setReadHandler({ [weak self] datagrams, error in
                         guard let self = self else { return }
-                        self.queue.async {
+                        self.schedule(delayMs: PacketTunnelProvider.inboundPacketDelay)  {
                             for datagram in datagrams ?? [] {
-//                                let protocolNumber = self.protocolNumber(for: datagram) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
-//                                self.logger.info("Inbound \(protocolNumber) packet: \(datagram.base64EncodedData())")
                                 self.packetFlow.writePackets([datagram], withProtocols: [self.protocolNumber(for: datagram)])
                             }
                         }
@@ -91,20 +93,29 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         }
     }
     
+    public func schedule(delayMs: Int = 0, execute work: @escaping @convention(block) () -> Void) {
+        if delayMs == 0 {
+            self.queue.async(execute: work)
+        } else {
+            self.queue.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(delayMs), execute: work)
+        }
+    }
+
+    
     private func readOutboundPackets() {
         self.packetFlow.readPacketObjects {[weak self] packets in
             guard let self = self else { return }
             for packet in packets {
-//                let protocolNumber = self.protocolNumber(for: packet.data) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
-//                self.logger.info("Outbound \(protocolNumber) packet: \(packet.data.base64EncodedString())")
+                //                let protocolNumber = self.protocolNumber(for: packet.data) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
+                //                self.logger.info("Outbound \(protocolNumber) packet: \(packet.data.base64EncodedString())")
                 self.session?.writeDatagram(packet.data) { error in
                     guard let error = error else { return }
                     self.logger.error("Error: \(String(describing: error))")
                 }
             }
-            self.queue.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(200), execute: {
+            self.schedule(delayMs: PacketTunnelProvider.outboundPacketDelay)  {
                 self.readOutboundPackets()
-            })
+            }
         }
     }
     
@@ -160,7 +171,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         guard !packet.isEmpty else {
             return AF_INET as NSNumber
         }
-
+        
         // 'packet' contains the decrypted incoming IP packet data
         // The first 4 bits identify the IP version
         let ipVersion = (packet[0] & 0xf0) >> 4
