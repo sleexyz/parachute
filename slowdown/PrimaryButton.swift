@@ -13,12 +13,12 @@ import UIKit
 struct PrimaryButton: View {
     let title: String
     let action: () -> Void
-    @Binding var isLoading: Bool
+    var isLoading: Bool
 
     var body: some View {
         Button(action: self.action) {
             ZStack {
-                Spinner(isAnimating: $isLoading, color: .white, style: .medium)
+                Spinner(isAnimating: isLoading, color: .white, style: .medium)
                 Text(title)
                     .opacity(isLoading ? 0 : 1)
             }
@@ -35,14 +35,14 @@ struct PrimaryButton: View {
 struct PrimaryButtonView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            PrimaryButton(title: "Action", action: {}, isLoading: .constant(false))
+            PrimaryButton(title: "Action", action: {}, isLoading: false)
                 .previewLayout(.fixed(width: 300, height: 80))
 
-            PrimaryButton(title: "Action", action: {}, isLoading: .constant(false))
+            PrimaryButton(title: "Action", action: {}, isLoading: false)
                 .previewLayout(.fixed(width: 300, height: 80))
                 .environment(\.colorScheme, .dark)
 
-            PrimaryButton(title: "Action", action: {}, isLoading: .constant(true))
+            PrimaryButton(title: "Action", action: {}, isLoading: true)
                 .previewLayout(.fixed(width: 300, height: 80))
         }
     }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Spinner: UIViewRepresentable {
-    @Binding var isAnimating: Bool
+    var isAnimating: Bool
 
     let color: UIColor
     let style: UIActivityIndicatorView.Style
@@ -28,8 +28,8 @@ struct Spinner: UIViewRepresentable {
 struct Spinner_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            Spinner(isAnimating: Binding.constant(true), color: .black, style: .medium)
-            Spinner(isAnimating: Binding.constant(false), color: .black, style: .medium)
+            Spinner(isAnimating: true, color: .black, style: .medium)
+            Spinner(isAnimating: false, color: .black, style: .medium)
         }
     }
 }

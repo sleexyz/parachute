@@ -13,12 +13,12 @@ import Foundation
 struct ContentView: View {
     @ObservedObject var service: VPNConfigurationService = .shared
     var body: some View {
-        if !service.tunnelLoaded {
+        if service.isInitializing {
             return AnyView(SplashView())
         }
         
-        if let tunnel = service.tunnel {
-            let model = AppViewModel(tunnel: tunnel)
+        if service.hasManager {
+            let model = AppViewModel()
             return AnyView(AppView(model:model))
         } else {
             return AnyView(SetupView())
@@ -46,7 +46,7 @@ struct SetupView: View {
         PrimaryButton(
             title: "Install VPN Profile",
             action: self.installProfile,
-            isLoading: $isLoading
+            isLoading: self.isLoading
         ).alert(isPresented: $isShowingError) {
             Alert(
                 title: Text("Failed to install a profile"),
@@ -57,7 +57,7 @@ struct SetupView: View {
     }
 
     private func installProfile() {
-        isLoading = true
+        self.isLoading = true
 
         service.installProfile { result in
             self.isLoading = false
@@ -72,8 +72,8 @@ struct SetupView: View {
     }
 }
 
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView()
-//    }
-//}
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
