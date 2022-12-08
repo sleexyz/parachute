@@ -35,13 +35,15 @@ final class AppViewModel: ObservableObject {
     }
     
     func startCheat() {
-        do {
-            try self.service.startCheat()
-        } catch {
-            self.showError(
-                title: "Failed to start cheat",
-                message: error.localizedDescription
-            )
+        Task {
+            do {
+                try await self.service.startCheat()
+            } catch {
+                self.showError(
+                    title: "Failed to start cheat",
+                    message: error.localizedDescription
+                )
+            }
         }
     }
     
@@ -52,18 +54,50 @@ final class AppViewModel: ObservableObject {
     }
 }
 
+struct CheatTimer: View {
+    @ObservedObject var service: VPNConfigurationService
+    @State var cheatTimeLeft: Int
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    init(service: VPNConfigurationService = .shared) {
+        self.service = service
+        self.cheatTimeLeft = service.cheatTimeLeft
+    }
+    
+    
+    var body: some View {
+        Text("\(self.cheatTimeLeft)").onReceive(timer) { _ in
+            self.cheatTimeLeft = max(service.cheatTimeLeft, 0)
+        }
+    }
+}
+
 struct AppView: View {
     @ObservedObject var model: AppViewModel
     @EnvironmentObject var store: SettingsStore
     @ObservedObject var service: VPNConfigurationService = .shared
     
+    @ViewBuilder
+    var cheatLoading : some View {
+        if service.isCheating {
+            CheatTimer()
+        } else {
+            EmptyView()
+        }
+    }
+    
     var body: some View {
         Form {
-            PrimaryButton(title: service.isConnected ? "stop" : "start", action: model.toggleConnection, isLoading: service.isTransitioning)
-            Toggle(isOn: $model.debug, label: { Text("Debug")})
-                .disabled(service.isConnected || service.isTransitioning)
-            Spacer()
-            PrimaryButton(title: "cheat", action: model.startCheat, isLoading: false)
+            if !service.isConnected {
+                PrimaryButton(title: "start", action: model.toggleConnection, isLoading: service.isTransitioning)
+                Spacer()
+                Toggle(isOn: $model.debug, label: { Text("Debug")})
+                    .disabled(service.isTransitioning)
+            } else {
+                PrimaryButton(title: "stop", action: model.toggleConnection, isLoading: service.isTransitioning)
+                Spacer()
+                PrimaryButton(title: "cheat", action: model.startCheat, isLoading: service.isCheating, loadingMessage: cheatLoading).disabled(service.isCheating)
+            }
         }
         .disabled(service.isTransitioning)
         .alert(isPresented: $model.isShowingError) {
