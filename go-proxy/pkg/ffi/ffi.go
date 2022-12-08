@@ -7,7 +7,7 @@ import (
 	proxy "strange.industries/go-proxy/pkg/proxy"
 )
 
-var p proxy.Proxy
+var p *proxy.ServerProxy
 
 func MaxProcs(max int) int {
 	return runtime.GOMAXPROCS(max)
