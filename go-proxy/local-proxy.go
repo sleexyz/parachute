@@ -11,7 +11,7 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/pyroscope-io/client/pyroscope"
-	"strange.industries/go-proxy/singleton"
+	"strange.industries/go-proxy/ffi"
 )
 
 func main() {
@@ -57,11 +57,11 @@ func main() {
 		},
 	})
 
-	singleton.MaxProcs(1)
-	singleton.SetMemoryLimit(20 << 20)
-	singleton.SetGCPercent(50)
-	defer singleton.Close()
-	singleton.Start(port)
+	ffi.MaxProcs(1)
+	ffi.SetMemoryLimit(20 << 20)
+	ffi.SetGCPercent(50)
+	defer ffi.Close()
+	ffi.Start(port)
 	// ctx := context.Background()
 	// <-ctx.Done()
 }
