@@ -1,4 +1,4 @@
-package singleton
+package ffi
 
 import (
 	"runtime"
@@ -20,9 +20,6 @@ func SetMemoryLimit(limit int64) int64 {
 func SetGCPercent(pct int) int {
 	return debug.SetGCPercent(pct)
 }
-
-// func SetGCPercent() {
-// }
 
 func Start(port int) {
 	p = &proxy.ServerProxy{}

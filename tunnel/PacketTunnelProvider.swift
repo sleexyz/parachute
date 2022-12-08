@@ -11,7 +11,7 @@ import Logging
 import LoggingOSLog
 import func os.os_log
 import UIKit
-import Singleton
+import Ffi
 
 public struct ProxyServerOptions {
     public let ipv4Address: String
@@ -60,9 +60,9 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
         self.logger = Logger(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
-        logger.info("go max procs: \(Singleton.SingletonMaxProcs(1))")
-        logger.info("go memory limit: \(Singleton.SingletonSetMemoryLimit(20<<20))")
-        logger.info("go gc percent: \(Singleton.SingletonSetGCPercent(50))")
+        logger.info("go max procs: \(Ffi.FfiMaxProcs(1))")
+        logger.info("go memory limit: \(Ffi.FfiSetMemoryLimit(20<<20))")
+        logger.info("go gc percent: \(Ffi.FfiSetGCPercent(50))")
     }
     
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
@@ -77,7 +77,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         if (!debug) {
             self.logger.info("starting server")
             DispatchQueue.global(qos: .background).async {
-                Singleton.SingletonStart(self.options.ipv4Port)
+                Ffi.FfiStart(self.options.ipv4Port)
             }
             self.logger.info("server started")
         } else {
@@ -165,7 +165,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     override func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
         self.logger.info("tunnel stopped")
         // Add code here to start the process of stopping the tunnel.
-        Singleton.SingletonClose()
+        Ffi.FfiClose()
         completionHandler()
     }
     
