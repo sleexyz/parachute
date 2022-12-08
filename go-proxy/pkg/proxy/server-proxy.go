@@ -3,8 +3,8 @@ package proxy
 import (
 	"log"
 
-	"strange.industries/go-proxy/router"
-	"strange.industries/go-proxy/tunconn"
+	"strange.industries/go-proxy/pkg/router"
+	"strange.industries/go-proxy/pkg/tunconn"
 )
 
 type ServerProxy struct {

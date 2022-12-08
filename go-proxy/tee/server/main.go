@@ -5,8 +5,8 @@ import (
 	"os"
 	"strconv"
 
+	"strange.industries/go-proxy/pkg/tunconn"
 	"strange.industries/go-proxy/tee"
-	"strange.industries/go-proxy/tunconn"
 )
 
 const (

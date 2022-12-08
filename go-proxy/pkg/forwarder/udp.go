@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
-	"strange.industries/go-proxy/adapter"
+	"strange.industries/go-proxy/pkg/adapter"
 )
 
 const (

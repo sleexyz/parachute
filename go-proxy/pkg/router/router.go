@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"log"
 
-	"strange.industries/go-proxy/adapter"
-	"strange.industries/go-proxy/external"
-	"strange.industries/go-proxy/forwarder"
-	"strange.industries/go-proxy/tunconn"
+	"strange.industries/go-proxy/pkg/adapter"
+	"strange.industries/go-proxy/pkg/external"
+	"strange.industries/go-proxy/pkg/forwarder"
+	"strange.industries/go-proxy/pkg/tunconn"
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"gvisor.dev/gvisor/pkg/tcpip"

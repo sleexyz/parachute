@@ -1,4 +1,5 @@
 // Abstraction for connection layer to TUN
+// TODO: deprecate, this is probably some existing go interface.
 
 package tunconn
 

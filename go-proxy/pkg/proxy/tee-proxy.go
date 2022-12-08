@@ -3,8 +3,8 @@ package proxy
 import (
 	"log"
 
+	"strange.industries/go-proxy/pkg/tunconn"
 	"strange.industries/go-proxy/tee"
-	"strange.industries/go-proxy/tunconn"
 )
 
 type TeeProxy struct {

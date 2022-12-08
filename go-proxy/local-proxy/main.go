@@ -11,7 +11,7 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/pyroscope-io/client/pyroscope"
-	"strange.industries/go-proxy/ffi"
+	"strange.industries/go-proxy/pkg/ffi"
 )
 
 func main() {
