@@ -1,4 +1,4 @@
-package external
+package router
 
 import (
 	"fmt"
@@ -72,7 +72,7 @@ const (
 	sndBufferSize = 16 >> 10
 )
 
-func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue chan adapter.UDPConn) (*stack.Stack, error) {
+func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue chan adapter.UDPConn) (*stack.Stack, error) {
 	s := stack.New(stack.Options{
 		NetworkProtocols:   []stack.NetworkProtocolFactory{ipv4.NewProtocol, ipv6.NewProtocol},
 		TransportProtocols: []stack.TransportProtocolFactory{tcp.NewProtocol, udp.NewProtocol, icmp.NewProtocol6, icmp.NewProtocol4},
@@ -191,7 +191,7 @@ func CreateStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 	return s, nil
 }
 
-func StackRoutingSetup(s *stack.Stack, nic tcpip.NICID, assignNet string) {
+func stackRoutingSetup(s *stack.Stack, nic tcpip.NICID, assignNet string) {
 	ipAddr, ipNet, err := net.ParseCIDR(assignNet)
 	if err != nil {
 		panic(fmt.Sprintf("Unable to ParseCIDR(%s): %s", assignNet, err))
@@ -211,13 +211,13 @@ func StackRoutingSetup(s *stack.Stack, nic tcpip.NICID, assignNet string) {
 
 	rt := s.GetRouteTable()
 	rt = append(rt, tcpip.Route{
-		Destination: *MustSubnet(ipNet),
+		Destination: *mustSubnet(ipNet),
 		NIC:         nic,
 	})
 	s.SetRouteTable(rt)
 }
 
-func MustSubnet(ipNet *net.IPNet) *tcpip.Subnet {
+func mustSubnet(ipNet *net.IPNet) *tcpip.Subnet {
 	subnet, errx := tcpip.NewSubnet(tcpip.Address(ipNet.IP), tcpip.AddressMask(ipNet.Mask))
 	if errx != nil {
 		panic(fmt.Sprintf("Unable to MustSubnet(%s): %s", ipNet, errx))
