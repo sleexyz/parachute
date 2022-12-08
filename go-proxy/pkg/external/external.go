@@ -17,7 +17,7 @@ import (
 	"gvisor.dev/gvisor/pkg/tcpip/transport/tcp"
 	"gvisor.dev/gvisor/pkg/tcpip/transport/udp"
 	"gvisor.dev/gvisor/pkg/waiter"
-	"strange.industries/go-proxy/adapter"
+	"strange.industries/go-proxy/pkg/adapter"
 )
 
 type tcpConn struct {

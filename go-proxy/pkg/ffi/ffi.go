@@ -4,7 +4,7 @@ import (
 	"runtime"
 	"runtime/debug"
 
-	proxy "strange.industries/go-proxy/proxy"
+	proxy "strange.industries/go-proxy/pkg/proxy"
 )
 
 var p proxy.Proxy

@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"net"
 
-	"strange.industries/go-proxy/tunconn"
-	"strange.industries/go-proxy/util"
+	"strange.industries/go-proxy/pkg/tunconn"
 )
 
 // proxies a packet along
@@ -51,7 +50,7 @@ func (t *Tee) Listen() {
 						fmt.Printf("bad write to client: %s\n", err)
 					}
 				}
-				fmt.Println(util.MakeDebugString(data[:n]))
+				fmt.Println(MakeDebugString(data[:n]))
 			}
 		}
 	}()
@@ -75,7 +74,7 @@ func (t *Tee) Listen() {
 					fmt.Printf("bad write to client: %s\n", err)
 					continue
 				}
-				// fmt.Printf("inbound: %s\n", util.MakeDebugString(data[:n]))
+				// fmt.Printf("inbound: %s\n", MakeDebugString(data[:n]))
 			}
 		}
 	}()

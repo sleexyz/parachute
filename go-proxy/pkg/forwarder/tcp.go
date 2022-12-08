@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
-	"strange.industries/go-proxy/adapter"
-	"strange.industries/go-proxy/dialer"
-	M "strange.industries/go-proxy/metadata"
+	"strange.industries/go-proxy/pkg/adapter"
+	"strange.industries/go-proxy/pkg/dialer"
+	M "strange.industries/go-proxy/pkg/metadata"
 )
 
 const (

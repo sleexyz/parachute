@@ -5,8 +5,8 @@ import (
 	"net"
 	"os/exec"
 
-	"strange.industries/go-proxy/tunconn"
-	"strange.industries/go-proxy/util"
+	"strange.industries/go-proxy/pkg/tunconn"
+	"strange.industries/go-proxy/tee"
 )
 
 const (
@@ -42,7 +42,7 @@ func main() {
 				log.Printf("error reading: %v\n", err)
 				break
 			}
-			str := util.MakeDebugString(data[:n])
+			str := tee.MakeDebugString(data[:n])
 			log.Println(str)
 			err = pcapSink.Write(data[:n])
 			if err != nil {
