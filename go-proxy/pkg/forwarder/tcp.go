@@ -10,7 +10,7 @@ import (
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pkg/adapter"
-	"strange.industries/go-proxy/pkg/dialer"
+	"strange.industries/go-proxy/pkg/forwarder/dialer"
 )
 
 const (
