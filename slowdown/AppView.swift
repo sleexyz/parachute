@@ -17,6 +17,7 @@ final class AppViewModel: ObservableObject {
     @Published private(set) var errorMessage = ""
     private var bag = [AnyCancellable]()
     let service: VPNConfigurationService = .shared
+    let cheatController: CheatController = .shared
     
     func toggleConnection() {
         if service.isConnected {
@@ -37,7 +38,7 @@ final class AppViewModel: ObservableObject {
     func startCheat() {
         Task {
             do {
-                try await self.service.startCheat()
+                try await self.cheatController.startCheat()
             } catch {
                 self.showError(
                     title: "Failed to start cheat",
@@ -55,19 +56,19 @@ final class AppViewModel: ObservableObject {
 }
 
 struct CheatTimer: View {
-    @ObservedObject var service: VPNConfigurationService
+    @ObservedObject var cheatController: CheatController
     @State var cheatTimeLeft: Int
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-    init(service: VPNConfigurationService = .shared) {
-        self.service = service
-        self.cheatTimeLeft = service.cheatTimeLeft
+    init(cheatController: CheatController = .shared) {
+        self.cheatController = cheatController
+        self.cheatTimeLeft = cheatController.cheatTimeLeft
     }
     
     
     var body: some View {
         Text("\(self.cheatTimeLeft)").onReceive(timer) { _ in
-            self.cheatTimeLeft = max(service.cheatTimeLeft, 0)
+            self.cheatTimeLeft = max(cheatController.cheatTimeLeft, 0)
         }
     }
 }
@@ -76,10 +77,11 @@ struct AppView: View {
     @ObservedObject var model: AppViewModel
     @EnvironmentObject var store: SettingsStore
     @ObservedObject var service: VPNConfigurationService = .shared
+    @ObservedObject var cheatController: CheatController = .shared
     
     @ViewBuilder
     var cheatLoading : some View {
-        if service.isCheating {
+        if cheatController.isCheating {
             CheatTimer()
         } else {
             EmptyView()
@@ -96,7 +98,7 @@ struct AppView: View {
             } else {
                 PrimaryButton(title: "stop", action: model.toggleConnection, isLoading: service.isTransitioning)
                 Spacer()
-                PrimaryButton(title: "cheat", action: model.startCheat, isLoading: service.isCheating, loadingMessage: cheatLoading).disabled(service.isCheating)
+                PrimaryButton(title: "cheat", action: model.startCheat, isLoading: cheatController.isCheating, loadingMessage: cheatLoading).disabled(cheatController.isCheating)
             }
         }
         .disabled(service.isTransitioning)

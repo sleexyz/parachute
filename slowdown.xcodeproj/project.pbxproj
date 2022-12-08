@@ -32,6 +32,7 @@
 		A0933649289DCD2300D57F22 /* ProxyServer in Frameworks */ = {isa = PBXBuildFile; productRef = A0933648289DCD2300D57F22 /* ProxyServer */; };
 		A0AA63B42910338000FCABC8 /* Singleton.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AA63B32910338000FCABC8 /* Singleton.xcframework */; };
 		A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9201293FCF1700C090E9 /* SettingsStore.swift */; };
+		A0BF9204294175AE00C090E9 /* CheatController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9203294175AE00C090E9 /* CheatController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +98,7 @@
 		A0933644289DCD0000D57F22 /* ProxyServer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ProxyServer; sourceTree = "<group>"; };
 		A0AA63B32910338000FCABC8 /* Singleton.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Singleton.xcframework; path = "go-proxy/Singleton.xcframework"; sourceTree = "<group>"; };
 		A0BF9201293FCF1700C090E9 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		A0BF9203294175AE00C090E9 /* CheatController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,6 +182,7 @@
 				A08719DB281A513200113F3F /* VPNConfigurationService.swift */,
 				A08719DD281A54A900113F3F /* Spinner.swift */,
 				A0BF9201293FCF1700C090E9 /* SettingsStore.swift */,
+				A0BF9203294175AE00C090E9 /* CheatController.swift */,
 			);
 			path = slowdown;
 			sourceTree = "<group>";
@@ -410,6 +413,7 @@
 				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,
 				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
 				A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */,
+				A0BF9204294175AE00C090E9 /* CheatController.swift in Sources */,
 				A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */,
 				A08719DC281A513200113F3F /* VPNConfigurationService.swift in Sources */,
 			);
