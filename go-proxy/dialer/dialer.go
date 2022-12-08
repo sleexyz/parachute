@@ -1,16 +1,16 @@
 package dialer
+
 import (
+	"context"
 	"net"
 	"syscall"
-	"context"
+
 	"go.uber.org/atomic"
 	"golang.org/x/sys/unix"
 )
 
-
 func DialContext(ctx context.Context, network, address string) (net.Conn, error) {
 	d := &net.Dialer{}
-	// setControl(d)
 	return d.DialContext(ctx, network, address)
 }
 
