@@ -5,7 +5,6 @@ import (
 	"net"
 	"os/exec"
 
-	"strange.industries/go-proxy/pkg/tunconn"
 	"strange.industries/go-proxy/tee"
 )
 
@@ -15,7 +14,7 @@ const (
 )
 
 func main() {
-	pcapSink, err := tunconn.InitPcapSink(pcapFile)
+	pcapSink, err := initPcapSink(pcapFile)
 	if err != nil {
 		log.Panicf("could not create pcap sink: %v\n", err)
 	}

@@ -31,13 +31,13 @@ func main() {
 	defer i1.Close()
 	log.Printf("Listening for inbound packets port %s", portStr)
 
-	sink, err := tunconn.InitTCPServerSink(sinkPort)
+	sink, err := InitTCPServerSink(sinkPort)
 	if err != nil {
 		log.Fatalf("Could not initialize TCPServerSink: %v", err)
 	}
 	sink.Listen()
 	log.Printf("Listening for sink connections at port %v", sinkPort)
-	i := tunconn.InitDuplexTee(i1, sink)
+	i := InitDuplexTee(i1, sink)
 	i.WriteLoop()
 
 	// i, err := tunconn.InitWithPcapPipe(i1, "/tmp/goproxy.pcapng")

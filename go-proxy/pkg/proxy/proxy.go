@@ -17,7 +17,7 @@ type ServerProxy struct {
 }
 
 func (p *ServerProxy) Start(port int) {
-	i, err := tunconn.InitUDPServerConn(port)
+	i, err := tunconn.initUDPServerConn(port)
 	if err != nil {
 		log.Fatalf("Could not initialize internal connection: %v", err)
 	}
