@@ -11,7 +11,6 @@ import (
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pkg/adapter"
 	"strange.industries/go-proxy/pkg/dialer"
-	M "strange.industries/go-proxy/pkg/metadata"
 )
 
 const (
@@ -30,7 +29,7 @@ func setKeepAlive(c net.Conn) {
 	}
 }
 
-func DialContext(ctx context.Context, metadata *M.Metadata) (net.Conn, error) {
+func DialContext(ctx context.Context, metadata *metadata) (net.Conn, error) {
 	c, err := dialer.DialContext(ctx, "tcp", metadata.DestinationAddress())
 	if err != nil {
 		return nil, err
@@ -39,7 +38,7 @@ func DialContext(ctx context.Context, metadata *M.Metadata) (net.Conn, error) {
 	return c, nil
 }
 
-func Dial(metadata *M.Metadata) (net.Conn, error) {
+func Dial(metadata *metadata) (net.Conn, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), tcpConnectTimeout)
 	defer cancel()
 	return DialContext(ctx, metadata)
@@ -49,8 +48,7 @@ func HandleTCPConn(localConn adapter.TCPConn) {
 	defer localConn.Close()
 
 	id := localConn.ID()
-	metadata := &M.Metadata{
-		Network: M.TCP,
+	metadata := &metadata{
 		SrcIP:   net.IP(id.RemoteAddress),
 		SrcPort: id.RemotePort,
 		DstIP:   net.IP(id.LocalAddress),
