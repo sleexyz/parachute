@@ -9,7 +9,6 @@ import (
 	"log"
 
 	"strange.industries/go-proxy/pkg/adapter"
-	"strange.industries/go-proxy/pkg/external"
 	"strange.industries/go-proxy/pkg/forwarder"
 	"strange.industries/go-proxy/pkg/tunconn"
 
@@ -43,7 +42,7 @@ func Init(address string, i tunconn.TunConn) *Router {
 	tcpQueue := make(chan adapter.TCPConn)
 	udpQueue := make(chan adapter.UDPConn)
 
-	s, err := external.CreateStack(ep, tcpQueue, udpQueue)
+	s, err := createStack(ep, tcpQueue, udpQueue)
 	if err != nil {
 		log.Panicln(err)
 	}
