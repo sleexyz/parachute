@@ -20,10 +20,10 @@ const (
 	_maxSegmentSize = 1500 // mtu
 )
 
-var (
-	inflight       = 0
-	historicalMaxN = 0 // hmmm. does t seem to exceed mtu size
-)
+// var (
+// 	inflight       = 0
+// 	historicalMaxN = 0 // hmmm. does t seem to exceed mtu size
+// )
 
 // uc: connection from
 func HandleUDPConn(uc adapter.UDPConn) {
@@ -66,23 +66,23 @@ func copyPacketBuffer2(dst net.PacketConn, src net.PacketConn, to net.Addr, time
 	v := bufferv2.NewViewSize(_maxSegmentSize)
 	defer v.Release()
 
-	start := time.Now()
-	br := 0
-	i := 0
-	maxN := 0
-	inflight++
-	defer func() {
-		duration := time.Since(start)
-		avg := -1
-		if i > 0 {
-			avg = br / i
-		}
-		if maxN > historicalMaxN {
-			historicalMaxN = maxN
-		}
-		log.Printf("inflight: %d, historicalMaxN: %d, bytes read: %d, iterations: %d, avg bytes per iteration: %d, max bytes per iteration: %d, elapsed: %s\n", inflight, historicalMaxN, br, i, avg, maxN, duration)
-		inflight--
-	}()
+	// start := time.Now()
+	// br := 0
+	// i := 0
+	// maxN := 0
+	// inflight++
+	// defer func() {
+	// 	duration := time.Since(start)
+	// 	avg := -1
+	// 	if i > 0 {
+	// 		avg = br / i
+	// 	}
+	// 	if maxN > historicalMaxN {
+	// 		historicalMaxN = maxN
+	// 	}
+	// 	log.Printf("inflight: %d, historicalMaxN: %d, bytes read: %d, iterations: %d, avg bytes per iteration: %d, max bytes per iteration: %d, elapsed: %s\n", inflight, historicalMaxN, br, i, avg, maxN, duration)
+	// 	inflight--
+	// }()
 	for {
 		src.SetReadDeadline(time.Now().Add(timeout))
 		n, _, err := src.ReadFrom(v.AsSlice())
@@ -95,11 +95,11 @@ func copyPacketBuffer2(dst net.PacketConn, src net.PacketConn, to net.Addr, time
 		} else if err != nil {
 			return err
 		}
-		br += n
-		if n > maxN {
-			maxN = n
-		}
-		i++
+		// br += n
+		// if n > maxN {
+		// 	maxN = n
+		// }
+		// i++
 
 		if _, err = dst.WriteTo(v.AsSlice()[:n], to); err != nil {
 			return err

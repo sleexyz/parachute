@@ -61,7 +61,8 @@ func main() {
 	ffi.SetMemoryLimit(20 << 20)
 	ffi.SetGCPercent(50)
 	defer ffi.Close()
-	ffi.Start(port)
+	go ffi.Start(port)
+	serveDebugHandlers()
 	// ctx := context.Background()
 	// <-ctx.Done()
 }
