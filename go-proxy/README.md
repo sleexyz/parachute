@@ -4,19 +4,19 @@ Packet forwarding router proxy server, implemented in Go.
 
 Development
 ```
-git ls-files| entr -cr go run local-proxy/main.go
+git ls-files| entr -cr go run local-proxy/.
 ```
 
 With wireshark
 ```
 # 1 -- starts the traffic tee, which proxies traffic to 8081 and tees all packets to 8082
-PORT=8080 go run tee/server/main.go
+PORT=8080 go run ./tee/server/.
 
 # 2 -- starts the proxy on 8081
-git ls-files | entr -crs 'PORT=8081 go run local-proxy/main.go'
+git ls-files | entr -crs 'PORT=8081 go run ./local-proxy/main.go'
 
 # 3 -- connects traffic tee on 8082
-go run tee/client/main.go
+go run ./tee/client/.
 ```
 
 Building for ios
