@@ -144,15 +144,16 @@ func (a *Analytics) ProcessPacket(b []byte) {
 	}
 	flow.IpAddr = ipAddr
 
-	now := time.Now()
 	if isTx {
 		flow.TxBytes += len(b)
 	} else {
 		flow.RxBytes += len(b)
 	}
 	if flow.FirstWrite == nil {
-		flow.FirstWrite = &now
+		firstWrite := time.Now()
+		flow.FirstWrite = &firstWrite
 	}
-	flow.LastWrite = &now
+	lastWrite := time.Now()
+	flow.LastWrite = &lastWrite
 	a.flows[key] = flow
 }
