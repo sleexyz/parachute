@@ -13,7 +13,7 @@ const (
 
 type ServerProxy struct {
 	i tunconn.TunConn
-	c *router.Router
+	C *router.Router
 }
 
 func (p *ServerProxy) Start(port int) {
@@ -23,11 +23,11 @@ func (p *ServerProxy) Start(port int) {
 	}
 	p.i = i
 	log.Printf("Listening on port %d", port)
-	p.c = router.Init(proxyAddr, i)
-	p.c.Start()
+	p.C = router.Init(proxyAddr, i)
+	p.C.Start()
 }
 
 func (p *ServerProxy) Close() {
 	p.i.Close()
-	p.c.Close()
+	p.C.Close()
 }

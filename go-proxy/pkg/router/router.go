@@ -9,6 +9,7 @@ import (
 	"log"
 
 	"strange.industries/go-proxy/pkg/adapter"
+	"strange.industries/go-proxy/pkg/analytics"
 	"strange.industries/go-proxy/pkg/forwarder"
 	"strange.industries/go-proxy/pkg/tunconn"
 
@@ -35,6 +36,9 @@ type Router struct {
 	tcpQueue chan adapter.TCPConn
 	udpQueue chan adapter.UDPConn
 	ep       *channel.Endpoint
+
+	// other
+	Analytics *analytics.Analytics
 }
 
 func Init(address string, i tunconn.TunConn) *Router {
@@ -56,6 +60,9 @@ func Init(address string, i tunconn.TunConn) *Router {
 
 		// internal
 		i: i,
+
+		// other
+		Analytics: analytics.Init(),
 	}
 
 	return &router
@@ -91,6 +98,10 @@ func (c *Router) listenInternal(ctx context.Context) {
 				case 6:
 					c.ep.InjectInbound(ipv6.ProtocolNumber, pkb)
 				}
+				// run analysis
+				c.Analytics.ProcessPacket(v.AsSlice())
+
+				// cleanup
 				pkb.DecRef()
 			}
 		}
@@ -122,6 +133,7 @@ func (c *Router) WriteToTUN(pkt stack.PacketBufferPtr) tcpip.Error {
 	if err != nil {
 		return &tcpip.ErrInvalidEndpointState{}
 	}
+	c.Analytics.ProcessPacket(v.AsSlice())
 	return nil
 }
 
