@@ -71,8 +71,11 @@ func (a *Analytics) clearOldFlows() {
 	defer a.mut.Unlock()
 	deadline := time.Now().Add(-1 * cleanupInterval)
 	for key, flow := range a.flows {
+		if flow == nil {
+			continue
+		}
 		if flow.LastWrite.Before(deadline) {
-			a.flows[key] = nil
+			delete(a.flows, key)
 		}
 	}
 }

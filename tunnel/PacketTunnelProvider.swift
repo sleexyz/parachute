@@ -22,7 +22,8 @@ public struct ProxyServerOptions {
     }
     static let localServer = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080)
     
-    static let debugServer = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080)
+    static let debugDataServer = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080)
+    static let debugControlServer = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8083)
 }
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
@@ -35,38 +36,22 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private var cheatCompletion: DispatchWorkItem?
     private var options: ProxyServerOptions = .localServer
     
-    // milliseconds
-    private var outboundPacketDelay: Int = 1200
-    private var inboundPacketDelay: Int = 1200
+    private var proxy: FfiProxyProtocol?
+    
     private var cheat: Bool {
         return cheatCompletion != nil
     };
     
-    func getOutboundPacketDelay() -> Int {
-        if self.cheat {
-            return 0
-        }
-        return self.outboundPacketDelay;
-    }
-    
-    func getInboundPacketDelay() -> Int {
-        if self.cheat {
-            return 0
-        }
-        return self.inboundPacketDelay;
-    }
-    
-    
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
-        self.logger = Logger(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
+        let logger = Logger(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
         logger.info("go max procs: \(Ffi.FfiMaxProcs(1))")
         logger.info("go memory limit: \(Ffi.FfiSetMemoryLimit(20<<20))")
         logger.info("go gc percent: \(Ffi.FfiSetGCPercent(50))")
+        self.logger = logger
     }
     
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
-        
         let debug = options?["debug"] != nil  ? (options?["debug"]! as! NSNumber).boolValue : false
         
         self.logger.info("starting tunnel")
@@ -75,16 +60,18 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         }
         
         if (!debug) {
+            self.proxy = Ffi.FfiInit()!
             self.logger.info("starting server")
             DispatchQueue.global(qos: .background).async {
-                Ffi.FfiStart(self.options.ipv4Port)
+                self.proxy!.start(self.options.ipv4Port)
             }
             self.logger.info("server started")
         } else {
+            self.proxy = Ffi.FfiInitDebug("\(ProxyServerOptions.debugControlServer.ipv4Address):\(ProxyServerOptions.debugControlServer.ipv4Port)")!
             self.logger.info("server started")
         }
         
-        self.options = debug ? .debugServer : .localServer
+        self.options = debug ? .debugDataServer : .localServer
         
         let settings = self.initTunnelSettings(proxyHost: self.options.ipv4Address, proxyPort: self.options.ipv4Port)
         
@@ -96,10 +83,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                 if session.state == .ready {
                     session.setReadHandler({ [weak self] datagrams, error in
                         guard let self = self else { return }
-                        self.schedule(delayMs: self.getInboundPacketDelay())  {
-                            for datagram in datagrams ?? [] {
-                                self.packetFlow.writePackets([datagram], withProtocols: [self.protocolNumber(for: datagram)])
-                            }
+                        for datagram in datagrams ?? [] {
+                            self.packetFlow.writePackets([datagram], withProtocols: [self.protocolNumber(for: datagram)])
                         }
                     }, maxDatagrams: Int.max)
                     self.logger.info("tunnel started")
@@ -110,15 +95,6 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             }
         }
     }
-    
-    public func schedule(delayMs: Int = 0, execute work: @escaping @convention(block) () -> Void) {
-        if delayMs == 0 {
-            self.queue.async(execute: work)
-        } else {
-            self.queue.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(delayMs), execute: work)
-        }
-    }
-
     
     private func readOutboundPackets() {
         self.packetFlow.readPacketObjects {[weak self] packets in
@@ -131,7 +107,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                     self.logger.error("Error: \(String(describing: error))")
                 }
             }
-            self.schedule(delayMs: self.getOutboundPacketDelay())  {
+            self.queue.async {
                 self.readOutboundPackets()
             }
         }
@@ -165,7 +141,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     override func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
         self.logger.info("tunnel stopped")
         // Add code here to start the process of stopping the tunnel.
-        Ffi.FfiClose()
+        self.proxy!.close()
         completionHandler()
     }
     
@@ -186,13 +162,11 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     func startCheat() {
         self.logger.info("cheat")
-        self.inboundPacketDelay = 0
-        self.outboundPacketDelay = 0
+        self.proxy!.setLatency(0)
         
         self.cheatCompletion?.cancel()
         self.cheatCompletion = DispatchWorkItem {
-            self.inboundPacketDelay = 1200
-            self.outboundPacketDelay = 1200
+            self.proxy!.setLatency(40)
             self.logger.info("cheat end")
             self.cheatCompletion = nil
         }

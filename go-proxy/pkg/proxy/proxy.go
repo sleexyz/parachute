@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"encoding/json"
 	"log"
 
 	"strange.industries/go-proxy/pkg/router"
@@ -12,8 +13,8 @@ const (
 )
 
 type ServerProxy struct {
-	i tunconn.TunConn
-	C *router.Router
+	i      tunconn.TunConn
+	Router *router.Router
 }
 
 func (p *ServerProxy) Start(port int) {
@@ -23,11 +24,24 @@ func (p *ServerProxy) Start(port int) {
 	}
 	p.i = i
 	log.Printf("Listening on port %d", port)
-	p.C = router.Init(proxyAddr, i)
-	p.C.Start()
+	p.Router = router.Init(proxyAddr, i)
+	p.Router.Start()
 }
 
 func (p *ServerProxy) Close() {
 	p.i.Close()
-	p.C.Close()
+	p.Router.Close()
+}
+
+func (p *ServerProxy) GetRecentFlows() []byte {
+	flows := p.Router.Analytics.GetRecentFlows()
+	out, err := json.MarshalIndent(flows, "", "  ")
+	if err != nil {
+		return nil
+	}
+	return out
+}
+
+func (p *ServerProxy) SetLatency(ms int) {
+	p.Router.Controller.SetLatency(ms)
 }

@@ -4,6 +4,7 @@ package main
 import (
 	"log"
 	"runtime"
+	"runtime/debug"
 	"strconv"
 
 	"os"
@@ -11,7 +12,6 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/pyroscope-io/client/pyroscope"
-	"strange.industries/go-proxy/pkg/ffi"
 )
 
 func main() {
@@ -56,13 +56,12 @@ func main() {
 			pyroscope.ProfileBlockDuration,
 		},
 	})
-
-	ffi.MaxProcs(1)
-	ffi.SetMemoryLimit(20 << 20)
-	ffi.SetGCPercent(50)
-	defer ffi.Close()
-	go ffi.Start(port)
-	serveDebugHandlers()
+	runtime.GOMAXPROCS(1)
+	debug.SetMemoryLimit(20 << 20)
+	debug.SetGCPercent(50)
+	proxy := &DebugServerProxy{}
+	defer proxy.Close()
+	proxy.Start(port)
 	// ctx := context.Background()
 	// <-ctx.Done()
 }

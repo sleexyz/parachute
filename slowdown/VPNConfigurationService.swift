@@ -36,21 +36,23 @@ final class VPNConfigurationService: ObservableObject {
         
         // Register to receive notification in your class
         NotificationCenter.default.addObserver(forName: .NEVPNStatusDidChange, object: nil, queue: nil) { notification in
-            let conn = notification.object as! NEVPNConnection
-            if conn.status == NEVPNStatus.connected {
-                self.isConnected = true
-                self.isTransitioning = false;
-                
-            }
-            if conn.status == NEVPNStatus.connecting{
-                self.isTransitioning = true
-            }
-            if conn.status == NEVPNStatus.disconnected {
-                self.isConnected = false
-                self.isTransitioning = false;
-            }
-            if conn.status == NEVPNStatus.disconnecting{
-                self.isTransitioning = true
+            DispatchQueue.main.async {
+                let conn = notification.object as! NEVPNConnection
+                if conn.status == NEVPNStatus.connected {
+                    self.isConnected = true
+                    self.isTransitioning = false;
+                    
+                }
+                if conn.status == NEVPNStatus.connecting{
+                    self.isTransitioning = true
+                }
+                if conn.status == NEVPNStatus.disconnected {
+                    self.isConnected = false
+                    self.isTransitioning = false;
+                }
+                if conn.status == NEVPNStatus.disconnecting{
+                    self.isTransitioning = true
+                }
             }
         }
     }
