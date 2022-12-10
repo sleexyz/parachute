@@ -1,16 +1,33 @@
 package ffi
 
 import (
-	"encoding/json"
+	"log"
 	"runtime"
 	"runtime/debug"
 
 	proxy "strange.industries/go-proxy/pkg/proxy"
 )
 
-var p *proxy.ServerProxy
+type Proxy interface {
+	Start(port int)
+	Close()
+	GetRecentFlows() []byte
+	SetLatency(ms int)
+}
 
-// Memory tuning functions
+func InitDebug(debugServerAddr string) Proxy {
+	mobilelog := MobileLogger{}
+	logger := log.New(mobilelog, "", 0)
+
+	return &proxy.DebugClientProxy{
+		DebugServerAddr: debugServerAddr,
+		Log:             logger,
+	}
+}
+
+func Init() Proxy {
+	return &proxy.ServerProxy{}
+}
 
 func MaxProcs(max int) int {
 	return runtime.GOMAXPROCS(max)
@@ -22,27 +39,4 @@ func SetMemoryLimit(limit int64) int64 {
 
 func SetGCPercent(pct int) int {
 	return debug.SetGCPercent(pct)
-}
-
-// Lifecycle functions
-
-func Start(port int) {
-	p = &proxy.ServerProxy{}
-	p.Start(port)
-}
-
-func Close() {
-	p.Close()
-}
-
-// Other functions
-
-// Returns JSON encoded string
-func GetRecentFlows() []byte {
-	flows := p.C.Analytics.GetRecentFlows()
-	out, err := json.MarshalIndent(flows, "", "  ")
-	if err != nil {
-		return nil
-	}
-	return out
 }

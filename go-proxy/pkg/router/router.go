@@ -7,9 +7,11 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"strange.industries/go-proxy/pkg/adapter"
 	"strange.industries/go-proxy/pkg/analytics"
+	"strange.industries/go-proxy/pkg/controller"
 	"strange.industries/go-proxy/pkg/forwarder"
 	"strange.industries/go-proxy/pkg/tunconn"
 
@@ -38,7 +40,8 @@ type Router struct {
 	ep       *channel.Endpoint
 
 	// other
-	Analytics *analytics.Analytics
+	Analytics  *analytics.Analytics
+	Controller *controller.Controller
 }
 
 func Init(address string, i tunconn.TunConn) *Router {
@@ -62,13 +65,14 @@ func Init(address string, i tunconn.TunConn) *Router {
 		i: i,
 
 		// other
-		Analytics: analytics.Init(),
+		Analytics:  analytics.Init(),
+		Controller: controller.Init(),
 	}
 
 	return &router
 }
 
-func (c *Router) listenInternal(ctx context.Context) {
+func (r *Router) listenInternal(ctx context.Context) {
 	childCtx, cancel := context.WithCancel(ctx)
 	// forward packet from client to stack
 	go func() {
@@ -79,8 +83,7 @@ func (c *Router) listenInternal(ctx context.Context) {
 				return
 			default:
 				v := bufferv2.NewViewSize(1024 * 4)
-				// data := make([]byte, 1024*4)
-				n, err := c.i.Read(v.AsSlice())
+				n, err := r.i.Read(v.AsSlice())
 				if err != nil {
 					fmt.Printf("(outbound) bad read: %s\n", err)
 					return
@@ -92,14 +95,15 @@ func (c *Router) listenInternal(ctx context.Context) {
 				pkb := stack.NewPacketBuffer(stack.PacketBufferOptions{
 					Payload: bufferv2.MakeWithView(v),
 				})
+				time.Sleep(time.Duration(r.Controller.TxLatency) * time.Millisecond)
 				switch proto {
 				case 4:
-					c.ep.InjectInbound(ipv4.ProtocolNumber, pkb)
+					r.ep.InjectInbound(ipv4.ProtocolNumber, pkb)
 				case 6:
-					c.ep.InjectInbound(ipv6.ProtocolNumber, pkb)
+					r.ep.InjectInbound(ipv6.ProtocolNumber, pkb)
 				}
 				// run analysis
-				c.Analytics.ProcessPacket(v.AsSlice())
+				go r.Analytics.ProcessPacket(v.AsSlice())
 
 				// cleanup
 				pkb.DecRef()
@@ -114,54 +118,55 @@ func (c *Router) listenInternal(ctx context.Context) {
 			case <-childCtx.Done():
 				return
 			default:
-				pkt := c.ep.ReadContext(childCtx)
+				pkt := r.ep.ReadContext(childCtx)
 				if pkt.IsNil() {
 					return
 				}
-				c.WriteToTUN(pkt)
+				r.WriteToTUN(pkt)
 			}
 		}
 	}()
 	// <-childCtx.Done()
 }
 
-func (c *Router) WriteToTUN(pkt stack.PacketBufferPtr) tcpip.Error {
+func (r *Router) WriteToTUN(pkt stack.PacketBufferPtr) tcpip.Error {
 	defer pkt.DecRef()
 	v := pkt.ToView()
 	defer v.Release()
-	_, err := c.i.Write(v.AsSlice())
+	time.Sleep(time.Duration(r.Controller.RxLatency) * time.Millisecond)
+	_, err := r.i.Write(v.AsSlice())
 	if err != nil {
 		return &tcpip.ErrInvalidEndpointState{}
 	}
-	c.Analytics.ProcessPacket(v.AsSlice())
+	go r.Analytics.ProcessPacket(v.AsSlice())
 	return nil
 }
 
 // Initializes channel handlers
-func (c *Router) listenExternal(ctx context.Context) {
+func (r *Router) listenExternal(ctx context.Context) {
 	defer log.Println("closing external handlers")
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case conn := <-c.tcpQueue:
+		case conn := <-r.tcpQueue:
 			go forwarder.HandleTCPConn(conn)
-		case conn := <-c.udpQueue:
+		case conn := <-r.udpQueue:
 			go forwarder.HandleUDPConn(conn)
 		}
 	}
 }
 
-func (c *Router) Start() {
+func (r *Router) Start() {
 	ctx, cancel := context.WithCancel(context.Background())
-	c.cancel = cancel
-	go c.listenExternal(ctx)
-	go c.listenInternal(ctx)
+	r.cancel = cancel
+	go r.listenExternal(ctx)
+	go r.listenInternal(ctx)
 	<-ctx.Done()
 }
 
-func (c *Router) Close() {
-	if c.cancel != nil {
-		c.cancel()
+func (r *Router) Close() {
+	if r.cancel != nil {
+		r.cancel()
 	}
 }
