@@ -12,6 +12,8 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/pyroscope-io/client/pyroscope"
+	ffi "strange.industries/go-proxy/pkg/ffi"
+	"strange.industries/go-proxy/pkg/proxy"
 )
 
 func main() {
@@ -59,9 +61,12 @@ func main() {
 	runtime.GOMAXPROCS(1)
 	debug.SetMemoryLimit(20 << 20)
 	debug.SetGCPercent(50)
-	proxy := &DebugServerProxy{}
-	defer proxy.Close()
-	proxy.Start(port)
+
+	proxy := proxy.InitServerProxy()
+	proxyBridge := &ffi.LocalProxyBridge{Proxy: proxy}
+	dsp := InitDebugServerProxy(proxyBridge, proxy)
+	defer dsp.Close()
+	dsp.Start(port)
 	// ctx := context.Background()
 	// <-ctx.Done()
 }

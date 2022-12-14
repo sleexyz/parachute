@@ -21,41 +21,66 @@ const (
 
 // TODO: regularly evict old values
 
+// TODO: delete the flows, we don't need it. Also, we don't need locking
+// If anything we should queue up operations
 type Analytics struct {
-	flows         map[string]*Flow
-	mut           *sync.RWMutex
-	cleanupTicker *time.Ticker
-	cleanupQuit   chan (struct{})
+	flows map[string]*Flow
+	mut   *sync.RWMutex
+
+	// cleanupTicker *time.Ticker
+	stopTickers chan (struct{})
+
+	speedTicker   *time.Ticker
+	OnSpeedUpdate func()
+	txDelta       int
+	rxDelta       int
+	TxSpeed       int
+	RxSpeed       int
 }
 
 func Init() *Analytics {
 	analytics := &Analytics{
-		flows: make(map[string]*Flow),
-		mut:   &sync.RWMutex{},
+		// flows:   make(map[string]*Flow),
+		mut:     &sync.RWMutex{},
+		txDelta: 0,
+		rxDelta: 0,
 	}
 	analytics.Start()
 	return analytics
 }
 
 func (a *Analytics) Close() {
-	close(a.cleanupQuit)
+	close(a.stopTickers)
 }
 
 func (a *Analytics) Start() {
-	a.cleanupTicker = time.NewTicker(cleanupInterval)
-	a.cleanupQuit = make(chan struct{})
+	// a.cleanupTicker = time.NewTicker(cleanupInterval)
+	a.speedTicker = time.NewTicker(time.Second)
+	a.stopTickers = make(chan struct{})
 	go func() {
 		for {
 			select {
-			case <-a.cleanupTicker.C:
-				a.clearOldFlows()
-				// do stuff
-			case <-a.cleanupQuit:
-				a.cleanupTicker.Stop()
+			// case <-a.cleanupTicker.C:
+			// 	a.clearOldFlows()
+			case <-a.speedTicker.C:
+				a.updateSpeed()
+				if a.OnSpeedUpdate != nil {
+					a.OnSpeedUpdate()
+				}
+			case <-a.stopTickers:
+				// a.cleanupTicker.Stop()
+				a.speedTicker.Stop()
 				return
 			}
 		}
 	}()
+}
+
+func (a *Analytics) updateSpeed() {
+	a.TxSpeed = a.txDelta
+	a.txDelta = 0
+	a.RxSpeed = a.rxDelta
+	a.rxDelta = 0
 }
 
 type Flow struct {
@@ -95,6 +120,14 @@ func (a *Analytics) GetRecentFlows() []Flow {
 	return flows
 }
 
+func (a *Analytics) AddTxBytes(n int) {
+	a.txDelta += n
+}
+
+func (a *Analytics) AddRxBytes(n int) {
+	a.rxDelta += n
+}
+
 func (a *Analytics) ProcessPacket(b []byte) {
 	if len(b) == 0 {
 		return
@@ -117,7 +150,7 @@ func (a *Analytics) ProcessPacket(b []byte) {
 			ipAddr = ipv4.SrcIP
 			isTx = false
 		} else {
-			// log.Printf("Received irrelevant packet: %s -> %s", ipv4.SrcIP.String(), ipv4.DstIP.String())
+			// logger.Logger.Printf("Received irrelevant packet: %s -> %s", ipv4.SrcIP.String(), ipv4.DstIP.String())
 			return
 		}
 	}
@@ -130,7 +163,7 @@ func (a *Analytics) ProcessPacket(b []byte) {
 			ipAddr = ipv6.SrcIP
 			isTx = false
 		} else {
-			// log.Printf("Received irrelevant packet: %s -> %s", ipv6.SrcIP.String(), ipv6.DstIP.String())
+			// logger.Logger.Printf("Received irrelevant packet: %s -> %s", ipv6.SrcIP.String(), ipv6.DstIP.String())
 			return
 		}
 	}
@@ -138,7 +171,7 @@ func (a *Analytics) ProcessPacket(b []byte) {
 	a.mut.Lock()
 	defer a.mut.Unlock()
 
-	// log.Printf("Processing packet from %s to %s", srcIP.String(), dstIP.String())
+	// logger.Logger.Printf("Processing packet from %s to %s", srcIP.String(), dstIP.String())
 	key := ipAddr.String()
 
 	flow := a.flows[key]
@@ -149,8 +182,10 @@ func (a *Analytics) ProcessPacket(b []byte) {
 
 	if isTx {
 		flow.TxBytes += len(b)
+		a.txDelta += len(b)
 	} else {
 		flow.RxBytes += len(b)
+		a.rxDelta += len(b)
 	}
 	if flow.FirstWrite == nil {
 		firstWrite := time.Now()
