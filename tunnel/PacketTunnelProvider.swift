@@ -33,14 +33,9 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private let queue = DispatchQueue(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
     private let logger: Logger
     
-    private var cheatCompletion: DispatchWorkItem?
     private var options: ProxyServerOptions = .localServer
     
-    private var proxy: FfiProxyProtocol?
-    
-    private var cheat: Bool {
-        return cheatCompletion != nil
-    };
+    private var proxy: Proxy?
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
@@ -60,14 +55,14 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         }
         
         if (!debug) {
-            self.proxy = Ffi.FfiInit()!
+            self.proxy = Proxy(bridge: Ffi.FfiInit()!, logger: self.logger)
             self.logger.info("starting server")
             DispatchQueue.global(qos: .background).async {
-                self.proxy!.start(self.options.ipv4Port)
+                self.proxy!.start(port: self.options.ipv4Port)
             }
             self.logger.info("server started")
         } else {
-            self.proxy = Ffi.FfiInitDebug("\(ProxyServerOptions.debugControlServer.ipv4Address):\(ProxyServerOptions.debugControlServer.ipv4Port)")!
+            self.proxy = Proxy(bridge: Ffi.FfiInitDebug("\(ProxyServerOptions.debugControlServer.ipv4Address):\(ProxyServerOptions.debugControlServer.ipv4Port)")!, logger: self.logger)
             self.logger.info("server started")
         }
         
@@ -152,28 +147,14 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         }
         
         if messageString == "cheat" {
-            self.startCheat()
+            self.logger.info("cheat")
+            self.proxy!.pause()
         }
         
         // Add code here to handle the message.
         let responseData = "ack".data(using: String.Encoding.utf8)
         completionHandler?(responseData)
     }
-    
-    func startCheat() {
-        self.logger.info("cheat")
-        self.proxy!.setLatency(0)
-        
-        self.cheatCompletion?.cancel()
-        self.cheatCompletion = DispatchWorkItem {
-            self.proxy!.setLatency(40)
-            self.logger.info("cheat end")
-            self.cheatCompletion = nil
-        }
-        self.queue.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(60), execute: cheatCompletion!)
-
-    }
-    
     
     override func sleep(completionHandler: @escaping () -> Void) {
         // Add code here to get ready to sleep.

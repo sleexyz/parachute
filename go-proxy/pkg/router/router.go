@@ -13,6 +13,7 @@ import (
 	"strange.industries/go-proxy/pkg/analytics"
 	"strange.industries/go-proxy/pkg/controller"
 	"strange.industries/go-proxy/pkg/forwarder"
+	"strange.industries/go-proxy/pkg/logger"
 	"strange.industries/go-proxy/pkg/tunconn"
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
@@ -54,6 +55,7 @@ func Init(address string, i tunconn.TunConn) *Router {
 		log.Panicln(err)
 	}
 
+	analytics := analytics.Init()
 	router := Router{
 		// external
 		stack:    s,
@@ -65,8 +67,8 @@ func Init(address string, i tunconn.TunConn) *Router {
 		i: i,
 
 		// other
-		Analytics:  analytics.Init(),
-		Controller: controller.Init(),
+		Analytics:  analytics,
+		Controller: controller.Init(analytics),
 	}
 
 	return &router
@@ -95,17 +97,16 @@ func (r *Router) listenInternal(ctx context.Context) {
 				pkb := stack.NewPacketBuffer(stack.PacketBufferOptions{
 					Payload: bufferv2.MakeWithView(v),
 				})
-				time.Sleep(time.Duration(r.Controller.TxLatency) * time.Millisecond)
+				if r.Controller.RxLatency > 0 {
+					time.Sleep(time.Duration(r.Controller.TxLatency) * time.Millisecond)
+				}
 				switch proto {
 				case 4:
 					r.ep.InjectInbound(ipv4.ProtocolNumber, pkb)
 				case 6:
 					r.ep.InjectInbound(ipv6.ProtocolNumber, pkb)
 				}
-				// run analysis
-				go r.Analytics.ProcessPacket(v.AsSlice())
-
-				// cleanup
+				r.Analytics.AddTxBytes(n)
 				pkb.DecRef()
 			}
 		}
@@ -133,18 +134,20 @@ func (r *Router) WriteToTUN(pkt stack.PacketBufferPtr) tcpip.Error {
 	defer pkt.DecRef()
 	v := pkt.ToView()
 	defer v.Release()
-	time.Sleep(time.Duration(r.Controller.RxLatency) * time.Millisecond)
-	_, err := r.i.Write(v.AsSlice())
+	if r.Controller.RxLatency > 0 {
+		time.Sleep(time.Duration(r.Controller.RxLatency) * time.Millisecond)
+	}
+	n, err := r.i.Write(v.AsSlice())
 	if err != nil {
 		return &tcpip.ErrInvalidEndpointState{}
 	}
-	go r.Analytics.ProcessPacket(v.AsSlice())
+	r.Analytics.AddRxBytes(n)
 	return nil
 }
 
 // Initializes channel handlers
 func (r *Router) listenExternal(ctx context.Context) {
-	defer log.Println("closing external handlers")
+	defer logger.Logger.Println("closing external handlers")
 	for {
 		select {
 		case <-ctx.Done():

@@ -3,7 +3,6 @@ package forwarder
 import (
 	"context"
 	"io"
-	"log"
 	"net"
 	"sync"
 	"time"
@@ -11,6 +10,7 @@ import (
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pkg/adapter"
 	"strange.industries/go-proxy/pkg/forwarder/dialer"
+	"strange.industries/go-proxy/pkg/logger"
 )
 
 const (
@@ -57,14 +57,14 @@ func HandleTCPConn(localConn adapter.TCPConn) {
 
 	targetConn, err := Dial(metadata)
 	if err != nil {
-		log.Printf("[TCP] dial %s error: %v", metadata.DestinationAddress(), err)
+		logger.Logger.Printf("[TCP] dial %s error: %v", metadata.DestinationAddress(), err)
 		return
 	}
 	metadata.MidIP, metadata.MidPort = parseAddr(targetConn.LocalAddr())
 
 	defer targetConn.Close()
 
-	// log.Printf("[TCP] %s <-> %s\n", metadata.SourceAddress(), metadata.DestinationAddress())
+	// logger.Logger.Printf("[TCP] %s <-> %s\n", metadata.SourceAddress(), metadata.DestinationAddress())
 	relay(localConn, targetConn) /* relay connections */
 }
 

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A02BE3DA29494277005F6812 /* Proxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02BE3D929494277005F6812 /* Proxy.swift */; };
+		A02BE3DB294954B9005F6812 /* Ffi.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0BF92052942959500C090E9 /* Ffi.xcframework */; };
 		A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58DF27A6F14500D3330F /* slowdownApp.swift */; };
 		A02F58E227A6F14500D3330F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58E127A6F14500D3330F /* ContentView.swift */; };
 		A02F58E427A6F14500D3330F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02F58E327A6F14500D3330F /* Assets.xcassets */; };
@@ -15,7 +17,6 @@
 		A02F58FB27A6F14600D3330F /* slowdownUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58FA27A6F14600D3330F /* slowdownUITests.swift */; };
 		A02F58FD27A6F14600D3330F /* slowdownUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58FC27A6F14600D3330F /* slowdownUITestsLaunchTests.swift */; };
 		A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
-		A0384611294404F00000129F /* Ffi.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0BF92052942959500C090E9 /* Ffi.xcframework */; };
 		A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A0458BF9285FB5A300CE4CCB /* Logging */; };
 		A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A0458C0028614D6500CE4CCB /* LoggingOSLog */; };
 		A05AD0B3285D0CD100878904 /* NIO in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B2285D0CD100878904 /* NIO */; };
@@ -72,6 +73,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A02BE3D929494277005F6812 /* Proxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proxy.swift; sourceTree = "<group>"; };
 		A02F58DC27A6F14500D3330F /* slowdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = slowdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02F58DF27A6F14500D3330F /* slowdownApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownApp.swift; sourceTree = "<group>"; };
 		A02F58E127A6F14500D3330F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -127,7 +129,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0384611294404F00000129F /* Ffi.xcframework in Frameworks */,
+				A02BE3DB294954B9005F6812 /* Ffi.xcframework in Frameworks */,
 				A05AD0B5285D0CD100878904 /* NIOCore in Frameworks */,
 				A05AD0B7285D0CD100878904 /* NIOFoundationCompat in Frameworks */,
 				A08719E4281A617500113F3F /* NetworkExtension.framework in Frameworks */,
@@ -220,6 +222,7 @@
 			isa = PBXGroup;
 			children = (
 				A08719E6281A617500113F3F /* PacketTunnelProvider.swift */,
+				A02BE3D929494277005F6812 /* Proxy.swift */,
 				A08719E8281A617500113F3F /* Info.plist */,
 				A08719E9281A617500113F3F /* tunnel.entitlements */,
 			);
@@ -433,6 +436,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A02BE3DA29494277005F6812 /* Proxy.swift in Sources */,
 				A08719E7281A617500113F3F /* PacketTunnelProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

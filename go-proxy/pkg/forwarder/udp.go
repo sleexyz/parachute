@@ -2,13 +2,13 @@ package forwarder
 
 import (
 	"io"
-	"log"
 	"net"
 	"sync"
 	"time"
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pkg/adapter"
+	"strange.industries/go-proxy/pkg/logger"
 )
 
 const (
@@ -33,7 +33,7 @@ func HandleUDPConn(uc adapter.UDPConn) {
 	// make actual connection
 	pc, err := net.ListenPacket("udp", "")
 	if err != nil {
-		log.Printf("[UDP] dial %s error: %v", id.LocalAddress, err)
+		logger.Logger.Printf("[UDP] dial %s error: %v", id.LocalAddress, err)
 		return
 	}
 
@@ -48,14 +48,14 @@ func HandleUDPConn(uc adapter.UDPConn) {
 	go func() {
 		defer wg.Done()
 		if err := copyPacketBuffer2(pc, uc, remote, _udpSessionTimeout); err != nil {
-			log.Printf("[UDP] %v", err)
+			logger.Logger.Printf("[UDP] %v", err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
 		if err := copyPacketBuffer2(uc, pc, nil, _udpSessionTimeout); err != nil {
-			log.Printf("[UDP] %v", err)
+			logger.Logger.Printf("[UDP] %v", err)
 		}
 	}()
 
@@ -80,17 +80,17 @@ func copyPacketBuffer2(dst net.PacketConn, src net.PacketConn, to net.Addr, time
 	// 	if maxN > historicalMaxN {
 	// 		historicalMaxN = maxN
 	// 	}
-	// 	log.Printf("inflight: %d, historicalMaxN: %d, bytes read: %d, iterations: %d, avg bytes per iteration: %d, max bytes per iteration: %d, elapsed: %s\n", inflight, historicalMaxN, br, i, avg, maxN, duration)
+	// 	logger.Logger.Printf("inflight: %d, historicalMaxN: %d, bytes read: %d, iterations: %d, avg bytes per iteration: %d, max bytes per iteration: %d, elapsed: %s\n", inflight, historicalMaxN, br, i, avg, maxN, duration)
 	// 	inflight--
 	// }()
 	for {
 		src.SetReadDeadline(time.Now().Add(timeout))
 		n, _, err := src.ReadFrom(v.AsSlice())
 		if ne, ok := err.(net.Error); ok && ne.Timeout() {
-			log.Println("timeout")
+			logger.Logger.Println("timeout")
 			return nil /* ignore I/O timeout */
 		} else if err == io.EOF {
-			log.Println("eof")
+			logger.Logger.Println("eof")
 			return nil /* ignore EOF */
 		} else if err != nil {
 			return err

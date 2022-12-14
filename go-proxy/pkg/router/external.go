@@ -2,7 +2,6 @@ package router
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"time"
 
@@ -18,6 +17,7 @@ import (
 	"gvisor.dev/gvisor/pkg/tcpip/transport/udp"
 	"gvisor.dev/gvisor/pkg/waiter"
 	"strange.industries/go-proxy/pkg/adapter"
+	"strange.industries/go-proxy/pkg/logger"
 )
 
 type tcpConn struct {
@@ -134,14 +134,14 @@ func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 			// RST: prevent potential half-open TCP connection leak.
 			r.Complete(true)
 
-			log.Printf("error forwarding tcp request %s:%d->%s:%d, could not create endpoint: %s\n",
+			logger.Logger.Printf("error forwarding tcp request %s:%d->%s:%d, could not create endpoint: %s\n",
 				id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort, err)
 			return
 		}
 		defer r.Complete(false)
 		defer func() {
 			if err != nil {
-				log.Printf("error forwarding tcp request %s:%d->%s:%d: %s\n",
+				logger.Logger.Printf("error forwarding tcp request %s:%d->%s:%d: %s\n",
 					id.RemoteAddress, id.RemotePort, id.LocalAddress, id.LocalPort, err)
 			}
 		}()

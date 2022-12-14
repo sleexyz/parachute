@@ -1,12 +1,14 @@
 package main
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
-	"log"
 	"net/http"
+	"regexp"
 	"time"
 
+	ffi "strange.industries/go-proxy/pkg/ffi"
+	"strange.industries/go-proxy/pkg/logger"
 	"strange.industries/go-proxy/pkg/proxy"
 )
 
@@ -15,48 +17,53 @@ var (
 )
 
 type DebugServerProxy struct {
-	proxy.ServerProxy
+	proxyBridge ffi.ProxyBridge
+	proxy       proxy.Proxy
+}
+
+func InitDebugServerProxy(proxyBridge ffi.ProxyBridge, proxy proxy.Proxy) *DebugServerProxy {
+	return &DebugServerProxy{proxyBridge: proxyBridge, proxy: proxy}
 }
 
 func (p *DebugServerProxy) Start(port int) {
-	go p.ServerProxy.Start(port)
+	go p.proxy.Start(port)
 	p.serveDebugHandlers()
 	// Start http server
 }
 
+func (p *DebugServerProxy) Close() {
+	p.proxy.Close()
+}
+
+func (p *DebugServerProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	regexp, _ := regexp.Compile("^/Command/([a-zA-Z]+)$")
+	match := regexp.FindStringSubmatch(r.URL.Path)
+	if len(match) < 2 {
+		http.Error(w, "No command found", http.StatusNotFound)
+		return
+	}
+	var buf bytes.Buffer
+	buf.ReadFrom(r.Body)
+	out := p.proxyBridge.Command(match[1], buf.Bytes())
+	logger.Logger.Printf("%s %s", match[1], buf.String())
+	w.Header().Set("Content-Type", "application/json")
+	_, err := w.Write(out)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
+	}
+}
+
 func (p *DebugServerProxy) serveDebugHandlers() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/GetRecentFlows", func(w http.ResponseWriter, r *http.Request) {
-		log.Println("/GetRecentFlows")
-		flows := p.GetRecentFlows()
-		w.Header().Set("Content-Type", "application/json")
-		_, err := w.Write(flows)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
-		}
-	})
-	mux.HandleFunc("/SetLatency", func(w http.ResponseWriter, r *http.Request) {
-		var ms int
-		err := json.NewDecoder(r.Body).Decode(&ms)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
-		}
-		log.Printf("/SetLatency: %dms", ms)
-		p.SetLatency(ms)
-		w.WriteHeader(http.StatusOK)
-		// w.Header().Set("Content-Type", "application/json")
-		// _, err := w.Write([])
-		// if err != nil {
-		// 	http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
-		// }
+	mux.HandleFunc("/Command", func(w http.ResponseWriter, r *http.Request) {
 	})
 	s := &http.Server{
 		Addr:           fmt.Sprintf(":%s", debugPort),
-		Handler:        mux,
+		Handler:        p,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
-	log.Printf("Serving debug requests at port %s\n", debugPort)
-	log.Fatal(s.ListenAndServe())
+	logger.Logger.Printf("Serving debug requests at port %s\n", debugPort)
+	logger.Logger.Fatal(s.ListenAndServe())
 }
