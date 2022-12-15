@@ -3,12 +3,12 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"net/http"
 	"regexp"
 	"time"
 
 	ffi "strange.industries/go-proxy/pkg/ffi"
-	"strange.industries/go-proxy/pkg/logger"
 	"strange.industries/go-proxy/pkg/proxy"
 )
 
@@ -45,7 +45,7 @@ func (p *DebugServerProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var buf bytes.Buffer
 	buf.ReadFrom(r.Body)
 	out := p.proxyBridge.Command(match[1], buf.Bytes())
-	logger.Logger.Printf("%s %s", match[1], buf.String())
+	log.Printf("%s %s", match[1], buf.String())
 	w.Header().Set("Content-Type", "application/json")
 	_, err := w.Write(out)
 	if err != nil {
@@ -64,6 +64,6 @@ func (p *DebugServerProxy) serveDebugHandlers() {
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
-	logger.Logger.Printf("Serving debug requests at port %s\n", debugPort)
-	logger.Logger.Fatal(s.ListenAndServe())
+	log.Printf("Serving debug requests at port %s\n", debugPort)
+	log.Fatal(s.ListenAndServe())
 }

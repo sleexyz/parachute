@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"log"
 	"net"
 	"sync"
 	"syscall"
@@ -12,7 +13,6 @@ import (
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pkg/adapter"
 	"strange.industries/go-proxy/pkg/controller"
-	"strange.industries/go-proxy/pkg/logger"
 )
 
 const (
@@ -22,7 +22,7 @@ const (
 
 	// _relayBufferSize = 16 << 10
 	_relayBufferSize = 16 << 10
-	// _relayBufferSize = 1024 * 8
+	//_relayBufferSize = 1024 * 2
 )
 
 // setKeepAlive sets tcp keepalive option for tcp connection.
@@ -61,19 +61,19 @@ func HandleTCPConn(localConn adapter.TCPConn) {
 	}
 
 	startTime := time.Now()
-	// logger.Logger.Printf("[TCP start] %s <-> %s\n", metadata.SourceAddress(), metadata.DestinationAddress())
+	// log.Printf("[TCP start] %s <-> %s\n", metadata.SourceAddress(), metadata.DestinationAddress())
 	targetConn, err := Dial(metadata.DestinationAddress())
 	if err != nil {
-		logger.Logger.Printf("[TCP] dial %s error: %v", metadata.DestinationAddress(), err)
+		log.Printf("[TCP] dial %s error: %v", metadata.DestinationAddress(), err)
 		return
 	}
 	metadata.MidIP, metadata.MidPort = parseAddr(targetConn.LocalAddr())
 
 	defer targetConn.Close()
 
-	txBytes, rxBytes := relay(localConn, targetConn) /* relay connections */
-	elapsed := time.Since(startTime)
-	logger.Logger.Printf("[TCP end (%s) (tx: %d, rx: %d)] %s <-> %s\n", elapsed, txBytes, rxBytes, metadata.SourceAddress(), metadata.DestinationAddress())
+	_, _ = relay(localConn, targetConn) /* relay connections */
+	_ = time.Since(startTime)
+	// log.Printf("[TCP end (%s) (tx: %d, rx: %d)] %s <-> %s\n", elapsed, txBytes, rxBytes, metadata.SourceAddress(), metadata.DestinationAddress())
 }
 
 // relay copies between left and right bidirectionally.

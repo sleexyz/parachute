@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"strange.industries/go-proxy/pkg/controller"
-	"strange.industries/go-proxy/pkg/logger"
 )
 
 type DebugClientProxy struct {
@@ -27,7 +27,7 @@ func (p *DebugClientProxy) Close() {
 
 func (p *DebugClientProxy) CallCommand(command string, input []byte) ([]byte, error) {
 	url := fmt.Sprintf("http://%s/Command/%s", p.debugServerAddr, command)
-	logger.Logger.Printf("POST %s", url)
+	log.Printf("POST %s", url)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(input))
 	if err != nil {
 		return nil, err
@@ -36,31 +36,31 @@ func (p *DebugClientProxy) CallCommand(command string, input []byte) ([]byte, er
 }
 
 func (p *DebugClientProxy) GetSpeed() *controller.GetSpeedResponse {
-	logger.Logger.Printf("/GetSpeed")
+	log.Printf("/GetSpeed")
 	in, err := json.Marshal(struct{}{})
 	if err != nil {
-		logger.Logger.Fatalln("Could not marshal request")
+		log.Fatalln("Could not marshal request")
 	}
 	out, err := p.CallCommand("GetSpeed", in)
 	var resp *controller.GetSpeedResponse
 	json.Unmarshal(out, &resp)
 	if err != nil {
-		logger.Logger.Fatalln("Could not unmarshal response")
+		log.Fatalln("Could not unmarshal response")
 	}
 	return resp
 }
 
 func (p *DebugClientProxy) GetRecentFlows() []controller.FlowData {
-	logger.Logger.Printf("/GetRecentFlows")
+	log.Printf("/GetRecentFlows")
 	in, err := json.Marshal(struct{}{})
 	if err != nil {
-		logger.Logger.Fatalln("Could not marshal request")
+		log.Fatalln("Could not marshal request")
 	}
 	out, err := p.CallCommand("GetRecentFlows", in)
 	var resp []controller.FlowData
 	json.Unmarshal(out, &resp)
 	if err != nil {
-		logger.Logger.Fatalln("Could not unmarshal response")
+		log.Fatalln("Could not unmarshal response")
 	}
 	return resp
 }
@@ -68,11 +68,11 @@ func (p *DebugClientProxy) GetRecentFlows() []controller.FlowData {
 func (p *DebugClientProxy) Pause() {
 	req, err := json.Marshal(struct{}{})
 	if err != nil {
-		logger.Logger.Fatalln("Could not marshal request")
+		log.Fatalln("Could not marshal request")
 	}
 	_, err = p.CallCommand("Pause", req)
 	if err != nil {
-		logger.Logger.Fatalln("Could not unmarshal response")
+		log.Fatalln("Could not unmarshal response")
 	}
 	return
 }

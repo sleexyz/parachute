@@ -2,6 +2,7 @@ package forwarder
 
 import (
 	"io"
+	"log"
 	"net"
 	"sync"
 	"time"
@@ -9,7 +10,6 @@ import (
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pkg/adapter"
 	"strange.industries/go-proxy/pkg/controller"
-	"strange.industries/go-proxy/pkg/logger"
 )
 
 const (
@@ -34,7 +34,7 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 	// make actual connection
 	targetConn, err := net.ListenPacket("udp", "")
 	if err != nil {
-		logger.Logger.Printf("[UDP] dial %s error: %v", id.LocalAddress, err)
+		log.Printf("[UDP] dial %s error: %v", id.LocalAddress, err)
 		return
 	}
 
@@ -43,35 +43,35 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 		Port: int(id.LocalPort),
 	}
 
-	var txBytes int
-	var rxBytes int
+	// var txBytes int
+	// var rxBytes int
 	start := time.Now()
-	// logger.Logger.Printf("[UDP start] %s:%d %s:%d", id.LocalAddress, id.LocalPort, id.RemoteAddress, id.RemotePort)
+	// log.Printf("[UDP start] %s:%d %s:%d", id.LocalAddress, id.LocalPort, id.RemoteAddress, id.RemotePort)
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 
 	go func() {
 		defer wg.Done()
-		n, err := copyPacketBuffer2(targetConn, localConn, remote, _udpSessionTimeout)
+		_, err := copyPacketBuffer2(targetConn, localConn, remote, _udpSessionTimeout)
 		if err != nil {
-			logger.Logger.Printf("[UDP] %v", err)
+			log.Printf("[UDP] %v", err)
 		}
-		txBytes = n
+		// txBytes = n
 	}()
 
 	go func() {
 		defer wg.Done()
 		slowedTargetConn := &controller.SlowablePacketConn{PacketConn: targetConn, S: localConn.Slowable()}
-		n, err := copyPacketBuffer2(localConn, slowedTargetConn, nil, _udpSessionTimeout)
+		_, err := copyPacketBuffer2(localConn, slowedTargetConn, nil, _udpSessionTimeout)
 		if err != nil {
-			logger.Logger.Printf("[UDP] %v", err)
+			log.Printf("[UDP] %v", err)
 		}
-		rxBytes = n
+		// rxBytes = n
 	}()
 
 	wg.Wait()
-	elapsed := time.Since(start)
-	logger.Logger.Printf("[UDP end (%s) (tx: %d, rx: %d)] %s:%d %s:%d", elapsed, txBytes, rxBytes, id.LocalAddress, id.LocalPort, id.RemoteAddress, id.RemotePort)
+	_ = time.Since(start)
+	// log.Printf("[UDP end (%s) (tx: %d, rx: %d)] %s:%d %s:%d", elapsed, txBytes, rxBytes, id.LocalAddress, id.LocalPort, id.RemoteAddress, id.RemotePort)
 }
 
 func copyPacketBuffer2(dst net.PacketConn, src net.PacketConn, to net.Addr, timeout time.Duration) (nw int, err error) {
