@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 
-	"strange.industries/go-proxy/pkg/analytics"
 	"strange.industries/go-proxy/pkg/controller"
 	"strange.industries/go-proxy/pkg/logger"
 )
@@ -51,14 +50,14 @@ func (p *DebugClientProxy) GetSpeed() *controller.GetSpeedResponse {
 	return resp
 }
 
-func (p *DebugClientProxy) GetRecentFlows() []analytics.Flow {
+func (p *DebugClientProxy) GetRecentFlows() []controller.FlowData {
 	logger.Logger.Printf("/GetRecentFlows")
 	in, err := json.Marshal(struct{}{})
 	if err != nil {
 		logger.Logger.Fatalln("Could not marshal request")
 	}
 	out, err := p.CallCommand("GetRecentFlows", in)
-	var resp []analytics.Flow
+	var resp []controller.FlowData
 	json.Unmarshal(out, &resp)
 	if err != nil {
 		logger.Logger.Fatalln("Could not unmarshal response")

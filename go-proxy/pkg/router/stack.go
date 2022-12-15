@@ -17,12 +17,18 @@ import (
 	"gvisor.dev/gvisor/pkg/tcpip/transport/udp"
 	"gvisor.dev/gvisor/pkg/waiter"
 	"strange.industries/go-proxy/pkg/adapter"
+	"strange.industries/go-proxy/pkg/controller"
 	"strange.industries/go-proxy/pkg/logger"
 )
 
 type tcpConn struct {
 	*gonet.TCPConn
-	id stack.TransportEndpointID
+	slowable controller.Slowable
+	id       stack.TransportEndpointID
+}
+
+func (c *tcpConn) Slowable() controller.Slowable {
+	return c.slowable
 }
 
 func (c *tcpConn) ID() *stack.TransportEndpointID {
@@ -31,7 +37,12 @@ func (c *tcpConn) ID() *stack.TransportEndpointID {
 
 type udpConn struct {
 	*gonet.UDPConn
-	id stack.TransportEndpointID
+	slowable controller.Slowable
+	id       stack.TransportEndpointID
+}
+
+func (c *udpConn) Slowable() controller.Slowable {
+	return c.slowable
 }
 
 func (c *udpConn) ID() *stack.TransportEndpointID {
@@ -72,7 +83,7 @@ const (
 	sndBufferSize = 16 >> 10
 )
 
-func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue chan adapter.UDPConn) (*stack.Stack, error) {
+func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue chan adapter.UDPConn, c *controller.Controller) (*stack.Stack, error) {
 	s := stack.New(stack.Options{
 		NetworkProtocols:   []stack.NetworkProtocolFactory{ipv4.NewProtocol, ipv6.NewProtocol},
 		TransportProtocols: []stack.TransportProtocolFactory{tcp.NewProtocol, udp.NewProtocol, icmp.NewProtocol6, icmp.NewProtocol4},
@@ -149,8 +160,9 @@ func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 		err = setSocketOptions(s, ep)
 
 		conn := &tcpConn{
-			TCPConn: gonet.NewTCPConn(&wq, ep),
-			id:      id,
+			TCPConn:  gonet.NewTCPConn(&wq, ep),
+			id:       id,
+			slowable: controller.InitProportionalSlowable(c),
 		}
 		tcpQueue <- conn
 	})
@@ -166,8 +178,9 @@ func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 			return
 		}
 		conn := &udpConn{
-			UDPConn: gonet.NewUDPConn(s, &wq, ep),
-			id:      id,
+			UDPConn:  gonet.NewUDPConn(s, &wq, ep),
+			id:       id,
+			slowable: controller.InitProportionalSlowable(c),
 		}
 		udpQueue <- conn
 	})

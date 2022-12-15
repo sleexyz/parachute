@@ -1,71 +1,53 @@
 package controller
 
 import (
+	"math"
+	"net"
 	"time"
 
-	"strange.industries/go-proxy/pkg/analytics"
+	"strange.industries/go-proxy/pkg/logger"
 )
 
 const (
-	defaultTxLatency     = 20
-	defaultRxLatency     = 20
-	defaultRxSpeedTarget = 50000
+	defaultRxSpeedTarget = 400000.0 //400kbps
 )
 
+type FlowData struct {
+	IpAddr  net.IP `json:"ipAddr"`
+	RxBytes int    `json:"rxBytes"`
+	// FirstWrite *time.Time `json:"firstWrite"`
+	// LastWrite  *time.Time `json:"lastWrite"`
+}
+
+type ControllerSettingsReadonly interface {
+	RxSpeedTarget() float64
+}
+
 type Controller struct {
-	TxLatency     float64
-	RxLatency     float64
-	rxSpeedTarget int
+	rxSpeedTarget float64
 	pauseTimer    *time.Timer
-	a             *analytics.Analytics
 }
 
 type GetSpeedResponse struct {
-	TxLatency     float64 `json:"txLatency"`
-	RxLatency     float64 `json:"rxLatency"`
-	TxSpeed       int     `json:"txSpeed"`
-	RxSpeed       int     `json:"rxSpeed"`
-	RxSpeedTarget int     `json:"rxSpeedTarget"`
+	RxSpeedTarget float64 `json:"rxSpeedTarget"`
 }
 
-func Init(a *analytics.Analytics) *Controller {
+func Init() *Controller {
 	controller := &Controller{
-		TxLatency:     defaultTxLatency,
-		RxLatency:     defaultRxLatency,
 		rxSpeedTarget: defaultRxSpeedTarget,
-		a:             a,
 	}
-	controller.Install()
 	return controller
 }
 
-// TODO
-// - record average tx latency
-// - plot graphs
-// - goal -- get steady borderline unusable
-
-func (c *Controller) Install() {
-	c.a.OnSpeedUpdate = func() {
-		delta := c.rxSpeedTarget - c.a.RxSpeed
-		dampening := 1 / 10000.0
-		if delta > 0 { // under target, breaking connection
-			dampening *= 2 // revive it
-		}
-		c.RxLatency -= float64(delta) * dampening
-		c.TxLatency -= float64(delta) * dampening
-		if c.RxLatency < 0 {
-			c.RxLatency = 0
-		}
-		if c.TxLatency < 0 {
-			c.TxLatency = 0
-		}
-	}
+func (c *Controller) RxSpeedTarget() float64 {
+	return c.rxSpeedTarget
 }
 
 func (c *Controller) Pause() {
-	c.rxSpeedTarget = 100000000
+	c.rxSpeedTarget = math.Inf(1)
 	if c.pauseTimer != nil {
 		c.pauseTimer.Stop()
+		logger.Logger.Printf("Pause ended")
 	}
 	c.pauseTimer = time.NewTimer(time.Minute)
 	<-c.pauseTimer.C
@@ -74,10 +56,6 @@ func (c *Controller) Pause() {
 
 func (c *Controller) GetSpeed() *GetSpeedResponse {
 	return &GetSpeedResponse{
-		TxLatency:     c.TxLatency,
-		RxLatency:     c.RxLatency,
-		TxSpeed:       c.a.TxSpeed,
-		RxSpeed:       c.a.RxSpeed,
 		RxSpeedTarget: c.rxSpeedTarget,
 	}
 }

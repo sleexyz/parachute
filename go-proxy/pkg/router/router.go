@@ -7,10 +7,8 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"strange.industries/go-proxy/pkg/adapter"
-	"strange.industries/go-proxy/pkg/analytics"
 	"strange.industries/go-proxy/pkg/controller"
 	"strange.industries/go-proxy/pkg/forwarder"
 	"strange.industries/go-proxy/pkg/logger"
@@ -35,13 +33,10 @@ type Router struct {
 	i tunconn.TunConn
 
 	// external (proxy <=> internet)
-	stack    *stack.Stack
-	tcpQueue chan adapter.TCPConn
-	udpQueue chan adapter.UDPConn
-	ep       *channel.Endpoint
-
-	// other
-	Analytics  *analytics.Analytics
+	stack      *stack.Stack
+	tcpQueue   chan adapter.TCPConn
+	udpQueue   chan adapter.UDPConn
+	ep         *channel.Endpoint
 	Controller *controller.Controller
 }
 
@@ -50,12 +45,12 @@ func Init(address string, i tunconn.TunConn) *Router {
 	tcpQueue := make(chan adapter.TCPConn)
 	udpQueue := make(chan adapter.UDPConn)
 
-	s, err := createStack(ep, tcpQueue, udpQueue)
+	controller := controller.Init()
+	s, err := createStack(ep, tcpQueue, udpQueue, controller)
 	if err != nil {
 		log.Panicln(err)
 	}
 
-	analytics := analytics.Init()
 	router := Router{
 		// external
 		stack:    s,
@@ -67,8 +62,7 @@ func Init(address string, i tunconn.TunConn) *Router {
 		i: i,
 
 		// other
-		Analytics:  analytics,
-		Controller: controller.Init(analytics),
+		Controller: controller,
 	}
 
 	return &router
@@ -97,16 +91,12 @@ func (r *Router) listenInternal(ctx context.Context) {
 				pkb := stack.NewPacketBuffer(stack.PacketBufferOptions{
 					Payload: bufferv2.MakeWithView(v),
 				})
-				if r.Controller.RxLatency > 0 {
-					time.Sleep(time.Duration(r.Controller.TxLatency) * time.Millisecond)
-				}
 				switch proto {
 				case 4:
 					r.ep.InjectInbound(ipv4.ProtocolNumber, pkb)
 				case 6:
 					r.ep.InjectInbound(ipv6.ProtocolNumber, pkb)
 				}
-				r.Analytics.AddTxBytes(n)
 				pkb.DecRef()
 			}
 		}
@@ -134,14 +124,10 @@ func (r *Router) WriteToTUN(pkt stack.PacketBufferPtr) tcpip.Error {
 	defer pkt.DecRef()
 	v := pkt.ToView()
 	defer v.Release()
-	if r.Controller.RxLatency > 0 {
-		time.Sleep(time.Duration(r.Controller.RxLatency) * time.Millisecond)
-	}
-	n, err := r.i.Write(v.AsSlice())
+	_, err := r.i.Write(v.AsSlice())
 	if err != nil {
 		return &tcpip.ErrInvalidEndpointState{}
 	}
-	r.Analytics.AddRxBytes(n)
 	return nil
 }
 
