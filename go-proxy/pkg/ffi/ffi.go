@@ -2,11 +2,11 @@ package ffi
 
 import (
 	"encoding/json"
+	"io"
 	"log"
 	"runtime"
 	"runtime/debug"
 
-	"strange.industries/go-proxy/pkg/logger"
 	proxy "strange.industries/go-proxy/pkg/proxy"
 )
 
@@ -41,24 +41,21 @@ func (p *LocalProxyBridge) Command(command string, input []byte) []byte {
 func (p *LocalProxyBridge) encodeResponse(resp any) []byte {
 	out, err := json.MarshalIndent(resp, "", "  ")
 	if err != nil {
-		logger.Logger.Fatalf("Error: %s", err)
+		log.Fatalf("Error: %s", err)
 		return make([]byte, 0)
 	}
 	return out
 }
 
 func InitDebug(debugServerAddr string) ProxyBridge {
-	logger.SetGlobalLogger(log.New(MobileLogger{}, "", 0))
-	logger.Logger.Printf("Initialized Debug Proxy Client, connected to %s", debugServerAddr)
-
+	log.SetOutput(MobileLogger{})
 	return &LocalProxyBridge{
 		Proxy: proxy.InitDebugClientProxy(debugServerAddr),
 	}
 }
 
 func Init() ProxyBridge {
-	logger.SetGlobalLogger(log.New(MobileLogger{}, "", 0))
-	logger.Logger.Printf("Initialized Local Proxy Server")
+	log.SetOutput(io.Discard)
 	return &LocalProxyBridge{
 		Proxy: proxy.InitServerProxy(),
 	}

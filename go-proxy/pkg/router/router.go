@@ -11,7 +11,6 @@ import (
 	"strange.industries/go-proxy/pkg/adapter"
 	"strange.industries/go-proxy/pkg/controller"
 	"strange.industries/go-proxy/pkg/forwarder"
-	"strange.industries/go-proxy/pkg/logger"
 	"strange.industries/go-proxy/pkg/tunconn"
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
@@ -133,7 +132,7 @@ func (r *Router) WriteToTUN(pkt stack.PacketBufferPtr) tcpip.Error {
 
 // Initializes channel handlers
 func (r *Router) listenExternal(ctx context.Context) {
-	defer logger.Logger.Println("closing external handlers")
+	defer log.Println("closing external handlers")
 	for {
 		select {
 		case <-ctx.Done():

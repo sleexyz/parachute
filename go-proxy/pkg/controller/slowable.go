@@ -3,8 +3,6 @@ package controller
 import (
 	"net"
 	"time"
-
-	"strange.industries/go-proxy/pkg/logger"
 )
 
 type SlowableConn struct {
@@ -14,8 +12,8 @@ type SlowableConn struct {
 
 func (r *SlowableConn) Read(p []byte) (n int, err error) {
 	n, err = r.Conn.Read(p)
-	r.S.RecordBytesRead(n)
-	r.S.InjectRxLatency()
+	r.S.Update(n, time.Now())
+	r.S.InjectRxLatency(n)
 	return
 }
 
@@ -27,8 +25,8 @@ type SlowablePacketConn struct {
 
 func (r *SlowablePacketConn) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	n, addr, err = r.PacketConn.ReadFrom(p)
-	r.S.RecordBytesRead(n)
-	r.S.InjectRxLatency()
+	r.S.Update(n, time.Now())
+	r.S.InjectRxLatency(n)
 	return
 }
 
@@ -37,48 +35,66 @@ type Flow interface {
 }
 
 type Slowable interface {
-	RecordBytesRead(n int)
-	InjectRxLatency()
+	Update(n int, now time.Time)
+	InjectRxLatency(n int)
 }
 
 type SlowableBase struct {
-	rxSpeed        float64
+	// total rxBytes
+	rxBytes int64
+	// rxBytes since last sample time
+	dRx            int64
 	lastSampleTime time.Time
-	rxLatency      time.Duration
+	rxSpeed        float64
+
+	rxLatencyPerByte time.Duration
+	Sampler          Sampler
 }
 
-func (s *SlowableBase) InjectRxLatency() {
-	if s.rxLatency == 0 {
+type Sampler interface {
+	Sample(n int, dt time.Duration)
+}
+
+func (s *SlowableBase) InjectRxLatency(n int) {
+	if s.rxLatencyPerByte <= 0 {
 		return
 	}
-	logger.Logger.Printf("sleeping %s", s.rxLatency)
-	time.Sleep(s.rxLatency)
+	time.Sleep(s.rxLatencyPerByte * time.Duration(n))
 }
 
-func InitSlowableBase(initialLatency time.Duration) *SlowableBase {
-	return &SlowableBase{
-		rxSpeed:        0,
-		lastSampleTime: time.Now(),
-		rxLatency:      initialLatency,
+func InitSlowableBase(initialLatencyPerByte time.Duration) *SlowableBase {
+	self := &SlowableBase{
+		rxSpeed:          0,
+		lastSampleTime:   time.Now(),
+		rxLatencyPerByte: initialLatencyPerByte,
+	}
+	self.Sampler = self
+	return self
+}
+
+func (s *SlowableBase) SetRxLatencyPerByte(l time.Duration) {
+	s.rxLatencyPerByte = l
+}
+
+func (s *SlowableBase) Update(n int, now time.Time) {
+	s.rxBytes += int64(n)
+	s.dRx += int64(n)
+	dt := now.Sub(s.lastSampleTime)
+	if dt > time.Second {
+		s.Sampler.Sample(n, dt)
+		s.lastSampleTime = now
+		s.dRx = 0
 	}
 }
 
-func (s *SlowableBase) SetRxLatency(l time.Duration) {
-	s.rxLatency = l
-}
-
-func (s *SlowableBase) RecordBytesRead(n int) {
-	now := time.Now()
-	dt := now.Sub(s.lastSampleTime)
-	// bytes/nanoseconds * 10^9 nanoseconds/second * 8 bits/byte
-	s.rxSpeed = float64(n) / float64(dt) * float64(time.Second) * 8
-	s.lastSampleTime = now
+func (s *SlowableBase) Sample(n int, dt time.Duration) {
+	s.rxSpeed = float64(s.dRx) / float64(dt) * float64(time.Second) * 8
 }
 
 func (s *SlowableBase) RxSpeed() float64 {
 	return s.rxSpeed
 }
 
-func (s *SlowableBase) RxLatency() time.Duration {
-	return s.rxLatency
+func (s *SlowableBase) RxLatencyPerByte() time.Duration {
+	return s.rxLatencyPerByte
 }

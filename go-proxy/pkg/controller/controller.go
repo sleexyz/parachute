@@ -1,15 +1,14 @@
 package controller
 
 import (
+	"log"
 	"math"
 	"net"
 	"time"
-
-	"strange.industries/go-proxy/pkg/logger"
 )
 
 const (
-	defaultRxSpeedTarget = 400000.0 //400kbps
+	defaultRxSpeedTarget = 40000.0 // dialup (40kbps)
 )
 
 type FlowData struct {
@@ -47,7 +46,7 @@ func (c *Controller) Pause() {
 	c.rxSpeedTarget = math.Inf(1)
 	if c.pauseTimer != nil {
 		c.pauseTimer.Stop()
-		logger.Logger.Printf("Pause ended")
+		log.Printf("Pause ended")
 	}
 	c.pauseTimer = time.NewTimer(time.Minute)
 	<-c.pauseTimer.C
