@@ -8,6 +8,7 @@ import (
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pkg/adapter"
+	"strange.industries/go-proxy/pkg/controller"
 	"strange.industries/go-proxy/pkg/logger"
 )
 
@@ -26,12 +27,12 @@ const (
 // )
 
 // uc: connection from
-func HandleUDPConn(uc adapter.UDPConn) {
-	defer uc.Close()
-	id := uc.ID()
+func HandleUDPConn(localConn adapter.UDPConn) {
+	defer localConn.Close()
+	id := localConn.ID()
 
 	// make actual connection
-	pc, err := net.ListenPacket("udp", "")
+	targetConn, err := net.ListenPacket("udp", "")
 	if err != nil {
 		logger.Logger.Printf("[UDP] dial %s error: %v", id.LocalAddress, err)
 		return
@@ -42,90 +43,58 @@ func HandleUDPConn(uc adapter.UDPConn) {
 		Port: int(id.LocalPort),
 	}
 
+	var txBytes int
+	var rxBytes int
+	start := time.Now()
+	// logger.Logger.Printf("[UDP start] %s:%d %s:%d", id.LocalAddress, id.LocalPort, id.RemoteAddress, id.RemotePort)
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 
 	go func() {
 		defer wg.Done()
-		if err := copyPacketBuffer2(pc, uc, remote, _udpSessionTimeout); err != nil {
+		n, err := copyPacketBuffer2(targetConn, localConn, remote, _udpSessionTimeout)
+		if err != nil {
 			logger.Logger.Printf("[UDP] %v", err)
 		}
+		txBytes = n
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := copyPacketBuffer2(uc, pc, nil, _udpSessionTimeout); err != nil {
+		slowedTargetConn := &controller.SlowablePacketConn{PacketConn: targetConn, S: localConn.Slowable()}
+		n, err := copyPacketBuffer2(localConn, slowedTargetConn, nil, _udpSessionTimeout)
+		if err != nil {
 			logger.Logger.Printf("[UDP] %v", err)
 		}
+		rxBytes = n
 	}()
 
 	wg.Wait()
+	elapsed := time.Since(start)
+	logger.Logger.Printf("[UDP end (%s) (tx: %d, rx: %d)] %s:%d %s:%d", elapsed, txBytes, rxBytes, id.LocalAddress, id.LocalPort, id.RemoteAddress, id.RemotePort)
 }
 
-func copyPacketBuffer2(dst net.PacketConn, src net.PacketConn, to net.Addr, timeout time.Duration) error {
+func copyPacketBuffer2(dst net.PacketConn, src net.PacketConn, to net.Addr, timeout time.Duration) (nw int, err error) {
 	v := bufferv2.NewViewSize(_maxSegmentSize)
 	defer v.Release()
 
-	// start := time.Now()
-	// br := 0
-	// i := 0
-	// maxN := 0
-	// inflight++
-	// defer func() {
-	// 	duration := time.Since(start)
-	// 	avg := -1
-	// 	if i > 0 {
-	// 		avg = br / i
-	// 	}
-	// 	if maxN > historicalMaxN {
-	// 		historicalMaxN = maxN
-	// 	}
-	// 	logger.Logger.Printf("inflight: %d, historicalMaxN: %d, bytes read: %d, iterations: %d, avg bytes per iteration: %d, max bytes per iteration: %d, elapsed: %s\n", inflight, historicalMaxN, br, i, avg, maxN, duration)
-	// 	inflight--
-	// }()
+	nw = 0
+
 	for {
 		src.SetReadDeadline(time.Now().Add(timeout))
 		n, _, err := src.ReadFrom(v.AsSlice())
+		nw += n
 		if ne, ok := err.(net.Error); ok && ne.Timeout() {
-			logger.Logger.Println("timeout")
-			return nil /* ignore I/O timeout */
+			return nw, nil /* ignore I/O timeout */
 		} else if err == io.EOF {
-			logger.Logger.Println("eof")
-			return nil /* ignore EOF */
+			return nw, nil /* ignore EOF */
 		} else if err != nil {
-			return err
+			return nw, err
 		}
-		// br += n
-		// if n > maxN {
-		// 	maxN = n
-		// }
-		// i++
 
 		if _, err = dst.WriteTo(v.AsSlice()[:n], to); err != nil {
-			return err
+			return nw, err
 		}
 		dst.SetReadDeadline(time.Now().Add(timeout))
 	}
 }
-
-// func copyPacketBuffer(dst net.PacketConn, src net.PacketConn, to net.Addr, timeout time.Duration) error {
-// 	buf := pool.Get(pool.MaxSegmentSize)
-// 	defer pool.Put(buf)
-
-// 	for {
-// 		src.SetReadDeadline(time.Now().Add(timeout))
-// 		n, _, err := src.ReadFrom(buf)
-// 		if ne, ok := err.(net.Error); ok && ne.Timeout() {
-// 			return nil /* ignore I/O timeout */
-// 		} else if err == io.EOF {
-// 			return nil /* ignore EOF */
-// 		} else if err != nil {
-// 			return err
-// 		}
-
-// 		if _, err = dst.WriteTo(buf[:n], to); err != nil {
-// 			return err
-// 		}
-// 		dst.SetReadDeadline(time.Now().Add(timeout))
-// 	}
-// }

@@ -1,7 +1,6 @@
 package proxy
 
 import (
-	"strange.industries/go-proxy/pkg/analytics"
 	"strange.industries/go-proxy/pkg/controller"
 	"strange.industries/go-proxy/pkg/logger"
 	"strange.industries/go-proxy/pkg/router"
@@ -16,7 +15,7 @@ type Proxy interface {
 	Start(port int)
 	Close()
 	GetSpeed() *controller.GetSpeedResponse
-	GetRecentFlows() []analytics.Flow
+	GetRecentFlows() []controller.FlowData
 	Pause()
 }
 
@@ -49,8 +48,8 @@ func (p *ServerProxy) GetSpeed() *controller.GetSpeedResponse {
 	return p.Router.Controller.GetSpeed()
 }
 
-func (p *ServerProxy) GetRecentFlows() []analytics.Flow {
-	return p.Router.Analytics.GetRecentFlows()
+func (p *ServerProxy) GetRecentFlows() []controller.FlowData {
+	return []controller.FlowData{}
 }
 
 func (p *ServerProxy) Pause() {

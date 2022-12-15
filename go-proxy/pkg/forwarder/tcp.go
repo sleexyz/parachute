@@ -2,23 +2,27 @@ package forwarder
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net"
 	"sync"
+	"syscall"
 	"time"
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pkg/adapter"
-	"strange.industries/go-proxy/pkg/forwarder/dialer"
+	"strange.industries/go-proxy/pkg/controller"
 	"strange.industries/go-proxy/pkg/logger"
 )
 
 const (
-	tcpWaitTimeout     = 5 * time.Second
+	tcpWaitTimeout     = 30 * time.Second
 	tcpKeepAlivePeriod = 30 * time.Second
-	tcpConnectTimeout  = 5 * time.Second
+	tcpConnectTimeout  = 30 * time.Second
 
+	// _relayBufferSize = 16 << 10
 	_relayBufferSize = 16 << 10
+	// _relayBufferSize = 1024 * 8
 )
 
 // setKeepAlive sets tcp keepalive option for tcp connection.
@@ -29,8 +33,9 @@ func setKeepAlive(c net.Conn) {
 	}
 }
 
-func DialContext(ctx context.Context, metadata *metadata) (net.Conn, error) {
-	c, err := dialer.DialContext(ctx, "tcp", metadata.DestinationAddress())
+func DialContext(ctx context.Context, dstAddr string) (net.Conn, error) {
+	d := &net.Dialer{}
+	c, err := d.DialContext(ctx, "tcp", dstAddr)
 	if err != nil {
 		return nil, err
 	}
@@ -38,10 +43,10 @@ func DialContext(ctx context.Context, metadata *metadata) (net.Conn, error) {
 	return c, nil
 }
 
-func Dial(metadata *metadata) (net.Conn, error) {
+func Dial(dstAddr string) (net.Conn, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), tcpConnectTimeout)
 	defer cancel()
-	return DialContext(ctx, metadata)
+	return DialContext(ctx, dstAddr)
 }
 
 func HandleTCPConn(localConn adapter.TCPConn) {
@@ -55,7 +60,9 @@ func HandleTCPConn(localConn adapter.TCPConn) {
 		DstPort: id.LocalPort,
 	}
 
-	targetConn, err := Dial(metadata)
+	startTime := time.Now()
+	// logger.Logger.Printf("[TCP start] %s <-> %s\n", metadata.SourceAddress(), metadata.DestinationAddress())
+	targetConn, err := Dial(metadata.DestinationAddress())
 	if err != nil {
 		logger.Logger.Printf("[TCP] dial %s error: %v", metadata.DestinationAddress(), err)
 		return
@@ -64,34 +71,48 @@ func HandleTCPConn(localConn adapter.TCPConn) {
 
 	defer targetConn.Close()
 
-	// logger.Logger.Printf("[TCP] %s <-> %s\n", metadata.SourceAddress(), metadata.DestinationAddress())
-	relay(localConn, targetConn) /* relay connections */
+	txBytes, rxBytes := relay(localConn, targetConn) /* relay connections */
+	elapsed := time.Since(startTime)
+	logger.Logger.Printf("[TCP end (%s) (tx: %d, rx: %d)] %s <-> %s\n", elapsed, txBytes, rxBytes, metadata.SourceAddress(), metadata.DestinationAddress())
 }
 
 // relay copies between left and right bidirectionally.
-func relay(left, right net.Conn) {
+func relay(localConn adapter.TCPConn, targetConn net.Conn) (int64, int64) {
+
+	var txBytes int64
+	var rxBytes int64
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 
 	go func() {
 		defer wg.Done()
-		_ = copyBuffer(right, left) /* ignore error */
-		right.SetReadDeadline(time.Now().Add(tcpWaitTimeout))
+		txBytes, _ = copyBuffer(targetConn, localConn) /* ignore error */
+		targetConn.SetReadDeadline(time.Now().Add(tcpWaitTimeout))
 	}()
 
 	go func() {
 		defer wg.Done()
-		_ = copyBuffer(left, right) /* ignore error */
-		left.SetReadDeadline(time.Now().Add(tcpWaitTimeout))
+		slowedTargetConn := &controller.SlowableConn{Conn: targetConn, S: localConn.Slowable()}
+		rxBytes, _ = copyBuffer(localConn, slowedTargetConn) /* ignore error */
+		localConn.SetReadDeadline(time.Now().Add(tcpWaitTimeout))
 	}()
 
 	wg.Wait()
+	return txBytes, rxBytes
 }
 
-func copyBuffer(dst io.Writer, src io.Reader) error {
+func copyBuffer(dst io.Writer, src io.Reader) (int64, error) {
 	v := bufferv2.NewViewSize(_relayBufferSize)
 	defer v.Release()
 
-	_, err := io.CopyBuffer(dst, src, v.AsSlice())
-	return err
+	n, err := io.CopyBuffer(dst, src, v.AsSlice())
+
+	if ne, ok := err.(net.Error); ok && ne.Timeout() {
+		return n, nil /* ignore I/O timeout */
+	} else if errors.Is(err, syscall.EPIPE) {
+		return n, nil /* ignore broken pipe */
+	} else if errors.Is(err, syscall.ECONNRESET) {
+		return n, nil /* ignore connection reset by peer */
+	}
+	return n, err
 }
