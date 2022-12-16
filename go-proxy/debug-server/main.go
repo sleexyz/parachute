@@ -10,12 +10,15 @@ import (
 
 	_ "net/http/pprof"
 
-	"github.com/pyroscope-io/client/pyroscope"
+	// "github.com/pyroscope-io/client/pyroscope"
+	"strange.industries/go-proxy/pb/proxyservice"
 	ffi "strange.industries/go-proxy/pkg/ffi"
 	"strange.industries/go-proxy/pkg/proxy"
 )
 
 func main() {
+	// log.Printf("%s", proxyservice.File_proxyservice_proto.Services().ByName("HelloService").Methods().ByName("Greet").Input())
+	_ = &proxyservice.HelloRequest{}
 	portStr := os.Getenv("PORT")
 	if portStr == "" {
 		portStr = "8080"
@@ -28,35 +31,35 @@ func main() {
 	runtime.SetMutexProfileFraction(5)
 	runtime.SetBlockProfileRate(5)
 
-	pyroscope.Start(pyroscope.Config{
-		ApplicationName: "strangeindustries.goproxy",
+	// pyroscope.Start(pyroscope.Config{
+	// 	ApplicationName: "strangeindustries.goproxy",
 
-		// replace this with the address of pyroscope server
-		ServerAddress: "http://localhost:4040",
+	// 	// replace this with the address of pyroscope server
+	// 	ServerAddress: "http://localhost:4040",
 
-		// you can disable logging by setting this to nil
-		// Logger: pyroscope.StandardLogger,
-		Logger: nil,
+	// 	// you can disable logging by setting this to nil
+	// 	// Logger: pyroscope.StandardLogger,
+	// 	Logger: nil,
 
-		// optionally, if authentication is enabled, specify the API key:
-		// AuthToken: os.Getenv("PYROSCOPE_AUTH_TOKEN"),
+	// 	// optionally, if authentication is enabled, specify the API key:
+	// 	// AuthToken: os.Getenv("PYROSCOPE_AUTH_TOKEN"),
 
-		ProfileTypes: []pyroscope.ProfileType{
-			// these profile types are enabled by default:
-			pyroscope.ProfileCPU,
-			pyroscope.ProfileAllocObjects,
-			pyroscope.ProfileAllocSpace,
-			pyroscope.ProfileInuseObjects,
-			pyroscope.ProfileInuseSpace,
+	// 	ProfileTypes: []pyroscope.ProfileType{
+	// 		// these profile types are enabled by default:
+	// 		pyroscope.ProfileCPU,
+	// 		pyroscope.ProfileAllocObjects,
+	// 		pyroscope.ProfileAllocSpace,
+	// 		pyroscope.ProfileInuseObjects,
+	// 		pyroscope.ProfileInuseSpace,
 
-			// these profile types are optional:
-			pyroscope.ProfileGoroutines,
-			pyroscope.ProfileMutexCount,
-			pyroscope.ProfileMutexDuration,
-			pyroscope.ProfileBlockCount,
-			pyroscope.ProfileBlockDuration,
-		},
-	})
+	// 		// these profile types are optional:
+	// 		pyroscope.ProfileGoroutines,
+	// 		pyroscope.ProfileMutexCount,
+	// 		pyroscope.ProfileMutexDuration,
+	// 		pyroscope.ProfileBlockCount,
+	// 		pyroscope.ProfileBlockDuration,
+	// 	},
+	// })
 	runtime.GOMAXPROCS(1)
 	debug.SetMemoryLimit(20 << 20)
 	debug.SetGCPercent(50)

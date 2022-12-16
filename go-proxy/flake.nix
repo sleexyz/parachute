@@ -1,12 +1,13 @@
 {
   description = "slowdown-dev-shell";
+  # inputs.nixpkgs.url = "github:stephank/nixpkgs/feat/swift-darwin"; # Swift works here
   inputs.nixpkgs.url = "github:nixos/nixpkgs/22.11";
   outputs =
     { self , nixpkgs , }:
     let
       pkgs = import nixpkgs { system = "aarch64-darwin"; };
       xcodewrapper = pkgs.xcodeenv.composeXcodeWrapper {
-        version = "14.1";
+        version = "14.2";
         xcodeBaseDir = "/Applications/Xcode.app";
       };
     in
@@ -15,6 +16,7 @@
         name = "slowdown-dev-shell";
         nativeBuildInputs = with pkgs; [
           go_1_19
+          protobuf3_21
           entr
           graphviz # for pprof
           llvmPackages_11.clang
@@ -26,6 +28,7 @@
           
           export GOPATH=$(pwd)/.gopath
           export PATH=$PATH:$GOPATH/bin
+          export PATH=$PATH:$(pwd)/.external/swift-protobuf/.build/release
           export CGO_ENABLED=1
         '';
       };

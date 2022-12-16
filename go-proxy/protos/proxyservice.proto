@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package proxyservice;
+
+option go_package = "pb/proxyservice";
+
+message HelloRequest {
+    string name = 1;
+}
+
+message HelloResponse {
+    string value = 1;
+}
+
+service HelloService {
+    rpc Greet(HelloRequest) returns (HelloResponse);
+}
