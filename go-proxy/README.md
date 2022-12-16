@@ -2,6 +2,11 @@
 
 Packet forwarding router proxy server, implemented in Go.
 
+Setup
+```
+./setup.sh
+```
+
 Development
 ```
 git ls-files| entr -cr go run local-proxy/.

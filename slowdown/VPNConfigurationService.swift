@@ -8,6 +8,7 @@
 import NetworkExtension
 import Foundation
 import os
+import ProxyService
 
 enum UserError: Error {
     case message(message: String)
@@ -29,6 +30,8 @@ final class VPNConfigurationService: ObservableObject {
     
     init(store: SettingsStore) {
         self.store = store
+        var foo = Proxyservice_HelloRequest()
+        foo.name = "me"
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.manager = managers?.first
             self.isInitializing = false
