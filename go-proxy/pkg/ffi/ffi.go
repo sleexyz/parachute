@@ -33,10 +33,10 @@ func (p *OnDeviceProxyBridge) Command(command string, input []byte) ([]byte, err
 		p.Proxy.Close()
 	case "GetSpeed":
 		return p.encodeResponse(p.Proxy.GetSpeed()), nil
-	case "SetRxSpeedTarget":
+	case "SetBaseRxSpeedTarget":
 		var req float64
 		json.Unmarshal(input, &req)
-		p.Proxy.SetRxSpeedTarget(req)
+		p.Proxy.SetBaseRxSpeedTarget(req)
 	case "SetTemporaryRxSpeedTarget":
 		var req SetTemporaryRxSpeedTargetRequest
 		json.Unmarshal(input, &req)

@@ -39,12 +39,10 @@ type Router struct {
 	Controller *controller.Controller
 }
 
-func Init(address string, i tunconn.TunConn) *Router {
+func Init(address string, i tunconn.TunConn, controller *controller.Controller) *Router {
 	ep := channel.New(10, defaultMTU, "10.0.0.8")
 	tcpQueue := make(chan adapter.TCPConn)
 	udpQueue := make(chan adapter.UDPConn)
-
-	controller := controller.Init()
 	s, err := createStack(ep, tcpQueue, udpQueue, controller)
 	if err != nil {
 		log.Panicln(err)

@@ -9,11 +9,11 @@ var latencyPerByteMax time.Duration = 0
 
 type ProportionalSlowable struct {
 	*SlowableBase
-	c    ControllerSettingsReadonly
+	c    ControllerSettingsReadOnly
 	gain float64
 }
 
-func InitProportionalSlowable(c ControllerSettingsReadonly) *ProportionalSlowable {
+func InitProportionalSlowable(c ControllerSettingsReadOnly) *ProportionalSlowable {
 	initialLatencyPerByte := time.Duration(0)
 	if !math.IsInf(c.RxSpeedTarget(), 1) {
 		initialLatencyPerByte = 18 * time.Microsecond * 400000.0 / time.Duration(c.RxSpeedTarget())

@@ -13,22 +13,21 @@ const (
 )
 
 type Proxy interface {
+	controller.ControllerSettingsReadWrite
 	Start(port int)
 	Close()
-	GetSpeed() *controller.GetSpeedResponse
-	// GetRecentFlows() []controller.FlowData
-	SetRxSpeedTarget(target float64)
-	SetTemporaryRxSpeedTarget(target float64, seconds int)
 }
 
 type ServerProxy struct {
 	controller.Controller
 	i      tunconn.TunConn
-	Router *router.Router
+	router *router.Router
 }
 
 func InitServerProxy() *ServerProxy {
-	return &ServerProxy{}
+	return &ServerProxy{
+		Controller: *controller.Init(),
+	}
 }
 
 func (p *ServerProxy) Start(port int) {
@@ -38,11 +37,11 @@ func (p *ServerProxy) Start(port int) {
 	}
 	p.i = i
 	log.Printf("Listening on port %d", port)
-	p.Router = router.Init(proxyAddr, i)
-	p.Router.Start()
+	p.router = router.Init(proxyAddr, i, &p.Controller)
+	p.router.Start()
 }
 
 func (p *ServerProxy) Close() {
 	p.i.Close()
-	p.Router.Close()
+	p.router.Close()
 }
