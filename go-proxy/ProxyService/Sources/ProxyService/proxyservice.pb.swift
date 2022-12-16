@@ -20,24 +20,47 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public struct Proxyservice_HelloRequest {
+public struct Proxyservice_Request {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var name: String = String()
+  public var command: String = String()
+
+  public var message: SwiftProtobuf.Google_Protobuf_Any {
+    get {return _message ?? SwiftProtobuf.Google_Protobuf_Any()}
+    set {_message = newValue}
+  }
+  /// Returns true if `message` has been explicitly set.
+  public var hasMessage: Bool {return self._message != nil}
+  /// Clears the value of `message`. Subsequent reads from it will return its default value.
+  public mutating func clearMessage() {self._message = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _message: SwiftProtobuf.Google_Protobuf_Any? = nil
+}
+
+public struct Proxyservice_SetTemporaryRxSpeedRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var speed: Double = 0
+
+  public var duration: Int32 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 }
 
-public struct Proxyservice_HelloResponse {
+public struct Proxyservice_SetTemporaryRxSpeedResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
-
-  public var value: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -45,18 +68,20 @@ public struct Proxyservice_HelloResponse {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
-extension Proxyservice_HelloRequest: @unchecked Sendable {}
-extension Proxyservice_HelloResponse: @unchecked Sendable {}
+extension Proxyservice_Request: @unchecked Sendable {}
+extension Proxyservice_SetTemporaryRxSpeedRequest: @unchecked Sendable {}
+extension Proxyservice_SetTemporaryRxSpeedResponse: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "proxyservice"
 
-extension Proxyservice_HelloRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".HelloRequest"
+extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Request"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "name"),
+    1: .same(proto: "command"),
+    2: .same(proto: "message"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -65,30 +90,40 @@ extension Proxyservice_HelloRequest: SwiftProtobuf.Message, SwiftProtobuf._Messa
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self.command) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._message) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.name.isEmpty {
-      try visitor.visitSingularStringField(value: self.name, fieldNumber: 1)
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.command.isEmpty {
+      try visitor.visitSingularStringField(value: self.command, fieldNumber: 1)
     }
+    try { if let v = self._message {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proxyservice_HelloRequest, rhs: Proxyservice_HelloRequest) -> Bool {
-    if lhs.name != rhs.name {return false}
+  public static func ==(lhs: Proxyservice_Request, rhs: Proxyservice_Request) -> Bool {
+    if lhs.command != rhs.command {return false}
+    if lhs._message != rhs._message {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension Proxyservice_HelloResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".HelloResponse"
+extension Proxyservice_SetTemporaryRxSpeedRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".SetTemporaryRxSpeedRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "value"),
+    1: .same(proto: "speed"),
+    2: .same(proto: "duration"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -97,21 +132,45 @@ extension Proxyservice_HelloResponse: SwiftProtobuf.Message, SwiftProtobuf._Mess
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.value) }()
+      case 1: try { try decoder.decodeSingularDoubleField(value: &self.speed) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self.duration) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.value.isEmpty {
-      try visitor.visitSingularStringField(value: self.value, fieldNumber: 1)
+    if self.speed != 0 {
+      try visitor.visitSingularDoubleField(value: self.speed, fieldNumber: 1)
+    }
+    if self.duration != 0 {
+      try visitor.visitSingularInt32Field(value: self.duration, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proxyservice_HelloResponse, rhs: Proxyservice_HelloResponse) -> Bool {
-    if lhs.value != rhs.value {return false}
+  public static func ==(lhs: Proxyservice_SetTemporaryRxSpeedRequest, rhs: Proxyservice_SetTemporaryRxSpeedRequest) -> Bool {
+    if lhs.speed != rhs.speed {return false}
+    if lhs.duration != rhs.duration {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_SetTemporaryRxSpeedResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".SetTemporaryRxSpeedResponse"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_SetTemporaryRxSpeedResponse, rhs: Proxyservice_SetTemporaryRxSpeedResponse) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

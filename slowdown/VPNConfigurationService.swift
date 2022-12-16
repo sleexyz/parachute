@@ -30,8 +30,6 @@ final class VPNConfigurationService: ObservableObject {
     
     init(store: SettingsStore) {
         self.store = store
-        var foo = Proxyservice_HelloRequest()
-        foo.name = "me"
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.manager = managers?.first
             self.isInitializing = false
@@ -44,7 +42,6 @@ final class VPNConfigurationService: ObservableObject {
                 if conn.status == NEVPNStatus.connected {
                     self.isConnected = true
                     self.isTransitioning = false;
-                    
                 }
                 if conn.status == NEVPNStatus.connecting{
                     self.isTransitioning = true
@@ -61,13 +58,15 @@ final class VPNConfigurationService: ObservableObject {
     }
     
     func startCheat() async throws -> () {
-        let message = "cheat".data(using: String.Encoding.utf8)
+        var message = Proxyservice_SetTemporaryRxSpeedRequest()
+        message.duration = 60
+        message.speed = -1
         guard let session = self.manager?.connection as? NETunnelProviderSession else {
             return
         }
         return try await withCheckedThrowingContinuation { continuation in
             do {
-                try session.sendProviderMessage(message!) { response in
+                try session.sendProviderMessage(message.serializedData()) { response in
                     if response != nil {
                         let responseString = NSString(data: response!, encoding: String.Encoding.utf8.rawValue)
                         os_log("Received response frommm the provider: \(responseString)")
@@ -79,7 +78,6 @@ final class VPNConfigurationService: ObservableObject {
                 }
             } catch let error {
                 continuation.resume(with: .failure(error))
-                
             }
         }
     }

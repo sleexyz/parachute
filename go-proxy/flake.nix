@@ -16,7 +16,7 @@
         name = "slowdown-dev-shell";
         nativeBuildInputs = with pkgs; [
           go_1_19
-          protobuf3_21
+          protobuf3_20
           entr
           graphviz # for pprof
           llvmPackages_11.clang
