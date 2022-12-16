@@ -44,10 +44,13 @@ func (p *DebugServerProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	var buf bytes.Buffer
 	buf.ReadFrom(r.Body)
-	out := p.proxyBridge.Command(match[1], buf.Bytes())
-	log.Printf("%s %s", match[1], buf.String())
+	log.Printf("/Command/%s %s", match[1], buf.String())
+	out, err := p.proxyBridge.Command(match[1], buf.Bytes())
+	if err != nil {
+		http.Error(w, fmt.Sprintf("command returned error: %v", err), http.StatusInternalServerError)
+	}
 	w.Header().Set("Content-Type", "application/json")
-	_, err := w.Write(out)
+	_, err = w.Write(out)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
 	}
