@@ -40,7 +40,7 @@ func MakeDebugString(data []byte) string {
 		dstPort = udp.DstPort.String()
 		protocol = "udp"
 	}
-	if protocol != "" {
+	if dstPort == "53(domain)" {
 		return fmt.Sprintf("%s -- %s:%s->%s:%s", protocol, srcAddr, srcPort, dstAddr, dstPort)
 	}
 	return ""

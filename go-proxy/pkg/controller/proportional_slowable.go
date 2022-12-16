@@ -15,11 +15,11 @@ type ProportionalSlowable struct {
 }
 
 func InitProportionalSlowable(c ControllerSettingsReadonly) *ProportionalSlowable {
-	initialLatencyPerByte := 18 * time.Microsecond * 400000.0 / time.Duration(c.RxSpeedTarget())
-	log.Printf("initial latency per byte: %s", initialLatencyPerByte)
-	if math.IsInf(c.RxSpeedTarget(), 1) {
-		initialLatencyPerByte = 0
+	initialLatencyPerByte := time.Duration(0)
+	if !math.IsInf(c.RxSpeedTarget(), 1) {
+		initialLatencyPerByte = 18 * time.Microsecond * 400000.0 / time.Duration(c.RxSpeedTarget())
 	}
+	log.Printf("initial latency per byte: %s", initialLatencyPerByte)
 	ret := &ProportionalSlowable{
 		SlowableBase: InitSlowableBase(initialLatencyPerByte),
 		c:            c,
