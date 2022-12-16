@@ -44,7 +44,7 @@ type SlowableBase struct {
 	rxBytes int64
 	// rxBytes since last sample time
 	dRx            int64
-	lastSampleTime time.Time
+	lastSampleTime *time.Time
 	rxSpeed        float64
 
 	rxLatencyPerByte time.Duration
@@ -63,9 +63,10 @@ func (s *SlowableBase) InjectRxLatency(n int) {
 }
 
 func InitSlowableBase(initialLatencyPerByte time.Duration) *SlowableBase {
+	now := time.Now()
 	self := &SlowableBase{
 		rxSpeed:          0,
-		lastSampleTime:   time.Now(),
+		lastSampleTime:   &now,
 		rxLatencyPerByte: initialLatencyPerByte,
 	}
 	self.Sampler = self
@@ -79,10 +80,10 @@ func (s *SlowableBase) SetRxLatencyPerByte(l time.Duration) {
 func (s *SlowableBase) Update(n int, now time.Time) {
 	s.rxBytes += int64(n)
 	s.dRx += int64(n)
-	dt := now.Sub(s.lastSampleTime)
+	dt := now.Sub(*s.lastSampleTime)
 	if dt > time.Second {
 		s.Sampler.Sample(n, dt)
-		s.lastSampleTime = now
+		s.lastSampleTime = &now
 		s.dRx = 0
 	}
 }

@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	defaultRxSpeedTarget = 40000.0 // dialup (40kbps)
+	// defaultRxSpeedTarget = 40000.0 // dialup (40kbps)
+	defaultRxSpeedTarget = 400000.0 // 400kbps
 )
 
 type FlowData struct {

@@ -50,7 +50,10 @@ func (t *Tee) Listen() {
 						fmt.Printf("bad write to client: %s\n", err)
 					}
 				}
-				fmt.Println(MakeDebugString(data[:n]))
+				debug := MakeDebugString(data[:n])
+				if debug != "" {
+					fmt.Println(debug)
+				}
 			}
 		}
 	}()

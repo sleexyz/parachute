@@ -21,6 +21,10 @@ const (
 	_maxSegmentSize = 1500 // mtu
 )
 
+var (
+	dnsServerIP = net.ParseIP("8.8.8.8")
+)
+
 // var (
 // 	inflight       = 0
 // 	historicalMaxN = 0 // hmmm. does t seem to exceed mtu size
@@ -43,6 +47,11 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 		Port: int(id.LocalPort),
 	}
 
+	isDns := false
+	if remote.IP.Equal(dnsServerIP) && remote.Port == 53 {
+		isDns = true
+	}
+
 	// var txBytes int
 	// var rxBytes int
 	start := time.Now()
@@ -61,8 +70,11 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 
 	go func() {
 		defer wg.Done()
-		slowedTargetConn := &controller.SlowablePacketConn{PacketConn: targetConn, S: localConn.Slowable()}
-		_, err := copyPacketBuffer2(localConn, slowedTargetConn, nil, _udpSessionTimeout)
+		sourceConn := targetConn
+		if !isDns {
+			sourceConn = &controller.SlowablePacketConn{PacketConn: targetConn, S: localConn.Slowable()}
+		}
+		_, err := copyPacketBuffer2(localConn, sourceConn, nil, _udpSessionTimeout)
 		if err != nil {
 			log.Printf("[UDP] %v", err)
 		}
