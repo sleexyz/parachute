@@ -28,8 +28,8 @@ public struct Proxy {
         try bridge.command("Close",input: nil)
     }
     
-    func setRxSpeedTarget(target: Float64) throws {
-        try bridge.command("SetSpeedTarget",input: encoder.encode(target))
+    func setBaseRxSpeedTarget(target: Float64) throws {
+        try bridge.command("SetBaseRxSpeedTarget",input: encoder.encode(target))
     }
     
     func pause() throws {
