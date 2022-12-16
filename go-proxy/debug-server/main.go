@@ -1,4 +1,3 @@
-// Local proxy
 package main
 
 import (
@@ -63,7 +62,7 @@ func main() {
 	debug.SetGCPercent(50)
 
 	proxy := proxy.InitServerProxy()
-	proxyBridge := &ffi.LocalProxyBridge{Proxy: proxy}
+	proxyBridge := &ffi.OnDeviceProxyBridge{Proxy: proxy}
 	dsp := InitDebugServerProxy(proxyBridge, proxy)
 	defer dsp.Close()
 	dsp.Start(port)

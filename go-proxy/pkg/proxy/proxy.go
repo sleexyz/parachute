@@ -16,11 +16,13 @@ type Proxy interface {
 	Start(port int)
 	Close()
 	GetSpeed() *controller.GetSpeedResponse
-	GetRecentFlows() []controller.FlowData
-	Pause()
+	// GetRecentFlows() []controller.FlowData
+	SetRxSpeedTarget(target float64)
+	SetTemporaryRxSpeedTarget(target float64, seconds int)
 }
 
 type ServerProxy struct {
+	controller.Controller
 	i      tunconn.TunConn
 	Router *router.Router
 }
@@ -43,16 +45,4 @@ func (p *ServerProxy) Start(port int) {
 func (p *ServerProxy) Close() {
 	p.i.Close()
 	p.Router.Close()
-}
-
-func (p *ServerProxy) GetSpeed() *controller.GetSpeedResponse {
-	return p.Router.Controller.GetSpeed()
-}
-
-func (p *ServerProxy) GetRecentFlows() []controller.FlowData {
-	return []controller.FlowData{}
-}
-
-func (p *ServerProxy) Pause() {
-	go p.Router.Controller.Pause()
 }

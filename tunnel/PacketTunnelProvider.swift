@@ -58,7 +58,11 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             self.proxy = Proxy(bridge: Ffi.FfiInit()!, logger: self.logger)
             self.logger.info("starting server")
             DispatchQueue.global(qos: .background).async {
-                self.proxy!.start(port: self.options.ipv4Port)
+                do {
+                    try self.proxy!.start(port: self.options.ipv4Port)
+                } catch {
+                    
+                }
             }
             self.logger.info("server started")
         } else {
@@ -137,7 +141,11 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     override func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
         self.logger.info("tunnel stopped")
         // Add code here to start the process of stopping the tunnel.
-        self.proxy!.close()
+        do {
+            try self.proxy!.close()
+        } catch {
+            
+        }
         completionHandler()
     }
     
@@ -146,15 +154,19 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             completionHandler?(nil)
             return
         }
-        
-        if messageString == "cheat" {
-            self.logger.info("cheat")
-            self.proxy!.pause()
+        do {
+            if messageString == "cheat" {
+                self.logger.info("cheat")
+                try self.proxy!.pause()
+            }
+            
+            // Add code here to handle the message.
+            let responseData = "ack".data(using: String.Encoding.utf8)
+            completionHandler?(responseData)
+        } catch {
+            self.logger.error("Error: \(error.localizedDescription)")
+            completionHandler?(nil)
         }
-        
-        // Add code here to handle the message.
-        let responseData = "ack".data(using: String.Encoding.utf8)
-        completionHandler?(responseData)
     }
     
     override func sleep(completionHandler: @escaping () -> Void) {

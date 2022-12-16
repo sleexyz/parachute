@@ -9,7 +9,7 @@ import (
 
 const (
 	// defaultRxSpeedTarget = 40000.0 // dialup (40kbps)
-	defaultRxSpeedTarget = 400000.0 // 400kbps
+	defaultRxSpeedTarget = 100000.0 // 100kbps
 )
 
 type FlowData struct {
@@ -24,8 +24,9 @@ type ControllerSettingsReadonly interface {
 }
 
 type Controller struct {
-	rxSpeedTarget float64
-	pauseTimer    *time.Timer
+	rxSpeedTarget     float64
+	baseRxSpeedTarget float64
+	temporaryTimer    *time.Timer
 }
 
 type GetSpeedResponse struct {
@@ -34,7 +35,8 @@ type GetSpeedResponse struct {
 
 func Init() *Controller {
 	controller := &Controller{
-		rxSpeedTarget: defaultRxSpeedTarget,
+		rxSpeedTarget:     defaultRxSpeedTarget,
+		baseRxSpeedTarget: defaultRxSpeedTarget,
 	}
 	return controller
 }
@@ -43,15 +45,26 @@ func (c *Controller) RxSpeedTarget() float64 {
 	return c.rxSpeedTarget
 }
 
-func (c *Controller) Pause() {
-	c.rxSpeedTarget = math.Inf(1)
-	if c.pauseTimer != nil {
-		c.pauseTimer.Stop()
+func (c *Controller) SetRxSpeedTarget(target float64) {
+	c.baseRxSpeedTarget = target
+}
+
+func (c *Controller) SetTemporaryRxSpeedTarget(target float64, duration int) {
+	log.Printf("target: %0.f, duration: %d", target, duration)
+	if target >= 0 {
+		c.rxSpeedTarget = target
+	} else {
+		c.rxSpeedTarget = math.Inf(1)
+	}
+	if c.temporaryTimer != nil {
+		c.temporaryTimer.Stop()
 		log.Printf("Pause ended")
 	}
-	c.pauseTimer = time.NewTimer(time.Minute)
-	<-c.pauseTimer.C
-	c.rxSpeedTarget = defaultRxSpeedTarget
+	c.temporaryTimer = time.NewTimer(time.Duration(duration) * time.Second)
+	go func() {
+		<-c.temporaryTimer.C
+		c.rxSpeedTarget = c.baseRxSpeedTarget
+	}()
 }
 
 func (c *Controller) GetSpeed() *GetSpeedResponse {

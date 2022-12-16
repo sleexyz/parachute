@@ -2,7 +2,7 @@ package ffi
 
 import (
 	"encoding/json"
-	"io"
+	"fmt"
 	"log"
 	"runtime"
 	"runtime/debug"
@@ -11,14 +11,19 @@ import (
 )
 
 type ProxyBridge interface {
-	Command(command string, input []byte) []byte
+	Command(command string, input []byte) ([]byte, error)
 }
 
-type LocalProxyBridge struct {
+type OnDeviceProxyBridge struct {
 	Proxy proxy.Proxy
 }
 
-func (p *LocalProxyBridge) Command(command string, input []byte) []byte {
+type SetTemporaryRxSpeedTargetRequest struct {
+	Target   float64 `json:"target"`
+	Duration int     `json:"duration"`
+}
+
+func (p *OnDeviceProxyBridge) Command(command string, input []byte) ([]byte, error) {
 	switch command {
 	case "Start":
 		var port int
@@ -27,18 +32,22 @@ func (p *LocalProxyBridge) Command(command string, input []byte) []byte {
 	case "Close":
 		p.Proxy.Close()
 	case "GetSpeed":
-		return p.encodeResponse(p.Proxy.GetSpeed())
-	case "GetRecentFlows":
-		return p.encodeResponse(p.Proxy.GetRecentFlows())
-	case "Pause":
-		p.Proxy.Pause()
+		return p.encodeResponse(p.Proxy.GetSpeed()), nil
+	case "SetRxSpeedTarget":
+		var req float64
+		json.Unmarshal(input, &req)
+		p.Proxy.SetRxSpeedTarget(req)
+	case "SetTemporaryRxSpeedTarget":
+		var req SetTemporaryRxSpeedTargetRequest
+		json.Unmarshal(input, &req)
+		p.Proxy.SetTemporaryRxSpeedTarget(req.Target, req.Duration)
 	default:
-		return p.encodeResponse(nil)
+		return nil, fmt.Errorf("unexpected command %s", command)
 	}
-	return p.encodeResponse(struct{}{})
+	return p.encodeResponse(struct{}{}), nil
 }
 
-func (p *LocalProxyBridge) encodeResponse(resp any) []byte {
+func (p *OnDeviceProxyBridge) encodeResponse(resp any) []byte {
 	out, err := json.MarshalIndent(resp, "", "  ")
 	if err != nil {
 		log.Fatalf("Error: %s", err)
@@ -49,14 +58,14 @@ func (p *LocalProxyBridge) encodeResponse(resp any) []byte {
 
 func InitDebug(debugServerAddr string) ProxyBridge {
 	log.SetOutput(MobileLogger{})
-	return &LocalProxyBridge{
-		Proxy: proxy.InitDebugClientProxy(debugServerAddr),
-	}
+	return proxy.InitDebugClientProxyBridge(debugServerAddr)
+
 }
 
 func Init() ProxyBridge {
-	log.SetOutput(io.Discard)
-	return &LocalProxyBridge{
+	// log.SetOutput(io.Discard)
+	log.SetOutput(MobileLogger{})
+	return &OnDeviceProxyBridge{
 		Proxy: proxy.InitServerProxy(),
 	}
 }
