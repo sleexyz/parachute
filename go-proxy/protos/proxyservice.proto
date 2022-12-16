@@ -2,16 +2,24 @@ syntax = "proto3";
 
 package proxyservice;
 
+import "google/protobuf/any.proto";
+
+
 option go_package = "pb/proxyservice";
 
-message HelloRequest {
-    string name = 1;
+message Request {
+    string command = 1;
+    google.protobuf.Any message = 2;
 }
 
-message HelloResponse {
-    string value = 1;
+message SetTemporaryRxSpeedRequest {
+    double speed = 1;
+    int32 duration = 2;
 }
 
-service HelloService {
-    rpc Greet(HelloRequest) returns (HelloResponse);
+message SetTemporaryRxSpeedResponse {
+}
+
+service ProxyService{
+    rpc SetTemporaryRxSpeed(SetTemporaryRxSpeedRequest) returns (SetTemporaryRxSpeedResponse);
 }
