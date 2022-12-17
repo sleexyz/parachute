@@ -18,6 +18,7 @@
           go_1_19
           protobuf3_20
           entr
+          flatbuffers
           graphviz # for pprof
           llvmPackages_11.clang
           buildifier

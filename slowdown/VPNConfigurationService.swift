@@ -58,28 +58,7 @@ final class VPNConfigurationService: ObservableObject {
     }
     
     func startCheat() async throws -> () {
-        var message = Proxyservice_SetTemporaryRxSpeedRequest()
-        message.duration = 60
-        message.speed = -1
-        guard let session = self.manager?.connection as? NETunnelProviderSession else {
-            return
-        }
-        return try await withCheckedThrowingContinuation { continuation in
-            do {
-                try session.sendProviderMessage(message.serializedData()) { response in
-                    if response != nil {
-                        let responseString = NSString(data: response!, encoding: String.Encoding.utf8.rawValue)
-                        os_log("Received response frommm the provider: \(responseString)")
-                        continuation.resume(returning: ())
-                    } else {
-                        os_log("Got a nil response from the provider")
-                        continuation.resume(throwing: UserError.message(message: "Got a nil response from the provider"))
-                    }
-                }
-            } catch let error {
-                continuation.resume(with: .failure(error))
-            }
-        }
+        try await self.SetTemporaryRxSpeedTarget(speed: -1, duration: 60)
     }
     
     
@@ -129,5 +108,37 @@ final class VPNConfigurationService: ObservableObject {
         tunnel.isEnabled = true
         
         return tunnel
+    }
+}
+
+extension VPNConfigurationService {
+    func SetTemporaryRxSpeedTarget(speed: Float64, duration: Int32) async throws {
+        var message = Proxyservice_Request()
+        var req = Proxyservice_SetTemporaryRxSpeedRequest()
+        message.setTemporaryRxSpeedRequest = req
+        req.duration = 60
+        req.speed = -1
+        return try await Rpc(message: message)
+    }
+    func Rpc(message: Proxyservice_Request) async throws {
+        guard let session = self.manager?.connection as? NETunnelProviderSession else {
+            return
+        }
+        return try await withCheckedThrowingContinuation { continuation in
+            do {
+                try session.sendProviderMessage(message.serializedData()) { response in
+                    if response != nil {
+                        let responseString = NSString(data: response!, encoding: String.Encoding.utf8.rawValue)
+                        os_log("Received response frommm the provider: \(responseString)")
+                        continuation.resume(returning: ())
+                    } else {
+                        os_log("Got a nil response from the provider")
+                        continuation.resume(throwing: UserError.message(message: "Got a nil response from the provider"))
+                    }
+                }
+            } catch let error {
+                continuation.resume(with: .failure(error))
+            }
+        }
     }
 }

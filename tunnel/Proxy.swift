@@ -20,19 +20,15 @@ public struct Proxy {
     
     let encoder = JSONEncoder()
     
-    func start(port: Int) throws {
-      try bridge.command("Start", input: encoder.encode(port))
+    func start(port: Int) {
+        bridge.start(port)
     }
     
-    func close() throws {
-        try bridge.command("Close",input: nil)
+    func close() {
+        bridge.close()
     }
     
-    func setBaseRxSpeedTarget(target: Float64) throws {
-        try bridge.command("SetBaseRxSpeedTarget",input: encoder.encode(target))
-    }
-    
-    func pause() throws {
-        try bridge.command("SetTemporaryRxSpeedTarget",input: encoder.encode(SetTemporaryRxSpeedTargetRequest(target:-1, duration:60)))
+    func rpc(input: Data?) throws {
+        try bridge.rpc(input)
     }
 }
