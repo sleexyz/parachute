@@ -7,15 +7,19 @@ import (
 	"runtime"
 	"runtime/debug"
 
+	"google.golang.org/protobuf/proto"
+	"strange.industries/go-proxy/pb/proxyservice"
 	proxy "strange.industries/go-proxy/pkg/proxy"
 )
 
 type ProxyBridge interface {
-	Command(command string, input []byte) ([]byte, error)
+	Start(port int)
+	Close()
+	Rpc(input []byte) ([]byte, error)
 }
 
 type OnDeviceProxyBridge struct {
-	Proxy proxy.Proxy
+	proxy.Proxy
 }
 
 type SetTemporaryRxSpeedTargetRequest struct {
@@ -23,26 +27,19 @@ type SetTemporaryRxSpeedTargetRequest struct {
 	Duration int     `json:"duration"`
 }
 
-func (p *OnDeviceProxyBridge) Command(command string, input []byte) ([]byte, error) {
-	switch command {
-	case "Start":
-		var port int
-		json.Unmarshal(input, &port)
-		p.Proxy.Start(port)
-	case "Close":
-		p.Proxy.Close()
-	case "GetSpeed":
-		return p.encodeResponse(p.Proxy.GetSpeed()), nil
-	case "SetBaseRxSpeedTarget":
-		var req float64
-		json.Unmarshal(input, &req)
-		p.Proxy.SetBaseRxSpeedTarget(req)
-	case "SetTemporaryRxSpeedTarget":
-		var req SetTemporaryRxSpeedTargetRequest
-		json.Unmarshal(input, &req)
-		p.Proxy.SetTemporaryRxSpeedTarget(req.Target, req.Duration)
+func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
+	r := &proxyservice.Request{}
+	err := proto.Unmarshal(input, r)
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("/Rpc %s", r)
+	switch r.Message.(type) {
+	case *proxyservice.Request_SetTemporaryRxSpeedRequest:
+		m := r.GetSetTemporaryRxSpeedRequest()
+		p.Proxy.SetTemporaryRxSpeedTarget(m.Speed, int(m.Duration))
 	default:
-		return nil, fmt.Errorf("unexpected command %s", command)
+		return nil, fmt.Errorf("could not parse rpc command")
 	}
 	return p.encodeResponse(struct{}{}), nil
 }

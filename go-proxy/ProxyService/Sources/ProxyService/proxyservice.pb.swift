@@ -25,22 +25,37 @@ public struct Proxyservice_Request {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var command: String = String()
+  public var message: Proxyservice_Request.OneOf_Message? = nil
 
-  public var message: SwiftProtobuf.Google_Protobuf_Any {
-    get {return _message ?? SwiftProtobuf.Google_Protobuf_Any()}
-    set {_message = newValue}
+  public var setTemporaryRxSpeedRequest: Proxyservice_SetTemporaryRxSpeedRequest {
+    get {
+      if case .setTemporaryRxSpeedRequest(let v)? = message {return v}
+      return Proxyservice_SetTemporaryRxSpeedRequest()
+    }
+    set {message = .setTemporaryRxSpeedRequest(newValue)}
   }
-  /// Returns true if `message` has been explicitly set.
-  public var hasMessage: Bool {return self._message != nil}
-  /// Clears the value of `message`. Subsequent reads from it will return its default value.
-  public mutating func clearMessage() {self._message = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  public enum OneOf_Message: Equatable {
+    case setTemporaryRxSpeedRequest(Proxyservice_SetTemporaryRxSpeedRequest)
 
-  fileprivate var _message: SwiftProtobuf.Google_Protobuf_Any? = nil
+  #if !swift(>=4.1)
+    public static func ==(lhs: Proxyservice_Request.OneOf_Message, rhs: Proxyservice_Request.OneOf_Message) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch (lhs, rhs) {
+      case (.setTemporaryRxSpeedRequest, .setTemporaryRxSpeedRequest): return {
+        guard case .setTemporaryRxSpeedRequest(let l) = lhs, case .setTemporaryRxSpeedRequest(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      }
+    }
+  #endif
+  }
+
+  public init() {}
 }
 
 public struct Proxyservice_SetTemporaryRxSpeedRequest {
@@ -69,6 +84,7 @@ public struct Proxyservice_SetTemporaryRxSpeedResponse {
 
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Proxyservice_Request: @unchecked Sendable {}
+extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
 extension Proxyservice_SetTemporaryRxSpeedRequest: @unchecked Sendable {}
 extension Proxyservice_SetTemporaryRxSpeedResponse: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
@@ -80,8 +96,7 @@ fileprivate let _protobuf_package = "proxyservice"
 extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Request"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "command"),
-    2: .same(proto: "message"),
+    1: .same(proto: "setTemporaryRxSpeedRequest"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -90,8 +105,19 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.command) }()
-      case 2: try { try decoder.decodeSingularMessageField(value: &self._message) }()
+      case 1: try {
+        var v: Proxyservice_SetTemporaryRxSpeedRequest?
+        var hadOneofValue = false
+        if let current = self.message {
+          hadOneofValue = true
+          if case .setTemporaryRxSpeedRequest(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.message = .setTemporaryRxSpeedRequest(v)
+        }
+      }()
       default: break
       }
     }
@@ -102,18 +128,14 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.command.isEmpty {
-      try visitor.visitSingularStringField(value: self.command, fieldNumber: 1)
-    }
-    try { if let v = self._message {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    try { if case .setTemporaryRxSpeedRequest(let v)? = self.message {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Proxyservice_Request, rhs: Proxyservice_Request) -> Bool {
-    if lhs.command != rhs.command {return false}
-    if lhs._message != rhs._message {return false}
+    if lhs.message != rhs.message {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

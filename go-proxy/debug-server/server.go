@@ -36,16 +36,15 @@ func (p *DebugServerProxy) Close() {
 }
 
 func (p *DebugServerProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	regexp, _ := regexp.Compile("^/Command/([a-zA-Z]+)$")
-	match := regexp.FindStringSubmatch(r.URL.Path)
-	if len(match) < 2 {
-		http.Error(w, "No command found", http.StatusNotFound)
+	regexp, _ := regexp.Compile("^/Rpc$")
+	match := regexp.FindString(r.URL.Path)
+	if match == "" {
+		http.Error(w, "Not found", http.StatusNotFound)
 		return
 	}
 	var buf bytes.Buffer
 	buf.ReadFrom(r.Body)
-	log.Printf("/Command/%s %s", match[1], buf.String())
-	out, err := p.proxyBridge.Command(match[1], buf.Bytes())
+	out, err := p.proxyBridge.Rpc(buf.Bytes())
 	if err != nil {
 		http.Error(w, fmt.Sprintf("command returned error: %v", err), http.StatusInternalServerError)
 	}

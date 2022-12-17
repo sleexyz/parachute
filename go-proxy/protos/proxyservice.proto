@@ -1,15 +1,12 @@
 syntax = "proto3";
 
 package proxyservice;
-
-import "google/protobuf/any.proto";
-
-
 option go_package = "pb/proxyservice";
 
 message Request {
-    string command = 1;
-    google.protobuf.Any message = 2;
+    oneof message {
+        SetTemporaryRxSpeedRequest setTemporaryRxSpeedRequest = 1;
+    }
 }
 
 message SetTemporaryRxSpeedRequest {

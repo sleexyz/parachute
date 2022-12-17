@@ -58,11 +58,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             self.proxy = Proxy(bridge: Ffi.FfiInit()!, logger: self.logger)
             self.logger.info("starting server")
             DispatchQueue.global(qos: .background).async {
-                do {
-                    try self.proxy!.start(port: self.options.ipv4Port)
-                } catch {
-                    
-                }
+              self.proxy!.start(port: self.options.ipv4Port)
             }
             self.logger.info("server started")
         } else {
@@ -141,25 +137,13 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     override func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
         self.logger.info("tunnel stopped")
         // Add code here to start the process of stopping the tunnel.
-        do {
-            try self.proxy!.close()
-        } catch {
-            
-        }
+        self.proxy!.close()
         completionHandler()
     }
     
     override func handleAppMessage(_ messageData: Data, completionHandler: ((Data?) -> Void)?) {
-        guard let messageString = NSString(data: messageData, encoding: String.Encoding.utf8.rawValue) else {
-            completionHandler?(nil)
-            return
-        }
         do {
-            if messageString == "cheat" {
-                self.logger.info("cheat")
-                try self.proxy!.pause()
-            }
-            
+            try proxy?.rpc(input: messageData)
             // Add code here to handle the message.
             let responseData = "ack".data(using: String.Encoding.utf8)
             completionHandler?(responseData)

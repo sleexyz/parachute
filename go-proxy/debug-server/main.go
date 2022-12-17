@@ -11,14 +11,12 @@ import (
 	_ "net/http/pprof"
 
 	// "github.com/pyroscope-io/client/pyroscope"
-	"strange.industries/go-proxy/pb/proxyservice"
+
 	ffi "strange.industries/go-proxy/pkg/ffi"
 	"strange.industries/go-proxy/pkg/proxy"
 )
 
 func main() {
-	// log.Printf("%s", proxyservice.File_proxyservice_proto.Services().ByName("HelloService").Methods().ByName("Greet").Input())
-	_ = &proxyservice.HelloRequest{}
 	portStr := os.Getenv("PORT")
 	if portStr == "" {
 		portStr = "8080"
