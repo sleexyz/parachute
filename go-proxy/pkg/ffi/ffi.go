@@ -22,11 +22,6 @@ type OnDeviceProxyBridge struct {
 	proxy.Proxy
 }
 
-type SetTemporaryRxSpeedTargetRequest struct {
-	Target   float64 `json:"target"`
-	Duration int     `json:"duration"`
-}
-
 func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
 	r := &proxyservice.Request{}
 	err := proto.Unmarshal(input, r)
@@ -35,8 +30,8 @@ func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
 	}
 	log.Printf("/Rpc %s", r)
 	switch r.Message.(type) {
-	case *proxyservice.Request_SetTemporaryRxSpeedRequest:
-		m := r.GetSetTemporaryRxSpeedRequest()
+	case *proxyservice.Request_SetTemporaryRxSpeedTarget:
+		m := r.GetSetTemporaryRxSpeedTarget()
 		p.Proxy.SetTemporaryRxSpeedTarget(m.Speed, int(m.Duration))
 	default:
 		return nil, fmt.Errorf("could not parse rpc command")

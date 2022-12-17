@@ -5,18 +5,16 @@ option go_package = "pb/proxyservice";
 
 message Request {
     oneof message {
-        SetTemporaryRxSpeedRequest setTemporaryRxSpeedRequest = 1;
+        SetTemporaryRxSpeedTargetRequest setTemporaryRxSpeedTarget = 1;
+        SetRxSpeedTargetRequest setRxSpeedTarget = 2;
     }
 }
 
-message SetTemporaryRxSpeedRequest {
+message SetTemporaryRxSpeedTargetRequest {
     double speed = 1;
     int32 duration = 2;
 }
 
-message SetTemporaryRxSpeedResponse {
-}
-
-service ProxyService{
-    rpc SetTemporaryRxSpeed(SetTemporaryRxSpeedRequest) returns (SetTemporaryRxSpeedResponse);
+message SetRxSpeedTargetRequest {
+    double speed = 1;
 }

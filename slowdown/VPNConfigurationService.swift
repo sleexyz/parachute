@@ -114,10 +114,9 @@ final class VPNConfigurationService: ObservableObject {
 extension VPNConfigurationService {
     func SetTemporaryRxSpeedTarget(speed: Float64, duration: Int32) async throws {
         var message = Proxyservice_Request()
-        var req = Proxyservice_SetTemporaryRxSpeedRequest()
-        message.setTemporaryRxSpeedRequest = req
-        req.duration = 60
-        req.speed = -1
+        message.setTemporaryRxSpeedTarget.duration = 60
+        message.setTemporaryRxSpeedTarget.speed = -1
+        os_log("\(message.debugDescription)")
         return try await Rpc(message: message)
     }
     func Rpc(message: Proxyservice_Request) async throws {
