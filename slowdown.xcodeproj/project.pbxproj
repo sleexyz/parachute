@@ -18,12 +18,12 @@
 		A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
 		A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A0458BF9285FB5A300CE4CCB /* Logging */; };
 		A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A0458C0028614D6500CE4CCB /* LoggingOSLog */; };
-		A04FAD96294D2FF10002C19B /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A04FAD95294D2FF10002C19B /* ProxyService */; };
 		A04FAD98294D477B0002C19B /* Proxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04FAD97294D477B0002C19B /* Proxy.swift */; };
+		A04FAD9C294D60960002C19B /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A04FAD9B294D60960002C19B /* SwiftProtobuf */; };
+		A04FAD9E294D60B90002C19B /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A04FAD9D294D60B90002C19B /* ProxyService */; };
 		A05AD0B3285D0CD100878904 /* NIO in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B2285D0CD100878904 /* NIO */; };
 		A05AD0B5285D0CD100878904 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B4285D0CD100878904 /* NIOCore */; };
 		A05AD0B7285D0CD100878904 /* NIOFoundationCompat in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B6285D0CD100878904 /* NIOFoundationCompat */; };
-		A0717CCB294D260C00186AFE /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A0717CCA294D260C00186AFE /* SwiftProtobuf */; };
 		A0717CCD294D260C00186AFE /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = A0717CCC294D260C00186AFE /* SwiftProtobufPluginLibrary */; };
 		A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D5281A4BF900113F3F /* PrimaryButton.swift */; };
 		A08719D8281A4CE500113F3F /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D7281A4CE500113F3F /* SplashView.swift */; };
@@ -112,8 +112,8 @@
 				A0717CCD294D260C00186AFE /* SwiftProtobufPluginLibrary in Frameworks */,
 				A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */,
 				A05AD0B3285D0CD100878904 /* NIO in Frameworks */,
-				A04FAD96294D2FF10002C19B /* ProxyService in Frameworks */,
-				A0717CCB294D260C00186AFE /* SwiftProtobuf in Frameworks */,
+				A04FAD9E294D60B90002C19B /* ProxyService in Frameworks */,
+				A04FAD9C294D60960002C19B /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,9 +255,9 @@
 			name = slowdown;
 			packageProductDependencies = (
 				A05AD0B2285D0CD100878904 /* NIO */,
-				A0717CCA294D260C00186AFE /* SwiftProtobuf */,
 				A0717CCC294D260C00186AFE /* SwiftProtobufPluginLibrary */,
-				A04FAD95294D2FF10002C19B /* ProxyService */,
+				A04FAD9B294D60960002C19B /* SwiftProtobuf */,
+				A04FAD9D294D60B90002C19B /* ProxyService */,
 			);
 			productName = slowdown;
 			productReference = A02F58DC27A6F14500D3330F /* slowdown.app */;
@@ -872,7 +872,12 @@
 			package = A0458BFF28614D6500CE4CCB /* XCRemoteSwiftPackageReference "swift-log-oslog" */;
 			productName = LoggingOSLog;
 		};
-		A04FAD95294D2FF10002C19B /* ProxyService */ = {
+		A04FAD9B294D60960002C19B /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		A04FAD9D294D60B90002C19B /* ProxyService */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ProxyService;
 		};
@@ -890,11 +895,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A05AD0B1285D0CD100878904 /* XCRemoteSwiftPackageReference "swift-nio" */;
 			productName = NIOFoundationCompat;
-		};
-		A0717CCA294D260C00186AFE /* SwiftProtobuf */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */;
-			productName = SwiftProtobuf;
 		};
 		A0717CCC294D260C00186AFE /* SwiftProtobufPluginLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
