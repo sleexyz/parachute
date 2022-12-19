@@ -203,6 +203,77 @@ func (x *SetTemporaryRxSpeedTargetRequest) GetDuration() int32 {
 	return 0
 }
 
+type Sample struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Ip        string `protobuf:"bytes,1,opt,name=ip,proto3" json:"ip,omitempty"`
+	RxBytes   int64  `protobuf:"varint,2,opt,name=rxBytes,proto3" json:"rxBytes,omitempty"`
+	StartTime int64  `protobuf:"varint,3,opt,name=startTime,proto3" json:"startTime,omitempty"`
+	Duration  int32  `protobuf:"varint,4,opt,name=duration,proto3" json:"duration,omitempty"` // how long the sample
+}
+
+func (x *Sample) Reset() {
+	*x = Sample{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proxyservice_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Sample) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Sample) ProtoMessage() {}
+
+func (x *Sample) ProtoReflect() protoreflect.Message {
+	mi := &file_proxyservice_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Sample.ProtoReflect.Descriptor instead.
+func (*Sample) Descriptor() ([]byte, []int) {
+	return file_proxyservice_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Sample) GetIp() string {
+	if x != nil {
+		return x.Ip
+	}
+	return ""
+}
+
+func (x *Sample) GetRxBytes() int64 {
+	if x != nil {
+		return x.RxBytes
+	}
+	return 0
+}
+
+func (x *Sample) GetStartTime() int64 {
+	if x != nil {
+		return x.StartTime
+	}
+	return 0
+}
+
+func (x *Sample) GetDuration() int32 {
+	if x != nil {
+		return x.Duration
+	}
+	return 0
+}
+
 var File_proxyservice_proto protoreflect.FileDescriptor
 
 var file_proxyservice_proto_rawDesc = []byte{
@@ -229,8 +300,15 @@ var file_proxyservice_proto_rawDesc = []byte{
 	0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x70, 0x65, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x01, 0x52, 0x05, 0x73, 0x70, 0x65, 0x65, 0x64, 0x12, 0x1a, 0x0a, 0x08, 0x64, 0x75, 0x72,
 	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x64, 0x75, 0x72,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x11, 0x5a, 0x0f, 0x70, 0x62, 0x2f, 0x70, 0x72, 0x6f, 0x78,
-	0x79, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x6c, 0x0a, 0x06, 0x53, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x70, 0x12,
+	0x18, 0x0a, 0x07, 0x72, 0x78, 0x42, 0x79, 0x74, 0x65, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x07, 0x72, 0x78, 0x42, 0x79, 0x74, 0x65, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x73, 0x74, 0x61,
+	0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x09, 0x73, 0x74,
+	0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x64, 0x75, 0x72, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x64, 0x75, 0x72, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x42, 0x11, 0x5a, 0x0f, 0x70, 0x62, 0x2f, 0x70, 0x72, 0x6f, 0x78, 0x79, 0x73,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -245,11 +323,12 @@ func file_proxyservice_proto_rawDescGZIP() []byte {
 	return file_proxyservice_proto_rawDescData
 }
 
-var file_proxyservice_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_proxyservice_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_proxyservice_proto_goTypes = []interface{}{
 	(*Settings)(nil),                         // 0: proxyservice.Settings
 	(*Request)(nil),                          // 1: proxyservice.Request
 	(*SetTemporaryRxSpeedTargetRequest)(nil), // 2: proxyservice.SetTemporaryRxSpeedTargetRequest
+	(*Sample)(nil),                           // 3: proxyservice.Sample
 }
 var file_proxyservice_proto_depIdxs = []int32{
 	0, // 0: proxyservice.Request.setSettings:type_name -> proxyservice.Settings
@@ -303,6 +382,18 @@ func file_proxyservice_proto_init() {
 				return nil
 			}
 		}
+		file_proxyservice_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Sample); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_proxyservice_proto_msgTypes[1].OneofWrappers = []interface{}{
 		(*Request_SetSettings)(nil),
@@ -314,7 +405,7 @@ func file_proxyservice_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proxyservice_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

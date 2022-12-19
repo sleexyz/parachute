@@ -28,7 +28,9 @@ func InitDebugServerProxy(proxyBridge ffi.ProxyBridge, proxy proxy.Proxy) *Debug
 }
 
 func (p *DebugServerProxy) Start(port int) {
-	startRequest := &proxyservice.Settings{BaseRxSpeedTarget: controller.DefaultRxSpeedTarget}
+	startRequest := &proxyservice.Settings{
+		BaseRxSpeedTarget: controller.DefaultRxSpeedTarget,
+	}
 	go p.proxy.Start(port, startRequest)
 	p.serveDebugHandlers()
 	// Start http server

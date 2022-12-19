@@ -162,7 +162,7 @@ func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 		conn := &tcpConn{
 			TCPConn:  gonet.NewTCPConn(&wq, ep),
 			id:       id,
-			slowable: controller.InitProportionalSlowable(c),
+			slowable: c.MakeSlowableForFlow(),
 		}
 		tcpQueue <- conn
 	})
@@ -180,7 +180,7 @@ func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 		conn := &udpConn{
 			UDPConn:  gonet.NewUDPConn(s, &wq, ep),
 			id:       id,
-			slowable: controller.InitProportionalSlowable(c),
+			slowable: c.MakeSlowableForFlow(),
 		}
 		udpQueue <- conn
 	})

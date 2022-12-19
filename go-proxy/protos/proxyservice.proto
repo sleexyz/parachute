@@ -19,3 +19,10 @@ message SetTemporaryRxSpeedTargetRequest {
     double speed = 1;
     int32 duration = 2;
 }
+
+message Sample {
+    string ip = 1;
+    int64 rxBytes = 2;
+    int64 startTime = 3;
+    int32 duration = 4; // how long the sample
+}

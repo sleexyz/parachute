@@ -30,10 +30,6 @@ func (r *SlowablePacketConn) ReadFrom(p []byte) (n int, addr net.Addr, err error
 	return
 }
 
-type Flow interface {
-	Slowable
-}
-
 type Slowable interface {
 	Update(n int, now time.Time)
 	InjectRxLatency(n int)
@@ -43,12 +39,17 @@ type SlowableBase struct {
 	// total rxBytes
 	rxBytes int64
 	// rxBytes since last sample time
-	dRx            int64
+	dRx            int
 	lastSampleTime *time.Time
 	rxSpeed        float64
 
 	rxLatencyPerByte time.Duration
+	SamplePublisher  SamplePublisher
 	Sampler          Sampler
+}
+
+type SamplePublisher interface {
+	PublishSample(n int, now time.Time, dt time.Duration)
 }
 
 type Sampler interface {
@@ -79,10 +80,13 @@ func (s *SlowableBase) SetRxLatencyPerByte(l time.Duration) {
 
 func (s *SlowableBase) Update(n int, now time.Time) {
 	s.rxBytes += int64(n)
-	s.dRx += int64(n)
+	s.dRx += n
 	dt := now.Sub(*s.lastSampleTime)
 	if dt > time.Second {
-		s.Sampler.Sample(n, dt)
+		s.Sampler.Sample(s.dRx, dt)
+		if s.SamplePublisher != nil {
+			s.SamplePublisher.PublishSample(s.dRx, now, dt)
+		}
 		s.lastSampleTime = &now
 		s.dRx = 0
 	}
