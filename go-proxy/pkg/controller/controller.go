@@ -27,7 +27,6 @@ type ControllerSettingsReadOnly interface {
 
 type ControllerSettingsReadWrite interface {
 	ControllerSettingsReadOnly
-	RxSpeedTarget() float64
 	GetSpeed() *GetSpeedResponse
 	SetSettings(settings *proxyservice.Settings)
 	SetTemporaryRxSpeedTarget(target float64, seconds int)
@@ -90,4 +89,8 @@ func (c *Controller) GetSpeed() *GetSpeedResponse {
 	return &GetSpeedResponse{
 		RxSpeedTarget: c.temporaryRxSpeedTarget,
 	}
+}
+
+func (c *Controller) MakeSlowableForFlow() Slowable {
+	return InitProportionalSlowable(c)
 }

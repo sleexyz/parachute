@@ -133,6 +133,10 @@ struct AppView: View {
                     Text("\(Int(store.settings.baseRxSpeedTarget))")
                 }
                 Spacer()
+//                Toggle(isOn: $store.settings.perFlow, label: { Text("PerFlow")}).onChange(of: store.settings.perFlow) { value in
+//                    controller.syncSettings()
+//                }
+                Spacer()
                 PrimaryButton(title: "cheat", action: model.startCheat, isLoading: cheatController.isCheating, loadingMessage: cheatLoading).disabled(cheatController.isCheating)
             }
         }

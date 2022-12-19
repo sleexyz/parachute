@@ -98,11 +98,31 @@ public struct Proxyservice_SetTemporaryRxSpeedTargetRequest {
   public init() {}
 }
 
+public struct Proxyservice_Sample {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var ip: String = String()
+
+  public var rxBytes: Int64 = 0
+
+  public var startTime: Int64 = 0
+
+  /// how long the sample
+  public var duration: Int32 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Proxyservice_Settings: @unchecked Sendable {}
 extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
 extension Proxyservice_SetTemporaryRxSpeedTargetRequest: @unchecked Sendable {}
+extension Proxyservice_Sample: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -243,6 +263,56 @@ extension Proxyservice_SetTemporaryRxSpeedTargetRequest: SwiftProtobuf.Message, 
 
   public static func ==(lhs: Proxyservice_SetTemporaryRxSpeedTargetRequest, rhs: Proxyservice_SetTemporaryRxSpeedTargetRequest) -> Bool {
     if lhs.speed != rhs.speed {return false}
+    if lhs.duration != rhs.duration {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Sample"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "ip"),
+    2: .same(proto: "rxBytes"),
+    3: .same(proto: "startTime"),
+    4: .same(proto: "duration"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.ip) }()
+      case 2: try { try decoder.decodeSingularInt64Field(value: &self.rxBytes) }()
+      case 3: try { try decoder.decodeSingularInt64Field(value: &self.startTime) }()
+      case 4: try { try decoder.decodeSingularInt32Field(value: &self.duration) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.ip.isEmpty {
+      try visitor.visitSingularStringField(value: self.ip, fieldNumber: 1)
+    }
+    if self.rxBytes != 0 {
+      try visitor.visitSingularInt64Field(value: self.rxBytes, fieldNumber: 2)
+    }
+    if self.startTime != 0 {
+      try visitor.visitSingularInt64Field(value: self.startTime, fieldNumber: 3)
+    }
+    if self.duration != 0 {
+      try visitor.visitSingularInt32Field(value: self.duration, fieldNumber: 4)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_Sample, rhs: Proxyservice_Sample) -> Bool {
+    if lhs.ip != rhs.ip {return false}
+    if lhs.rxBytes != rhs.rxBytes {return false}
+    if lhs.startTime != rhs.startTime {return false}
     if lhs.duration != rhs.duration {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

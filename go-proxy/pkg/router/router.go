@@ -6,6 +6,7 @@ package router
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 
 	"strange.industries/go-proxy/pkg/adapter"
@@ -39,11 +40,11 @@ type Router struct {
 	Controller *controller.Controller
 }
 
-func Init(address string, i tunconn.TunConn, controller *controller.Controller) *Router {
+func Init(address string, i tunconn.TunConn, con *controller.Controller) *Router {
 	ep := channel.New(10, defaultMTU, "10.0.0.8")
 	tcpQueue := make(chan adapter.TCPConn)
 	udpQueue := make(chan adapter.UDPConn)
-	s, err := createStack(ep, tcpQueue, udpQueue, controller)
+	s, err := createStack(ep, tcpQueue, udpQueue, con)
 	if err != nil {
 		log.Panicln(err)
 	}
@@ -59,7 +60,7 @@ func Init(address string, i tunconn.TunConn, controller *controller.Controller) 
 		i: i,
 
 		// other
-		Controller: controller,
+		Controller: con,
 	}
 
 	return &router
@@ -110,18 +111,18 @@ func (r *Router) listenInternal(ctx context.Context) {
 				if pkt.IsNil() {
 					return
 				}
-				r.WriteToTUN(pkt)
+				WriteToTUN(pkt, r.i)
 			}
 		}
 	}()
 	// <-childCtx.Done()
 }
 
-func (r *Router) WriteToTUN(pkt stack.PacketBufferPtr) tcpip.Error {
+func WriteToTUN(pkt stack.PacketBufferPtr, w io.Writer) tcpip.Error {
 	defer pkt.DecRef()
 	v := pkt.ToView()
 	defer v.Release()
-	_, err := r.i.Write(v.AsSlice())
+	_, err := w.Write(v.AsSlice())
 	if err != nil {
 		return &tcpip.ErrInvalidEndpointState{}
 	}

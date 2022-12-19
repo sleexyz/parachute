@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"math"
 	"time"
 )
@@ -28,13 +29,16 @@ func InitProportionalSlowable(c ControllerSettingsReadOnly) *ProportionalSlowabl
 	return ret
 }
 
+func (s *ProportionalSlowable) isEnabled() bool {
+	return !math.IsInf(s.c.RxSpeedTarget(), 1)
+}
+
 func (s *ProportionalSlowable) Sample(n int, dt time.Duration) {
 	// Update rxSpeed
 	s.SlowableBase.Sample(n, dt)
 
-	// Update settings
-	if math.IsInf(s.c.RxSpeedTarget(), 1) {
-		// no need to update latencyPerByte
+	if !s.isEnabled() {
+		s.SetRxLatencyPerByte(0)
 		return
 	}
 
@@ -45,8 +49,8 @@ func (s *ProportionalSlowable) Sample(n int, dt time.Duration) {
 	if newLatencyPerByte < 0 {
 		newLatencyPerByte = 0
 	}
-	_ = time.Duration(n) * newLatencyPerByte
-	// log.Printf("dRx: %d, e: %.2f, rxSpeed: %.0f, newLatencyPerByte: %s, nextLatency: %s", s.dRx, e, s.RxSpeed(), newLatencyPerByte, nextLatency)
+	nextLatency := time.Duration(n) * newLatencyPerByte
+	log.Printf("dRx: %d, e: %.2f, rxSpeed: %.0f, newLatencyPerByte: %s, nextLatency: %s", s.dRx, e, s.RxSpeed(), newLatencyPerByte, nextLatency)
 	if newLatencyPerByte > latencyPerByteMax {
 		latencyPerByteMax = newLatencyPerByte
 		// log.Printf("new latency max: %s", latencyMax)
