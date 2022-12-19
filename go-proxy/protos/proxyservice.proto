@@ -3,18 +3,19 @@ syntax = "proto3";
 package proxyservice;
 option go_package = "pb/proxyservice";
 
+message Settings {
+    double baseRxSpeedTarget = 1;
+}
+
+
 message Request {
     oneof message {
-        SetTemporaryRxSpeedTargetRequest setTemporaryRxSpeedTarget = 1;
-        SetRxSpeedTargetRequest setRxSpeedTarget = 2;
+        Settings setSettings = 1;
+        SetTemporaryRxSpeedTargetRequest setTemporaryRxSpeedTarget = 2;
     }
 }
 
 message SetTemporaryRxSpeedTargetRequest {
     double speed = 1;
     int32 duration = 2;
-}
-
-message SetRxSpeedTargetRequest {
-    double speed = 1;
 }

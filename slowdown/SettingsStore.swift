@@ -6,9 +6,16 @@
 //
 
 import Foundation
+import ProxyService
 
 class SettingsStore: ObservableObject {
-    @Published var settings: Bool = false
+    @Published var settings: Proxyservice_Settings = makeDefaultSettings()
+    
+    static func makeDefaultSettings() -> Proxyservice_Settings {
+        var settings = Proxyservice_Settings()
+        settings.baseRxSpeedTarget = 200000
+        return settings
+    }
     
     static let shared = SettingsStore()
     
@@ -20,19 +27,20 @@ class SettingsStore: ObservableObject {
             .appendingPathComponent("settings.data")
     }
     
-    static func load(completion: @escaping (Result<Bool,Error>) -> Void) {
+    func load(completion: @escaping (Result<(),Error>) -> Void) {
         DispatchQueue.global(qos: .background).async {
             do {
-                let fileUrl = try fileUrl()
+                let fileUrl = try SettingsStore.fileUrl()
                 guard let file = try? FileHandle(forReadingFrom: fileUrl) else {
                     DispatchQueue.main.async {
-                        completion(.success(false))
+                        completion(.success(()))
                     }
                     return
                 }
-                let settings = try JSONDecoder().decode(Bool.self, from: file.availableData)
+                let newSettings = try Proxyservice_Settings(serializedData: file.availableData)
                 DispatchQueue.main.async {
-                    completion(.success(settings))
+                    self.settings = newSettings
+                    completion(.success(()))
                 }
             } catch {
                 DispatchQueue.main.async {
@@ -42,11 +50,11 @@ class SettingsStore: ObservableObject {
         }
     }
     
-    static func save(settings: Bool, completion: @escaping(Result<Int, Error>) -> Void) {
+    func save(completion: @escaping(Result<Int, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async {
             do {
-                let data = try JSONEncoder().encode(settings)
-                let outfile = try fileUrl()
+                let data = try self.settings.serializedData()
+                let outfile = try SettingsStore.fileUrl()
                 try data.write(to:outfile)
                 DispatchQueue.main.async {
                     completion(.success(1))

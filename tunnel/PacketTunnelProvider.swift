@@ -9,7 +9,6 @@ import Foundation
 import NetworkExtension
 import Logging
 import LoggingOSLog
-import func os.os_log
 import UIKit
 import Ffi
 
@@ -48,6 +47,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
         let debug = options?["debug"] != nil  ? (options?["debug"]! as! NSNumber).boolValue : false
+        let settingsData = Data(referencing: options?["settings"]! as! NSData)
         
         self.logger.info("starting tunnel")
         self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
@@ -56,15 +56,15 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         
         if (!debug) {
             self.proxy = Proxy(bridge: Ffi.FfiInit()!, logger: self.logger)
-            self.logger.info("starting server")
-            DispatchQueue.global(qos: .background).async {
-              self.proxy!.start(port: self.options.ipv4Port)
-            }
-            self.logger.info("server started")
         } else {
             self.proxy = Proxy(bridge: Ffi.FfiInitDebug("\(ProxyServerOptions.debugControlServer.ipv4Address):\(ProxyServerOptions.debugControlServer.ipv4Port)")!, logger: self.logger)
-            self.logger.info("server started")
         }
+        
+        self.logger.info("starting server")
+        DispatchQueue.global(qos: .background).async {
+            self.proxy!.startProxy(port: 8080, settingsData: settingsData)
+        }
+        self.logger.info("server started")
         
         self.options = debug ? .debugDataServer : .localServer
         

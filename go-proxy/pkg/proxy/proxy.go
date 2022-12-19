@@ -3,6 +3,7 @@ package proxy
 import (
 	"log"
 
+	"strange.industries/go-proxy/pb/proxyservice"
 	"strange.industries/go-proxy/pkg/controller"
 	"strange.industries/go-proxy/pkg/router"
 	"strange.industries/go-proxy/pkg/tunconn"
@@ -14,7 +15,7 @@ const (
 
 type Proxy interface {
 	controller.ControllerSettingsReadWrite
-	Start(port int)
+	Start(port int, startRequest *proxyservice.Settings)
 	Close()
 }
 
@@ -30,7 +31,11 @@ func InitServerProxy() *ServerProxy {
 	}
 }
 
-func (p *ServerProxy) Start(port int) {
+func (p *ServerProxy) Start(port int, s *proxyservice.Settings) {
+	if s.BaseRxSpeedTarget > 0 {
+		p.Controller.SetBaseRxSpeedTarget(s.BaseRxSpeedTarget)
+	}
+
 	i, err := tunconn.InitUDPServerConn(port)
 	if err != nil {
 		log.Fatalf("Could not initialize internal connection: %v", err)

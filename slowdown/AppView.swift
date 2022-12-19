@@ -8,16 +8,34 @@
 import SwiftUI
 import NetworkExtension
 import Combine
+import func os.os_log
 
 final class AppViewModel: ObservableObject {
+    
+    @Published var logSpeed: Double
     
     @Published var debug = false
     @Published var isShowingError = false
     @Published private(set) var errorTitle = ""
     @Published private(set) var errorMessage = ""
     private var bag = [AnyCancellable]()
-    let service: VPNConfigurationService = .shared
-    let cheatController: CheatController = .shared
+    let service: VPNConfigurationService
+    let cheatController: CheatController
+    let settingsController: SettingsController
+    let store: SettingsStore
+    
+    
+    init(service: VPNConfigurationService = .shared, cheatController: CheatController = .shared, settingsController: SettingsController = .shared, settingsStore: SettingsStore = .shared) {
+        self.service = service
+        self.cheatController = cheatController
+        self.settingsController = settingsController
+        self.store = settingsStore
+        logSpeed = log(settingsStore.settings.baseRxSpeedTarget)
+        $logSpeed.sink {
+            settingsStore.settings.baseRxSpeedTarget = exp($0)
+        }.store(in: &bag)
+    }
+    
     
     func toggleConnection() {
         if service.isConnected {
@@ -75,9 +93,13 @@ struct CheatTimer: View {
 
 struct AppView: View {
     @ObservedObject var model: AppViewModel
-    @EnvironmentObject var store: SettingsStore
+    @ObservedObject var store: SettingsStore = .shared
     @ObservedObject var service: VPNConfigurationService = .shared
     @ObservedObject var cheatController: CheatController = .shared
+    var controller: SettingsController = .shared
+    
+    
+
     
     @ViewBuilder
     var cheatLoading : some View {
@@ -97,6 +119,19 @@ struct AppView: View {
                     .disabled(service.isTransitioning)
             } else {
                 PrimaryButton(title: "stop", action: model.toggleConnection, isLoading: service.isTransitioning)
+                Spacer()
+                VStack {
+                    Slider(
+                        value: $model.logSpeed,
+                        in: (11...16),
+                        onEditingChanged: { editing in
+                            if !editing {
+                                controller.syncSettings()
+                            }
+                        }
+                    )
+                    Text("\(Int(store.settings.baseRxSpeedTarget))")
+                }
                 Spacer()
                 PrimaryButton(title: "cheat", action: model.startCheat, isLoading: cheatController.isCheating, loadingMessage: cheatLoading).disabled(cheatController.isCheating)
             }

@@ -9,10 +9,6 @@ import Foundation
 import Ffi
 import Logging
 
-public struct SetTemporaryRxSpeedTargetRequest: Encodable {
-    public var target: Float64
-    public var duration: Int
-}
 
 public struct Proxy {
     let bridge: FfiProxyBridgeProtocol
@@ -20,8 +16,8 @@ public struct Proxy {
     
     let encoder = JSONEncoder()
     
-    func start(port: Int) {
-        bridge.start(port)
+    func startProxy(port: Int, settingsData: Data) {
+        bridge.startProxy(port, settingsData: settingsData)
     }
     
     func close() {
