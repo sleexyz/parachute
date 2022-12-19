@@ -9,7 +9,7 @@ import (
 
 const (
 	// defaultRxSpeedTarget = 40000.0 // dialup (40kbps)
-	defaultRxSpeedTarget float64 = 100000.0 // 100kbps
+	DefaultRxSpeedTarget float64 = 100000.0 // 100kbps
 )
 
 type FlowData struct {
@@ -32,9 +32,9 @@ type ControllerSettingsReadWrite interface {
 }
 
 type Controller struct {
-	rxSpeedTarget     float64
-	baseRxSpeedTarget float64
-	temporaryTimer    *time.Timer
+	temporaryRxSpeedTarget float64
+	baseRxSpeedTarget      float64
+	temporaryTimer         *time.Timer
 }
 
 type GetSpeedResponse struct {
@@ -43,13 +43,16 @@ type GetSpeedResponse struct {
 
 func Init() *Controller {
 	return &Controller{
-		rxSpeedTarget:     defaultRxSpeedTarget,
-		baseRxSpeedTarget: defaultRxSpeedTarget,
+		temporaryRxSpeedTarget: DefaultRxSpeedTarget,
+		baseRxSpeedTarget:      DefaultRxSpeedTarget,
 	}
 }
 
 func (c *Controller) RxSpeedTarget() float64 {
-	return c.rxSpeedTarget
+	if c.temporaryTimer != nil {
+		return c.temporaryRxSpeedTarget
+	}
+	return c.baseRxSpeedTarget
 }
 
 func (c *Controller) SetBaseRxSpeedTarget(target float64) {
@@ -57,31 +60,33 @@ func (c *Controller) SetBaseRxSpeedTarget(target float64) {
 	c.baseRxSpeedTarget = target
 }
 
-func (c *Controller) setRxSpeedTarget(target float64) {
+func (c *Controller) setTemporaryRxSpeedTarget(target float64) {
 	log.Printf("set rxSpeedTarget: %f", target)
-	c.rxSpeedTarget = target
+	c.temporaryRxSpeedTarget = target
 }
 
 func (c *Controller) SetTemporaryRxSpeedTarget(target float64, duration int) {
 	log.Printf("baseRxSpeedTarget: %0.f, temporaryRxSpeedTarget: %0.f, duration: %d", c.baseRxSpeedTarget, target, duration)
 	if target >= 0 {
-		c.setRxSpeedTarget(target)
+		c.setTemporaryRxSpeedTarget(target)
 	} else {
-		c.setRxSpeedTarget(math.Inf(1))
+		c.setTemporaryRxSpeedTarget(math.Inf(1))
 	}
 	if c.temporaryTimer != nil {
 		c.temporaryTimer.Stop()
+		c.temporaryTimer = nil
 		log.Printf("Pause ended")
 	}
 	c.temporaryTimer = time.NewTimer(time.Duration(duration) * time.Second)
 	go func() {
 		<-c.temporaryTimer.C
-		c.setRxSpeedTarget(c.baseRxSpeedTarget)
+		c.temporaryTimer = nil
+		log.Printf("Pause ended")
 	}()
 }
 
 func (c *Controller) GetSpeed() *GetSpeedResponse {
 	return &GetSpeedResponse{
-		RxSpeedTarget: c.rxSpeedTarget,
+		RxSpeedTarget: c.temporaryRxSpeedTarget,
 	}
 }

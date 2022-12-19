@@ -20,12 +20,32 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+public struct Proxyservice_Settings {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var baseRxSpeedTarget: Double = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct Proxyservice_Request {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   public var message: Proxyservice_Request.OneOf_Message? = nil
+
+  public var setSettings: Proxyservice_Settings {
+    get {
+      if case .setSettings(let v)? = message {return v}
+      return Proxyservice_Settings()
+    }
+    set {message = .setSettings(newValue)}
+  }
 
   public var setTemporaryRxSpeedTarget: Proxyservice_SetTemporaryRxSpeedTargetRequest {
     get {
@@ -35,19 +55,11 @@ public struct Proxyservice_Request {
     set {message = .setTemporaryRxSpeedTarget(newValue)}
   }
 
-  public var setRxSpeedTarget: Proxyservice_SetRxSpeedTargetRequest {
-    get {
-      if case .setRxSpeedTarget(let v)? = message {return v}
-      return Proxyservice_SetRxSpeedTargetRequest()
-    }
-    set {message = .setRxSpeedTarget(newValue)}
-  }
-
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Message: Equatable {
+    case setSettings(Proxyservice_Settings)
     case setTemporaryRxSpeedTarget(Proxyservice_SetTemporaryRxSpeedTargetRequest)
-    case setRxSpeedTarget(Proxyservice_SetRxSpeedTargetRequest)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proxyservice_Request.OneOf_Message, rhs: Proxyservice_Request.OneOf_Message) -> Bool {
@@ -55,12 +67,12 @@ public struct Proxyservice_Request {
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch (lhs, rhs) {
-      case (.setTemporaryRxSpeedTarget, .setTemporaryRxSpeedTarget): return {
-        guard case .setTemporaryRxSpeedTarget(let l) = lhs, case .setTemporaryRxSpeedTarget(let r) = rhs else { preconditionFailure() }
+      case (.setSettings, .setSettings): return {
+        guard case .setSettings(let l) = lhs, case .setSettings(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
-      case (.setRxSpeedTarget, .setRxSpeedTarget): return {
-        guard case .setRxSpeedTarget(let l) = lhs, case .setRxSpeedTarget(let r) = rhs else { preconditionFailure() }
+      case (.setTemporaryRxSpeedTarget, .setTemporaryRxSpeedTarget): return {
+        guard case .setTemporaryRxSpeedTarget(let l) = lhs, case .setTemporaryRxSpeedTarget(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       default: return false
@@ -86,34 +98,54 @@ public struct Proxyservice_SetTemporaryRxSpeedTargetRequest {
   public init() {}
 }
 
-public struct Proxyservice_SetRxSpeedTargetRequest {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var speed: Double = 0
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
 #if swift(>=5.5) && canImport(_Concurrency)
+extension Proxyservice_Settings: @unchecked Sendable {}
 extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
 extension Proxyservice_SetTemporaryRxSpeedTargetRequest: @unchecked Sendable {}
-extension Proxyservice_SetRxSpeedTargetRequest: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "proxyservice"
 
+extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Settings"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "baseRxSpeedTarget"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularDoubleField(value: &self.baseRxSpeedTarget) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.baseRxSpeedTarget != 0 {
+      try visitor.visitSingularDoubleField(value: self.baseRxSpeedTarget, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_Settings, rhs: Proxyservice_Settings) -> Bool {
+    if lhs.baseRxSpeedTarget != rhs.baseRxSpeedTarget {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Request"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "setTemporaryRxSpeedTarget"),
-    2: .same(proto: "setRxSpeedTarget"),
+    1: .same(proto: "setSettings"),
+    2: .same(proto: "setTemporaryRxSpeedTarget"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -123,6 +155,19 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try {
+        var v: Proxyservice_Settings?
+        var hadOneofValue = false
+        if let current = self.message {
+          hadOneofValue = true
+          if case .setSettings(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.message = .setSettings(v)
+        }
+      }()
+      case 2: try {
         var v: Proxyservice_SetTemporaryRxSpeedTargetRequest?
         var hadOneofValue = false
         if let current = self.message {
@@ -133,19 +178,6 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
         if let v = v {
           if hadOneofValue {try decoder.handleConflictingOneOf()}
           self.message = .setTemporaryRxSpeedTarget(v)
-        }
-      }()
-      case 2: try {
-        var v: Proxyservice_SetRxSpeedTargetRequest?
-        var hadOneofValue = false
-        if let current = self.message {
-          hadOneofValue = true
-          if case .setRxSpeedTarget(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {
-          if hadOneofValue {try decoder.handleConflictingOneOf()}
-          self.message = .setRxSpeedTarget(v)
         }
       }()
       default: break
@@ -159,12 +191,12 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
     switch self.message {
-    case .setTemporaryRxSpeedTarget?: try {
-      guard case .setTemporaryRxSpeedTarget(let v)? = self.message else { preconditionFailure() }
+    case .setSettings?: try {
+      guard case .setSettings(let v)? = self.message else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     }()
-    case .setRxSpeedTarget?: try {
-      guard case .setRxSpeedTarget(let v)? = self.message else { preconditionFailure() }
+    case .setTemporaryRxSpeedTarget?: try {
+      guard case .setTemporaryRxSpeedTarget(let v)? = self.message else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     }()
     case nil: break
@@ -212,38 +244,6 @@ extension Proxyservice_SetTemporaryRxSpeedTargetRequest: SwiftProtobuf.Message, 
   public static func ==(lhs: Proxyservice_SetTemporaryRxSpeedTargetRequest, rhs: Proxyservice_SetTemporaryRxSpeedTargetRequest) -> Bool {
     if lhs.speed != rhs.speed {return false}
     if lhs.duration != rhs.duration {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Proxyservice_SetRxSpeedTargetRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".SetRxSpeedTargetRequest"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "speed"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularDoubleField(value: &self.speed) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.speed != 0 {
-      try visitor.visitSingularDoubleField(value: self.speed, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Proxyservice_SetRxSpeedTargetRequest, rhs: Proxyservice_SetRxSpeedTargetRequest) -> Bool {
-    if lhs.speed != rhs.speed {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

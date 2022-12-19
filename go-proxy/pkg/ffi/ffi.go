@@ -13,13 +13,22 @@ import (
 )
 
 type ProxyBridge interface {
-	Start(port int)
+	StartProxy(port int, settingsData []byte)
 	Close()
 	Rpc(input []byte) ([]byte, error)
 }
 
 type OnDeviceProxyBridge struct {
 	proxy.Proxy
+}
+
+func (p *OnDeviceProxyBridge) StartProxy(port int, settingsData []byte) {
+	r := &proxyservice.Settings{}
+	err := proto.Unmarshal(settingsData, r)
+	if err != nil {
+		log.Panicf("could not start server: %s", err)
+	}
+	p.Proxy.Start(port, r)
 }
 
 func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
@@ -33,6 +42,9 @@ func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
 	case *proxyservice.Request_SetTemporaryRxSpeedTarget:
 		m := r.GetSetTemporaryRxSpeedTarget()
 		p.Proxy.SetTemporaryRxSpeedTarget(m.Speed, int(m.Duration))
+	case *proxyservice.Request_SetSettings:
+		m := r.GetSetSettings()
+		p.Proxy.SetBaseRxSpeedTarget(m.BaseRxSpeedTarget)
 	default:
 		return nil, fmt.Errorf("could not parse rpc command")
 	}
@@ -51,7 +63,6 @@ func (p *OnDeviceProxyBridge) encodeResponse(resp any) []byte {
 func InitDebug(debugServerAddr string) ProxyBridge {
 	log.SetOutput(MobileLogger{})
 	return proxy.InitDebugClientProxyBridge(debugServerAddr)
-
 }
 
 func Init() ProxyBridge {

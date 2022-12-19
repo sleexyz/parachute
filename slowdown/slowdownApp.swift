@@ -6,24 +6,30 @@
 //
 
 import SwiftUI
+import ProxyService
+import Logging
+import LoggingOSLog
 
 @main
 struct slowdownApp: App {
-    @StateObject private var store = SettingsStore()
+    private let logger: Logger
+    init() {
+        LoggingSystem.bootstrap(LoggingOSLog.init)
+        self.logger = Logger(label: "com.strangeindustries.slowdown.App")
+    }
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .onAppear {
-                    SettingsStore.load { result in
+                    SettingsStore.shared.load { result in
                         switch result {
                         case .failure(let error):
                             fatalError(error.localizedDescription)
-                        case .success(let settings):
-                            store.settings = settings
+                        case .success():
+                            logger.info("loaded settings")
                         }
                     }
                 }
-                .environmentObject(store)
         }
     }
 }

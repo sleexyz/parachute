@@ -7,14 +7,15 @@
 
 import NetworkExtension
 import Foundation
-import os
 import ProxyService
+import Logging
 
 enum UserError: Error {
     case message(message: String)
 }
 
 final class VPNConfigurationService: ObservableObject {
+    private let logger: Logger
     @Published private(set) var isInitializing = true
     @Published private(set) var isConnected = false
     @Published var isTransitioning = false
@@ -29,6 +30,7 @@ final class VPNConfigurationService: ObservableObject {
     static let shared = VPNConfigurationService(store: .shared)
     
     init(store: SettingsStore) {
+        self.logger = Logger(label: "com.strangeindustries.slowdown.VPNConfigurationService")
         self.store = store
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.manager = managers?.first
@@ -66,8 +68,11 @@ final class VPNConfigurationService: ObservableObject {
         //        if !self.manager?.isEnabled {
         //
         //        }
+        logger.info("\(store.settings.debugDescription)")
+        
         try self.manager?.connection.startVPNTunnel(options: [
-            "debug": NSNumber(booleanLiteral: debug)
+            "debug": NSNumber(booleanLiteral: debug),
+            "settings": NSData(data: store.settings.serializedData()),
         ])
         self.isTransitioning = true
     }
@@ -112,11 +117,15 @@ final class VPNConfigurationService: ObservableObject {
 }
 
 extension VPNConfigurationService {
+    func SetSettings(settings: Proxyservice_Settings) async throws {
+        var message = Proxyservice_Request()
+        message.setSettings = settings
+        return try await Rpc(message: message)
+    }
     func SetTemporaryRxSpeedTarget(speed: Float64, duration: Int32) async throws {
         var message = Proxyservice_Request()
-        message.setTemporaryRxSpeedTarget.duration = 60
-        message.setTemporaryRxSpeedTarget.speed = -1
-        os_log("\(message.debugDescription)")
+        message.setTemporaryRxSpeedTarget.duration = duration
+        message.setTemporaryRxSpeedTarget.speed = speed
         return try await Rpc(message: message)
     }
     func Rpc(message: Proxyservice_Request) async throws {
@@ -125,13 +134,14 @@ extension VPNConfigurationService {
         }
         return try await withCheckedThrowingContinuation { continuation in
             do {
+                self.logger.info("\(message.debugDescription)")
                 try session.sendProviderMessage(message.serializedData()) { response in
                     if response != nil {
                         let responseString = NSString(data: response!, encoding: String.Encoding.utf8.rawValue)
-                        os_log("Received response frommm the provider: \(responseString)")
+                        self.logger.info("Received response frommm the provider: \(responseString.debugDescription)")
                         continuation.resume(returning: ())
                     } else {
-                        os_log("Got a nil response from the provider")
+                        self.logger.info("Got a nil response from the provider")
                         continuation.resume(throwing: UserError.message(message: "Got a nil response from the provider"))
                     }
                 }

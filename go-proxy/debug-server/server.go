@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"time"
 
+	"strange.industries/go-proxy/pb/proxyservice"
+	"strange.industries/go-proxy/pkg/controller"
 	ffi "strange.industries/go-proxy/pkg/ffi"
 	"strange.industries/go-proxy/pkg/proxy"
 )
@@ -26,7 +28,8 @@ func InitDebugServerProxy(proxyBridge ffi.ProxyBridge, proxy proxy.Proxy) *Debug
 }
 
 func (p *DebugServerProxy) Start(port int) {
-	go p.proxy.Start(port)
+	startRequest := &proxyservice.Settings{BaseRxSpeedTarget: controller.DefaultRxSpeedTarget}
+	go p.proxy.Start(port, startRequest)
 	p.serveDebugHandlers()
 	// Start http server
 }
