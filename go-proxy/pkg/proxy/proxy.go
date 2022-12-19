@@ -32,10 +32,7 @@ func InitServerProxy() *ServerProxy {
 }
 
 func (p *ServerProxy) Start(port int, s *proxyservice.Settings) {
-	if s.BaseRxSpeedTarget > 0 {
-		p.Controller.SetBaseRxSpeedTarget(s.BaseRxSpeedTarget)
-	}
-
+	p.Controller.SetSettings(s)
 	i, err := tunconn.InitUDPServerConn(port)
 	if err != nil {
 		log.Fatalf("Could not initialize internal connection: %v", err)

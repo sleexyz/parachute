@@ -5,6 +5,8 @@ import (
 	"math"
 	"net"
 	"time"
+
+	"strange.industries/go-proxy/pb/proxyservice"
 )
 
 const (
@@ -27,13 +29,13 @@ type ControllerSettingsReadWrite interface {
 	ControllerSettingsReadOnly
 	RxSpeedTarget() float64
 	GetSpeed() *GetSpeedResponse
-	SetBaseRxSpeedTarget(target float64)
+	SetSettings(settings *proxyservice.Settings)
 	SetTemporaryRxSpeedTarget(target float64, seconds int)
 }
 
 type Controller struct {
+	settings               *proxyservice.Settings
 	temporaryRxSpeedTarget float64
-	baseRxSpeedTarget      float64
 	temporaryTimer         *time.Timer
 }
 
@@ -44,7 +46,6 @@ type GetSpeedResponse struct {
 func Init() *Controller {
 	return &Controller{
 		temporaryRxSpeedTarget: DefaultRxSpeedTarget,
-		baseRxSpeedTarget:      DefaultRxSpeedTarget,
 	}
 }
 
@@ -52,12 +53,12 @@ func (c *Controller) RxSpeedTarget() float64 {
 	if c.temporaryTimer != nil {
 		return c.temporaryRxSpeedTarget
 	}
-	return c.baseRxSpeedTarget
+	return c.settings.BaseRxSpeedTarget
 }
 
-func (c *Controller) SetBaseRxSpeedTarget(target float64) {
-	log.Printf("set baseRxSpeedTarget: %0.f", target)
-	c.baseRxSpeedTarget = target
+func (c *Controller) SetSettings(settings *proxyservice.Settings) {
+	log.Printf("set settings: %s", settings)
+	c.settings = settings
 }
 
 func (c *Controller) setTemporaryRxSpeedTarget(target float64) {
@@ -66,7 +67,7 @@ func (c *Controller) setTemporaryRxSpeedTarget(target float64) {
 }
 
 func (c *Controller) SetTemporaryRxSpeedTarget(target float64, duration int) {
-	log.Printf("baseRxSpeedTarget: %0.f, temporaryRxSpeedTarget: %0.f, duration: %d", c.baseRxSpeedTarget, target, duration)
+	log.Printf("baseRxSpeedTarget: %0.f, temporaryRxSpeedTarget: %0.f, duration: %d", c.settings.BaseRxSpeedTarget, target, duration)
 	if target >= 0 {
 		c.setTemporaryRxSpeedTarget(target)
 	} else {

@@ -44,7 +44,7 @@ func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
 		p.Proxy.SetTemporaryRxSpeedTarget(m.Speed, int(m.Duration))
 	case *proxyservice.Request_SetSettings:
 		m := r.GetSetSettings()
-		p.Proxy.SetBaseRxSpeedTarget(m.BaseRxSpeedTarget)
+		p.Proxy.SetSettings(m)
 	default:
 		return nil, fmt.Errorf("could not parse rpc command")
 	}
