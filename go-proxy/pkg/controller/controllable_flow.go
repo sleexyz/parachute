@@ -1,41 +1,40 @@
 package controller
 
 import (
-	"log"
 	"math"
 	"time"
 )
 
 var latencyPerByteMax time.Duration = 0
 
-type ProportionalSlowable struct {
-	*SlowableBase
+type ControllableFlow struct {
+	*FlowBase
 	c    ControllerSettingsReadOnly
 	gain float64
 }
 
-func InitProportionalSlowable(c ControllerSettingsReadOnly) *ProportionalSlowable {
+func InitControllableFlow(c *Controller, ip string) *ControllableFlow {
 	initialLatencyPerByte := time.Duration(0)
 	if !math.IsInf(c.RxSpeedTarget(), 1) {
 		initialLatencyPerByte = 18 * time.Microsecond * 400000.0 / time.Duration(c.RxSpeedTarget())
 	}
 	// log.Printf("initial latency per byte: %s", initialLatencyPerByte)
-	ret := &ProportionalSlowable{
-		SlowableBase: InitSlowableBase(initialLatencyPerByte),
-		c:            c,
-		gain:         1000,
+	ret := &ControllableFlow{
+		FlowBase: InitFlowBase(initialLatencyPerByte, ip, c),
+		c:        c,
+		gain:     1000,
 	}
-	ret.Sampler = ret
+	ret.Updater = ret
 	return ret
 }
 
-func (s *ProportionalSlowable) isEnabled() bool {
+func (s *ControllableFlow) isEnabled() bool {
 	return !math.IsInf(s.c.RxSpeedTarget(), 1)
 }
 
-func (s *ProportionalSlowable) Sample(n int, dt time.Duration) {
+func (s *ControllableFlow) UpdateFn(n int, dt time.Duration) {
 	// Update rxSpeed
-	s.SlowableBase.Sample(n, dt)
+	s.FlowBase.UpdateFn(n, dt)
 
 	if !s.isEnabled() {
 		s.SetRxLatencyPerByte(0)
@@ -49,8 +48,8 @@ func (s *ProportionalSlowable) Sample(n int, dt time.Duration) {
 	if newLatencyPerByte < 0 {
 		newLatencyPerByte = 0
 	}
-	nextLatency := time.Duration(n) * newLatencyPerByte
-	log.Printf("dRx: %d, e: %.2f, rxSpeed: %.0f, newLatencyPerByte: %s, nextLatency: %s", s.dRx, e, s.RxSpeed(), newLatencyPerByte, nextLatency)
+	_ = time.Duration(n) * newLatencyPerByte
+	// log.Printf("dRx: %d, e: %.2f, rxSpeed: %.0f, newLatencyPerByte: %s, nextLatency: %s", s.dRx, e, s.RxSpeed(), newLatencyPerByte, nextLatency)
 	if newLatencyPerByte > latencyPerByteMax {
 		latencyPerByteMax = newLatencyPerByte
 		// log.Printf("new latency max: %s", latencyMax)

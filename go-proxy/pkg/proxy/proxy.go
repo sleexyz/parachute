@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"strange.industries/go-proxy/pb/proxyservice"
+	"strange.industries/go-proxy/pkg/analytics"
 	"strange.industries/go-proxy/pkg/controller"
 	"strange.industries/go-proxy/pkg/router"
 	"strange.industries/go-proxy/pkg/tunconn"
@@ -20,14 +21,16 @@ type Proxy interface {
 }
 
 type ServerProxy struct {
-	controller.Controller
+	analytics.Analytics
+	*controller.Controller
 	i      tunconn.TunConn
 	router *router.Router
 }
 
-func InitServerProxy() *ServerProxy {
+func InitOnDeviceProxy(a analytics.Analytics) *ServerProxy {
 	return &ServerProxy{
-		Controller: *controller.Init(),
+		Controller: controller.Init(a),
+		Analytics:  a,
 	}
 }
 
@@ -39,11 +42,12 @@ func (p *ServerProxy) Start(port int, s *proxyservice.Settings) {
 	}
 	p.i = i
 	log.Printf("Listening on port %d", port)
-	p.router = router.Init(proxyAddr, i, &p.Controller)
+	p.router = router.Init(proxyAddr, i, p.Controller)
 	p.router.Start()
 }
 
 func (p *ServerProxy) Close() {
+	p.Analytics.Close()
 	p.i.Close()
 	p.router.Close()
 }

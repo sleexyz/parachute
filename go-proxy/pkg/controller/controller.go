@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"strange.industries/go-proxy/pb/proxyservice"
+	"strange.industries/go-proxy/pkg/analytics"
 )
 
 const (
@@ -33,6 +34,7 @@ type ControllerSettingsReadWrite interface {
 }
 
 type Controller struct {
+	analytics.SamplePublisher
 	settings               *proxyservice.Settings
 	temporaryRxSpeedTarget float64
 	temporaryTimer         *time.Timer
@@ -42,9 +44,10 @@ type GetSpeedResponse struct {
 	RxSpeedTarget float64 `json:"rxSpeedTarget"`
 }
 
-func Init() *Controller {
+func Init(sp analytics.SamplePublisher) *Controller {
 	return &Controller{
 		temporaryRxSpeedTarget: DefaultRxSpeedTarget,
+		SamplePublisher:        sp,
 	}
 }
 
@@ -89,8 +92,4 @@ func (c *Controller) GetSpeed() *GetSpeedResponse {
 	return &GetSpeedResponse{
 		RxSpeedTarget: c.temporaryRxSpeedTarget,
 	}
-}
-
-func (c *Controller) MakeSlowableForFlow() Slowable {
-	return InitProportionalSlowable(c)
 }

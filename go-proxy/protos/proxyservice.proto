@@ -3,6 +3,10 @@ syntax = "proto3";
 package proxyservice;
 option go_package = "pb/proxyservice";
 
+import "google/protobuf/timestamp.proto";
+
+
+
 message Settings {
     double baseRxSpeedTarget = 1;
 }
@@ -23,6 +27,6 @@ message SetTemporaryRxSpeedTargetRequest {
 message Sample {
     string ip = 1;
     int64 rxBytes = 2;
-    int64 startTime = 3;
-    int32 duration = 4; // how long the sample
+    google.protobuf.Timestamp startTime = 3;
+    int64 duration = 4; // how long the sample
 }

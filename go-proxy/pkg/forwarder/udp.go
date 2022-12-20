@@ -72,7 +72,7 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 		defer wg.Done()
 		sourceConn := targetConn
 		if !isDns {
-			sourceConn = &controller.SlowablePacketConn{PacketConn: targetConn, S: localConn.Slowable()}
+			sourceConn = &controller.FlowPacketConn{PacketConn: targetConn, S: localConn}
 		}
 		_, err := copyPacketBuffer2(localConn, sourceConn, nil, _udpSessionTimeout)
 		if err != nil {
