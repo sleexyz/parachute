@@ -11,8 +11,7 @@ import (
 type UDPConn interface {
 	net.Conn
 	net.PacketConn
-
-	Slowable() controller.Slowable
+	controller.Flow
 	// ID returns the transport endpoint id of UDPConn.
 	ID() *stack.TransportEndpointID
 }
@@ -20,8 +19,7 @@ type UDPConn interface {
 // TCPConn implements the net.Conn interface.
 type TCPConn interface {
 	net.Conn
-
-	Slowable() controller.Slowable
+	controller.Flow
 	// ID returns the transport endpoint id of TCPConn.
 	ID() *stack.TransportEndpointID
 }

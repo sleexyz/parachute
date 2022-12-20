@@ -92,7 +92,7 @@ func relay(localConn adapter.TCPConn, targetConn net.Conn) (int64, int64) {
 
 	go func() {
 		defer wg.Done()
-		slowedTargetConn := &controller.SlowableConn{Conn: targetConn, S: localConn.Slowable()}
+		slowedTargetConn := &controller.FlowConn{Conn: targetConn, S: localConn}
 		rxBytes, _ = copyBuffer(localConn, slowedTargetConn) /* ignore error */
 		localConn.SetReadDeadline(time.Now().Add(tcpWaitTimeout))
 	}()

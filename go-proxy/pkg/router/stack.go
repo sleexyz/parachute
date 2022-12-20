@@ -23,12 +23,8 @@ import (
 
 type tcpConn struct {
 	*gonet.TCPConn
-	slowable controller.Slowable
-	id       stack.TransportEndpointID
-}
-
-func (c *tcpConn) Slowable() controller.Slowable {
-	return c.slowable
+	*controller.ControllableFlow
+	id stack.TransportEndpointID
 }
 
 func (c *tcpConn) ID() *stack.TransportEndpointID {
@@ -37,12 +33,8 @@ func (c *tcpConn) ID() *stack.TransportEndpointID {
 
 type udpConn struct {
 	*gonet.UDPConn
-	slowable controller.Slowable
-	id       stack.TransportEndpointID
-}
-
-func (c *udpConn) Slowable() controller.Slowable {
-	return c.slowable
+	*controller.ControllableFlow
+	id stack.TransportEndpointID
 }
 
 func (c *udpConn) ID() *stack.TransportEndpointID {
@@ -160,9 +152,9 @@ func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 		err = setSocketOptions(s, ep)
 
 		conn := &tcpConn{
-			TCPConn:  gonet.NewTCPConn(&wq, ep),
-			id:       id,
-			slowable: c.MakeSlowableForFlow(),
+			TCPConn:          gonet.NewTCPConn(&wq, ep),
+			ControllableFlow: controller.InitControllableFlow(c, id.LocalAddress.String()),
+			id:               id,
 		}
 		tcpQueue <- conn
 	})
@@ -178,9 +170,9 @@ func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 			return
 		}
 		conn := &udpConn{
-			UDPConn:  gonet.NewUDPConn(s, &wq, ep),
-			id:       id,
-			slowable: c.MakeSlowableForFlow(),
+			UDPConn:          gonet.NewUDPConn(s, &wq, ep),
+			ControllableFlow: controller.InitControllableFlow(c, id.LocalAddress.String()),
+			id:               id,
 		}
 		udpQueue <- conn
 	})

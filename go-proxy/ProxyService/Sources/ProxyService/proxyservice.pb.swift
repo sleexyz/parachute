@@ -107,14 +107,23 @@ public struct Proxyservice_Sample {
 
   public var rxBytes: Int64 = 0
 
-  public var startTime: Int64 = 0
+  public var startTime: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _startTime ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_startTime = newValue}
+  }
+  /// Returns true if `startTime` has been explicitly set.
+  public var hasStartTime: Bool {return self._startTime != nil}
+  /// Clears the value of `startTime`. Subsequent reads from it will return its default value.
+  public mutating func clearStartTime() {self._startTime = nil}
 
   /// how long the sample
-  public var duration: Int32 = 0
+  public var duration: Int64 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
+
+  fileprivate var _startTime: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -286,25 +295,29 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.ip) }()
       case 2: try { try decoder.decodeSingularInt64Field(value: &self.rxBytes) }()
-      case 3: try { try decoder.decodeSingularInt64Field(value: &self.startTime) }()
-      case 4: try { try decoder.decodeSingularInt32Field(value: &self.duration) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._startTime) }()
+      case 4: try { try decoder.decodeSingularInt64Field(value: &self.duration) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if !self.ip.isEmpty {
       try visitor.visitSingularStringField(value: self.ip, fieldNumber: 1)
     }
     if self.rxBytes != 0 {
       try visitor.visitSingularInt64Field(value: self.rxBytes, fieldNumber: 2)
     }
-    if self.startTime != 0 {
-      try visitor.visitSingularInt64Field(value: self.startTime, fieldNumber: 3)
-    }
+    try { if let v = self._startTime {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    } }()
     if self.duration != 0 {
-      try visitor.visitSingularInt32Field(value: self.duration, fieldNumber: 4)
+      try visitor.visitSingularInt64Field(value: self.duration, fieldNumber: 4)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -312,7 +325,7 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
   public static func ==(lhs: Proxyservice_Sample, rhs: Proxyservice_Sample) -> Bool {
     if lhs.ip != rhs.ip {return false}
     if lhs.rxBytes != rhs.rxBytes {return false}
-    if lhs.startTime != rhs.startTime {return false}
+    if lhs._startTime != rhs._startTime {return false}
     if lhs.duration != rhs.duration {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

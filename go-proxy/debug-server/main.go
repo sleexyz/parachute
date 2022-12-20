@@ -62,7 +62,9 @@ func main() {
 	debug.SetMemoryLimit(20 << 20)
 	debug.SetGCPercent(50)
 
-	proxy := proxy.InitServerProxy()
+	a := InitAnalyticsServer(8084)
+	proxy := proxy.InitOnDeviceProxy(a)
+	a.Start()
 	proxyBridge := &ffi.OnDeviceProxyBridge{Proxy: proxy}
 	dsp := InitDebugServerProxy(proxyBridge, proxy)
 	defer dsp.Close()

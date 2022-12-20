@@ -15,6 +15,7 @@
       devShells.aarch64-darwin.default = pkgs.mkShell {
         name = "slowdown-dev-shell";
         nativeBuildInputs = with pkgs; [
+          nodejs
           go_1_19
           protobuf3_20
           entr
@@ -29,7 +30,6 @@
           
           export GOPATH=$(pwd)/.gopath
           export PATH=$PATH:$GOPATH/bin
-          export PATH=$PATH:$(pwd)/.external/swift-protobuf/.build/release
           export CGO_ENABLED=1
         '';
       };
