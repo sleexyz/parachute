@@ -28,7 +28,6 @@ type ControllerSettingsReadOnly interface {
 
 type ControllerSettingsReadWrite interface {
 	ControllerSettingsReadOnly
-	GetSpeed() *GetSpeedResponse
 	SetSettings(settings *proxyservice.Settings)
 	SetTemporaryRxSpeedTarget(target float64, seconds int)
 }
@@ -38,10 +37,6 @@ type Controller struct {
 	settings               *proxyservice.Settings
 	temporaryRxSpeedTarget float64
 	temporaryTimer         *time.Timer
-}
-
-type GetSpeedResponse struct {
-	RxSpeedTarget float64 `json:"rxSpeedTarget"`
 }
 
 func Init(sp analytics.SamplePublisher) *Controller {
@@ -86,10 +81,4 @@ func (c *Controller) SetTemporaryRxSpeedTarget(target float64, duration int) {
 		c.temporaryTimer = nil
 		log.Printf("Pause ended")
 	}()
-}
-
-func (c *Controller) GetSpeed() *GetSpeedResponse {
-	return &GetSpeedResponse{
-		RxSpeedTarget: c.temporaryRxSpeedTarget,
-	}
 }
