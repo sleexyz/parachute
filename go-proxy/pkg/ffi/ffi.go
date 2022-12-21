@@ -46,6 +46,9 @@ func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
 	case *proxyservice.Request_SetSettings:
 		m := r.GetSetSettings()
 		p.Proxy.SetSettings(m)
+	case *proxyservice.Request_ResetPoints:
+		// m := r.GetResetPoints()
+		p.Proxy.ResetPoints()
 	default:
 		return nil, fmt.Errorf("could not parse rpc command")
 	}

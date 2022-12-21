@@ -20,9 +20,9 @@
 		A04FAD98294D477B0002C19B /* Proxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04FAD97294D477B0002C19B /* Proxy.swift */; };
 		A04FAD9C294D60960002C19B /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A04FAD9B294D60960002C19B /* SwiftProtobuf */; };
 		A05AD0B3285D0CD100878904 /* NIO in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B2285D0CD100878904 /* NIO */; };
+		A06516E42953667900227A95 /* Ffi.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A080EDF3294F8532005401E4 /* Ffi.xcframework */; };
 		A0717CCD294D260C00186AFE /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = A0717CCC294D260C00186AFE /* SwiftProtobufPluginLibrary */; };
 		A080EDF0294F7B89005401E4 /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDEF294F7B89005401E4 /* ProxyService */; };
-		A080EDF4294F8532005401E4 /* Ffi.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A080EDF3294F8532005401E4 /* Ffi.xcframework */; };
 		A080EDF6294F9864005401E4 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF5294F9864005401E4 /* Logging */; };
 		A080EDF8294F9868005401E4 /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF7294F9868005401E4 /* LoggingOSLog */; };
 		A080EDFA294F9B1C005401E4 /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A080EDF9294F9B1C005401E4 /* SettingsController.swift */; };
@@ -139,8 +139,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A06516E42953667900227A95 /* Ffi.xcframework in Frameworks */,
 				A08719E4281A617500113F3F /* NetworkExtension.framework in Frameworks */,
-				A080EDF4294F8532005401E4 /* Ffi.xcframework in Frameworks */,
 				A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */,
 				A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */,
 			);

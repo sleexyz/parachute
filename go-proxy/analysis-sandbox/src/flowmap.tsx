@@ -4,10 +4,7 @@ import { pointsToFdate, updateFdate } from "./frecency";
 import { Sample } from "./proxyservice";
 import { Atom, createEmptyContext } from "./utils";
 
-export interface Flow {
-  ip: string;
-  rxBytes: number;
-  fdate: Date;
+export interface Flow extends Sample{
 }
 
 export class FlowMap {
@@ -48,12 +45,12 @@ export class FlowMap {
     if (flow == undefined) {
       this.map.set({
         ...this.map.get(),
-        [sample.ip]: { ip: sample.ip, rxBytes: sample.rxBytes, fdate: pointsToFdate(pointsToAdd) },
+        [sample.ip]: { ...sample },
       });
     } else {
       this.map.set({
         ...this.map.get(),
-        [sample.ip]: { ...flow, rxBytes: flow.rxBytes + sample.rxBytes, fdate: updateFdate(flow.fdate, pointsToAdd) },
+        [sample.ip]: { ...flow, ...sample, rxBytes: flow.rxBytes + sample.rxBytes },
       });
     }
   };

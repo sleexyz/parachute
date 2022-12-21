@@ -1,6 +1,6 @@
 
 // decay factor: 30 second half life
-// =0.5^(1/10)
+// =0.5^(1/30)
 const lambda = Math.pow(0.5, 1/30);
 
 // Continuous frecency with no recomputations.

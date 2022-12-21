@@ -9,6 +9,7 @@ import SwiftUI
 import NetworkExtension
 import Combine
 import func os.os_log
+import ProxyService
 
 final class AppViewModel: ObservableObject {
     
@@ -50,6 +51,21 @@ final class AppViewModel: ObservableObject {
                 title: "Failed to start VPN tunnel",
                 message: error.localizedDescription
             )
+        }
+    }
+    
+    func resetPoints() {
+        Task {
+            do {
+                var req = Proxyservice_Request()
+                req.resetPoints = Proxyservice_ResetPointsRequest()
+                try await service.Rpc(message: req)
+            } catch {
+                self.showError(
+                    title: "Failed to reset points",
+                    message: error.localizedDescription
+                )
+            }
         }
     }
     
@@ -133,9 +149,11 @@ struct AppView: View {
                     Text("\(Int(store.settings.baseRxSpeedTarget))")
                 }
                 Spacer()
-//                Toggle(isOn: $store.settings.perFlow, label: { Text("PerFlow")}).onChange(of: store.settings.perFlow) { value in
-//                    controller.syncSettings()
-//                }
+                Toggle(isOn: $store.settings.useExponentialDecay, label: { Text("Use Exponential Decay")}).onChange(of: store.settings.useExponentialDecay) { value in
+                    controller.syncSettings()
+                }
+                Spacer()
+                PrimaryButton(title: "reset points", action: model.resetPoints, isLoading: false)
                 Spacer()
                 PrimaryButton(title: "cheat", action: model.startCheat, isLoading: cheatController.isCheating, loadingMessage: cheatLoading).disabled(cheatController.isCheating)
             }

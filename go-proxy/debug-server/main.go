@@ -63,6 +63,7 @@ func main() {
 	debug.SetGCPercent(50)
 
 	a := InitAnalyticsServer(8084)
+	// a := &analytics.NoOpAnalytics{}
 	proxy := proxy.InitOnDeviceProxy(a)
 	a.Start()
 	proxyBridge := &ffi.OnDeviceProxyBridge{Proxy: proxy}

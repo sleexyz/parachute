@@ -16,7 +16,7 @@ function App() {
     <div className="App">
       <Controls />
       <div className="Card">
-        {Object.values(map).sort(sortByFdate).map((flow) => {
+        {Object.values(map).sort(sortByPoints).map((flow) => {
           return <FlowDiv key={flow.ip} value={flow} />;
         })}
       </div>
@@ -36,8 +36,12 @@ function Controls() {
     </div>);
 }
 
-function sortByFdate(a: Flow, b: Flow): number {
-  return b.fdate - a.fdate;
+function sortByStartTime(a: Flow, b: Flow): number {
+  return b.startTime - a.startTime;
+}
+
+function sortByPoints(a: Flow, b: Flow): number {
+  return b.points - a.points;
 }
 
 function useHighlightOnChange(deps: [any]) {
@@ -62,10 +66,7 @@ function FlowDiv(props: { value: Flow }) {
   const className = `debug-pre ${shouldHighlight ? 'highlight' : ''}`;
   return (
     <pre className={className}>
-      <div> ip: {props.value.ip} </div>
-      <div> rxBytes: {props.value.rxBytes} </div>
-      <div> fdate: {props.value.fdate.toISOString()} </div>
-      <div> points: {fdateToPoints(props.value.fdate)} </div>
+      {JSON.stringify(props.value, null, 2)}
     </pre>
   );
 }

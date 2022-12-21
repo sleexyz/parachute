@@ -5,17 +5,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/r3labs/sse/v2"
 	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"strange.industries/go-proxy/pb/proxyservice"
 )
 
 type AnalyticsServer struct {
 	port    int
-	started bool
 	sse     *sse.Server
 	mux     *http.ServeMux
 	samples chan (*proxyservice.Sample)
@@ -39,7 +36,6 @@ func InitAnalyticsServer(port int) *AnalyticsServer {
 		sse:     s,
 		mux:     mux,
 		samples: make(chan *proxyservice.Sample),
-		started: false,
 	}
 }
 
@@ -54,7 +50,7 @@ func (a *AnalyticsServer) Start() {
 			case <-ctx.Done():
 				return
 			case sample := <-a.samples:
-				log.Printf("Processing Sample: %s", sample)
+				// log.Printf("Processing Sample: %s", sample)
 				data, err := protojson.Marshal(sample)
 				if err != nil {
 					log.Fatalf("Error marshalling sample data: %s", sample)
@@ -68,7 +64,6 @@ func (a *AnalyticsServer) Start() {
 	go func() {
 		http.ListenAndServe(fmt.Sprintf(":%d", a.port), a.mux)
 	}()
-	a.started = true
 	log.Printf("Started analytics server")
 }
 
@@ -79,14 +74,6 @@ func (a *AnalyticsServer) Close() {
 	}
 }
 
-func (a *AnalyticsServer) PublishSample(ip string, n int, now time.Time, dt time.Duration) {
-	if !a.started {
-		return
-	}
-	sample := &proxyservice.Sample{}
-	sample.Ip = ip
-	sample.RxBytes = int64(n)
-	sample.StartTime = timestamppb.New(now)
-	sample.Duration = int64(dt)
+func (a *AnalyticsServer) PublishSample(sample *proxyservice.Sample) {
 	a.samples <- sample
 }
