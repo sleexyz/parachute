@@ -153,7 +153,7 @@ func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 
 		conn := &tcpConn{
 			TCPConn:          gonet.NewTCPConn(&wq, ep),
-			ControllableFlow: controller.InitControllableFlow(c, id.LocalAddress.String()),
+			ControllableFlow: c.GetFlow(id.LocalAddress.String()),
 			id:               id,
 		}
 		tcpQueue <- conn
@@ -171,7 +171,7 @@ func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 		}
 		conn := &udpConn{
 			UDPConn:          gonet.NewUDPConn(s, &wq, ep),
-			ControllableFlow: controller.InitControllableFlow(c, id.LocalAddress.String()),
+			ControllableFlow: c.GetFlow(id.LocalAddress.String()),
 			id:               id,
 		}
 		udpQueue <- conn

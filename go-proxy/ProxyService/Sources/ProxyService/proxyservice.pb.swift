@@ -27,6 +27,8 @@ public struct Proxyservice_Settings {
 
   public var baseRxSpeedTarget: Double = 0
 
+  public var useExponentialDecay: Bool = false
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -55,11 +57,20 @@ public struct Proxyservice_Request {
     set {message = .setTemporaryRxSpeedTarget(newValue)}
   }
 
+  public var resetPoints: Proxyservice_ResetPointsRequest {
+    get {
+      if case .resetPoints(let v)? = message {return v}
+      return Proxyservice_ResetPointsRequest()
+    }
+    set {message = .resetPoints(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Message: Equatable {
     case setSettings(Proxyservice_Settings)
     case setTemporaryRxSpeedTarget(Proxyservice_SetTemporaryRxSpeedTargetRequest)
+    case resetPoints(Proxyservice_ResetPointsRequest)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proxyservice_Request.OneOf_Message, rhs: Proxyservice_Request.OneOf_Message) -> Bool {
@@ -75,11 +86,25 @@ public struct Proxyservice_Request {
         guard case .setTemporaryRxSpeedTarget(let l) = lhs, case .setTemporaryRxSpeedTarget(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
+      case (.resetPoints, .resetPoints): return {
+        guard case .resetPoints(let l) = lhs, case .resetPoints(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
   #endif
   }
+
+  public init() {}
+}
+
+public struct Proxyservice_ResetPointsRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 }
@@ -119,6 +144,18 @@ public struct Proxyservice_Sample {
   /// how long the sample
   public var duration: Int64 = 0
 
+  public var points: Double = 0
+
+  public var k: Double = 0
+
+  public var minutesLeft: Double = 0
+
+  public var rxSpeed: Double = 0
+
+  public var rxSpeedTarget: Double = 0
+
+  public var matches: [String] = []
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -130,6 +167,7 @@ public struct Proxyservice_Sample {
 extension Proxyservice_Settings: @unchecked Sendable {}
 extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
+extension Proxyservice_ResetPointsRequest: @unchecked Sendable {}
 extension Proxyservice_SetTemporaryRxSpeedTargetRequest: @unchecked Sendable {}
 extension Proxyservice_Sample: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
@@ -142,6 +180,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
   public static let protoMessageName: String = _protobuf_package + ".Settings"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "baseRxSpeedTarget"),
+    2: .same(proto: "useExponentialDecay"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -151,6 +190,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularDoubleField(value: &self.baseRxSpeedTarget) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self.useExponentialDecay) }()
       default: break
       }
     }
@@ -160,11 +200,15 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if self.baseRxSpeedTarget != 0 {
       try visitor.visitSingularDoubleField(value: self.baseRxSpeedTarget, fieldNumber: 1)
     }
+    if self.useExponentialDecay != false {
+      try visitor.visitSingularBoolField(value: self.useExponentialDecay, fieldNumber: 2)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Proxyservice_Settings, rhs: Proxyservice_Settings) -> Bool {
     if lhs.baseRxSpeedTarget != rhs.baseRxSpeedTarget {return false}
+    if lhs.useExponentialDecay != rhs.useExponentialDecay {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -175,6 +219,7 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "setSettings"),
     2: .same(proto: "setTemporaryRxSpeedTarget"),
+    3: .same(proto: "resetPoints"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -209,6 +254,19 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
           self.message = .setTemporaryRxSpeedTarget(v)
         }
       }()
+      case 3: try {
+        var v: Proxyservice_ResetPointsRequest?
+        var hadOneofValue = false
+        if let current = self.message {
+          hadOneofValue = true
+          if case .resetPoints(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.message = .resetPoints(v)
+        }
+      }()
       default: break
       }
     }
@@ -228,6 +286,10 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       guard case .setTemporaryRxSpeedTarget(let v)? = self.message else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     }()
+    case .resetPoints?: try {
+      guard case .resetPoints(let v)? = self.message else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    }()
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -235,6 +297,25 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
 
   public static func ==(lhs: Proxyservice_Request, rhs: Proxyservice_Request) -> Bool {
     if lhs.message != rhs.message {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_ResetPointsRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ResetPointsRequest"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_ResetPointsRequest, rhs: Proxyservice_ResetPointsRequest) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -285,6 +366,12 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     2: .same(proto: "rxBytes"),
     3: .same(proto: "startTime"),
     4: .same(proto: "duration"),
+    5: .same(proto: "points"),
+    6: .same(proto: "k"),
+    7: .same(proto: "minutesLeft"),
+    8: .same(proto: "rxSpeed"),
+    9: .same(proto: "rxSpeedTarget"),
+    10: .same(proto: "matches"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -297,6 +384,12 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       case 2: try { try decoder.decodeSingularInt64Field(value: &self.rxBytes) }()
       case 3: try { try decoder.decodeSingularMessageField(value: &self._startTime) }()
       case 4: try { try decoder.decodeSingularInt64Field(value: &self.duration) }()
+      case 5: try { try decoder.decodeSingularDoubleField(value: &self.points) }()
+      case 6: try { try decoder.decodeSingularDoubleField(value: &self.k) }()
+      case 7: try { try decoder.decodeSingularDoubleField(value: &self.minutesLeft) }()
+      case 8: try { try decoder.decodeSingularDoubleField(value: &self.rxSpeed) }()
+      case 9: try { try decoder.decodeSingularDoubleField(value: &self.rxSpeedTarget) }()
+      case 10: try { try decoder.decodeRepeatedStringField(value: &self.matches) }()
       default: break
       }
     }
@@ -319,6 +412,24 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if self.duration != 0 {
       try visitor.visitSingularInt64Field(value: self.duration, fieldNumber: 4)
     }
+    if self.points != 0 {
+      try visitor.visitSingularDoubleField(value: self.points, fieldNumber: 5)
+    }
+    if self.k != 0 {
+      try visitor.visitSingularDoubleField(value: self.k, fieldNumber: 6)
+    }
+    if self.minutesLeft != 0 {
+      try visitor.visitSingularDoubleField(value: self.minutesLeft, fieldNumber: 7)
+    }
+    if self.rxSpeed != 0 {
+      try visitor.visitSingularDoubleField(value: self.rxSpeed, fieldNumber: 8)
+    }
+    if self.rxSpeedTarget != 0 {
+      try visitor.visitSingularDoubleField(value: self.rxSpeedTarget, fieldNumber: 9)
+    }
+    if !self.matches.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.matches, fieldNumber: 10)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -327,6 +438,12 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if lhs.rxBytes != rhs.rxBytes {return false}
     if lhs._startTime != rhs._startTime {return false}
     if lhs.duration != rhs.duration {return false}
+    if lhs.points != rhs.points {return false}
+    if lhs.k != rhs.k {return false}
+    if lhs.minutesLeft != rhs.minutesLeft {return false}
+    if lhs.rxSpeed != rhs.rxSpeed {return false}
+    if lhs.rxSpeedTarget != rhs.rxSpeedTarget {return false}
+    if lhs.matches != rhs.matches {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

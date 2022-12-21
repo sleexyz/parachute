@@ -1,12 +1,12 @@
 package analytics
 
 import (
-	"time"
+	"strange.industries/go-proxy/pb/proxyservice"
 )
 
 // ingestion
 type SamplePublisher interface {
-	PublishSample(ip string, n int, now time.Time, dt time.Duration)
+	PublishSample(sample *proxyservice.Sample)
 }
 
 type Analytics interface {
@@ -17,5 +17,5 @@ type Analytics interface {
 type NoOpAnalytics struct {
 }
 
-func (*NoOpAnalytics) Close()                                                          {}
-func (*NoOpAnalytics) PublishSample(ip string, n int, now time.Time, dt time.Duration) {}
+func (*NoOpAnalytics) Close()                                    {}
+func (*NoOpAnalytics) PublishSample(sample *proxyservice.Sample) {}

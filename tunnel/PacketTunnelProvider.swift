@@ -128,7 +128,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         ipv6Settings.includedRoutes = [NEIPv6Route.default()]
         settings.ipv6Settings = ipv6Settings
         settings.mtu = 1500
-        settings.dnsSettings = NEDNSSettings(servers: ["8.8.8.8"])
+//        settings.dnsSettings = NEDNSSettings(servers: ["8.8.8.8"])
+        settings.dnsSettings = NEDNSSettings(servers: ["10.0.0.9"])
         settings.dnsSettings?.matchDomains = [""] // All dns requests go through tunnel
         return settings
     }

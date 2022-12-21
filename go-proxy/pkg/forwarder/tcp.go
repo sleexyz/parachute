@@ -73,6 +73,7 @@ func HandleTCPConn(localConn adapter.TCPConn) {
 
 	_, _ = relay(localConn, targetConn) /* relay connections */
 	_ = time.Since(startTime)
+	localConn.DecRef()
 	// log.Printf("[TCP end (%s) (tx: %d, rx: %d)] %s <-> %s\n", elapsed, txBytes, rxBytes, metadata.SourceAddress(), metadata.DestinationAddress())
 }
 

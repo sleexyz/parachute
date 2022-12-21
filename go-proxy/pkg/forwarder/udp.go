@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/net/dns/dnsmessage"
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pkg/adapter"
 	"strange.industries/go-proxy/pkg/controller"
@@ -22,7 +23,7 @@ const (
 )
 
 var (
-	dnsServerIP = net.ParseIP("8.8.8.8")
+	dnsServerIP = net.ParseIP("10.0.0.9")
 )
 
 // var (
@@ -42,48 +43,91 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 		return
 	}
 
-	remote := &net.UDPAddr{
-		IP:   net.IP(id.LocalAddress),
-		Port: int(id.LocalPort),
+	var remote *net.UDPAddr
+	if dnsServerIP.Equal(net.IP(id.LocalAddress)) && id.LocalPort == 53 {
+		remote = &net.UDPAddr{
+			IP:   net.IP{8, 8, 8, 8},
+			Port: int(id.LocalPort),
+		}
+		targetConn = &DnsSnifferConn{PacketConn: targetConn, Flow: localConn, IP: &remote.IP}
+	} else {
+		remote = &net.UDPAddr{
+			IP:   net.IP(id.LocalAddress),
+			Port: int(id.LocalPort),
+		}
+		targetConn = &controller.FlowPacketConn{PacketConn: targetConn, S: localConn}
 	}
 
-	isDns := false
-	if remote.IP.Equal(dnsServerIP) && remote.Port == 53 {
-		isDns = true
-	}
-
-	// var txBytes int
-	// var rxBytes int
-	start := time.Now()
-	// log.Printf("[UDP start] %s:%d %s:%d", id.LocalAddress, id.LocalPort, id.RemoteAddress, id.RemotePort)
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 
+	// tx
 	go func() {
 		defer wg.Done()
 		_, err := copyPacketBuffer2(targetConn, localConn, remote, _udpSessionTimeout)
 		if err != nil {
 			log.Printf("[UDP] %v", err)
 		}
-		// txBytes = n
 	}()
 
+	// rx
 	go func() {
 		defer wg.Done()
-		sourceConn := targetConn
-		if !isDns {
-			sourceConn = &controller.FlowPacketConn{PacketConn: targetConn, S: localConn}
-		}
-		_, err := copyPacketBuffer2(localConn, sourceConn, nil, _udpSessionTimeout)
+		_, err := copyPacketBuffer2(localConn, targetConn, nil, _udpSessionTimeout)
 		if err != nil {
 			log.Printf("[UDP] %v", err)
 		}
-		// rxBytes = n
 	}()
 
 	wg.Wait()
-	_ = time.Since(start)
+	localConn.DecRef()
+	// _ = time.Since(start)
 	// log.Printf("[UDP end (%s) (tx: %d, rx: %d)] %s:%d %s:%d", elapsed, txBytes, rxBytes, id.LocalAddress, id.LocalPort, id.RemoteAddress, id.RemotePort)
+}
+
+type DnsSnifferConn struct {
+	net.PacketConn
+	controller.Flow
+	IP *net.IP
+}
+
+func (r *DnsSnifferConn) ReadFrom(buf []byte) (n int, addr net.Addr, err error) {
+	n, addr, err = r.PacketConn.ReadFrom(buf)
+	{
+		err := r.SniffDns(buf)
+		if err != nil {
+			log.Printf("error parsing dns: %v", err)
+		}
+	}
+	return
+}
+
+func (r *DnsSnifferConn) SniffDns(buf []byte) error {
+	var p dnsmessage.Parser
+	if _, err := p.Start(buf); err != nil {
+		return err
+	}
+	err := p.SkipAllQuestions()
+	if err != nil {
+		return err
+	}
+	answers, err := p.AllAnswers()
+	if err != nil {
+		return err
+	}
+	for _, a := range answers {
+		name := a.Header.Name.String()
+		switch m := a.Body.(type) {
+		case *dnsmessage.AAAAResource:
+			ip := net.IP(m.AAAA[:]).String()
+
+			r.Flow.Controller().AddReverseDnsEntry(ip, name)
+		case *dnsmessage.AResource:
+			ip := net.IP(m.A[:]).String()
+			r.Flow.Controller().AddReverseDnsEntry(ip, name)
+		}
+	}
+	return nil
 }
 
 func copyPacketBuffer2(dst net.PacketConn, src net.PacketConn, to net.Addr, timeout time.Duration) (nw int, err error) {

@@ -7,11 +7,16 @@ export const protobufPackage = "proxyservice";
 
 export interface Settings {
   baseRxSpeedTarget: number;
+  useExponentialDecay: boolean;
 }
 
 export interface Request {
   setSettings?: Settings | undefined;
   setTemporaryRxSpeedTarget?: SetTemporaryRxSpeedTargetRequest | undefined;
+  resetPoints?: ResetPointsRequest | undefined;
+}
+
+export interface ResetPointsRequest {
 }
 
 export interface SetTemporaryRxSpeedTargetRequest {
@@ -27,16 +32,25 @@ export interface Sample {
     | undefined;
   /** how long the sample */
   duration: number;
+  points: number;
+  k: number;
+  minutesLeft: number;
+  rxSpeed: number;
+  rxSpeedTarget: number;
+  matches: string[];
 }
 
 function createBaseSettings(): Settings {
-  return { baseRxSpeedTarget: 0 };
+  return { baseRxSpeedTarget: 0, useExponentialDecay: false };
 }
 
 export const Settings = {
   encode(message: Settings, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.baseRxSpeedTarget !== 0) {
       writer.uint32(9).double(message.baseRxSpeedTarget);
+    }
+    if (message.useExponentialDecay === true) {
+      writer.uint32(16).bool(message.useExponentialDecay);
     }
     return writer;
   },
@@ -51,6 +65,9 @@ export const Settings = {
         case 1:
           message.baseRxSpeedTarget = reader.double();
           break;
+        case 2:
+          message.useExponentialDecay = reader.bool();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -60,24 +77,29 @@ export const Settings = {
   },
 
   fromJSON(object: any): Settings {
-    return { baseRxSpeedTarget: isSet(object.baseRxSpeedTarget) ? Number(object.baseRxSpeedTarget) : 0 };
+    return {
+      baseRxSpeedTarget: isSet(object.baseRxSpeedTarget) ? Number(object.baseRxSpeedTarget) : 0,
+      useExponentialDecay: isSet(object.useExponentialDecay) ? Boolean(object.useExponentialDecay) : false,
+    };
   },
 
   toJSON(message: Settings): unknown {
     const obj: any = {};
     message.baseRxSpeedTarget !== undefined && (obj.baseRxSpeedTarget = message.baseRxSpeedTarget);
+    message.useExponentialDecay !== undefined && (obj.useExponentialDecay = message.useExponentialDecay);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Settings>, I>>(object: I): Settings {
     const message = createBaseSettings();
     message.baseRxSpeedTarget = object.baseRxSpeedTarget ?? 0;
+    message.useExponentialDecay = object.useExponentialDecay ?? false;
     return message;
   },
 };
 
 function createBaseRequest(): Request {
-  return { setSettings: undefined, setTemporaryRxSpeedTarget: undefined };
+  return { setSettings: undefined, setTemporaryRxSpeedTarget: undefined, resetPoints: undefined };
 }
 
 export const Request = {
@@ -87,6 +109,9 @@ export const Request = {
     }
     if (message.setTemporaryRxSpeedTarget !== undefined) {
       SetTemporaryRxSpeedTargetRequest.encode(message.setTemporaryRxSpeedTarget, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.resetPoints !== undefined) {
+      ResetPointsRequest.encode(message.resetPoints, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -104,6 +129,9 @@ export const Request = {
         case 2:
           message.setTemporaryRxSpeedTarget = SetTemporaryRxSpeedTargetRequest.decode(reader, reader.uint32());
           break;
+        case 3:
+          message.resetPoints = ResetPointsRequest.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -118,6 +146,7 @@ export const Request = {
       setTemporaryRxSpeedTarget: isSet(object.setTemporaryRxSpeedTarget)
         ? SetTemporaryRxSpeedTargetRequest.fromJSON(object.setTemporaryRxSpeedTarget)
         : undefined,
+      resetPoints: isSet(object.resetPoints) ? ResetPointsRequest.fromJSON(object.resetPoints) : undefined,
     };
   },
 
@@ -129,6 +158,8 @@ export const Request = {
       (obj.setTemporaryRxSpeedTarget = message.setTemporaryRxSpeedTarget
         ? SetTemporaryRxSpeedTargetRequest.toJSON(message.setTemporaryRxSpeedTarget)
         : undefined);
+    message.resetPoints !== undefined &&
+      (obj.resetPoints = message.resetPoints ? ResetPointsRequest.toJSON(message.resetPoints) : undefined);
     return obj;
   },
 
@@ -141,6 +172,48 @@ export const Request = {
       (object.setTemporaryRxSpeedTarget !== undefined && object.setTemporaryRxSpeedTarget !== null)
         ? SetTemporaryRxSpeedTargetRequest.fromPartial(object.setTemporaryRxSpeedTarget)
         : undefined;
+    message.resetPoints = (object.resetPoints !== undefined && object.resetPoints !== null)
+      ? ResetPointsRequest.fromPartial(object.resetPoints)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseResetPointsRequest(): ResetPointsRequest {
+  return {};
+}
+
+export const ResetPointsRequest = {
+  encode(_: ResetPointsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ResetPointsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseResetPointsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): ResetPointsRequest {
+    return {};
+  },
+
+  toJSON(_: ResetPointsRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<ResetPointsRequest>, I>>(_: I): ResetPointsRequest {
+    const message = createBaseResetPointsRequest();
     return message;
   },
 };
@@ -206,7 +279,18 @@ export const SetTemporaryRxSpeedTargetRequest = {
 };
 
 function createBaseSample(): Sample {
-  return { ip: "", rxBytes: 0, startTime: undefined, duration: 0 };
+  return {
+    ip: "",
+    rxBytes: 0,
+    startTime: undefined,
+    duration: 0,
+    points: 0,
+    k: 0,
+    minutesLeft: 0,
+    rxSpeed: 0,
+    rxSpeedTarget: 0,
+    matches: [],
+  };
 }
 
 export const Sample = {
@@ -222,6 +306,24 @@ export const Sample = {
     }
     if (message.duration !== 0) {
       writer.uint32(32).int64(message.duration);
+    }
+    if (message.points !== 0) {
+      writer.uint32(41).double(message.points);
+    }
+    if (message.k !== 0) {
+      writer.uint32(49).double(message.k);
+    }
+    if (message.minutesLeft !== 0) {
+      writer.uint32(57).double(message.minutesLeft);
+    }
+    if (message.rxSpeed !== 0) {
+      writer.uint32(65).double(message.rxSpeed);
+    }
+    if (message.rxSpeedTarget !== 0) {
+      writer.uint32(73).double(message.rxSpeedTarget);
+    }
+    for (const v of message.matches) {
+      writer.uint32(82).string(v!);
     }
     return writer;
   },
@@ -245,6 +347,24 @@ export const Sample = {
         case 4:
           message.duration = longToNumber(reader.int64() as Long);
           break;
+        case 5:
+          message.points = reader.double();
+          break;
+        case 6:
+          message.k = reader.double();
+          break;
+        case 7:
+          message.minutesLeft = reader.double();
+          break;
+        case 8:
+          message.rxSpeed = reader.double();
+          break;
+        case 9:
+          message.rxSpeedTarget = reader.double();
+          break;
+        case 10:
+          message.matches.push(reader.string());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -259,6 +379,12 @@ export const Sample = {
       rxBytes: isSet(object.rxBytes) ? Number(object.rxBytes) : 0,
       startTime: isSet(object.startTime) ? fromJsonTimestamp(object.startTime) : undefined,
       duration: isSet(object.duration) ? Number(object.duration) : 0,
+      points: isSet(object.points) ? Number(object.points) : 0,
+      k: isSet(object.k) ? Number(object.k) : 0,
+      minutesLeft: isSet(object.minutesLeft) ? Number(object.minutesLeft) : 0,
+      rxSpeed: isSet(object.rxSpeed) ? Number(object.rxSpeed) : 0,
+      rxSpeedTarget: isSet(object.rxSpeedTarget) ? Number(object.rxSpeedTarget) : 0,
+      matches: Array.isArray(object?.matches) ? object.matches.map((e: any) => String(e)) : [],
     };
   },
 
@@ -268,6 +394,16 @@ export const Sample = {
     message.rxBytes !== undefined && (obj.rxBytes = Math.round(message.rxBytes));
     message.startTime !== undefined && (obj.startTime = message.startTime.toISOString());
     message.duration !== undefined && (obj.duration = Math.round(message.duration));
+    message.points !== undefined && (obj.points = message.points);
+    message.k !== undefined && (obj.k = message.k);
+    message.minutesLeft !== undefined && (obj.minutesLeft = message.minutesLeft);
+    message.rxSpeed !== undefined && (obj.rxSpeed = message.rxSpeed);
+    message.rxSpeedTarget !== undefined && (obj.rxSpeedTarget = message.rxSpeedTarget);
+    if (message.matches) {
+      obj.matches = message.matches.map((e) => e);
+    } else {
+      obj.matches = [];
+    }
     return obj;
   },
 
@@ -277,6 +413,12 @@ export const Sample = {
     message.rxBytes = object.rxBytes ?? 0;
     message.startTime = object.startTime ?? undefined;
     message.duration = object.duration ?? 0;
+    message.points = object.points ?? 0;
+    message.k = object.k ?? 0;
+    message.minutesLeft = object.minutesLeft ?? 0;
+    message.rxSpeed = object.rxSpeed ?? 0;
+    message.rxSpeedTarget = object.rxSpeedTarget ?? 0;
+    message.matches = object.matches?.map((e) => e) || [];
     return message;
   },
 };
