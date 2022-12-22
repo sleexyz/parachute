@@ -20,7 +20,7 @@ func InitControllableFlow(c *Controller, ip string) *ControllableFlow {
 }
 
 func (f *ControllableFlow) rxSpeedTarget() float64 {
-	if !f.Controller.HasMatch(f.ip) {
+	if f.GetApp(f.ip) != nil {
 		return math.Inf(1)
 	}
 	return f.RxSpeedTarget()
@@ -33,7 +33,10 @@ func (f *ControllableFlow) InitialSpeed() float64 {
 func (f *ControllableFlow) UpdateSpeed(ctx *UpdateCtx) float64 {
 	st := f.rxSpeedTarget()
 	ctx.sample.Ip = f.ip
-	ctx.sample.AppMatch = f.appMap[f.ip]
+	app := f.GetApp(f.ip)
+	if app != nil {
+		ctx.sample.AppMatch = app.name
+	}
 	ctx.sample.RxSpeedTarget = st
 	return st
 }

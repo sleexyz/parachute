@@ -12,7 +12,7 @@ type AppResolver struct {
 	apps     []*App
 
 	// Whether an ip should map to an app
-	appMap map[string]string
+	appMap map[string]*App
 
 	// Whether match has been attempted
 	lookupCache map[string]struct{}
@@ -21,7 +21,7 @@ type AppResolver struct {
 func InitAppResolver() *AppResolver {
 	ar := &AppResolver{
 		apps:        apps,
-		appMap:      make(map[string]string),
+		appMap:      make(map[string]*App),
 		lookupCache: make(map[string]struct{}),
 	}
 	ar.DnsCache = initDnsCache(ar)
@@ -35,7 +35,7 @@ func (ar *AppResolver) OnEntryUpdate(ip string, name string) {
 		return
 	}
 	app := ar.matchAppByName(name)
-	if app != "" {
+	if app != nil {
 		ar.appMap[ip] = app
 		// log.Printf("registered matching ip: %s, %s, via %s", ip, app, name)
 	}
@@ -48,39 +48,36 @@ func (ar *AppResolver) RegisterIp(ip string) {
 	if !ok && !ar.DnsCache.HasReverseDnsEntry(ip) {
 		go func() {
 			app := ar.matchAppByIp(ip)
-			if app != "" {
+			if app != nil {
 				ar.appMap[ip] = app
-				log.Printf("registered matching ip: %s, %s", ip, app)
+				log.Printf("registered matching ip: %s, %s", ip, app.name)
 				return
 			}
 			ar.DnsCache.LookupIp(ip)
 			ar.lookupCache[ip] = exists
 		}()
 	}
-
-	// lookup via configuration
 }
 
-func (ar *AppResolver) matchAppByName(name string) string {
+func (ar *AppResolver) matchAppByName(name string) *App {
 	for _, app := range ar.apps {
 		if app.MatchByName(name) {
-			return app.name
+			return app
 		}
 	}
-	return ""
+	return nil
 }
 
-func (ar *AppResolver) matchAppByIp(ip string) string {
+func (ar *AppResolver) matchAppByIp(ip string) *App {
 	addr := netip.MustParseAddr(ip)
 	for _, app := range ar.apps {
 		if app.MatchByIp(addr) {
-			return app.name
+			return app
 		}
 	}
-	return ""
+	return nil
 }
 
-func (ar *AppResolver) HasMatch(ip string) bool {
-	_, ok := ar.appMap[ip]
-	return ok
+func (ar *AppResolver) GetApp(ip string) *App {
+	return ar.appMap[ip]
 }
