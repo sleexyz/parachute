@@ -49,7 +49,7 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 			IP:   net.IP{8, 8, 8, 8},
 			Port: int(id.LocalPort),
 		}
-		targetConn = &DnsSnifferConn{PacketConn: targetConn, Flow: localConn, IP: &remote.IP}
+		targetConn = &DnsSnifferConn{PacketConn: targetConn, c: localConn.Controller(), IP: &remote.IP}
 	} else {
 		remote = &net.UDPAddr{
 			IP:   net.IP(id.LocalAddress),
@@ -87,7 +87,7 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 
 type DnsSnifferConn struct {
 	net.PacketConn
-	controller.Flow
+	c  *controller.Controller
 	IP *net.IP
 }
 
@@ -121,10 +121,10 @@ func (r *DnsSnifferConn) SniffDns(buf []byte) error {
 		case *dnsmessage.AAAAResource:
 			ip := net.IP(m.AAAA[:]).String()
 
-			r.Flow.Controller().AddReverseDnsEntry(ip, name)
+			r.c.AddReverseDnsEntry(ip, name)
 		case *dnsmessage.AResource:
 			ip := net.IP(m.A[:]).String()
-			r.Flow.Controller().AddReverseDnsEntry(ip, name)
+			r.c.AddReverseDnsEntry(ip, name)
 		}
 	}
 	return nil

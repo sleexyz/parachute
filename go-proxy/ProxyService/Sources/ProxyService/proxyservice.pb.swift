@@ -144,17 +144,11 @@ public struct Proxyservice_Sample {
   /// how long the sample
   public var duration: Int64 = 0
 
-  public var points: Double = 0
-
-  public var k: Double = 0
-
-  public var minutesLeft: Double = 0
-
   public var rxSpeed: Double = 0
 
   public var rxSpeedTarget: Double = 0
 
-  public var matches: [String] = []
+  public var appMatch: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -366,12 +360,9 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     2: .same(proto: "rxBytes"),
     3: .same(proto: "startTime"),
     4: .same(proto: "duration"),
-    5: .same(proto: "points"),
-    6: .same(proto: "k"),
-    7: .same(proto: "minutesLeft"),
-    8: .same(proto: "rxSpeed"),
-    9: .same(proto: "rxSpeedTarget"),
-    10: .same(proto: "matches"),
+    5: .same(proto: "rxSpeed"),
+    6: .same(proto: "rxSpeedTarget"),
+    7: .same(proto: "appMatch"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -384,12 +375,9 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       case 2: try { try decoder.decodeSingularInt64Field(value: &self.rxBytes) }()
       case 3: try { try decoder.decodeSingularMessageField(value: &self._startTime) }()
       case 4: try { try decoder.decodeSingularInt64Field(value: &self.duration) }()
-      case 5: try { try decoder.decodeSingularDoubleField(value: &self.points) }()
-      case 6: try { try decoder.decodeSingularDoubleField(value: &self.k) }()
-      case 7: try { try decoder.decodeSingularDoubleField(value: &self.minutesLeft) }()
-      case 8: try { try decoder.decodeSingularDoubleField(value: &self.rxSpeed) }()
-      case 9: try { try decoder.decodeSingularDoubleField(value: &self.rxSpeedTarget) }()
-      case 10: try { try decoder.decodeRepeatedStringField(value: &self.matches) }()
+      case 5: try { try decoder.decodeSingularDoubleField(value: &self.rxSpeed) }()
+      case 6: try { try decoder.decodeSingularDoubleField(value: &self.rxSpeedTarget) }()
+      case 7: try { try decoder.decodeSingularStringField(value: &self.appMatch) }()
       default: break
       }
     }
@@ -412,23 +400,14 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if self.duration != 0 {
       try visitor.visitSingularInt64Field(value: self.duration, fieldNumber: 4)
     }
-    if self.points != 0 {
-      try visitor.visitSingularDoubleField(value: self.points, fieldNumber: 5)
-    }
-    if self.k != 0 {
-      try visitor.visitSingularDoubleField(value: self.k, fieldNumber: 6)
-    }
-    if self.minutesLeft != 0 {
-      try visitor.visitSingularDoubleField(value: self.minutesLeft, fieldNumber: 7)
-    }
     if self.rxSpeed != 0 {
-      try visitor.visitSingularDoubleField(value: self.rxSpeed, fieldNumber: 8)
+      try visitor.visitSingularDoubleField(value: self.rxSpeed, fieldNumber: 5)
     }
     if self.rxSpeedTarget != 0 {
-      try visitor.visitSingularDoubleField(value: self.rxSpeedTarget, fieldNumber: 9)
+      try visitor.visitSingularDoubleField(value: self.rxSpeedTarget, fieldNumber: 6)
     }
-    if !self.matches.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.matches, fieldNumber: 10)
+    if !self.appMatch.isEmpty {
+      try visitor.visitSingularStringField(value: self.appMatch, fieldNumber: 7)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -438,12 +417,9 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if lhs.rxBytes != rhs.rxBytes {return false}
     if lhs._startTime != rhs._startTime {return false}
     if lhs.duration != rhs.duration {return false}
-    if lhs.points != rhs.points {return false}
-    if lhs.k != rhs.k {return false}
-    if lhs.minutesLeft != rhs.minutesLeft {return false}
     if lhs.rxSpeed != rhs.rxSpeed {return false}
     if lhs.rxSpeedTarget != rhs.rxSpeedTarget {return false}
-    if lhs.matches != rhs.matches {return false}
+    if lhs.appMatch != rhs.appMatch {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

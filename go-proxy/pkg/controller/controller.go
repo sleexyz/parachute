@@ -36,11 +36,14 @@ type Controller struct {
 	temporaryRxSpeedTarget float64
 	temporaryTimer         *time.Timer
 	fm                     map[string]*ControllableFlow
-	rdnsMap                map[string]map[string]struct{}
-	appMap                 map[string]string
-	lookupCache            map[string]struct{}
-	gcTicker               *time.Ticker
-	stopGcTicker           func()
+	// Reverse dns map
+	rdnsMap map[string]map[string]struct{}
+	// Whether an ip should map to an app
+	appMap map[string]string
+	// Whether an ip lookup has been attempted
+	lookupCache  map[string]struct{}
+	gcTicker     *time.Ticker
+	stopGcTicker func()
 }
 
 func Init(sp analytics.SamplePublisher) *Controller {
@@ -158,7 +161,7 @@ func (c *Controller) AddReverseDnsEntry(ip string, name string) {
 	app := c.matchAppByName(name)
 	if app != "" {
 		c.appMap[ip] = app
-		log.Printf("registered matching ip: %s, %s, via %s", ip, app, name)
+		// log.Printf("registered matching ip: %s, %s, via %s", ip, app, name)
 	}
 }
 
@@ -281,10 +284,10 @@ func (c *Controller) Close() {
 }
 
 func (c *Controller) GarbageCollect() {
-	now := time.Now()
+	// now := time.Now()
 	log.Printf("garbage collection started")
 	for k, v := range c.fm {
-		if v != nil && v.refCount == 0 && v.fdate.Before(now) {
+		if v != nil && v.refCount == 0 {
 			log.Printf("deleting %s", c.fm[k].ip)
 			delete(c.fm, k)
 		}
