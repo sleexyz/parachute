@@ -34,10 +34,7 @@ message Sample {
     int64 rxBytes = 2;
     google.protobuf.Timestamp startTime = 3;
     int64 duration = 4; // how long the sample
-    double points = 5;
-    double k = 6;
-    double minutesLeft = 7;
-    double rxSpeed = 8;
-    double rxSpeedTarget = 9;
-    repeated string matches = 10;
+    double rxSpeed = 5;
+    double rxSpeedTarget = 6;
+    string appMatch = 7;
 }

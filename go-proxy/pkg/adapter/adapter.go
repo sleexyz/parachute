@@ -12,6 +12,7 @@ type UDPConn interface {
 	net.Conn
 	net.PacketConn
 	controller.Flow
+	Controller() *controller.Controller
 	// ID returns the transport endpoint id of UDPConn.
 	ID() *stack.TransportEndpointID
 }
@@ -20,6 +21,7 @@ type UDPConn interface {
 type TCPConn interface {
 	net.Conn
 	controller.Flow
+	Controller() *controller.Controller
 	// ID returns the transport endpoint id of TCPConn.
 	ID() *stack.TransportEndpointID
 }

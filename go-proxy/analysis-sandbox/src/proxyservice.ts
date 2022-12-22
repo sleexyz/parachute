@@ -32,12 +32,9 @@ export interface Sample {
     | undefined;
   /** how long the sample */
   duration: number;
-  points: number;
-  k: number;
-  minutesLeft: number;
   rxSpeed: number;
   rxSpeedTarget: number;
-  matches: string[];
+  appMatch: string;
 }
 
 function createBaseSettings(): Settings {
@@ -279,18 +276,7 @@ export const SetTemporaryRxSpeedTargetRequest = {
 };
 
 function createBaseSample(): Sample {
-  return {
-    ip: "",
-    rxBytes: 0,
-    startTime: undefined,
-    duration: 0,
-    points: 0,
-    k: 0,
-    minutesLeft: 0,
-    rxSpeed: 0,
-    rxSpeedTarget: 0,
-    matches: [],
-  };
+  return { ip: "", rxBytes: 0, startTime: undefined, duration: 0, rxSpeed: 0, rxSpeedTarget: 0, appMatch: "" };
 }
 
 export const Sample = {
@@ -307,23 +293,14 @@ export const Sample = {
     if (message.duration !== 0) {
       writer.uint32(32).int64(message.duration);
     }
-    if (message.points !== 0) {
-      writer.uint32(41).double(message.points);
-    }
-    if (message.k !== 0) {
-      writer.uint32(49).double(message.k);
-    }
-    if (message.minutesLeft !== 0) {
-      writer.uint32(57).double(message.minutesLeft);
-    }
     if (message.rxSpeed !== 0) {
-      writer.uint32(65).double(message.rxSpeed);
+      writer.uint32(41).double(message.rxSpeed);
     }
     if (message.rxSpeedTarget !== 0) {
-      writer.uint32(73).double(message.rxSpeedTarget);
+      writer.uint32(49).double(message.rxSpeedTarget);
     }
-    for (const v of message.matches) {
-      writer.uint32(82).string(v!);
+    if (message.appMatch !== "") {
+      writer.uint32(58).string(message.appMatch);
     }
     return writer;
   },
@@ -348,22 +325,13 @@ export const Sample = {
           message.duration = longToNumber(reader.int64() as Long);
           break;
         case 5:
-          message.points = reader.double();
-          break;
-        case 6:
-          message.k = reader.double();
-          break;
-        case 7:
-          message.minutesLeft = reader.double();
-          break;
-        case 8:
           message.rxSpeed = reader.double();
           break;
-        case 9:
+        case 6:
           message.rxSpeedTarget = reader.double();
           break;
-        case 10:
-          message.matches.push(reader.string());
+        case 7:
+          message.appMatch = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -379,12 +347,9 @@ export const Sample = {
       rxBytes: isSet(object.rxBytes) ? Number(object.rxBytes) : 0,
       startTime: isSet(object.startTime) ? fromJsonTimestamp(object.startTime) : undefined,
       duration: isSet(object.duration) ? Number(object.duration) : 0,
-      points: isSet(object.points) ? Number(object.points) : 0,
-      k: isSet(object.k) ? Number(object.k) : 0,
-      minutesLeft: isSet(object.minutesLeft) ? Number(object.minutesLeft) : 0,
       rxSpeed: isSet(object.rxSpeed) ? Number(object.rxSpeed) : 0,
       rxSpeedTarget: isSet(object.rxSpeedTarget) ? Number(object.rxSpeedTarget) : 0,
-      matches: Array.isArray(object?.matches) ? object.matches.map((e: any) => String(e)) : [],
+      appMatch: isSet(object.appMatch) ? String(object.appMatch) : "",
     };
   },
 
@@ -394,16 +359,9 @@ export const Sample = {
     message.rxBytes !== undefined && (obj.rxBytes = Math.round(message.rxBytes));
     message.startTime !== undefined && (obj.startTime = message.startTime.toISOString());
     message.duration !== undefined && (obj.duration = Math.round(message.duration));
-    message.points !== undefined && (obj.points = message.points);
-    message.k !== undefined && (obj.k = message.k);
-    message.minutesLeft !== undefined && (obj.minutesLeft = message.minutesLeft);
     message.rxSpeed !== undefined && (obj.rxSpeed = message.rxSpeed);
     message.rxSpeedTarget !== undefined && (obj.rxSpeedTarget = message.rxSpeedTarget);
-    if (message.matches) {
-      obj.matches = message.matches.map((e) => e);
-    } else {
-      obj.matches = [];
-    }
+    message.appMatch !== undefined && (obj.appMatch = message.appMatch);
     return obj;
   },
 
@@ -413,12 +371,9 @@ export const Sample = {
     message.rxBytes = object.rxBytes ?? 0;
     message.startTime = object.startTime ?? undefined;
     message.duration = object.duration ?? 0;
-    message.points = object.points ?? 0;
-    message.k = object.k ?? 0;
-    message.minutesLeft = object.minutesLeft ?? 0;
     message.rxSpeed = object.rxSpeed ?? 0;
     message.rxSpeedTarget = object.rxSpeedTarget ?? 0;
-    message.matches = object.matches?.map((e) => e) || [];
+    message.appMatch = object.appMatch ?? "";
     return message;
   },
 };

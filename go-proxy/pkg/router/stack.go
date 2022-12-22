@@ -24,6 +24,7 @@ import (
 type tcpConn struct {
 	*gonet.TCPConn
 	*controller.ControllableFlow
+	c  *controller.Controller
 	id stack.TransportEndpointID
 }
 
@@ -31,14 +32,22 @@ func (c *tcpConn) ID() *stack.TransportEndpointID {
 	return &c.id
 }
 
+func (c *tcpConn) Controller() *controller.Controller {
+	return c.c
+}
+
 type udpConn struct {
 	*gonet.UDPConn
 	*controller.ControllableFlow
+	c  *controller.Controller
 	id stack.TransportEndpointID
 }
 
 func (c *udpConn) ID() *stack.TransportEndpointID {
 	return &c.id
+}
+func (c *udpConn) Controller() *controller.Controller {
+	return c.c
 }
 
 const (
@@ -154,6 +163,7 @@ func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 		conn := &tcpConn{
 			TCPConn:          gonet.NewTCPConn(&wq, ep),
 			ControllableFlow: c.GetFlow(id.LocalAddress.String()),
+			c:                c,
 			id:               id,
 		}
 		tcpQueue <- conn
@@ -172,6 +182,7 @@ func createStack(ep *channel.Endpoint, tcpQueue chan adapter.TCPConn, udpQueue c
 		conn := &udpConn{
 			UDPConn:          gonet.NewUDPConn(s, &wq, ep),
 			ControllableFlow: c.GetFlow(id.LocalAddress.String()),
+			c:                c,
 			id:               id,
 		}
 		udpQueue <- conn
