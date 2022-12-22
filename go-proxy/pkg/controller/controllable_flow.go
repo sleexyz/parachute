@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"math"
 )
 
@@ -20,7 +21,7 @@ func InitControllableFlow(c *Controller, ip string) *ControllableFlow {
 }
 
 func (f *ControllableFlow) rxSpeedTarget() float64 {
-	if f.GetApp(f.ip) != nil {
+	if f.GetApp(f.ip) == nil {
 		return math.Inf(1)
 	}
 	return f.RxSpeedTarget()
@@ -32,11 +33,17 @@ func (f *ControllableFlow) InitialSpeed() float64 {
 
 func (f *ControllableFlow) UpdateSpeed(ctx *UpdateCtx) float64 {
 	st := f.rxSpeedTarget()
+	ctx.sample.RxSpeedTarget = st
 	ctx.sample.Ip = f.ip
 	app := f.GetApp(f.ip)
-	if app != nil {
-		ctx.sample.AppMatch = app.name
+	if app == nil {
+		return st
 	}
-	ctx.sample.RxSpeedTarget = st
+	toAdd := 1.0
+	points := app.AddPoints(toAdd, ctx.now)
+	log.Printf("%s points: %.2f", app.Name(), points)
+
+	ctx.sample.AppMatch = app.name
+	ctx.sample.DnsNames = f.AppResolver.DnsCache.GetReverseDnsEntries(f.ip)
 	return st
 }

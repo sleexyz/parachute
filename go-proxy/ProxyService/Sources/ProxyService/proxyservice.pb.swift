@@ -150,6 +150,8 @@ public struct Proxyservice_Sample {
 
   public var appMatch: String = String()
 
+  public var dnsNames: [String] = []
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -363,6 +365,7 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     5: .same(proto: "rxSpeed"),
     6: .same(proto: "rxSpeedTarget"),
     7: .same(proto: "appMatch"),
+    8: .same(proto: "dnsNames"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -378,6 +381,7 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       case 5: try { try decoder.decodeSingularDoubleField(value: &self.rxSpeed) }()
       case 6: try { try decoder.decodeSingularDoubleField(value: &self.rxSpeedTarget) }()
       case 7: try { try decoder.decodeSingularStringField(value: &self.appMatch) }()
+      case 8: try { try decoder.decodeRepeatedStringField(value: &self.dnsNames) }()
       default: break
       }
     }
@@ -409,6 +413,9 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if !self.appMatch.isEmpty {
       try visitor.visitSingularStringField(value: self.appMatch, fieldNumber: 7)
     }
+    if !self.dnsNames.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.dnsNames, fieldNumber: 8)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -420,6 +427,7 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if lhs.rxSpeed != rhs.rxSpeed {return false}
     if lhs.rxSpeedTarget != rhs.rxSpeedTarget {return false}
     if lhs.appMatch != rhs.appMatch {return false}
+    if lhs.dnsNames != rhs.dnsNames {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

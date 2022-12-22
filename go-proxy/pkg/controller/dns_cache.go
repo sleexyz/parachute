@@ -8,6 +8,7 @@ import (
 type DnsCache interface {
 	AddReverseDnsEntry(ip string, name string)
 	HasReverseDnsEntry(ip string) bool
+	GetReverseDnsEntries(ip string) []string
 	LookupIp(ip string)
 }
 
@@ -46,7 +47,7 @@ func (ar *dnsCache) HasReverseDnsEntry(ip string) bool {
 	return ok
 }
 
-func (ar *dnsCache) GetReverseDnsEntry(ip string) []string {
+func (ar *dnsCache) GetReverseDnsEntries(ip string) []string {
 	_, ok := ar.rdnsMap[ip]
 	if !ok {
 		return nil
