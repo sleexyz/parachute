@@ -54,11 +54,11 @@ final class AppViewModel: ObservableObject {
         }
     }
     
-    func resetPoints() {
+    func resetState() {
         Task {
             do {
                 var req = Proxyservice_Request()
-                req.resetPoints = Proxyservice_ResetPointsRequest()
+                req.resetState = Proxyservice_ResetStateRequest()
                 try await service.Rpc(message: req)
             } catch {
                 self.showError(
@@ -153,7 +153,7 @@ struct AppView: View {
                     controller.syncSettings()
                 }
                 Spacer()
-                PrimaryButton(title: "reset points", action: model.resetPoints, isLoading: false)
+                PrimaryButton(title: "reset state", action: model.resetState, isLoading: false)
                 Spacer()
                 PrimaryButton(title: "cheat", action: model.startCheat, isLoading: cheatController.isCheating, loadingMessage: cheatLoading).disabled(cheatController.isCheating)
             }
