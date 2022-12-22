@@ -17,11 +17,11 @@ message Request {
     oneof message {
         Settings setSettings = 1;
         SetTemporaryRxSpeedTargetRequest setTemporaryRxSpeedTarget = 2;
-        ResetPointsRequest resetPoints = 3;
+        ResetStateRequest resetState = 3;
     }
 }
 
-message ResetPointsRequest {
+message ResetStateRequest {
 }
 
 message SetTemporaryRxSpeedTargetRequest {

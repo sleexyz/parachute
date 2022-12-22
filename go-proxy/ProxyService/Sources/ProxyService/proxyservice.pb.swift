@@ -57,12 +57,12 @@ public struct Proxyservice_Request {
     set {message = .setTemporaryRxSpeedTarget(newValue)}
   }
 
-  public var resetPoints: Proxyservice_ResetPointsRequest {
+  public var resetState: Proxyservice_ResetStateRequest {
     get {
-      if case .resetPoints(let v)? = message {return v}
-      return Proxyservice_ResetPointsRequest()
+      if case .resetState(let v)? = message {return v}
+      return Proxyservice_ResetStateRequest()
     }
-    set {message = .resetPoints(newValue)}
+    set {message = .resetState(newValue)}
   }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -70,7 +70,7 @@ public struct Proxyservice_Request {
   public enum OneOf_Message: Equatable {
     case setSettings(Proxyservice_Settings)
     case setTemporaryRxSpeedTarget(Proxyservice_SetTemporaryRxSpeedTargetRequest)
-    case resetPoints(Proxyservice_ResetPointsRequest)
+    case resetState(Proxyservice_ResetStateRequest)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proxyservice_Request.OneOf_Message, rhs: Proxyservice_Request.OneOf_Message) -> Bool {
@@ -86,8 +86,8 @@ public struct Proxyservice_Request {
         guard case .setTemporaryRxSpeedTarget(let l) = lhs, case .setTemporaryRxSpeedTarget(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
-      case (.resetPoints, .resetPoints): return {
-        guard case .resetPoints(let l) = lhs, case .resetPoints(let r) = rhs else { preconditionFailure() }
+      case (.resetState, .resetState): return {
+        guard case .resetState(let l) = lhs, case .resetState(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       default: return false
@@ -99,7 +99,7 @@ public struct Proxyservice_Request {
   public init() {}
 }
 
-public struct Proxyservice_ResetPointsRequest {
+public struct Proxyservice_ResetStateRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -161,7 +161,7 @@ public struct Proxyservice_Sample {
 extension Proxyservice_Settings: @unchecked Sendable {}
 extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
-extension Proxyservice_ResetPointsRequest: @unchecked Sendable {}
+extension Proxyservice_ResetStateRequest: @unchecked Sendable {}
 extension Proxyservice_SetTemporaryRxSpeedTargetRequest: @unchecked Sendable {}
 extension Proxyservice_Sample: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
@@ -213,7 +213,7 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "setSettings"),
     2: .same(proto: "setTemporaryRxSpeedTarget"),
-    3: .same(proto: "resetPoints"),
+    3: .same(proto: "resetState"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -249,16 +249,16 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
         }
       }()
       case 3: try {
-        var v: Proxyservice_ResetPointsRequest?
+        var v: Proxyservice_ResetStateRequest?
         var hadOneofValue = false
         if let current = self.message {
           hadOneofValue = true
-          if case .resetPoints(let m) = current {v = m}
+          if case .resetState(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {
           if hadOneofValue {try decoder.handleConflictingOneOf()}
-          self.message = .resetPoints(v)
+          self.message = .resetState(v)
         }
       }()
       default: break
@@ -280,8 +280,8 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       guard case .setTemporaryRxSpeedTarget(let v)? = self.message else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     }()
-    case .resetPoints?: try {
-      guard case .resetPoints(let v)? = self.message else { preconditionFailure() }
+    case .resetState?: try {
+      guard case .resetState(let v)? = self.message else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
     }()
     case nil: break
@@ -296,8 +296,8 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
   }
 }
 
-extension Proxyservice_ResetPointsRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ResetPointsRequest"
+extension Proxyservice_ResetStateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ResetStateRequest"
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -309,7 +309,7 @@ extension Proxyservice_ResetPointsRequest: SwiftProtobuf.Message, SwiftProtobuf.
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proxyservice_ResetPointsRequest, rhs: Proxyservice_ResetPointsRequest) -> Bool {
+  public static func ==(lhs: Proxyservice_ResetStateRequest, rhs: Proxyservice_ResetStateRequest) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -49,7 +49,7 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 			IP:   net.IP{8, 8, 8, 8},
 			Port: int(id.LocalPort),
 		}
-		targetConn = &DnsSnifferConn{PacketConn: targetConn, c: localConn.Controller(), IP: &remote.IP}
+		targetConn = &DnsSnifferConn{PacketConn: targetConn, c: localConn.Controller().DnsCache, IP: &remote.IP}
 	} else {
 		remote = &net.UDPAddr{
 			IP:   net.IP(id.LocalAddress),
@@ -87,7 +87,7 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 
 type DnsSnifferConn struct {
 	net.PacketConn
-	c  *controller.Controller
+	c  controller.DnsCache
 	IP *net.IP
 }
 

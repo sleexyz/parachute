@@ -20,7 +20,7 @@ func InitControllableFlow(c *Controller, ip string) *ControllableFlow {
 }
 
 func (f *ControllableFlow) rxSpeedTarget() float64 {
-	if !f.Controller.ShouldSlow(f.ip) {
+	if !f.Controller.HasMatch(f.ip) {
 		return math.Inf(1)
 	}
 	return f.RxSpeedTarget()

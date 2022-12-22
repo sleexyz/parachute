@@ -13,10 +13,10 @@ export interface Settings {
 export interface Request {
   setSettings?: Settings | undefined;
   setTemporaryRxSpeedTarget?: SetTemporaryRxSpeedTargetRequest | undefined;
-  resetPoints?: ResetPointsRequest | undefined;
+  resetState?: ResetStateRequest | undefined;
 }
 
-export interface ResetPointsRequest {
+export interface ResetStateRequest {
 }
 
 export interface SetTemporaryRxSpeedTargetRequest {
@@ -96,7 +96,7 @@ export const Settings = {
 };
 
 function createBaseRequest(): Request {
-  return { setSettings: undefined, setTemporaryRxSpeedTarget: undefined, resetPoints: undefined };
+  return { setSettings: undefined, setTemporaryRxSpeedTarget: undefined, resetState: undefined };
 }
 
 export const Request = {
@@ -107,8 +107,8 @@ export const Request = {
     if (message.setTemporaryRxSpeedTarget !== undefined) {
       SetTemporaryRxSpeedTargetRequest.encode(message.setTemporaryRxSpeedTarget, writer.uint32(18).fork()).ldelim();
     }
-    if (message.resetPoints !== undefined) {
-      ResetPointsRequest.encode(message.resetPoints, writer.uint32(26).fork()).ldelim();
+    if (message.resetState !== undefined) {
+      ResetStateRequest.encode(message.resetState, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -127,7 +127,7 @@ export const Request = {
           message.setTemporaryRxSpeedTarget = SetTemporaryRxSpeedTargetRequest.decode(reader, reader.uint32());
           break;
         case 3:
-          message.resetPoints = ResetPointsRequest.decode(reader, reader.uint32());
+          message.resetState = ResetStateRequest.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -143,7 +143,7 @@ export const Request = {
       setTemporaryRxSpeedTarget: isSet(object.setTemporaryRxSpeedTarget)
         ? SetTemporaryRxSpeedTargetRequest.fromJSON(object.setTemporaryRxSpeedTarget)
         : undefined,
-      resetPoints: isSet(object.resetPoints) ? ResetPointsRequest.fromJSON(object.resetPoints) : undefined,
+      resetState: isSet(object.resetState) ? ResetStateRequest.fromJSON(object.resetState) : undefined,
     };
   },
 
@@ -155,8 +155,8 @@ export const Request = {
       (obj.setTemporaryRxSpeedTarget = message.setTemporaryRxSpeedTarget
         ? SetTemporaryRxSpeedTargetRequest.toJSON(message.setTemporaryRxSpeedTarget)
         : undefined);
-    message.resetPoints !== undefined &&
-      (obj.resetPoints = message.resetPoints ? ResetPointsRequest.toJSON(message.resetPoints) : undefined);
+    message.resetState !== undefined &&
+      (obj.resetState = message.resetState ? ResetStateRequest.toJSON(message.resetState) : undefined);
     return obj;
   },
 
@@ -169,26 +169,26 @@ export const Request = {
       (object.setTemporaryRxSpeedTarget !== undefined && object.setTemporaryRxSpeedTarget !== null)
         ? SetTemporaryRxSpeedTargetRequest.fromPartial(object.setTemporaryRxSpeedTarget)
         : undefined;
-    message.resetPoints = (object.resetPoints !== undefined && object.resetPoints !== null)
-      ? ResetPointsRequest.fromPartial(object.resetPoints)
+    message.resetState = (object.resetState !== undefined && object.resetState !== null)
+      ? ResetStateRequest.fromPartial(object.resetState)
       : undefined;
     return message;
   },
 };
 
-function createBaseResetPointsRequest(): ResetPointsRequest {
+function createBaseResetStateRequest(): ResetStateRequest {
   return {};
 }
 
-export const ResetPointsRequest = {
-  encode(_: ResetPointsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const ResetStateRequest = {
+  encode(_: ResetStateRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): ResetPointsRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): ResetStateRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseResetPointsRequest();
+    const message = createBaseResetStateRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -200,17 +200,17 @@ export const ResetPointsRequest = {
     return message;
   },
 
-  fromJSON(_: any): ResetPointsRequest {
+  fromJSON(_: any): ResetStateRequest {
     return {};
   },
 
-  toJSON(_: ResetPointsRequest): unknown {
+  toJSON(_: ResetStateRequest): unknown {
     const obj: any = {};
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<ResetPointsRequest>, I>>(_: I): ResetPointsRequest {
-    const message = createBaseResetPointsRequest();
+  fromPartial<I extends Exact<DeepPartial<ResetStateRequest>, I>>(_: I): ResetStateRequest {
+    const message = createBaseResetStateRequest();
     return message;
   },
 };
