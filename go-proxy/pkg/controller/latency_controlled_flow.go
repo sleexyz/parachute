@@ -14,10 +14,10 @@ type LatencyControlledFlow struct {
 	// total rxBytes
 	rxBytes int64
 	// rxBytes since last sample time
-	dRx             int
-	lastSampleTime  *time.Time
-	computedRxSpeed float64
-	refCount        int
+	dRx            int
+	lastSampleTime *time.Time
+	rxSpeed        float64
+	refCount       int
 
 	rxLatencyPerByte time.Duration
 	latencyProvider  LatencyProvider
@@ -41,7 +41,7 @@ func InitLatencyControlledFlow(latencyProvider LatencyProvider, sp analytics.Sam
 	now := time.Now()
 	ret := &LatencyControlledFlow{
 		refCount:         0,
-		computedRxSpeed:  0,
+		rxSpeed:          0,
 		lastSampleTime:   &now,
 		rxLatencyPerByte: latencyProvider.InitialLatency(),
 		latencyProvider:  latencyProvider,
@@ -51,7 +51,10 @@ func InitLatencyControlledFlow(latencyProvider LatencyProvider, sp analytics.Sam
 }
 
 type UpdateCtx struct {
-	sample *proxyservice.Sample
+	sample  *proxyservice.Sample
+	now     *time.Time
+	rxBytes int
+	rxSpeed float64
 }
 
 func (s *LatencyControlledFlow) Update(n int, now time.Time) {
@@ -59,15 +62,16 @@ func (s *LatencyControlledFlow) Update(n int, now time.Time) {
 	s.dRx += n
 	dt := now.Sub(*s.lastSampleTime)
 	if dt > time.Second {
+		s.rxSpeed = float64(s.dRx) / float64(dt) * float64(time.Second) * 8
+
 		sample := &proxyservice.Sample{}
 		sample.RxBytes = int64(s.dRx)
 		sample.StartTime = timestamppb.New(now)
 		sample.Duration = int64(dt)
-		sample.RxSpeed = s.computedRxSpeed
-		updateCtx := &UpdateCtx{sample: sample}
+		sample.RxSpeed = s.rxSpeed
 
-		s.computedRxSpeed = float64(s.dRx) / float64(dt) * float64(time.Second) * 8
-		s.rxLatencyPerByte = s.latencyProvider.UpdateLatency(updateCtx, s.dRx, now, dt, s.rxLatencyPerByte, s.computedRxSpeed)
+		updateCtx := &UpdateCtx{sample: sample, now: &now, rxBytes: s.dRx, rxSpeed: s.rxSpeed}
+		s.rxLatencyPerByte = s.latencyProvider.UpdateLatency(updateCtx, s.dRx, now, dt, s.rxLatencyPerByte, s.rxSpeed)
 		go s.publishSample(sample)
 		s.lastSampleTime = &now
 		s.dRx = 0

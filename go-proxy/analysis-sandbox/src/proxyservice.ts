@@ -35,6 +35,7 @@ export interface Sample {
   rxSpeed: number;
   rxSpeedTarget: number;
   appMatch: string;
+  dnsNames: string[];
 }
 
 function createBaseSettings(): Settings {
@@ -276,7 +277,16 @@ export const SetTemporaryRxSpeedTargetRequest = {
 };
 
 function createBaseSample(): Sample {
-  return { ip: "", rxBytes: 0, startTime: undefined, duration: 0, rxSpeed: 0, rxSpeedTarget: 0, appMatch: "" };
+  return {
+    ip: "",
+    rxBytes: 0,
+    startTime: undefined,
+    duration: 0,
+    rxSpeed: 0,
+    rxSpeedTarget: 0,
+    appMatch: "",
+    dnsNames: [],
+  };
 }
 
 export const Sample = {
@@ -301,6 +311,9 @@ export const Sample = {
     }
     if (message.appMatch !== "") {
       writer.uint32(58).string(message.appMatch);
+    }
+    for (const v of message.dnsNames) {
+      writer.uint32(66).string(v!);
     }
     return writer;
   },
@@ -333,6 +346,9 @@ export const Sample = {
         case 7:
           message.appMatch = reader.string();
           break;
+        case 8:
+          message.dnsNames.push(reader.string());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -350,6 +366,7 @@ export const Sample = {
       rxSpeed: isSet(object.rxSpeed) ? Number(object.rxSpeed) : 0,
       rxSpeedTarget: isSet(object.rxSpeedTarget) ? Number(object.rxSpeedTarget) : 0,
       appMatch: isSet(object.appMatch) ? String(object.appMatch) : "",
+      dnsNames: Array.isArray(object?.dnsNames) ? object.dnsNames.map((e: any) => String(e)) : [],
     };
   },
 
@@ -362,6 +379,11 @@ export const Sample = {
     message.rxSpeed !== undefined && (obj.rxSpeed = message.rxSpeed);
     message.rxSpeedTarget !== undefined && (obj.rxSpeedTarget = message.rxSpeedTarget);
     message.appMatch !== undefined && (obj.appMatch = message.appMatch);
+    if (message.dnsNames) {
+      obj.dnsNames = message.dnsNames.map((e) => e);
+    } else {
+      obj.dnsNames = [];
+    }
     return obj;
   },
 
@@ -374,6 +396,7 @@ export const Sample = {
     message.rxSpeed = object.rxSpeed ?? 0;
     message.rxSpeedTarget = object.rxSpeedTarget ?? 0;
     message.appMatch = object.appMatch ?? "";
+    message.dnsNames = object.dnsNames?.map((e) => e) || [];
     return message;
   },
 };

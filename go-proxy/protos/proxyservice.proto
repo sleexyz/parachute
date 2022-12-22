@@ -37,4 +37,5 @@ message Sample {
     double rxSpeed = 5;
     double rxSpeedTarget = 6;
     string appMatch = 7;
+    repeated string dnsNames = 8;
 }

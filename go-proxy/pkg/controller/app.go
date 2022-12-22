@@ -1,8 +1,10 @@
 package controller
 
 import (
+	"math"
 	"net/netip"
 	"regexp"
+	"time"
 )
 
 type AppMatcher struct {
@@ -66,12 +68,32 @@ func ParseAddresses(strs []string) []*netip.Prefix {
 }
 
 type App struct {
-	matchers *AppMatcher
-	name     string
+	matchers  *AppMatcher
+	name      string
+	ps        *PointsSystem
+	pointsCap float64
+	fdate     *time.Time
 }
 
 func InitApp(name string, matchers *AppMatcher) *App {
-	return &App{name: name, matchers: matchers}
+	ps := &PointsSystem{
+		lambda: 0.5,
+	}
+	return &App{
+		name:      name,
+		matchers:  matchers,
+		ps:        ps,
+		fdate:     ps.PointsToFdate(0, nil),
+		pointsCap: 20,
+	}
+}
+
+// returns new points
+func (a *App) AddPoints(points float64, now *time.Time) float64 {
+	oldPoints := a.ps.FdateToPoints(a.fdate, now)
+	newPoints := math.Min(points+oldPoints, a.pointsCap)
+	a.fdate = a.ps.PointsToFdate(newPoints, now)
+	return newPoints
 }
 
 func (a *App) Name() string {
