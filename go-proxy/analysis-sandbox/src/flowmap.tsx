@@ -1,30 +1,21 @@
-import { useContext, useEffect, useMemo } from "react";
-import { Client } from "./client";
+import {  useEffect, useMemo } from "react";
+import { EventSourceClient, } from "./client";
 import { pointsToFdate, updateFdate } from "./frecency";
 import { Sample } from "./proxyservice";
-import { Atom, createEmptyContext } from "./utils";
+import { Atom, makeDep } from "./utils";
 
-export interface Flow extends Sample{
+export interface Flow extends Sample {
+  fdate: Date;
 }
 
 export class FlowMap {
   map: Atom<Record<string, Flow>> = new Atom({});
-  constructor(readonly client: Client) {}
+  constructor(readonly client: EventSourceClient<Sample>) {}
 
-  static context = createEmptyContext<FlowMap>();
-  static Provider(props: { children: React.ReactNode }) {
-    const client = Client.use();
-    const flowMap = useMemo(() => new FlowMap(client), [client]);
-    return (
-      <FlowMap.context.Provider value={flowMap}>
-        {props.children}
-      </FlowMap.context.Provider>
-    );
-  }
-
-  static use(): FlowMap {
-    return useContext(FlowMap.context);
-  }
+  static dep = makeDep(() => {
+      const client = EventSourceClient.samplesDep.use();
+      return useMemo(() => new FlowMap(client), [client]);
+  });
 
   clear() {
     this.map.set({});
@@ -41,16 +32,21 @@ export class FlowMap {
 
   ingestSample = (sample: Sample) => {
     let flow = this.map.get()[sample.ip];
-    let pointsToAdd = sample.rxBytes / 10000;
+    let pointsToAdd = 1;
     if (flow == undefined) {
       this.map.set({
         ...this.map.get(),
-        [sample.ip]: { ...sample },
+        [sample.ip]: { ...sample , fdate: pointsToFdate(pointsToAdd)},
       });
     } else {
       this.map.set({
         ...this.map.get(),
-        [sample.ip]: { ...flow, ...sample, rxBytes: flow.rxBytes + sample.rxBytes },
+        [sample.ip]: {
+          ...flow,
+          ...sample,
+          fdate: updateFdate(flow.fdate, pointsToAdd),
+          rxBytes: flow.rxBytes + sample.rxBytes,
+        },
       });
     }
   };

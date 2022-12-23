@@ -12,6 +12,7 @@ import (
 
 	// "github.com/pyroscope-io/client/pyroscope"
 
+	"strange.industries/go-proxy/pkg/controller"
 	ffi "strange.industries/go-proxy/pkg/ffi"
 	"strange.industries/go-proxy/pkg/proxy"
 )
@@ -63,8 +64,10 @@ func main() {
 	debug.SetGCPercent(50)
 
 	a := InitAnalyticsServer(8084)
+	c := controller.Init(a)
+	a.C = c
 	// a := &analytics.NoOpAnalytics{}
-	proxy := proxy.InitOnDeviceProxy(a)
+	proxy := proxy.InitOnDeviceProxy(a, c)
 	a.Start()
 	proxyBridge := &ffi.OnDeviceProxyBridge{Proxy: proxy}
 	dsp := InitDebugServerProxy(proxyBridge, proxy)

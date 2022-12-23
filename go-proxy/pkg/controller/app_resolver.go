@@ -1,18 +1,53 @@
 package controller
 
 import (
+	"fmt"
 	"log"
+	"math"
 	"net/netip"
+
+	"strange.industries/go-proxy/pb/proxyservice"
 )
 
 var exists = struct{}{}
+
+type AppMatch struct {
+	*App
+
+	prefix  *netip.Prefix
+	dnsName string
+
+	correlation int
+	inferred    bool
+}
+
+func (am *AppMatch) Reason() string {
+	if am.inferred {
+		return fmt.Sprintf("inferred (%s), correlation: %d", am.Name(), am.correlation)
+	}
+	if am.prefix != nil {
+		return am.prefix.String()
+	}
+	if am.dnsName != "" {
+		return am.dnsName
+	}
+	return "invalid reason"
+}
+
+func (am *AppMatch) Probability() float64 {
+	if am.inferred {
+		return math.Tanh(float64(am.correlation) / 1)
+	}
+	return 1
+}
 
 type AppResolver struct {
 	DnsCache DnsCache
 	apps     []*App
 
 	// Whether an ip should map to an app
-	appMap map[string]*App
+	appMap         map[string]*AppMatch
+	inferredAppMap map[string]*AppMatch
 
 	// Whether match has been attempted
 	lookupCache map[string]struct{}
@@ -20,9 +55,10 @@ type AppResolver struct {
 
 func InitAppResolver() *AppResolver {
 	ar := &AppResolver{
-		apps:        apps,
-		appMap:      make(map[string]*App),
-		lookupCache: make(map[string]struct{}),
+		apps:           apps,
+		appMap:         make(map[string]*AppMatch),
+		inferredAppMap: make(map[string]*AppMatch),
+		lookupCache:    make(map[string]struct{}),
 	}
 	ar.DnsCache = initDnsCache(ar)
 	return ar
@@ -34,10 +70,15 @@ func (ar *AppResolver) OnEntryUpdate(ip string, name string) {
 	if ok {
 		return
 	}
-	app := ar.matchAppByName(name)
-	if app != nil {
-		ar.appMap[ip] = app
-		// log.Printf("registered matching ip: %s, %s, via %s", ip, app, name)
+	for _, app := range ar.apps {
+		p := app.MatchByName(name)
+		if p == 1 {
+			ar.appMap[ip] = &AppMatch{App: app, dnsName: name}
+			// log.Printf("registered matching ip: %s, %s, via %s", ip, app, name)
+			return
+		} else if p == 0.5 {
+			ar.inferredAppMap[ip] = &AppMatch{App: app, dnsName: name, inferred: true, correlation: 1}
+		}
 	}
 }
 
@@ -47,10 +88,10 @@ func (ar *AppResolver) RegisterIp(ip string) {
 	_, ok := ar.lookupCache[ip]
 	if !ok && !ar.DnsCache.HasReverseDnsEntry(ip) {
 		go func() {
-			app := ar.matchAppByIp(ip)
-			if app != nil {
-				ar.appMap[ip] = app
-				log.Printf("registered matching ip: %s, %s", ip, app.name)
+			am := ar.matchAppByIp(ip)
+			if am != nil {
+				ar.appMap[ip] = am
+				log.Printf("registered matching ip: %s, %s", ip, am.name)
 				return
 			}
 			ar.DnsCache.LookupIp(ip)
@@ -59,25 +100,72 @@ func (ar *AppResolver) RegisterIp(ip string) {
 	}
 }
 
-func (ar *AppResolver) matchAppByName(name string) *App {
-	for _, app := range ar.apps {
-		if app.MatchByName(name) {
-			return app
-		}
-	}
-	return nil
-}
-
-func (ar *AppResolver) matchAppByIp(ip string) *App {
+func (ar *AppResolver) matchAppByIp(ip string) *AppMatch {
 	addr := netip.MustParseAddr(ip)
 	for _, app := range ar.apps {
-		if app.MatchByIp(addr) {
+		prefix := app.MatchByIp(addr)
+		if prefix != nil {
+			return &AppMatch{App: app, prefix: prefix}
+		}
+	}
+	return nil
+}
+
+func (ar *AppResolver) RecordIp(ip string) {
+	_, ok := ar.appMap[ip]
+	if ok {
+		return
+	}
+
+	app := ar.AppUsed()
+	if app != nil {
+		_, ok := ar.inferredAppMap[ip]
+		// what if match != app
+		if ok {
+			ar.inferredAppMap[ip].correlation += 1
+		} else {
+			// ar.inferredAppMap[ip] = &AppMatch{App: app, inferred: true, correlation: 1}
+		}
+	} else {
+		_, ok := ar.inferredAppMap[ip]
+		if ok {
+			ar.inferredAppMap[ip].correlation -= 1
+			// if ar.inferredAppMap[ip].correlation == 0 {
+			// 	delete(ar.inferredAppMap, ip)
+			// }
+		}
+	}
+}
+
+func (ar *AppResolver) GetDefiniteAppMatch(ip string) *AppMatch {
+	return ar.appMap[ip]
+}
+
+func (ar *AppResolver) GetFuzzyAppMatch(ip string) (*AppMatch, float64) {
+	match, ok := ar.appMap[ip]
+	if ok {
+		return match, 1
+	}
+	match, ok = ar.inferredAppMap[ip]
+	if ok {
+		return match, match.Probability()
+	}
+	return nil, 0
+}
+
+func (ar *AppResolver) AppUsed() *App {
+	for _, app := range ar.apps {
+		if app.AppUsed() {
 			return app
 		}
 	}
 	return nil
 }
 
-func (ar *AppResolver) GetApp(ip string) *App {
-	return ar.appMap[ip]
+func (ar *AppResolver) RecordState() *proxyservice.ServerState {
+	s := &proxyservice.ServerState{}
+	for _, app := range ar.apps {
+		s.Apps = append(s.Apps, app.RecordState())
+	}
+	return s
 }

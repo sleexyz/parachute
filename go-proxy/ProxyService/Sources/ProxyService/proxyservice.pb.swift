@@ -123,6 +123,32 @@ public struct Proxyservice_SetTemporaryRxSpeedTargetRequest {
   public init() {}
 }
 
+public struct Proxyservice_ServerState {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var apps: [Proxyservice_AppState] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Proxyservice_AppState {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var points: Double = 0
+
+  public var name: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct Proxyservice_Sample {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -150,7 +176,9 @@ public struct Proxyservice_Sample {
 
   public var appMatch: String = String()
 
-  public var dnsNames: [String] = []
+  public var slowReason: String = String()
+
+  public var dnsMatchers: [String] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -165,6 +193,8 @@ extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
 extension Proxyservice_ResetStateRequest: @unchecked Sendable {}
 extension Proxyservice_SetTemporaryRxSpeedTargetRequest: @unchecked Sendable {}
+extension Proxyservice_ServerState: @unchecked Sendable {}
+extension Proxyservice_AppState: @unchecked Sendable {}
 extension Proxyservice_Sample: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
@@ -355,6 +385,76 @@ extension Proxyservice_SetTemporaryRxSpeedTargetRequest: SwiftProtobuf.Message, 
   }
 }
 
+extension Proxyservice_ServerState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ServerState"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "apps"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.apps) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.apps.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.apps, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_ServerState, rhs: Proxyservice_ServerState) -> Bool {
+    if lhs.apps != rhs.apps {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_AppState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".AppState"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "points"),
+    2: .same(proto: "name"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularDoubleField(value: &self.points) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.points != 0 {
+      try visitor.visitSingularDoubleField(value: self.points, fieldNumber: 1)
+    }
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_AppState, rhs: Proxyservice_AppState) -> Bool {
+    if lhs.points != rhs.points {return false}
+    if lhs.name != rhs.name {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Sample"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -365,7 +465,8 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     5: .same(proto: "rxSpeed"),
     6: .same(proto: "rxSpeedTarget"),
     7: .same(proto: "appMatch"),
-    8: .same(proto: "dnsNames"),
+    8: .same(proto: "slowReason"),
+    9: .same(proto: "dnsMatchers"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -381,7 +482,8 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       case 5: try { try decoder.decodeSingularDoubleField(value: &self.rxSpeed) }()
       case 6: try { try decoder.decodeSingularDoubleField(value: &self.rxSpeedTarget) }()
       case 7: try { try decoder.decodeSingularStringField(value: &self.appMatch) }()
-      case 8: try { try decoder.decodeRepeatedStringField(value: &self.dnsNames) }()
+      case 8: try { try decoder.decodeSingularStringField(value: &self.slowReason) }()
+      case 9: try { try decoder.decodeRepeatedStringField(value: &self.dnsMatchers) }()
       default: break
       }
     }
@@ -413,8 +515,11 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if !self.appMatch.isEmpty {
       try visitor.visitSingularStringField(value: self.appMatch, fieldNumber: 7)
     }
-    if !self.dnsNames.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.dnsNames, fieldNumber: 8)
+    if !self.slowReason.isEmpty {
+      try visitor.visitSingularStringField(value: self.slowReason, fieldNumber: 8)
+    }
+    if !self.dnsMatchers.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.dnsMatchers, fieldNumber: 9)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -427,7 +532,8 @@ extension Proxyservice_Sample: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if lhs.rxSpeed != rhs.rxSpeed {return false}
     if lhs.rxSpeedTarget != rhs.rxSpeedTarget {return false}
     if lhs.appMatch != rhs.appMatch {return false}
-    if lhs.dnsNames != rhs.dnsNames {return false}
+    if lhs.slowReason != rhs.slowReason {return false}
+    if lhs.dnsMatchers != rhs.dnsMatchers {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

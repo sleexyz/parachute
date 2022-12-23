@@ -1,37 +1,49 @@
-import { useContext, useMemo } from "react";
-import { Sample } from "./proxyservice";
-import { createEmptyContext } from "./utils";
+import { useMemo } from "react";
+import { Sample, ServerState } from "./proxyservice";
+import { makeDep } from "./utils";
 
-export class Client {
-  evtSource = new EventSource("http://localhost:8084/events?stream=samples");
-  subscribeFns = new Set<(sample: Sample) => void>();
+export class EventSourceClient<T> {
+  subscribeFns = new Set<(sample: T) => void>();
 
-  constructor() {
+  constructor(
+    readonly evtSource: EventSource,
+    deserialize: (data: unknown) => T
+  ) {
     this.evtSource.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      const sample = Sample.fromJSON(message);
+      const sample = deserialize(message);
       for (let fn of this.subscribeFns) {
         fn(sample);
       }
     };
   }
-  addSubscriber(fn: (sample: Sample) => void) {
+
+  static samplesDep = makeDep(() => {
+    return useMemo(
+      () =>
+        new EventSourceClient(
+          new EventSource("http://localhost:8084/events?stream=samples"),
+          Sample.fromJSON
+        ),
+      []
+    );
+  });
+
+  static serverDep = makeDep(() => {
+    return useMemo(
+      () =>
+        new EventSourceClient(
+          new EventSource("http://localhost:8084/events?stream=server"),
+          ServerState.fromJSON
+        ),
+      []
+    );
+  });
+
+  addSubscriber(fn: (sample: T) => void) {
     this.subscribeFns.add(fn);
   }
-  removeSubscriber(fn: (sample: Sample) => void) {
+  removeSubscriber(fn: (sample: T) => void) {
     this.subscribeFns.delete(fn);
-  }
-
-  static context = createEmptyContext<Client>();
-  static use(): Client {
-    return useContext(Client.context);
-  }
-  static Provider(props: { children: React.ReactNode }) {
-    const value = useMemo(() => new Client(), []);
-    return (
-      <Client.context.Provider value={value}>
-        {props.children}
-      </Client.context.Provider>
-    );
   }
 }

@@ -22,7 +22,7 @@ func (ps *PointsSystem) PointsToFdate(points float64, now *time.Time) *time.Time
 		n := time.Now()
 		now = &n
 	}
-	fdate := now.Add(time.Duration(-1.0 * math.Log1p(points) / math.Log(ps.lambda) * 1e9))
+	fdate := now.Add(time.Duration(-1.0 * math.Log(points) / math.Log(ps.lambda) * 1e9))
 	return &fdate
 }
 
@@ -31,5 +31,5 @@ func (ps *PointsSystem) FdateToPoints(fdate *time.Time, now *time.Time) float64 
 		n := time.Now()
 		now = &n
 	}
-	return math.Pow(ps.lambda, float64(now.Sub(*fdate).Seconds())) - 1
+	return math.Pow(ps.lambda, float64(now.Sub(*fdate).Seconds()))
 }

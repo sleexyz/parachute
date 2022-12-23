@@ -12,7 +12,8 @@ import (
 
 const (
 	// defaultRxSpeedTarget = 40000.0 // dialup (40kbps)
-	DefaultRxSpeedTarget float64 = 100000.0 // 100kbps
+	// DefaultRxSpeedTarget float64 = 100000.0 // 100kbps
+	DefaultRxSpeedTarget float64 = 56000.0 // 100kbps
 )
 
 type ControllerSettingsReadWrite interface {
@@ -128,4 +129,8 @@ func (c *Controller) ResetState() {
 	for k := range c.fm {
 		delete(c.fm, k)
 	}
+}
+
+func (c *Controller) RecordState() *proxyservice.ServerState {
+	return c.AppResolver.RecordState()
 }
