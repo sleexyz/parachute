@@ -36,7 +36,7 @@ func (f *ControllableFlow) getAppReason() (*App, string) {
 		if probability > 0.5 {
 			return appMatch.App, appMatch.Reason()
 		} else {
-			return nil, fmt.Sprintf("too low: %.2f, correlation: %.2f", probability, math.Atanh(probability)*2)
+			return nil, fmt.Sprintf("too low: %.2f, correlation: %.2f", probability, Logit(probability))
 		}
 	}
 	return nil, ""

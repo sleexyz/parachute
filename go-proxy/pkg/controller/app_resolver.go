@@ -17,13 +17,13 @@ type AppMatch struct {
 	prefix  *netip.Prefix
 	dnsName string
 
-	correlation int
-	inferred    bool
+	correlationScore int
+	inferred         bool
 }
 
 func (am *AppMatch) Reason() string {
 	if am.inferred {
-		return fmt.Sprintf("inferred (%s), correlation: %d", am.Name(), am.correlation)
+		return fmt.Sprintf("inferred (%s), correlation: %d", am.Name(), am.correlationScore)
 	}
 	if am.prefix != nil {
 		return am.prefix.String()
@@ -34,9 +34,17 @@ func (am *AppMatch) Reason() string {
 	return "invalid reason"
 }
 
+func Logistic(x float64) float64 {
+	return 0.5 + math.Tanh(x/2)/2
+}
+
+func Logit(x float64) float64 {
+	return math.Log(x / (1 - x))
+}
+
 func (am *AppMatch) Probability() float64 {
 	if am.inferred {
-		return math.Tanh(float64(am.correlation) / 1)
+		return Logistic(float64(am.correlationScore))
 	}
 	return 1
 }
@@ -77,7 +85,7 @@ func (ar *AppResolver) OnEntryUpdate(ip string, name string) {
 			// log.Printf("registered matching ip: %s, %s, via %s", ip, app, name)
 			return
 		} else if p == 0.5 {
-			ar.inferredAppMap[ip] = &AppMatch{App: app, dnsName: name, inferred: true, correlation: 1}
+			ar.inferredAppMap[ip] = &AppMatch{App: app, dnsName: name, inferred: true, correlationScore: 0}
 		}
 	}
 }
@@ -116,24 +124,15 @@ func (ar *AppResolver) RecordIp(ip string) {
 	if ok {
 		return
 	}
-
+	match, ok := ar.inferredAppMap[ip]
 	app := ar.AppUsed()
-	if app != nil {
-		_, ok := ar.inferredAppMap[ip]
-		// what if match != app
-		if ok {
-			ar.inferredAppMap[ip].correlation += 1
-		} else {
-			// ar.inferredAppMap[ip] = &AppMatch{App: app, inferred: true, correlation: 1}
-		}
-	} else {
-		_, ok := ar.inferredAppMap[ip]
-		if ok {
-			ar.inferredAppMap[ip].correlation -= 1
-			// if ar.inferredAppMap[ip].correlation == 0 {
-			// 	delete(ar.inferredAppMap, ip)
-			// }
-		}
+	if ok && app == match.App {
+		ar.inferredAppMap[ip].correlationScore += 1
+		return
+	}
+	if ok {
+		ar.inferredAppMap[ip].correlationScore -= 1
+		return
 	}
 }
 

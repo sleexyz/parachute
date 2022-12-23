@@ -52,9 +52,9 @@ function sortByFdate(a: Flow, b: Flow): number {
 function FlowDiv(props: { value: Flow }) {
   const shouldHighlight = useHighlightOnChange([props.value.rxSpeedTarget]);
   const className = `debug-pre ${shouldHighlight ? "highlight" : ""}`;
-  // if (props.value.rxSpeedTarget != Infinity) {
-  //   return null
-  // }
+  if (props.value.rxSpeedTarget != Infinity) {
+    return null
+  }
   return (
     <pre className={className}>
       {JSON.stringify(
