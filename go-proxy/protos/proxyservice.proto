@@ -29,6 +29,14 @@ message SetTemporaryRxSpeedTargetRequest {
     int32 duration = 2;
 }
 
+message ServerState {
+    repeated AppState apps = 1;
+}
+message AppState {
+    double points = 1;
+    string name = 2;
+}
+
 message Sample {
     string ip = 1;
     int64 rxBytes = 2;
@@ -37,5 +45,6 @@ message Sample {
     double rxSpeed = 5;
     double rxSpeedTarget = 6;
     string appMatch = 7;
-    repeated string dnsNames = 8;
+    string slowReason = 8;
+    repeated string dnsMatchers = 9;
 }

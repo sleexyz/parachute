@@ -5,11 +5,14 @@ import (
 	"net/netip"
 	"regexp"
 	"time"
+
+	"strange.industries/go-proxy/pb/proxyservice"
 )
 
 type AppMatcher struct {
-	dnsMatchers []*regexp.Regexp
-	addresses   []*netip.Prefix
+	dnsMatchers         []*regexp.Regexp
+	possibleDnsMatchers []*regexp.Regexp
+	addresses           []*netip.Prefix
 }
 
 var apps = []*App{
@@ -21,12 +24,13 @@ var apps = []*App{
 			regexp.MustCompile(`.*\.bytefcdn-oversea\.com\.$`),
 			regexp.MustCompile(`.*\.ttoverseaus\.net\.$`),
 			regexp.MustCompile(`.*\.bytetcdn\.com\.$`),
-			regexp.MustCompile(`.*\.cdn77\.org\.$`),
-			regexp.MustCompile(`.*\.akamai\.net\.$`),
 			regexp.MustCompile(`.*\.worldfcdn\.com\.$`),
 			regexp.MustCompile(`.*\.worldfcdn2\.com\.$`),
+		},
+		possibleDnsMatchers: []*regexp.Regexp{
+			regexp.MustCompile(`.*\.cdn77\.org\.$`),
+			regexp.MustCompile(`.*\.akamai\.net\.$`),
 			regexp.MustCompile(`.*\.akamaiedge\.net\.$`),
-			// TODO: disable
 			regexp.MustCompile(`.*\.static\.akamaitechnologies\.com\.$`),
 		},
 	}),
@@ -34,24 +38,27 @@ var apps = []*App{
 		dnsMatchers: []*regexp.Regexp{
 			regexp.MustCompile(`.*\.instagram\.com\.$`),
 			regexp.MustCompile(`.*\.cdninstagram\.com\.$`),
-			regexp.MustCompile(`.*\.fbcdn\.net\.$`),
-			regexp.MustCompile(`.*\.facebook\.com\.$`),
+			regexp.MustCompile(`instagram-.*\.fbcdn\.net\.$`),
+			// regexp.MustCompile(`.*\.facebook\.com\.$`),
 		},
 	}),
 	InitApp("twitter", &AppMatcher{
 		dnsMatchers: []*regexp.Regexp{
+			regexp.MustCompile(`t\.co\.$`),
 			regexp.MustCompile(`.*\.twitter\.com\.$`),
 			regexp.MustCompile(`.*\.twitter\.map\.fastly\.net\.$`),
-			// TODO: disable
+		},
+		possibleDnsMatchers: []*regexp.Regexp{
 			regexp.MustCompile(`.*\.cloudfront\.net\.$`),
 			regexp.MustCompile(`.*\.edgecastcdn\.net\.$`),
 		},
-		addresses: append(
-			// fastly
-			ParseAddresses([]string{"23.235.32.0/20", "43.249.72.0/22", "103.244.50.0/24", "103.245.222.0/23", "103.245.224.0/24", "104.156.80.0/20", "140.248.64.0/18", "140.248.128.0/17", "146.75.0.0/17", "151.101.0.0/16", "157.52.64.0/18", "167.82.0.0/17", "167.82.128.0/20", "167.82.160.0/20", "167.82.224.0/20", "172.111.64.0/18", "185.31.16.0/22", "199.27.72.0/21", "199.232.0.0/16"}),
-			// twitter
-			ParseAddresses([]string{"104.244.42.0/24"})...,
-		),
+		addresses: ParseAddresses([]string{"104.244.42.0/24"}),
+		// addresses: append(
+		// 	// fastly
+		// 	ParseAddresses([]string{"23.235.32.0/20", "43.249.72.0/22", "103.244.50.0/24", "103.245.222.0/23", "103.245.224.0/24", "104.156.80.0/20", "140.248.64.0/18", "140.248.128.0/17", "146.75.0.0/17", "151.101.0.0/16", "157.52.64.0/18", "167.82.0.0/17", "167.82.128.0/20", "167.82.160.0/20", "167.82.224.0/20", "172.111.64.0/18", "185.31.16.0/22", "199.27.72.0/21", "199.232.0.0/16"}),
+		// 	// twitter
+		// 	ParseAddresses([]string{"104.244.42.0/24"})...,
+		// ),
 	}),
 }
 
@@ -77,15 +84,19 @@ type App struct {
 
 func InitApp(name string, matchers *AppMatcher) *App {
 	ps := &PointsSystem{
-		lambda: 0.5,
+		lambda: math.Pow(0.5, 1.0/5.0),
 	}
 	return &App{
 		name:      name,
 		matchers:  matchers,
 		ps:        ps,
 		fdate:     ps.PointsToFdate(0, nil),
-		pointsCap: 20,
+		pointsCap: 2,
 	}
+}
+
+func (a *App) AppUsed() bool {
+	return a.fdate.After(time.Now())
 }
 
 // returns new points
@@ -100,20 +111,32 @@ func (a *App) Name() string {
 	return a.name
 }
 
-func (a *App) MatchByName(name string) bool {
+func (a *App) MatchByName(name string) float64 {
 	for _, r := range a.matchers.dnsMatchers {
 		if r.MatchString(name) {
-			return true
+			return 1
 		}
 	}
-	return false
+	for _, r := range a.matchers.possibleDnsMatchers {
+		if r.MatchString(name) {
+			return 0.5
+		}
+	}
+	return 0
 }
 
-func (a *App) MatchByIp(ip netip.Addr) bool {
+func (a *App) MatchByIp(ip netip.Addr) *netip.Prefix {
 	for _, addr := range a.matchers.addresses {
 		if addr.Contains(ip) {
-			return true
+			return addr
 		}
 	}
-	return false
+	return nil
+}
+
+func (a *App) RecordState() *proxyservice.AppState {
+	s := &proxyservice.AppState{}
+	s.Name = a.name
+	s.Points = a.ps.FdateToPoints(a.fdate, nil)
+	return s
 }

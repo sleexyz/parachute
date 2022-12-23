@@ -27,9 +27,9 @@ type ServerProxy struct {
 	router *router.Router
 }
 
-func InitOnDeviceProxy(a analytics.Analytics) *ServerProxy {
+func InitOnDeviceProxy(a analytics.Analytics, controller *controller.Controller) *ServerProxy {
 	return &ServerProxy{
-		Controller: controller.Init(a),
+		Controller: controller,
 		Analytics:  a,
 	}
 }

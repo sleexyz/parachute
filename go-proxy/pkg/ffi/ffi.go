@@ -10,6 +10,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"strange.industries/go-proxy/pb/proxyservice"
 	"strange.industries/go-proxy/pkg/analytics"
+	"strange.industries/go-proxy/pkg/controller"
 	proxy "strange.industries/go-proxy/pkg/proxy"
 )
 
@@ -72,8 +73,9 @@ func Init() ProxyBridge {
 	// log.SetOutput(io.Discard)
 	log.SetOutput(MobileLogger{})
 	a := &analytics.NoOpAnalytics{}
+	c := controller.Init(a)
 	return &OnDeviceProxyBridge{
-		Proxy: proxy.InitOnDeviceProxy(a),
+		Proxy: proxy.InitOnDeviceProxy(a, c),
 	}
 }
 

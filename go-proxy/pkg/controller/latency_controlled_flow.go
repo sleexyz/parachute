@@ -11,10 +11,10 @@ import (
 )
 
 type LatencyControlledFlow struct {
-	// total rxBytes
-	rxBytes int64
 	// rxBytes since last sample time
-	dRx            int
+	dRx int
+	// txBytes since last sample time
+	dTx            int
 	lastSampleTime *time.Time
 	rxSpeed        float64
 	refCount       int
@@ -22,11 +22,16 @@ type LatencyControlledFlow struct {
 	rxLatencyPerByte time.Duration
 	latencyProvider  LatencyProvider
 	sp               analytics.SamplePublisher
+	updateTxProvider UpdateTxProvider
+}
+
+type UpdateTxProvider interface {
+	UpdateTx(n int, now time.Time)
 }
 
 type LatencyProvider interface {
 	InitialLatency() time.Duration
-	UpdateLatency(ctx *UpdateCtx, n int, now time.Time, dt time.Duration, latencyPerByte time.Duration, rxSpeed float64) time.Duration
+	UpdateLatency(ctx *UpdateRxCtx, n int, now time.Time, dt time.Duration, latencyPerByte time.Duration, rxSpeed float64) time.Duration
 }
 
 func (s *LatencyControlledFlow) InjectRxLatency(n int) {
@@ -50,18 +55,25 @@ func InitLatencyControlledFlow(latencyProvider LatencyProvider, sp analytics.Sam
 	return ret
 }
 
-type UpdateCtx struct {
+func (s *LatencyControlledFlow) RecordTxBytes(n int, now time.Time) {
+	s.dTx += n
+	if s.updateTxProvider != nil {
+		s.updateTxProvider.UpdateTx(n, now)
+	}
+}
+
+type UpdateRxCtx struct {
 	sample  *proxyservice.Sample
 	now     *time.Time
 	rxBytes int
 	rxSpeed float64
 }
 
-func (s *LatencyControlledFlow) Update(n int, now time.Time) {
-	s.rxBytes += int64(n)
+func (s *LatencyControlledFlow) RecordRxBytes(n int, now time.Time) {
 	s.dRx += n
 	dt := now.Sub(*s.lastSampleTime)
-	if dt > time.Second {
+	// update ever quarter second
+	if dt > time.Second/4 {
 		s.rxSpeed = float64(s.dRx) / float64(dt) * float64(time.Second) * 8
 
 		sample := &proxyservice.Sample{}
@@ -70,7 +82,7 @@ func (s *LatencyControlledFlow) Update(n int, now time.Time) {
 		sample.Duration = int64(dt)
 		sample.RxSpeed = s.rxSpeed
 
-		updateCtx := &UpdateCtx{sample: sample, now: &now, rxBytes: s.dRx, rxSpeed: s.rxSpeed}
+		updateCtx := &UpdateRxCtx{sample: sample, now: &now, rxBytes: s.dRx, rxSpeed: s.rxSpeed}
 		s.rxLatencyPerByte = s.latencyProvider.UpdateLatency(updateCtx, s.dRx, now, dt, s.rxLatencyPerByte, s.rxSpeed)
 		go s.publishSample(sample)
 		s.lastSampleTime = &now
@@ -79,9 +91,7 @@ func (s *LatencyControlledFlow) Update(n int, now time.Time) {
 }
 
 func (s *LatencyControlledFlow) publishSample(sample *proxyservice.Sample) {
-	if !math.IsInf(sample.RxSpeedTarget, 1) {
-		log.Printf("Slowed: %v", sample)
-	} else {
+	if math.IsInf(sample.RxSpeedTarget, 1) {
 		log.Printf("(Skipped): %v", sample)
 	}
 	go s.sp.PublishSample(sample)

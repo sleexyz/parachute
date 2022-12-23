@@ -15,7 +15,7 @@ type SpeedControlledFlow struct {
 
 type SpeedProvider interface {
 	InitialSpeed() float64
-	UpdateSpeed(ctx *UpdateCtx) float64
+	UpdateSpeed(ctx *UpdateRxCtx) float64
 }
 
 func InitSpeedControlledFlow(samplePublisher analytics.SamplePublisher, speedProvider SpeedProvider) *SpeedControlledFlow {
@@ -33,7 +33,7 @@ func (f *SpeedControlledFlow) InitialLatency() time.Duration {
 	return 18 * time.Microsecond * 400000.0 / time.Duration(st)
 }
 
-func (f *SpeedControlledFlow) UpdateLatency(ctx *UpdateCtx, n int, now time.Time, dt time.Duration, latencyPerByte time.Duration, rxSpeed float64) time.Duration {
+func (f *SpeedControlledFlow) UpdateLatency(ctx *UpdateRxCtx, n int, now time.Time, dt time.Duration, latencyPerByte time.Duration, rxSpeed float64) time.Duration {
 	st := f.speedProvider.UpdateSpeed(ctx)
 	if math.IsInf(st, 1) {
 		return 0

@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"log"
+	"fmt"
 	"math"
+	"time"
 )
 
 type ControllableFlow struct {
@@ -17,33 +18,54 @@ func InitControllableFlow(c *Controller, ip string) *ControllableFlow {
 		ip:         ip,
 	}
 	f.SpeedControlledFlow = InitSpeedControlledFlow(c, f)
+	f.updateTxProvider = f
 	return f
 }
 
-func (f *ControllableFlow) rxSpeedTarget() float64 {
-	if f.GetApp(f.ip) == nil {
-		return math.Inf(1)
+func (f *ControllableFlow) rxSpeedTarget() (float64, *App, string) {
+	app, reason := f.getAppReason()
+	if app == nil {
+		return math.Inf(1), nil, reason
 	}
-	return f.RxSpeedTarget()
+	return f.RxSpeedTarget(), app, reason
+}
+
+func (f *ControllableFlow) getAppReason() (*App, string) {
+	appMatch, probability := f.GetFuzzyAppMatch(f.ip)
+	if appMatch != nil {
+		if probability > 0.5 {
+			return appMatch.App, appMatch.Reason()
+		} else {
+			return nil, fmt.Sprintf("too low: %.2f, correlation: %.2f", probability, math.Atanh(probability)*2)
+		}
+	}
+	return nil, ""
 }
 
 func (f *ControllableFlow) InitialSpeed() float64 {
-	return f.rxSpeedTarget()
+	target, _, _ := f.rxSpeedTarget()
+	return target
 }
 
-func (f *ControllableFlow) UpdateSpeed(ctx *UpdateCtx) float64 {
-	st := f.rxSpeedTarget()
-	ctx.sample.RxSpeedTarget = st
-	ctx.sample.Ip = f.ip
-	app := f.GetApp(f.ip)
-	if app == nil {
-		return st
+func (f *ControllableFlow) UpdateTx(n int, now time.Time) {
+	am := f.GetDefiniteAppMatch(f.ip)
+	if am == nil {
+		return
 	}
 	toAdd := 1.0
-	points := app.AddPoints(toAdd, ctx.now)
-	log.Printf("%s points: %.2f", app.Name(), points)
+	_ = am.AddPoints(toAdd, &now)
+	// log.Printf("%s points: %.2f, txBytes: %d, reason: %s", am.Name(), points, n, am.Reason())
+}
 
-	ctx.sample.AppMatch = app.name
-	ctx.sample.DnsNames = f.AppResolver.DnsCache.GetReverseDnsEntries(f.ip)
+func (f *ControllableFlow) UpdateSpeed(ctx *UpdateRxCtx) float64 {
+	f.RecordIp(f.ip)
+	st, app, reason := f.rxSpeedTarget()
+	ctx.sample.RxSpeedTarget = st
+	ctx.sample.Ip = f.ip
+	ctx.sample.SlowReason = reason
+	ctx.sample.DnsMatchers = f.DnsCache.GetReverseDnsEntries(f.ip)
+	if app != nil {
+		ctx.sample.AppMatch = app.name
+	}
 	return st
 }

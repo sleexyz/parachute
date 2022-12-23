@@ -1,82 +1,91 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
-import { Client } from "./client";
+import { EventSourceClient } from "./client";
 import { Flow, FlowMap } from "./flowmap";
 import { fdateToPoints } from "./frecency";
-
-
+import { ServerStateController } from "./serverstate";
+import { ServerStateView } from "./ServerStateView";
+import { useHighlightOnChange } from "./utils";
 
 function App() {
-  const flowmap = FlowMap.use();
+  const flowmap = FlowMap.dep.use();
   flowmap.installFlowMapHandlers();
   const map = flowmap.map.use();
-  console.log(map);
 
   return (
     <div className="App">
+      <ServerStateView />
       <Controls />
       <div className="Card">
-        {Object.values(map).sort(sortByPoints).map((flow) => {
-          return <FlowDiv key={flow.ip} value={flow} />;
-        })}
+        {Object.values(map)
+          .sort(sortByFdate)
+          .map((flow) => {
+            return <FlowDiv key={flow.ip} value={flow} />;
+          })}
       </div>
     </div>
   );
 }
 
 function Controls() {
-  const flowmap = FlowMap.use();
+  const flowmap = FlowMap.dep.use();
 
   const clear = React.useCallback(() => {
     flowmap.clear();
   }, [flowmap]);
 
-  return (<div>
-    <button onClick={clear}>Clear</button>
-    </div>);
+  return (
+    <div>
+      <button onClick={clear}>Clear</button>
+    </div>
+  );
 }
 
 function sortByStartTime(a: Flow, b: Flow): number {
   return b.startTime - a.startTime;
 }
 
-function sortByPoints(a: Flow, b: Flow): number {
-  return b.points - a.points;
-}
-
-function useHighlightOnChange(deps: [any]) {
-  const [t, setT] = useState<number|null>(null);
-  useEffect(() => {
-    if (t != null) {
-      window.clearTimeout(t);
-    }
-    setT(window.setTimeout(() =>{
-      setT(null)
-      if (t != null) {
-        window.clearTimeout(t);
-      }
-    }, 500));
-  }, deps);
-  return t != null
+function sortByFdate(a: Flow, b: Flow): number {
+  return b.fdate - a.fdate;
 }
 
 function FlowDiv(props: { value: Flow }) {
-  const shouldHighlight = useHighlightOnChange([props.value])
-
-  const className = `debug-pre ${shouldHighlight ? 'highlight' : ''}`;
+  const shouldHighlight = useHighlightOnChange([props.value.rxSpeedTarget]);
+  const className = `debug-pre ${shouldHighlight ? "highlight" : ""}`;
+  // if (props.value.rxSpeedTarget != Infinity) {
+  //   return null
+  // }
   return (
     <pre className={className}>
-      {JSON.stringify(props.value, null, 2)}
+      {JSON.stringify(
+        {
+          ...props.value,
+          ip: undefined,
+          fdate: undefined,
+          points: fdateToPoints(props.value.fdate),
+          rxSpeed: undefined,
+          rxSpeedTarget: undefined,
+          duration: undefined,
+          startTime: undefined,
+        },
+        null,
+        2
+      )}
     </pre>
   );
 }
 
-function Providers(props: { children?: React.ReactNode }) {
-  return (
-    <Client.Provider>
-      <FlowMap.Provider>{props.children}</FlowMap.Provider>
-    </Client.Provider>
-  );
+const deps = [
+  ...[ServerStateController.dep, EventSourceClient.serverDep],
+  ...[FlowMap.dep, EventSourceClient.samplesDep],
+];
+
+function Providers(props: { children?: React.ReactNode }): JSX.Element {
+  let elem = props.children;
+  for (let dep of deps) {
+    elem = React.createElement(dep.Provider, { children: elem });
+  }
+  return elem as any;
 }
 
 export default () => {

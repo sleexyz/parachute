@@ -24,6 +24,15 @@ export interface SetTemporaryRxSpeedTargetRequest {
   duration: number;
 }
 
+export interface ServerState {
+  apps: AppState[];
+}
+
+export interface AppState {
+  points: number;
+  name: string;
+}
+
 export interface Sample {
   ip: string;
   rxBytes: number;
@@ -35,7 +44,8 @@ export interface Sample {
   rxSpeed: number;
   rxSpeedTarget: number;
   appMatch: string;
-  dnsNames: string[];
+  slowReason: string;
+  dnsMatchers: string[];
 }
 
 function createBaseSettings(): Settings {
@@ -276,6 +286,115 @@ export const SetTemporaryRxSpeedTargetRequest = {
   },
 };
 
+function createBaseServerState(): ServerState {
+  return { apps: [] };
+}
+
+export const ServerState = {
+  encode(message: ServerState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.apps) {
+      AppState.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ServerState {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseServerState();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.apps.push(AppState.decode(reader, reader.uint32()));
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ServerState {
+    return { apps: Array.isArray(object?.apps) ? object.apps.map((e: any) => AppState.fromJSON(e)) : [] };
+  },
+
+  toJSON(message: ServerState): unknown {
+    const obj: any = {};
+    if (message.apps) {
+      obj.apps = message.apps.map((e) => e ? AppState.toJSON(e) : undefined);
+    } else {
+      obj.apps = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<ServerState>, I>>(object: I): ServerState {
+    const message = createBaseServerState();
+    message.apps = object.apps?.map((e) => AppState.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseAppState(): AppState {
+  return { points: 0, name: "" };
+}
+
+export const AppState = {
+  encode(message: AppState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.points !== 0) {
+      writer.uint32(9).double(message.points);
+    }
+    if (message.name !== "") {
+      writer.uint32(18).string(message.name);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): AppState {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseAppState();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.points = reader.double();
+          break;
+        case 2:
+          message.name = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): AppState {
+    return {
+      points: isSet(object.points) ? Number(object.points) : 0,
+      name: isSet(object.name) ? String(object.name) : "",
+    };
+  },
+
+  toJSON(message: AppState): unknown {
+    const obj: any = {};
+    message.points !== undefined && (obj.points = message.points);
+    message.name !== undefined && (obj.name = message.name);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<AppState>, I>>(object: I): AppState {
+    const message = createBaseAppState();
+    message.points = object.points ?? 0;
+    message.name = object.name ?? "";
+    return message;
+  },
+};
+
 function createBaseSample(): Sample {
   return {
     ip: "",
@@ -285,7 +404,8 @@ function createBaseSample(): Sample {
     rxSpeed: 0,
     rxSpeedTarget: 0,
     appMatch: "",
-    dnsNames: [],
+    slowReason: "",
+    dnsMatchers: [],
   };
 }
 
@@ -312,8 +432,11 @@ export const Sample = {
     if (message.appMatch !== "") {
       writer.uint32(58).string(message.appMatch);
     }
-    for (const v of message.dnsNames) {
-      writer.uint32(66).string(v!);
+    if (message.slowReason !== "") {
+      writer.uint32(66).string(message.slowReason);
+    }
+    for (const v of message.dnsMatchers) {
+      writer.uint32(74).string(v!);
     }
     return writer;
   },
@@ -347,7 +470,10 @@ export const Sample = {
           message.appMatch = reader.string();
           break;
         case 8:
-          message.dnsNames.push(reader.string());
+          message.slowReason = reader.string();
+          break;
+        case 9:
+          message.dnsMatchers.push(reader.string());
           break;
         default:
           reader.skipType(tag & 7);
@@ -366,7 +492,8 @@ export const Sample = {
       rxSpeed: isSet(object.rxSpeed) ? Number(object.rxSpeed) : 0,
       rxSpeedTarget: isSet(object.rxSpeedTarget) ? Number(object.rxSpeedTarget) : 0,
       appMatch: isSet(object.appMatch) ? String(object.appMatch) : "",
-      dnsNames: Array.isArray(object?.dnsNames) ? object.dnsNames.map((e: any) => String(e)) : [],
+      slowReason: isSet(object.slowReason) ? String(object.slowReason) : "",
+      dnsMatchers: Array.isArray(object?.dnsMatchers) ? object.dnsMatchers.map((e: any) => String(e)) : [],
     };
   },
 
@@ -379,10 +506,11 @@ export const Sample = {
     message.rxSpeed !== undefined && (obj.rxSpeed = message.rxSpeed);
     message.rxSpeedTarget !== undefined && (obj.rxSpeedTarget = message.rxSpeedTarget);
     message.appMatch !== undefined && (obj.appMatch = message.appMatch);
-    if (message.dnsNames) {
-      obj.dnsNames = message.dnsNames.map((e) => e);
+    message.slowReason !== undefined && (obj.slowReason = message.slowReason);
+    if (message.dnsMatchers) {
+      obj.dnsMatchers = message.dnsMatchers.map((e) => e);
     } else {
-      obj.dnsNames = [];
+      obj.dnsMatchers = [];
     }
     return obj;
   },
@@ -396,7 +524,8 @@ export const Sample = {
     message.rxSpeed = object.rxSpeed ?? 0;
     message.rxSpeedTarget = object.rxSpeedTarget ?? 0;
     message.appMatch = object.appMatch ?? "";
-    message.dnsNames = object.dnsNames?.map((e) => e) || [];
+    message.slowReason = object.slowReason ?? "";
+    message.dnsMatchers = object.dnsMatchers?.map((e) => e) || [];
     return message;
   },
 };
