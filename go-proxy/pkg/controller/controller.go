@@ -34,8 +34,13 @@ type Controller struct {
 }
 
 func Init(sp analytics.SamplePublisher) *Controller {
+	ao := &AppResolverOptions{
+		failedIpMatchCacheSize:  1024,
+		failedDnsMatchCacheSize: 1024,
+		apps:                    prodApps,
+	}
 	c := &Controller{
-		AppResolver:            InitAppResolver(),
+		AppResolver:            InitAppResolver(ao),
 		temporaryRxSpeedTarget: DefaultRxSpeedTarget,
 		SamplePublisher:        sp,
 		fm:                     make(map[string]*ControllableFlow),

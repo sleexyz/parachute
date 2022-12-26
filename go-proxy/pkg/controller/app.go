@@ -15,7 +15,7 @@ type AppMatcher struct {
 	addresses           []*netip.Prefix
 }
 
-var apps = []*App{
+var prodApps = []*App{
 	InitApp("tiktok", &AppMatcher{
 		dnsMatchers: []*regexp.Regexp{
 			regexp.MustCompile(`.*bytedance\.map\.fastly\.net\.$`),
@@ -38,7 +38,7 @@ var apps = []*App{
 		dnsMatchers: []*regexp.Regexp{
 			regexp.MustCompile(`.*\.instagram\.com\.$`),
 			regexp.MustCompile(`.*\.cdninstagram\.com\.$`),
-			regexp.MustCompile(`instagram-.*\.fbcdn\.net\.$`),
+			regexp.MustCompile(`instagram.*\.fbcdn\.net\.$`),
 			// regexp.MustCompile(`.*\.facebook\.com\.$`),
 		},
 	}),

@@ -65,14 +65,10 @@ final class VPNConfigurationService: ObservableObject {
     
     
     func startConnection(debug: Bool) throws {
-        //        if !self.manager?.isEnabled {
-        //
-        //        }
         logger.info("\(store.settings.debugDescription)")
         
         try self.manager?.connection.startVPNTunnel(options: [
             "debug": NSNumber(booleanLiteral: debug),
-            "settings": NSData(data: store.settings.serializedData()),
         ])
         self.isTransitioning = true
     }
@@ -108,6 +104,10 @@ final class VPNConfigurationService: ObservableObject {
         proto.providerConfiguration = [:]
         
         tunnel.protocolConfiguration = proto
+        let rule = NEOnDemandRuleConnect()
+        rule.interfaceTypeMatch = .any
+        tunnel.onDemandRules = [rule]
+        tunnel.isOnDemandEnabled = true
         
         // Enable the tunnel by default
         tunnel.isEnabled = true

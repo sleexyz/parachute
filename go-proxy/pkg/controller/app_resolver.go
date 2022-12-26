@@ -1,9 +1,8 @@
 package controller
 
 import (
-	"fmt"
 	"log"
-	"math"
+	"net"
 	"net/netip"
 
 	"strange.industries/go-proxy/pb/proxyservice"
@@ -11,70 +10,58 @@ import (
 
 var exists = struct{}{}
 
-type AppMatch struct {
-	*App
-
-	prefix  *netip.Prefix
-	dnsName string
-
-	correlationScore int
-	inferred         bool
-}
-
-func (am *AppMatch) Reason() string {
-	if am.inferred {
-		return fmt.Sprintf("inferred (%s), correlation: %d", am.Name(), am.correlationScore)
-	}
-	if am.prefix != nil {
-		return am.prefix.String()
-	}
-	if am.dnsName != "" {
-		return am.dnsName
-	}
-	return "invalid reason"
-}
-
-func Logistic(x float64) float64 {
-	return 0.5 + math.Tanh(x/2)/2
-}
-
-func Logit(x float64) float64 {
-	return math.Log(x / (1 - x))
-}
-
-func (am *AppMatch) Probability() float64 {
-	if am.inferred {
-		return Logistic(float64(am.correlationScore))
-	}
-	return 1
-}
-
 type AppResolver struct {
-	DnsCache DnsCache
-	apps     []*App
+	apps []*App
 
 	// Whether an ip should map to an app
 	appMap         map[string]*AppMatch
 	inferredAppMap map[string]*AppMatch
 
-	// Whether match has been attempted
-	lookupCache map[string]struct{}
+	failedIpMatchCache  *LRUCache[struct{}]
+	failedDnsMatchCache *DnsMatchCache
 }
 
-func InitAppResolver() *AppResolver {
+type AppResolverOptions struct {
+	failedIpMatchCacheSize  int
+	failedDnsMatchCacheSize int
+	apps                    []*App
+}
+
+func InitAppResolver(options *AppResolverOptions) *AppResolver {
 	ar := &AppResolver{
-		apps:           apps,
-		appMap:         make(map[string]*AppMatch),
-		inferredAppMap: make(map[string]*AppMatch),
-		lookupCache:    make(map[string]struct{}),
+		apps:                options.apps,
+		appMap:              make(map[string]*AppMatch),
+		inferredAppMap:      make(map[string]*AppMatch),
+		failedIpMatchCache:  InitLRUCache[struct{}](options.failedIpMatchCacheSize),
+		failedDnsMatchCache: initDnsMatchCache(options.failedDnsMatchCacheSize),
 	}
-	ar.DnsCache = initDnsCache(ar)
 	return ar
 }
 
-func (ar *AppResolver) OnEntryUpdate(ip string, name string) {
-	// update app map
+// Registers a dns entry
+func (ar *AppResolver) RegisterDnsEntry(ip string, name string) {
+	// if ip already matches, continue
+	match := ar.checkAppMatch(ip)
+	if match {
+		return
+	}
+	ar.checkDnsMatch(ip, name)
+}
+
+func (ar *AppResolver) checkAppMatch(ip string) bool {
 	_, ok := ar.appMap[ip]
+	if ok {
+		return true
+	}
+	_, ok = ar.inferredAppMap[ip]
+	if ok {
+		return true
+	}
+	return false
+}
+
+func (ar *AppResolver) checkDnsMatch(ip string, name string) {
+	ok := ar.failedDnsMatchCache.HasEntry(ip, name)
 	if ok {
 		return
 	}
@@ -86,26 +73,32 @@ func (ar *AppResolver) OnEntryUpdate(ip string, name string) {
 			return
 		} else if p == 0.5 {
 			ar.inferredAppMap[ip] = &AppMatch{App: app, dnsName: name, inferred: true, correlationScore: 0}
+			return
 		}
 	}
+	ar.failedDnsMatchCache.AddEntry(ip, name)
 }
 
-// Attempt ip match and lookup once per ip
-// TODO: add a TTL to lookupCache
 func (ar *AppResolver) RegisterIp(ip string) {
-	_, ok := ar.lookupCache[ip]
-	if !ok && !ar.DnsCache.HasReverseDnsEntry(ip) {
-		go func() {
-			am := ar.matchAppByIp(ip)
-			if am != nil {
-				ar.appMap[ip] = am
-				log.Printf("registered matching ip: %s, %s", ip, am.name)
-				return
-			}
-			ar.DnsCache.LookupIp(ip)
-			ar.lookupCache[ip] = exists
-		}()
+	match := ar.checkAppMatch(ip)
+	if match {
+		return
 	}
+	ar.checkIpMatch(ip)
+	ar.lookupUnknownIp(ip)
+}
+
+func (ar *AppResolver) checkIpMatch(ip string) {
+	if ar.failedIpMatchCache.Has(ip) {
+		return
+	}
+	am := ar.matchAppByIp(ip)
+	if am != nil {
+		ar.appMap[ip] = am
+		log.Printf("registered matching ip: %s, %s", ip, am.name)
+		return
+	}
+	ar.failedIpMatchCache.Put(ip, exists)
 }
 
 func (ar *AppResolver) matchAppByIp(ip string) *AppMatch {
@@ -117,6 +110,29 @@ func (ar *AppResolver) matchAppByIp(ip string) *AppMatch {
 		}
 	}
 	return nil
+}
+
+func (ar *AppResolver) lookupUnknownIp(ip string) {
+	if ar.failedDnsMatchCache.Has(ip) {
+		return
+	}
+	// Only do dns lookup when app signal is firing
+	app := ar.AppUsed()
+	if app == nil {
+		return
+	}
+	go func() {
+		// lookup via reverse dns
+		names, err := net.LookupAddr(ip)
+		if err != nil {
+			log.Printf("error looking up ip %s: %v", ip, err)
+			return
+		}
+		for _, name := range names {
+			ar.RegisterDnsEntry(ip, name)
+			log.Printf("lookup for ip %s: %v", ip, name)
+		}
+	}()
 }
 
 func (ar *AppResolver) RecordIp(ip string) {

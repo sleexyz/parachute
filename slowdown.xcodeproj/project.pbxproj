@@ -63,6 +63,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		A06516F729574C1000227A95 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A08719F0281A617500113F3F /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -177,16 +187,15 @@
 		A02F58DE27A6F14500D3330F /* slowdown */ = {
 			isa = PBXGroup;
 			children = (
+				A06516E52956A08F00227A95 /* elements */,
 				A02F590927B09A7A00D3330F /* slowdown.entitlements */,
 				A02F58DF27A6F14500D3330F /* slowdownApp.swift */,
 				A02F58E127A6F14500D3330F /* ContentView.swift */,
 				A02F58E327A6F14500D3330F /* Assets.xcassets */,
 				A02F58E527A6F14500D3330F /* Preview Content */,
-				A08719D5281A4BF900113F3F /* PrimaryButton.swift */,
 				A08719D7281A4CE500113F3F /* SplashView.swift */,
 				A08719D9281A4E1100113F3F /* AppView.swift */,
 				A08719DB281A513200113F3F /* VPNConfigurationService.swift */,
-				A08719DD281A54A900113F3F /* Spinner.swift */,
 				A0BF9201293FCF1700C090E9 /* SettingsStore.swift */,
 				A080EDF9294F9B1C005401E4 /* SettingsController.swift */,
 				A0BF9203294175AE00C090E9 /* CheatController.swift */,
@@ -227,6 +236,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		A06516E52956A08F00227A95 /* elements */ = {
+			isa = PBXGroup;
+			children = (
+				A08719D5281A4BF900113F3F /* PrimaryButton.swift */,
+				A08719DD281A54A900113F3F /* Spinner.swift */,
+			);
+			path = elements;
+			sourceTree = "<group>";
+		};
 		A08719E5281A617500113F3F /* tunnel */ = {
 			isa = PBXGroup;
 			children = (
@@ -249,6 +267,7 @@
 				A02F58D927A6F14500D3330F /* Frameworks */,
 				A02F58DA27A6F14500D3330F /* Resources */,
 				A08719F0281A617500113F3F /* Embed Foundation Extensions */,
+				A06516F729574C1000227A95 /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);
@@ -332,7 +351,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1330;
+				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1410;
 				TargetAttributes = {
 					A02F58DB27A6F14500D3330F = {
@@ -617,6 +636,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = strangeindustries.slowdown;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -648,6 +670,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = strangeindustries.slowdown;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

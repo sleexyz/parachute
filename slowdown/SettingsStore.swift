@@ -20,11 +20,10 @@ class SettingsStore: ObservableObject {
     static let shared = SettingsStore()
     
     private static func fileUrl() throws -> URL {
-        try FileManager.default.url(for: .documentDirectory,
-                                       in: .userDomainMask,
-                                       appropriateFor: nil,
-                                       create: false)
-            .appendingPathComponent("settings.data")
+        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.strangeindustries.slowdown") else {
+            fatalError("could not get shared app group directory.")
+        }
+        return groupURL.appendingPathComponent("settings.data")
     }
     
     func load(completion: @escaping (Result<(),Error>) -> Void) {

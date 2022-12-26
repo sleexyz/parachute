@@ -7,7 +7,6 @@ export const protobufPackage = "proxyservice";
 
 export interface Settings {
   baseRxSpeedTarget: number;
-  useExponentialDecay: boolean;
 }
 
 export interface Request {
@@ -49,16 +48,13 @@ export interface Sample {
 }
 
 function createBaseSettings(): Settings {
-  return { baseRxSpeedTarget: 0, useExponentialDecay: false };
+  return { baseRxSpeedTarget: 0 };
 }
 
 export const Settings = {
   encode(message: Settings, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.baseRxSpeedTarget !== 0) {
       writer.uint32(9).double(message.baseRxSpeedTarget);
-    }
-    if (message.useExponentialDecay === true) {
-      writer.uint32(16).bool(message.useExponentialDecay);
     }
     return writer;
   },
@@ -73,9 +69,6 @@ export const Settings = {
         case 1:
           message.baseRxSpeedTarget = reader.double();
           break;
-        case 2:
-          message.useExponentialDecay = reader.bool();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -85,23 +78,18 @@ export const Settings = {
   },
 
   fromJSON(object: any): Settings {
-    return {
-      baseRxSpeedTarget: isSet(object.baseRxSpeedTarget) ? Number(object.baseRxSpeedTarget) : 0,
-      useExponentialDecay: isSet(object.useExponentialDecay) ? Boolean(object.useExponentialDecay) : false,
-    };
+    return { baseRxSpeedTarget: isSet(object.baseRxSpeedTarget) ? Number(object.baseRxSpeedTarget) : 0 };
   },
 
   toJSON(message: Settings): unknown {
     const obj: any = {};
     message.baseRxSpeedTarget !== undefined && (obj.baseRxSpeedTarget = message.baseRxSpeedTarget);
-    message.useExponentialDecay !== undefined && (obj.useExponentialDecay = message.useExponentialDecay);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Settings>, I>>(object: I): Settings {
     const message = createBaseSettings();
     message.baseRxSpeedTarget = object.baseRxSpeedTarget ?? 0;
-    message.useExponentialDecay = object.useExponentialDecay ?? false;
     return message;
   },
 };
