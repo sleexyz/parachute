@@ -45,49 +45,67 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         self.logger = logger
     }
     
+    private static func fileUrl() throws -> URL {
+        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.strangeindustries.slowdown") else {
+            fatalError("could not get shared app group directory.")
+        }
+        return groupURL.appendingPathComponent("settings.data")
+    }
+    
+    func loadSettingsData() throws -> Data {
+        guard let file = try? FileHandle(forReadingFrom: PacketTunnelProvider.fileUrl()) else {
+            fatalError("could not get shared app group directory.")
+        }
+        return file.availableData
+    }
+    
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
-        let debug = options?["debug"] != nil  ? (options?["debug"]! as! NSNumber).boolValue : false
-        let settingsData = Data(referencing: options?["settings"]! as! NSData)
-        
-        self.logger.info("starting tunnel")
-        self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
-            completionHandler(NEVPNError(.connectionFailed))
-        }
-        
-        if (!debug) {
-            self.proxy = Proxy(bridge: Ffi.FfiInit()!, logger: self.logger)
-        } else {
-            self.proxy = Proxy(bridge: Ffi.FfiInitDebug("\(ProxyServerOptions.debugControlServer.ipv4Address):\(ProxyServerOptions.debugControlServer.ipv4Port)")!, logger: self.logger)
-        }
-        
-        self.logger.info("starting server")
-        DispatchQueue.global(qos: .background).async {
-            self.proxy!.startProxy(port: 8080, settingsData: settingsData)
-        }
-        self.logger.info("server started")
-        
-        self.options = debug ? .debugDataServer : .localServer
-        
-        let settings = self.initTunnelSettings(proxyHost: self.options.ipv4Address, proxyPort: self.options.ipv4Port)
-        
-        self.setTunnelNetworkSettings(settings) { error in
-            completionHandler(error)
-            let endpoint = NWHostEndpoint(hostname: self.options.ipv4Address, port: String(self.options.ipv4Port))
-            self.session = self.createUDPSession(to: endpoint, from: nil)
-            self.observer = self.session?.observe(\.state, options: [.new]) { session, _ in
-                if session.state == .ready {
-                    session.setReadHandler({ [weak self] datagrams, error in
-                        guard let self = self else { return }
-                        for datagram in datagrams ?? [] {
-                            self.packetFlow.writePackets([datagram], withProtocols: [self.protocolNumber(for: datagram)])
-                        }
-                    }, maxDatagrams: Int.max)
-                    self.logger.info("tunnel started")
-                    
-                    // The session is ready to exchange UDP datagrams with the server
-                    self.readOutboundPackets()
+        do {
+            let debug = options?["debug"] != nil  ? (options?["debug"]! as! NSNumber).boolValue : false
+            let settingsData = try loadSettingsData()
+            
+            self.logger.info("starting tunnel")
+            self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
+                completionHandler(NEVPNError(.connectionFailed))
+            }
+            
+            if (!debug) {
+                self.proxy = Proxy(bridge: Ffi.FfiInit()!, logger: self.logger)
+            } else {
+                self.proxy = Proxy(bridge: Ffi.FfiInitDebug("\(ProxyServerOptions.debugControlServer.ipv4Address):\(ProxyServerOptions.debugControlServer.ipv4Port)")!, logger: self.logger)
+            }
+            
+            self.logger.info("starting server")
+            DispatchQueue.global(qos: .background).async {
+                self.proxy!.startProxy(port: 8080, settingsData: settingsData)
+            }
+            self.logger.info("server started")
+            
+            self.options = debug ? .debugDataServer : .localServer
+            
+            let settings = self.initTunnelSettings(proxyHost: self.options.ipv4Address, proxyPort: self.options.ipv4Port)
+            
+            self.setTunnelNetworkSettings(settings) { error in
+                completionHandler(error)
+                let endpoint = NWHostEndpoint(hostname: self.options.ipv4Address, port: String(self.options.ipv4Port))
+                self.session = self.createUDPSession(to: endpoint, from: nil)
+                self.observer = self.session?.observe(\.state, options: [.new]) { session, _ in
+                    if session.state == .ready {
+                        session.setReadHandler({ [weak self] datagrams, error in
+                            guard let self = self else { return }
+                            for datagram in datagrams ?? [] {
+                                self.packetFlow.writePackets([datagram], withProtocols: [self.protocolNumber(for: datagram)])
+                            }
+                        }, maxDatagrams: Int.max)
+                        self.logger.info("tunnel started")
+                        
+                        // The session is ready to exchange UDP datagrams with the server
+                        self.readOutboundPackets()
+                    }
                 }
             }
+        } catch {
+            fatalError("Encountered error")
         }
     }
     

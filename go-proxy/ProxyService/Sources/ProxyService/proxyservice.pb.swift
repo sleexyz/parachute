@@ -27,8 +27,6 @@ public struct Proxyservice_Settings {
 
   public var baseRxSpeedTarget: Double = 0
 
-  public var useExponentialDecay: Bool = false
-
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -206,7 +204,6 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
   public static let protoMessageName: String = _protobuf_package + ".Settings"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "baseRxSpeedTarget"),
-    2: .same(proto: "useExponentialDecay"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -216,7 +213,6 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularDoubleField(value: &self.baseRxSpeedTarget) }()
-      case 2: try { try decoder.decodeSingularBoolField(value: &self.useExponentialDecay) }()
       default: break
       }
     }
@@ -226,15 +222,11 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if self.baseRxSpeedTarget != 0 {
       try visitor.visitSingularDoubleField(value: self.baseRxSpeedTarget, fieldNumber: 1)
     }
-    if self.useExponentialDecay != false {
-      try visitor.visitSingularBoolField(value: self.useExponentialDecay, fieldNumber: 2)
-    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Proxyservice_Settings, rhs: Proxyservice_Settings) -> Bool {
     if lhs.baseRxSpeedTarget != rhs.baseRxSpeedTarget {return false}
-    if lhs.useExponentialDecay != rhs.useExponentialDecay {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

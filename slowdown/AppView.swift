@@ -10,6 +10,7 @@ import NetworkExtension
 import Combine
 import func os.os_log
 import ProxyService
+import Intents
 
 final class AppViewModel: ObservableObject {
     
@@ -35,8 +36,8 @@ final class AppViewModel: ObservableObject {
         $logSpeed.sink {
             settingsStore.settings.baseRxSpeedTarget = exp($0)
         }.store(in: &bag)
+        
     }
-    
     
     func toggleConnection() {
         if service.isConnected {
@@ -114,9 +115,6 @@ struct AppView: View {
     @ObservedObject var cheatController: CheatController = .shared
     var controller: SettingsController = .shared
     
-    
-
-    
     @ViewBuilder
     var cheatLoading : some View {
         if cheatController.isCheating {
@@ -148,12 +146,6 @@ struct AppView: View {
                     )
                     Text("\(Int(store.settings.baseRxSpeedTarget))")
                 }
-                Spacer()
-                Toggle(isOn: $store.settings.useExponentialDecay, label: { Text("Use Exponential Decay")}).onChange(of: store.settings.useExponentialDecay) { value in
-                    controller.syncSettings()
-                }
-                Spacer()
-                PrimaryButton(title: "reset state", action: model.resetState, isLoading: false)
                 Spacer()
                 PrimaryButton(title: "cheat", action: model.startCheat, isLoading: cheatController.isCheating, loadingMessage: cheatLoading).disabled(cheatController.isCheating)
             }

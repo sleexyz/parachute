@@ -9,7 +9,6 @@ import "google/protobuf/timestamp.proto";
 
 message Settings {
     double baseRxSpeedTarget = 1;
-    bool useExponentialDecay = 2;
 }
 
 

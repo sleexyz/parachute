@@ -63,7 +63,7 @@ func (f *ControllableFlow) UpdateSpeed(ctx *UpdateRxCtx) float64 {
 	ctx.sample.RxSpeedTarget = st
 	ctx.sample.Ip = f.ip
 	ctx.sample.SlowReason = reason
-	ctx.sample.DnsMatchers = f.DnsCache.GetReverseDnsEntries(f.ip)
+	ctx.sample.DnsMatchers = f.failedDnsMatchCache.DebugGetEntries(f.ip)
 	if app != nil {
 		ctx.sample.AppMatch = app.name
 	}

@@ -17,7 +17,10 @@ Ffi.xcframework: $(shell git ls-files | grep .go$)
 	echo $?
 	./build.sh
 
-.PHONY = clean
+test:
+	go test ./...
+
+.PHONY = clean test
 clean: 
 	rm pb/proxyservice/proxyservice.pb.go
 	rm -rf Ffi.xcframework
