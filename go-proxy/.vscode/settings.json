@@ -1,0 +1,7 @@
+{
+    "search.exclude": {
+        "**/.direnv": true,
+        "**/.external": true,
+        "**/.gopath": true
+    }
+}
