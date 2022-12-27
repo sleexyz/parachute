@@ -29,7 +29,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private weak var timeoutTimer: Timer?
     private var session: NWUDPSession?
     private var observer: AnyObject?
-    private let queue = DispatchQueue(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
+    private let queue = DispatchQueue(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
     private let logger: Logger
     
     private var options: ProxyServerOptions = .localServer
@@ -38,7 +38,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
-        let logger = Logger(label: "com.strangeindustries.slowdown.PacketTunnelProvider")
+        let logger = Logger(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
         logger.info("go max procs: \(Ffi.FfiMaxProcs(1))")
         logger.info("go memory limit: \(Ffi.FfiSetMemoryLimit(20<<20))")
         logger.info("go gc percent: \(Ffi.FfiSetGCPercent(50))")

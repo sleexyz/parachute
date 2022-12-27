@@ -15,7 +15,7 @@ struct slowdownApp: App {
     private let logger: Logger
     init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
-        self.logger = Logger(label: "com.strangeindustries.slowdown.App")
+        self.logger = Logger(label: "industries.strange.slowdown.App")
     }
     var body: some Scene {
         WindowGroup {

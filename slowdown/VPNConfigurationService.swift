@@ -30,7 +30,7 @@ final class VPNConfigurationService: ObservableObject {
     static let shared = VPNConfigurationService(store: .shared)
     
     init(store: SettingsStore) {
-        self.logger = Logger(label: "com.strangeindustries.slowdown.VPNConfigurationService")
+        self.logger = Logger(label: "industries.strange.slowdown.VPNConfigurationService")
         self.store = store
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.manager = managers?.first
@@ -99,7 +99,7 @@ final class VPNConfigurationService: ObservableObject {
         tunnel.localizedDescription = "Slowdown"
         
         let proto = NETunnelProviderProtocol()
-        proto.providerBundleIdentifier = "strangeindustries.slowdown.tunnel"
+        proto.providerBundleIdentifier = "industries.strange.slowdown.tunnel"
         proto.serverAddress = "127.0.0.1:8080"
         proto.providerConfiguration = [:]
         
