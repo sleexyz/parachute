@@ -46,7 +46,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
     
     private static func fileUrl() throws -> URL {
-        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.strangeindustries.slowdown") else {
+        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.industries.strange.slowdown") else {
             fatalError("could not get shared app group directory.")
         }
         return groupURL.appendingPathComponent("settings.data")

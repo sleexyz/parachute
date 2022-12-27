@@ -8,7 +8,7 @@
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.strangeindustries.slowdown</string>
+		<string>group.industries.strange.slowdown</string>
 	</array>
 </dict>
 </plist>
