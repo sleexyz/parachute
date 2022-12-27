@@ -64,23 +64,40 @@ final class VPNConfigurationService: ObservableObject {
     }
     
     
-    func startConnection(debug: Bool) throws {
+    @MainActor
+    func startConnection(debug: Bool) async throws {
         logger.info("\(store.settings.debugDescription)")
         
         try self.manager?.connection.startVPNTunnel(options: [
             "debug": NSNumber(booleanLiteral: debug),
         ])
         self.isTransitioning = true
+        self.manager?.isOnDemandEnabled = true
+        try await self.saveManagerPreferences()
     }
     
-    func stopConnection() {
+    @MainActor
+    public func stopConnection() async throws {
         self.manager?.connection.stopVPNTunnel()
         self.isTransitioning = true
+        self.manager?.isOnDemandEnabled = false
+        try await self.saveManagerPreferences()
+    }
+    
+    func saveManagerPreferences() async throws -> () {
+        return try await withCheckedThrowingContinuation{ continuation in
+            self.manager?.saveToPreferences { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                }
+                continuation.resume(returning:())
+            }
+        }
     }
     
     
-    func installProfile(_ completion: @escaping (Result<Void, Error>) -> Void) {
-        let tunnel = makeTunnel()
+    public func installProfile(_ completion: @escaping (Result<Void, Error>) -> Void) {
+        let tunnel = makeNewTunnel()
         tunnel.saveToPreferences { [weak self] error in
             if let error = error {
                 return completion(.failure(error))
@@ -94,7 +111,7 @@ final class VPNConfigurationService: ObservableObject {
         }
     }
     
-    private func makeTunnel() -> NETunnelProviderManager {
+    private func makeNewTunnel() -> NETunnelProviderManager {
         let tunnel = NETunnelProviderManager()
         tunnel.localizedDescription = "Slowdown"
         

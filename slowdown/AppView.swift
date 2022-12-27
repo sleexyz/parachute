@@ -41,17 +41,28 @@ final class AppViewModel: ObservableObject {
     
     func toggleConnection() {
         if service.isConnected {
-            service.stopConnection()
+            Task {
+                do {
+                    try await service.stopConnection()
+                } catch {
+                    self.showError(
+                        title: "Failed to stop VPN tunnel",
+                        message: error.localizedDescription
+                    )
+                }
+            }
             return
         }
         
-        do {
-            try self.service.startConnection(debug: self.debug)
-        } catch {
-            self.showError(
-                title: "Failed to start VPN tunnel",
-                message: error.localizedDescription
-            )
+        Task {
+            do {
+                await try self.service.startConnection(debug: self.debug)
+            } catch {
+                self.showError(
+                    title: "Failed to start VPN tunnel",
+                    message: error.localizedDescription
+                )
+            }
         }
     }
     

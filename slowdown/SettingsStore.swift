@@ -9,13 +9,11 @@ import Foundation
 import ProxyService
 
 class SettingsStore: ObservableObject {
-    @Published var settings: Proxyservice_Settings = makeDefaultSettings()
-    
-    static func makeDefaultSettings() -> Proxyservice_Settings {
+    @Published var settings: Proxyservice_Settings = {
         var settings = Proxyservice_Settings()
-        settings.baseRxSpeedTarget = 200000
+        settings.baseRxSpeedTarget = 56000
         return settings
-    }
+    }()
     
     static let shared = SettingsStore()
     
