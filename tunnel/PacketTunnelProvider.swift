@@ -54,7 +54,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     func loadSettingsData() throws -> Data {
         guard let file = try? FileHandle(forReadingFrom: PacketTunnelProvider.fileUrl()) else {
-            fatalError("could not get shared app group directory.")
+            return Data()
         }
         return file.availableData
     }
