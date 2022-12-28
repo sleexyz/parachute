@@ -29,7 +29,7 @@ struct PrimaryButton<LoadingView: View>: View {
                 if type(of: loadingMessage) != EmptyView.self {
                     loadingMessage.opacity(isLoading ? 1 : 0)
                 } else {
-                    Spinner(isAnimating: isLoading, color: .white, style: .medium)
+                    Spinner(isAnimating: isLoading, color: .black, style: .medium)
                 }
                 Text(title)
                     .opacity(isLoading ? 0 : 1)
@@ -38,8 +38,8 @@ struct PrimaryButton<LoadingView: View>: View {
             .disabled(isLoading)
             .padding()
             .frame(maxWidth: .infinity)
-            .foregroundColor(Color.white)
-            .background(Color.blue)
+            .foregroundColor(Color.black)
+            .background(Color(hue: 0, saturation: 0, brightness: 0.9))
             .cornerRadius(8)
     }
 }

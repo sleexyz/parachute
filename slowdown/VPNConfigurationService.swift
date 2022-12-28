@@ -14,10 +14,10 @@ enum UserError: Error {
     case message(message: String)
 }
 
-final class VPNConfigurationService: ObservableObject {
+open class VPNConfigurationService: ObservableObject {
     private let logger: Logger
     @Published private(set) var isInitializing = true
-    @Published private(set) var isConnected = false
+    @Published var isConnected = false
     @Published var isTransitioning = false
     @Published private var manager: NETunnelProviderManager?
     
@@ -25,7 +25,7 @@ final class VPNConfigurationService: ObservableObject {
         return manager != nil
     }
     
-    let store: SettingsStore
+    private let store: SettingsStore
     
     static let shared = VPNConfigurationService(store: .shared)
     
@@ -80,7 +80,7 @@ final class VPNConfigurationService: ObservableObject {
         try await self.saveManagerPreferences()
     }
     
-    func saveManagerPreferences() async throws -> () {
+    private func saveManagerPreferences() async throws -> () {
         return try await withCheckedThrowingContinuation{ continuation in
             self.manager?.saveToPreferences { error in
                 if let error = error {
@@ -92,7 +92,7 @@ final class VPNConfigurationService: ObservableObject {
     }
     
     
-    public func installProfile(_ completion: @escaping (Result<Void, Error>) -> Void) {
+    public func installVPNProfile(_ completion: @escaping (Result<Void, Error>) -> Void) {
         let tunnel = makeNewTunnel()
         tunnel.saveToPreferences { [weak self] error in
             if let error = error {
@@ -129,15 +129,13 @@ final class VPNConfigurationService: ObservableObject {
         
         return tunnel
     }
-}
-
-extension VPNConfigurationService {
+    
     func SetSettings(settings: Proxyservice_Settings) async throws {
         var message = Proxyservice_Request()
         message.setSettings = settings
         return try await Rpc(message: message)
     }
-    func Rpc(message: Proxyservice_Request) async throws {
+    private func Rpc(message: Proxyservice_Request) async throws {
         guard let session = self.manager?.connection as? NETunnelProviderSession else {
             return
         }
@@ -158,5 +156,12 @@ extension VPNConfigurationService {
                 continuation.resume(with: .failure(error))
             }
         }
+    }
+}
+
+
+class MockVPNConfigurationService: VPNConfigurationService {
+    func setIsConnected(value: Bool) {
+        self.isConnected = value
     }
 }

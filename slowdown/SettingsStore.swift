@@ -12,6 +12,8 @@ import SwiftProtobuf
 class SettingsStore: ObservableObject {
     static let shared = SettingsStore()
     
+    private var onLoadFns: Array<() -> Void> = []
+    
     @Published var settings: Proxyservice_Settings = {
         var settings = Proxyservice_Settings()
         settings.baseRxSpeedTarget = 56000
@@ -33,9 +35,16 @@ class SettingsStore: ObservableObject {
         return groupURL.appendingPathComponent("settings.data")
     }
     
+    func onLoad(fn: @escaping () -> Void) {
+        onLoadFns.append(fn)
+    }
+    
     func load() throws {
         do {
             try loadFromFile()
+            for fn in onLoadFns {
+                fn()
+            }
         } catch CocoaError.fileNoSuchFile {
             try save()
             return try loadFromFile()
