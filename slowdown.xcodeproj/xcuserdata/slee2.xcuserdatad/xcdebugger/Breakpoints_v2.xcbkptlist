@@ -62,8 +62,8 @@
             filePath = "slowdown/AppView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "40"
-            endingLineNumber = "40"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
             landmarkName = "init(service:cheatController:settingsController:settingsStore:)"
             landmarkType = "7">
          </BreakpointContent>

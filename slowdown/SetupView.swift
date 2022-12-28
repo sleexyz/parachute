@@ -40,7 +40,7 @@ struct SetupView: View {
     private func installProfile() {
         self.isLoading = true
 
-        service.installProfile { result in
+        service.installVPNProfile { result in
             self.isLoading = false
             switch result {
             case .success:

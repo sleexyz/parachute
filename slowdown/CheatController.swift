@@ -8,26 +8,17 @@
 import SwiftUI
 import NetworkExtension
 import Foundation
-import os
 import UserNotifications
+import Logging
 
 final class CheatController: ObservableObject {
+    static let shared = CheatController()
+    
     private let service: VPNConfigurationService = .shared
     @ObservedObject private var store: SettingsStore = .shared
     private var settingsController: SettingsController = .shared
+    private var logger = Logger(label: "industries.strange.slowdown.CheatController")
     private var timer: Timer?
-    
-    @Published
-    public var cheatTimeLeft: Int = 0
-    
-    init() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            self.sampleCheatTimeLeft()
-        }
-        self.sampleCheatTimeLeft()
-    }
-    
-    static let shared = CheatController()
     
     var cheatExpiry: Date? {
         if store.settings.temporaryRxSpeedExpiry.seconds == 0 {
@@ -36,23 +27,66 @@ final class CheatController: ObservableObject {
         return store.settings.temporaryRxSpeedExpiry.date
     }
     
+    var cheatTimeLeft: TimeInterval {
+        return max(cheatExpiry?.timeIntervalSinceNow ?? 0, 0)
+    }
+    @Published
+    public var sampledCheatTimeLeft: TimeInterval = 0
+    
     
     var isCheating: Bool {
-        return cheatExpiry != nil && cheatExpiry! > Date()
+        return cheatTimeLeft > 0
     }
+    
+    
+    init() {
+        self.store.onLoad {
+            self.syncUpdateTimer()
+        }
+    }
+    
+    private func syncUpdateTimer() {
+        if !isCheating {
+            return
+        }
+        self.sampleCheatTimeLeft()
+        timer = Timer.scheduledTimer(withTimeInterval: cheatTimeLeft.truncatingRemainder(dividingBy: 1), repeats: false) { _ in
+            self.startCheatUpdateTimer()
+        }
+    }
+    
+    private func startCheatUpdateTimer() {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            self.sampleCheatTimeLeft()
+            if !self.isCheating {
+                self.timer?.invalidate()
+            }
+        }
+        self.sampleCheatTimeLeft()
+    }
+    
     
     @MainActor
     private func sampleCheatTimeLeft() {
-            self.cheatTimeLeft = Int(cheatExpiry?.timeIntervalSinceNow ?? 0)
+        self.sampledCheatTimeLeft = self.cheatTimeLeft
     }
     
-    func startCheat() async throws {
-        self.store.setCheatSettings(expiry: Date() + 60, speed: Double.infinity)
+    func addCheat() async throws {
+        let fromNow = TimeInterval(min(60 * 5, self.cheatTimeLeft + 60))
+        self.store.setCheatSettings(expiry: Date() + fromNow, speed: Double.infinity)
         self.settingsController.syncSettings()
+        syncUpdateTimer()
         
         let _ = try await enableNotifications()
         self.clearNotifications()
-        try await self.sendMessage(title: "Cheat ended", body: "", fromNow: 60)
+        try await self.sendMessage(title: "Cheat ended", body: "", fromNow: fromNow)
+    }
+    
+    func stopCheat() async throws  -> Void {
+        self.store.setCheatSettings(expiry: Date(), speed: Double.infinity)
+        self.settingsController.syncSettings()
+        self.timer?.invalidate()
     }
     
     func clearNotifications() {

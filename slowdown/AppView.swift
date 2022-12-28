@@ -13,9 +13,7 @@ import ProxyService
 import Intents
 
 final class AppViewModel: ObservableObject {
-    
     @Published var logSpeed: Double
-    
     @Published var debug = false
     @Published var isShowingError = false
     @Published private(set) var errorTitle = ""
@@ -56,7 +54,7 @@ final class AppViewModel: ObservableObject {
         
         Task {
             do {
-                await try self.service.startConnection(debug: self.debug)
+                try await self.service.startConnection(debug: self.debug)
             } catch {
                 self.showError(
                     title: "Failed to start VPN tunnel",
@@ -66,25 +64,10 @@ final class AppViewModel: ObservableObject {
         }
     }
     
-    func resetState() {
-        Task {
-            do {
-                var req = Proxyservice_Request()
-                req.resetState = Proxyservice_ResetStateRequest()
-                try await service.Rpc(message: req)
-            } catch {
-                self.showError(
-                    title: "Failed to reset points",
-                    message: error.localizedDescription
-                )
-            }
-        }
-    }
-    
     func startCheat() {
         Task {
             do {
-                try await self.cheatController.startCheat()
+                try await self.cheatController.addCheat()
             } catch {
                 self.showError(
                     title: "Failed to start cheat",
@@ -93,6 +76,22 @@ final class AppViewModel: ObservableObject {
             }
         }
     }
+    
+    func doAsync(fn: @escaping () async throws -> Void) -> () -> Void{
+        return {
+            Task {
+                do {
+                    try await fn()
+                } catch {
+                    self.showError(
+                        title: "Unexpected error",
+                        message: error.localizedDescription
+                    )
+                }
+            }
+        }
+    }
+    
     
     private func showError(title: String, message: String) {
         self.errorTitle = title
@@ -103,20 +102,71 @@ final class AppViewModel: ObservableObject {
 
 struct AppView: View {
     @ObservedObject var model: AppViewModel
-    @ObservedObject var store: SettingsStore = .shared
-    @ObservedObject var service: VPNConfigurationService = .shared
-    @ObservedObject var cheatController: CheatController = .shared
+    @ObservedObject var store: SettingsStore
+    @ObservedObject var service: VPNConfigurationService
+    @ObservedObject var cheatController: CheatController
     var controller: SettingsController = .shared
     
+    init(model: AppViewModel, store: SettingsStore = .shared, service: VPNConfigurationService = .shared, cheatController: CheatController = .shared, controller: SettingsController = .shared) {
+        self.model = model
+        self.store = store
+        self.service = service
+        self.cheatController = cheatController
+        self.controller = controller
+    }
     
-    @ViewBuilder
+    
     var cheatButton : some View {
-        let title = cheatController.cheatTimeLeft > 0 ? "\(cheatController.cheatTimeLeft)s" : "Cheat"
-        PrimaryButton(title: title, action: model.startCheat, isLoading: false)
+        var icon = AnyView(Text("😎"))
+        var title = ""
+        if cheatController.isCheating  {
+            icon = AnyView(Button(action: model.startCheat) {
+                Text("🤤")
+            })
+            let t = Int(cheatController.sampledCheatTimeLeft + 1)
+            let min = t / 60
+            let sec = t % 60
+            if min > 0 {
+                title += "\(min)m"
+            }
+            if sec > 0 {
+                if title != "" {
+                    title += " "
+                }
+                title += "\(sec)s"
+            }
+        }
+        return VStack {
+            Spacer()
+            ZStack(alignment: .top) {
+                icon
+                    .font(.system(size: 144))
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                if title != "" {
+                    Text(title).padding().offset(x: 0, y: 200)
+                }
+            }
+            Spacer()
+            HStack{
+                Button(action: model.doAsync(fn: cheatController.stopCheat)) {
+                    Text("😎")
+                        .font(.system(size: 32))
+                }
+                .padding([.leading])
+                Spacer()
+                Button(action: model.startCheat) {
+                    Text("🤤")
+                        .font(.system(size: 32))
+                }.padding([.trailing])
+            }
+            .frame(maxWidth: .infinity)
+            Spacer()
+        }
     }
     
     var body: some View {
-        Form {
+        VStack{
             if !service.isConnected {
                 PrimaryButton(title: "Start", action: model.toggleConnection, isLoading: service.isTransitioning)
                 Spacer()
@@ -139,8 +189,10 @@ struct AppView: View {
                 }
                 Spacer()
                 cheatButton
+                Spacer()
             }
         }
+        .padding()
         .disabled(service.isTransitioning)
         .alert(isPresented: $model.isShowingError) {
             Alert(
@@ -155,8 +207,11 @@ struct AppView: View {
     }
 }
 
-//struct AppView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AppView(model: )
-//    }
-//}
+struct AppView_Previews: PreviewProvider {
+    static var previews: some View {
+        let appModel = AppViewModel()
+        let service = MockVPNConfigurationService(store: .shared)
+        service.setIsConnected(value: true)
+        return  AppView(model: appModel, service: service)
+    }
+}
