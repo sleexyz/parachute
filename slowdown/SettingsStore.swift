@@ -14,6 +14,7 @@ class SettingsStore: ObservableObject {
         settings.baseRxSpeedTarget = 56000
         return settings
     }()
+    @Published var loaded = false
     
     static let shared = SettingsStore()
     
@@ -24,44 +25,41 @@ class SettingsStore: ObservableObject {
         return groupURL.appendingPathComponent("settings.data")
     }
     
-    func load(completion: @escaping (Result<(),Error>) -> Void) {
-        DispatchQueue.global(qos: .background).async {
-            do {
-                let fileUrl = try SettingsStore.fileUrl()
-                guard let file = try? FileHandle(forReadingFrom: fileUrl) else {
-                    DispatchQueue.main.async {
-                        completion(.success(()))
-                    }
-                    return
-                }
-                let newSettings = try Proxyservice_Settings(serializedData: file.availableData)
-                DispatchQueue.main.async {
-                    self.settings = newSettings
-                    completion(.success(()))
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completion(.failure(error))
-                }
-            }
+    func load() throws {
+        do {
+            try loadFromFile()
+        } catch CocoaError.fileNoSuchFile {
+            try save()
+            return try loadFromFile()
         }
     }
     
-    func save(completion: @escaping(Result<Int, Error>) -> Void) {
-        DispatchQueue.global(qos: .background).async {
-            do {
-                let data = try self.settings.serializedData()
-                let outfile = try SettingsStore.fileUrl()
-                try data.write(to:outfile)
-                DispatchQueue.main.async {
-                    completion(.success(1))
-                }
-            
-            } catch {
-                DispatchQueue.main.async {
-                    completion(.failure(error))
-                }
-            }
+    private func loadFromFile() throws {
+        let fileUrl = try SettingsStore.fileUrl()
+        let file = try FileHandle(forReadingFrom: fileUrl)
+        let newSettings = try Proxyservice_Settings(serializedData: file.availableData)
+        Task {
+            await self.setSettings(value: newSettings)
+            await self.setLoaded(value: true)
         }
     }
+    
+    @MainActor
+    func setSettings(value: Proxyservice_Settings) {
+        self.settings = value
+        
+    }
+    
+    @MainActor
+    func setLoaded(value: Bool) {
+        self.loaded = value
+        
+    }
+    
+    func save() throws {
+        let data = try self.settings.serializedData()
+        let outfile = try SettingsStore.fileUrl()
+        try data.write(to:outfile)
+    }
+            
 }

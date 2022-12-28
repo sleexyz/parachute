@@ -26,13 +26,9 @@ type OnDeviceProxyBridge struct {
 
 func (p *OnDeviceProxyBridge) StartProxy(port int, settingsData []byte) {
 	r := &proxyservice.Settings{}
-	if len(settingsData) > 0 {
-		err := proto.Unmarshal(settingsData, r)
-		if err != nil {
-			log.Panicf("could not start server: %s", err)
-		}
-	} else {
-		controller.SetDefaultSettings(r)
+	err := proto.Unmarshal(settingsData, r)
+	if err != nil {
+		log.Panicf("could not start server: %s", err)
 	}
 	p.Proxy.Start(port, r)
 }
