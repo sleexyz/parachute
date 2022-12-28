@@ -59,10 +59,6 @@ final class VPNConfigurationService: ObservableObject {
         }
     }
     
-    func startCheat() async throws -> () {
-        try await self.SetTemporaryRxSpeedTarget(speed: -1, duration: 60)
-    }
-    
     
     @MainActor
     func startConnection(debug: Bool) async throws {
@@ -139,12 +135,6 @@ extension VPNConfigurationService {
     func SetSettings(settings: Proxyservice_Settings) async throws {
         var message = Proxyservice_Request()
         message.setSettings = settings
-        return try await Rpc(message: message)
-    }
-    func SetTemporaryRxSpeedTarget(speed: Float64, duration: Int32) async throws {
-        var message = Proxyservice_Request()
-        message.setTemporaryRxSpeedTarget.duration = duration
-        message.setTemporaryRxSpeedTarget.speed = speed
         return try await Rpc(message: message)
     }
     func Rpc(message: Proxyservice_Request) async throws {

@@ -41,9 +41,6 @@ func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
 	}
 	log.Printf("/Rpc %s", r)
 	switch r.Message.(type) {
-	case *proxyservice.Request_SetTemporaryRxSpeedTarget:
-		m := r.GetSetTemporaryRxSpeedTarget()
-		p.Proxy.SetTemporaryRxSpeedTarget(m.Speed, int(m.Duration))
 	case *proxyservice.Request_SetSettings:
 		m := r.GetSetSettings()
 		p.Proxy.SetSettings(m)

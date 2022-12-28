@@ -5,6 +5,7 @@
 //  Created by Sean Lee on 12/7/22.
 //
 
+import SwiftUI
 import NetworkExtension
 import Foundation
 import os
@@ -12,36 +13,53 @@ import UserNotifications
 
 final class CheatController: ObservableObject {
     private let service: VPNConfigurationService = .shared
-    static let shared = CheatController()
+    @ObservedObject private var store: SettingsStore = .shared
+    private var settingsController: SettingsController = .shared
+    private var timer: Timer?
     
-    @Published private var cheatDeadline: Date?
+    @Published
+    public var cheatTimeLeft: Int = 0
     
-    var isCheating: Bool {
-        return cheatDeadline != nil && cheatDeadline! > Date()
+    init() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            self.sampleCheatTimeLeft()
+        }
+        self.sampleCheatTimeLeft()
     }
     
-    var cheatTimeLeft: Int {
-        if cheatDeadline == nil {
-            return 0
+    static let shared = CheatController()
+    
+    var cheatExpiry: Date? {
+        if store.settings.temporaryRxSpeedExpiry.seconds == 0 {
+            return nil
         }
-        return Int(cheatDeadline!.timeIntervalSinceNow)
+        return store.settings.temporaryRxSpeedExpiry.date
+    }
+    
+    
+    var isCheating: Bool {
+        return cheatExpiry != nil && cheatExpiry! > Date()
+    }
+    
+    @MainActor
+    private func sampleCheatTimeLeft() {
+            self.cheatTimeLeft = Int(cheatExpiry?.timeIntervalSinceNow ?? 0)
     }
     
     func startCheat() async throws {
-        try await self.service.startCheat()
-        
-        DispatchQueue.main.async {
-            self.cheatDeadline = Date().addingTimeInterval(60)
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(60)) {
-                    os_log("invalidating cheat time")
-            self.cheatDeadline = nil
-        }
+        self.store.setCheatSettings(expiry: Date() + 60, speed: Double.infinity)
+        self.settingsController.syncSettings()
         
         let _ = try await enableNotifications()
+        self.clearNotifications()
         try await self.sendMessage(title: "Cheat ended", body: "", fromNow: 60)
     }
     
+    func clearNotifications() {
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.removeAllPendingNotificationRequests()
+        notificationCenter.removeAllDeliveredNotifications()
+    }
     func sendMessage(title: String, body: String, fromNow: TimeInterval) async throws {
         let content = UNMutableNotificationContent()
         content.title = title

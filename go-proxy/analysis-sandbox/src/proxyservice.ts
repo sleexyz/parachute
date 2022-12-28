@@ -7,20 +7,16 @@ export const protobufPackage = "proxyservice";
 
 export interface Settings {
   baseRxSpeedTarget: number;
+  temporaryRxSpeedTarget: number;
+  temporaryRxSpeedExpiry: Date | undefined;
 }
 
 export interface Request {
   setSettings?: Settings | undefined;
-  setTemporaryRxSpeedTarget?: SetTemporaryRxSpeedTargetRequest | undefined;
   resetState?: ResetStateRequest | undefined;
 }
 
 export interface ResetStateRequest {
-}
-
-export interface SetTemporaryRxSpeedTargetRequest {
-  speed: number;
-  duration: number;
 }
 
 export interface ServerState {
@@ -48,13 +44,19 @@ export interface Sample {
 }
 
 function createBaseSettings(): Settings {
-  return { baseRxSpeedTarget: 0 };
+  return { baseRxSpeedTarget: 0, temporaryRxSpeedTarget: 0, temporaryRxSpeedExpiry: undefined };
 }
 
 export const Settings = {
   encode(message: Settings, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.baseRxSpeedTarget !== 0) {
       writer.uint32(9).double(message.baseRxSpeedTarget);
+    }
+    if (message.temporaryRxSpeedTarget !== 0) {
+      writer.uint32(17).double(message.temporaryRxSpeedTarget);
+    }
+    if (message.temporaryRxSpeedExpiry !== undefined) {
+      Timestamp.encode(toTimestamp(message.temporaryRxSpeedExpiry), writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -69,6 +71,12 @@ export const Settings = {
         case 1:
           message.baseRxSpeedTarget = reader.double();
           break;
+        case 2:
+          message.temporaryRxSpeedTarget = reader.double();
+          break;
+        case 3:
+          message.temporaryRxSpeedExpiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -78,24 +86,35 @@ export const Settings = {
   },
 
   fromJSON(object: any): Settings {
-    return { baseRxSpeedTarget: isSet(object.baseRxSpeedTarget) ? Number(object.baseRxSpeedTarget) : 0 };
+    return {
+      baseRxSpeedTarget: isSet(object.baseRxSpeedTarget) ? Number(object.baseRxSpeedTarget) : 0,
+      temporaryRxSpeedTarget: isSet(object.temporaryRxSpeedTarget) ? Number(object.temporaryRxSpeedTarget) : 0,
+      temporaryRxSpeedExpiry: isSet(object.temporaryRxSpeedExpiry)
+        ? fromJsonTimestamp(object.temporaryRxSpeedExpiry)
+        : undefined,
+    };
   },
 
   toJSON(message: Settings): unknown {
     const obj: any = {};
     message.baseRxSpeedTarget !== undefined && (obj.baseRxSpeedTarget = message.baseRxSpeedTarget);
+    message.temporaryRxSpeedTarget !== undefined && (obj.temporaryRxSpeedTarget = message.temporaryRxSpeedTarget);
+    message.temporaryRxSpeedExpiry !== undefined &&
+      (obj.temporaryRxSpeedExpiry = message.temporaryRxSpeedExpiry.toISOString());
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Settings>, I>>(object: I): Settings {
     const message = createBaseSettings();
     message.baseRxSpeedTarget = object.baseRxSpeedTarget ?? 0;
+    message.temporaryRxSpeedTarget = object.temporaryRxSpeedTarget ?? 0;
+    message.temporaryRxSpeedExpiry = object.temporaryRxSpeedExpiry ?? undefined;
     return message;
   },
 };
 
 function createBaseRequest(): Request {
-  return { setSettings: undefined, setTemporaryRxSpeedTarget: undefined, resetState: undefined };
+  return { setSettings: undefined, resetState: undefined };
 }
 
 export const Request = {
@@ -103,11 +122,8 @@ export const Request = {
     if (message.setSettings !== undefined) {
       Settings.encode(message.setSettings, writer.uint32(10).fork()).ldelim();
     }
-    if (message.setTemporaryRxSpeedTarget !== undefined) {
-      SetTemporaryRxSpeedTargetRequest.encode(message.setTemporaryRxSpeedTarget, writer.uint32(18).fork()).ldelim();
-    }
     if (message.resetState !== undefined) {
-      ResetStateRequest.encode(message.resetState, writer.uint32(26).fork()).ldelim();
+      ResetStateRequest.encode(message.resetState, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -123,9 +139,6 @@ export const Request = {
           message.setSettings = Settings.decode(reader, reader.uint32());
           break;
         case 2:
-          message.setTemporaryRxSpeedTarget = SetTemporaryRxSpeedTargetRequest.decode(reader, reader.uint32());
-          break;
-        case 3:
           message.resetState = ResetStateRequest.decode(reader, reader.uint32());
           break;
         default:
@@ -139,9 +152,6 @@ export const Request = {
   fromJSON(object: any): Request {
     return {
       setSettings: isSet(object.setSettings) ? Settings.fromJSON(object.setSettings) : undefined,
-      setTemporaryRxSpeedTarget: isSet(object.setTemporaryRxSpeedTarget)
-        ? SetTemporaryRxSpeedTargetRequest.fromJSON(object.setTemporaryRxSpeedTarget)
-        : undefined,
       resetState: isSet(object.resetState) ? ResetStateRequest.fromJSON(object.resetState) : undefined,
     };
   },
@@ -150,10 +160,6 @@ export const Request = {
     const obj: any = {};
     message.setSettings !== undefined &&
       (obj.setSettings = message.setSettings ? Settings.toJSON(message.setSettings) : undefined);
-    message.setTemporaryRxSpeedTarget !== undefined &&
-      (obj.setTemporaryRxSpeedTarget = message.setTemporaryRxSpeedTarget
-        ? SetTemporaryRxSpeedTargetRequest.toJSON(message.setTemporaryRxSpeedTarget)
-        : undefined);
     message.resetState !== undefined &&
       (obj.resetState = message.resetState ? ResetStateRequest.toJSON(message.resetState) : undefined);
     return obj;
@@ -164,10 +170,6 @@ export const Request = {
     message.setSettings = (object.setSettings !== undefined && object.setSettings !== null)
       ? Settings.fromPartial(object.setSettings)
       : undefined;
-    message.setTemporaryRxSpeedTarget =
-      (object.setTemporaryRxSpeedTarget !== undefined && object.setTemporaryRxSpeedTarget !== null)
-        ? SetTemporaryRxSpeedTargetRequest.fromPartial(object.setTemporaryRxSpeedTarget)
-        : undefined;
     message.resetState = (object.resetState !== undefined && object.resetState !== null)
       ? ResetStateRequest.fromPartial(object.resetState)
       : undefined;
@@ -210,66 +212,6 @@ export const ResetStateRequest = {
 
   fromPartial<I extends Exact<DeepPartial<ResetStateRequest>, I>>(_: I): ResetStateRequest {
     const message = createBaseResetStateRequest();
-    return message;
-  },
-};
-
-function createBaseSetTemporaryRxSpeedTargetRequest(): SetTemporaryRxSpeedTargetRequest {
-  return { speed: 0, duration: 0 };
-}
-
-export const SetTemporaryRxSpeedTargetRequest = {
-  encode(message: SetTemporaryRxSpeedTargetRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.speed !== 0) {
-      writer.uint32(9).double(message.speed);
-    }
-    if (message.duration !== 0) {
-      writer.uint32(16).int32(message.duration);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): SetTemporaryRxSpeedTargetRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSetTemporaryRxSpeedTargetRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.speed = reader.double();
-          break;
-        case 2:
-          message.duration = reader.int32();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): SetTemporaryRxSpeedTargetRequest {
-    return {
-      speed: isSet(object.speed) ? Number(object.speed) : 0,
-      duration: isSet(object.duration) ? Number(object.duration) : 0,
-    };
-  },
-
-  toJSON(message: SetTemporaryRxSpeedTargetRequest): unknown {
-    const obj: any = {};
-    message.speed !== undefined && (obj.speed = message.speed);
-    message.duration !== undefined && (obj.duration = Math.round(message.duration));
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<SetTemporaryRxSpeedTargetRequest>, I>>(
-    object: I,
-  ): SetTemporaryRxSpeedTargetRequest {
-    const message = createBaseSetTemporaryRxSpeedTargetRequest();
-    message.speed = object.speed ?? 0;
-    message.duration = object.duration ?? 0;
     return message;
   },
 };

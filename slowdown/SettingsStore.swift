@@ -7,8 +7,11 @@
 
 import Foundation
 import ProxyService
+import SwiftProtobuf
 
 class SettingsStore: ObservableObject {
+    static let shared = SettingsStore()
+    
     @Published var settings: Proxyservice_Settings = {
         var settings = Proxyservice_Settings()
         settings.baseRxSpeedTarget = 56000
@@ -16,7 +19,12 @@ class SettingsStore: ObservableObject {
     }()
     @Published var loaded = false
     
-    static let shared = SettingsStore()
+    @MainActor
+    func setCheatSettings(expiry: Date, speed: Double) {
+        settings.temporaryRxSpeedExpiry = Google_Protobuf_Timestamp(date: expiry)
+        settings.temporaryRxSpeedTarget = speed
+    }
+    
     
     private static func fileUrl() throws -> URL {
         guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.industries.strange.slowdown") else {
@@ -45,18 +53,16 @@ class SettingsStore: ObservableObject {
     }
     
     @MainActor
-    func setSettings(value: Proxyservice_Settings) {
+    private func setSettings(value: Proxyservice_Settings) {
         self.settings = value
-        
     }
     
     @MainActor
-    func setLoaded(value: Bool) {
+    private func setLoaded(value: Bool) {
         self.loaded = value
-        
     }
     
-    func save() throws {
+    public func save() throws {
         let data = try self.settings.serializedData()
         let outfile = try SettingsStore.fileUrl()
         try data.write(to:outfile)

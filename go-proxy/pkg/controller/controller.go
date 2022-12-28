@@ -3,7 +3,6 @@ package controller
 import (
 	"context"
 	"log"
-	"math"
 	"time"
 
 	"strange.industries/go-proxy/pb/proxyservice"
@@ -19,18 +18,16 @@ const (
 type ControllerSettingsReadWrite interface {
 	ResetState()
 	SetSettings(settings *proxyservice.Settings)
-	SetTemporaryRxSpeedTarget(target float64, seconds int)
 }
 
 type Controller struct {
 	*AppResolver
 	analytics.SamplePublisher
-	settings               *proxyservice.Settings
-	temporaryRxSpeedTarget float64
-	temporaryTimer         *time.Timer
-	fm                     map[string]*ControllableFlow
-	gcTicker               *time.Ticker
-	stopGcTicker           func()
+	settings       *proxyservice.Settings
+	temporaryTimer *time.Timer
+	fm             map[string]*ControllableFlow
+	gcTicker       *time.Ticker
+	stopGcTicker   func()
 }
 
 func Init(sp analytics.SamplePublisher) *Controller {
@@ -40,10 +37,9 @@ func Init(sp analytics.SamplePublisher) *Controller {
 		apps:                    prodApps,
 	}
 	c := &Controller{
-		AppResolver:            InitAppResolver(ao),
-		temporaryRxSpeedTarget: DefaultRxSpeedTarget,
-		SamplePublisher:        sp,
-		fm:                     make(map[string]*ControllableFlow),
+		AppResolver:     InitAppResolver(ao),
+		SamplePublisher: sp,
+		fm:              make(map[string]*ControllableFlow),
 	}
 	c.Start()
 	return c
@@ -51,7 +47,7 @@ func Init(sp analytics.SamplePublisher) *Controller {
 
 func (c *Controller) RxSpeedTarget() float64 {
 	if c.temporaryTimer != nil {
-		return c.temporaryRxSpeedTarget
+		return c.settings.TemporaryRxSpeedTarget
 	}
 	return c.settings.BaseRxSpeedTarget
 }
@@ -59,30 +55,24 @@ func (c *Controller) RxSpeedTarget() float64 {
 func (c *Controller) SetSettings(settings *proxyservice.Settings) {
 	log.Printf("set settings: %s", settings)
 	c.settings = settings
-}
 
-func (c *Controller) setTemporaryRxSpeedTarget(target float64) {
-	log.Printf("set rxSpeedTarget: %f", target)
-	c.temporaryRxSpeedTarget = target
-}
-
-func (c *Controller) SetTemporaryRxSpeedTarget(target float64, duration int) {
-	log.Printf("baseRxSpeedTarget: %0.f, temporaryRxSpeedTarget: %0.f, duration: %d", c.settings.BaseRxSpeedTarget, target, duration)
-	if target >= 0 {
-		c.setTemporaryRxSpeedTarget(target)
-	} else {
-		c.setTemporaryRxSpeedTarget(math.Inf(1))
+	expiry := settings.TemporaryRxSpeedExpiry.AsTime()
+	if expiry.After(time.Now()) {
+		c.setTemporaryRxSpeedTimer(expiry)
 	}
+}
+
+func (c *Controller) setTemporaryRxSpeedTimer(expiry time.Time) {
 	if c.temporaryTimer != nil {
 		c.temporaryTimer.Stop()
 		c.temporaryTimer = nil
-		log.Printf("Pause ended")
+		log.Printf("evicted existing pause timer")
 	}
-	c.temporaryTimer = time.NewTimer(time.Duration(duration) * time.Second)
+	c.temporaryTimer = time.NewTimer(expiry.Sub(time.Now()))
 	go func() {
 		<-c.temporaryTimer.C
 		c.temporaryTimer = nil
-		log.Printf("Pause ended")
+		log.Printf("pause timer ended")
 	}()
 }
 

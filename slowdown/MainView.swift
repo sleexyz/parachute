@@ -27,10 +27,7 @@ struct MainView: View {
     }
     
     var body: some View {
-        if !store.loaded {
-            return AnyView(EmptyView())
-        }
-        if service.isInitializing {
+        if !store.loaded || service.isInitializing {
             return AnyView(SplashView())
         }
         

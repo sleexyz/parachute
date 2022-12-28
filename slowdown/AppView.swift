@@ -101,24 +101,6 @@ final class AppViewModel: ObservableObject {
     }
 }
 
-struct CheatTimer: View {
-    @ObservedObject var cheatController: CheatController
-    @State var cheatTimeLeft: Int
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
-    init(cheatController: CheatController = .shared) {
-        self.cheatController = cheatController
-        self.cheatTimeLeft = cheatController.cheatTimeLeft
-    }
-    
-    
-    var body: some View {
-        Text("\(self.cheatTimeLeft)").onReceive(timer) { _ in
-            self.cheatTimeLeft = max(cheatController.cheatTimeLeft, 0)
-        }
-    }
-}
-
 struct AppView: View {
     @ObservedObject var model: AppViewModel
     @ObservedObject var store: SettingsStore = .shared
@@ -126,24 +108,22 @@ struct AppView: View {
     @ObservedObject var cheatController: CheatController = .shared
     var controller: SettingsController = .shared
     
+    
     @ViewBuilder
-    var cheatLoading : some View {
-        if cheatController.isCheating {
-            CheatTimer()
-        } else {
-            EmptyView()
-        }
+    var cheatButton : some View {
+        let title = cheatController.cheatTimeLeft > 0 ? "\(cheatController.cheatTimeLeft)s" : "Cheat"
+        PrimaryButton(title: title, action: model.startCheat, isLoading: false)
     }
     
     var body: some View {
         Form {
             if !service.isConnected {
-                PrimaryButton(title: "start", action: model.toggleConnection, isLoading: service.isTransitioning)
+                PrimaryButton(title: "Start", action: model.toggleConnection, isLoading: service.isTransitioning)
                 Spacer()
                 Toggle(isOn: $model.debug, label: { Text("Debug")})
                     .disabled(service.isTransitioning)
             } else {
-                PrimaryButton(title: "stop", action: model.toggleConnection, isLoading: service.isTransitioning)
+                PrimaryButton(title: "Stop", action: model.toggleConnection, isLoading: service.isTransitioning)
                 Spacer()
                 VStack {
                     Slider(
@@ -158,7 +138,7 @@ struct AppView: View {
                     Text("\(Int(store.settings.baseRxSpeedTarget))")
                 }
                 Spacer()
-                PrimaryButton(title: "cheat", action: model.startCheat, isLoading: cheatController.isCheating, loadingMessage: cheatLoading).disabled(cheatController.isCheating)
+                cheatButton
             }
         }
         .disabled(service.isTransitioning)
