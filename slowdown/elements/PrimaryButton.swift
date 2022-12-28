@@ -33,6 +33,7 @@ struct PrimaryButton<LoadingView: View>: View {
                 }
                 Text(title)
                     .opacity(isLoading ? 0 : 1)
+                    .frame(maxWidth: .infinity)
             }
         }
             .disabled(isLoading)
