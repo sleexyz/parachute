@@ -87,6 +87,7 @@ final class CheatController: ObservableObject {
         self.store.setCheatSettings(expiry: Date(), speed: Double.infinity)
         self.settingsController.syncSettings()
         self.timer?.invalidate()
+        clearNotifications()
     }
     
     func clearNotifications() {
@@ -94,6 +95,7 @@ final class CheatController: ObservableObject {
         notificationCenter.removeAllPendingNotificationRequests()
         notificationCenter.removeAllDeliveredNotifications()
     }
+    
     func sendMessage(title: String, body: String, fromNow: TimeInterval) async throws {
         let content = UNMutableNotificationContent()
         content.title = title
