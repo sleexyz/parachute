@@ -78,10 +78,10 @@
             filePath = "slowdown/SettingsStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "12"
-            endingLineNumber = "12"
-            landmarkName = "settings"
-            landmarkType = "24">
+            startingLineNumber = "13"
+            endingLineNumber = "13"
+            landmarkName = "SettingsStore"
+            landmarkType = "3">
             <Locations>
                <Location
                   uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - 55c5a3497dbc851e"

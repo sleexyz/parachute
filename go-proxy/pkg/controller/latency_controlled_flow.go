@@ -93,6 +93,8 @@ func (s *LatencyControlledFlow) RecordRxBytes(n int, now time.Time) {
 func (s *LatencyControlledFlow) publishSample(sample *proxyservice.Sample) {
 	if math.IsInf(sample.RxSpeedTarget, 1) {
 		log.Printf("(Skipped): %v", sample)
+	} else {
+		log.Printf("Slowed: %v", sample)
 	}
 	go s.sp.PublishSample(sample)
 }

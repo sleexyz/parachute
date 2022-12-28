@@ -9,24 +9,21 @@ import "google/protobuf/timestamp.proto";
 
 message Settings {
     double baseRxSpeedTarget = 1;
+    double temporaryRxSpeedTarget = 2;
+    google.protobuf.Timestamp temporaryRxSpeedExpiry = 3;
 }
 
 
 message Request {
     oneof message {
         Settings setSettings = 1;
-        SetTemporaryRxSpeedTargetRequest setTemporaryRxSpeedTarget = 2;
-        ResetStateRequest resetState = 3;
+        ResetStateRequest resetState = 2;
     }
 }
 
 message ResetStateRequest {
 }
 
-message SetTemporaryRxSpeedTargetRequest {
-    double speed = 1;
-    int32 duration = 2;
-}
 
 message ServerState {
     repeated AppState apps = 1;
