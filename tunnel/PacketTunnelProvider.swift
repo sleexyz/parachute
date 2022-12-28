@@ -53,9 +53,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
     
     func loadSettingsData() throws -> Data {
-        guard let file = try? FileHandle(forReadingFrom: PacketTunnelProvider.fileUrl()) else {
-            return Data()
-        }
+        let file = try FileHandle(forReadingFrom: PacketTunnelProvider.fileUrl())
         return file.availableData
     }
     

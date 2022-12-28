@@ -12,24 +12,12 @@ import LoggingOSLog
 
 @main
 struct slowdownApp: App {
-    private let logger: Logger
     init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
-        self.logger = Logger(label: "industries.strange.slowdown.App")
     }
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .onAppear {
-                    SettingsStore.shared.load { result in
-                        switch result {
-                        case .failure(let error):
-                            fatalError(error.localizedDescription)
-                        case .success():
-                            logger.info("loaded settings")
-                        }
-                    }
-                }
+            MainView()
         }
     }
 }

@@ -16,10 +16,6 @@ const (
 	DefaultRxSpeedTarget float64 = 56000.0 // 100kbps
 )
 
-func SetDefaultSettings(settings *proxyservice.Settings) {
-	settings.BaseRxSpeedTarget = DefaultRxSpeedTarget
-}
-
 type ControllerSettingsReadWrite interface {
 	ResetState()
 	SetSettings(settings *proxyservice.Settings)

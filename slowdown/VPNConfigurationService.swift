@@ -124,7 +124,9 @@ final class VPNConfigurationService: ObservableObject {
         let rule = NEOnDemandRuleConnect()
         rule.interfaceTypeMatch = .any
         tunnel.onDemandRules = [rule]
-        tunnel.isOnDemandEnabled = true
+        
+        // Don't autoconnect on app install -- wait for user to hit start.
+        tunnel.isOnDemandEnabled = false
         
         // Enable the tunnel by default
         tunnel.isEnabled = true

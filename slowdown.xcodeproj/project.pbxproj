@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58DF27A6F14500D3330F /* slowdownApp.swift */; };
-		A02F58E227A6F14500D3330F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58E127A6F14500D3330F /* ContentView.swift */; };
+		A02F58E227A6F14500D3330F /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58E127A6F14500D3330F /* MainView.swift */; };
 		A02F58E427A6F14500D3330F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02F58E327A6F14500D3330F /* Assets.xcassets */; };
 		A02F58E727A6F14500D3330F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02F58E627A6F14500D3330F /* Preview Assets.xcassets */; };
 		A02F58F127A6F14600D3330F /* slowdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58F027A6F14600D3330F /* slowdownTests.swift */; };
@@ -26,6 +26,7 @@
 		A080EDF6294F9864005401E4 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF5294F9864005401E4 /* Logging */; };
 		A080EDF8294F9868005401E4 /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF7294F9868005401E4 /* LoggingOSLog */; };
 		A080EDFA294F9B1C005401E4 /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A080EDF9294F9B1C005401E4 /* SettingsController.swift */; };
+		A081F232295BB3D700863FE3 /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F231295BB3D700863FE3 /* SetupView.swift */; };
 		A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D5281A4BF900113F3F /* PrimaryButton.swift */; };
 		A08719D8281A4CE500113F3F /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D7281A4CE500113F3F /* SplashView.swift */; };
 		A08719DA281A4E1100113F3F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D9281A4E1100113F3F /* AppView.swift */; };
@@ -89,7 +90,7 @@
 /* Begin PBXFileReference section */
 		A02F58DC27A6F14500D3330F /* slowdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = slowdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02F58DF27A6F14500D3330F /* slowdownApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownApp.swift; sourceTree = "<group>"; };
-		A02F58E127A6F14500D3330F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A02F58E127A6F14500D3330F /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		A02F58E327A6F14500D3330F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A02F58E627A6F14500D3330F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A02F58EC27A6F14600D3330F /* slowdownTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = slowdownTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -104,6 +105,7 @@
 		A080EDF3294F8532005401E4 /* Ffi.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Ffi.xcframework; path = "go-proxy/Ffi.xcframework"; sourceTree = "<group>"; };
 		A080EDF9294F9B1C005401E4 /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		A081F230295B732900863FE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A081F231295BB3D700863FE3 /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
 		A08719D5281A4BF900113F3F /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
 		A08719D7281A4CE500113F3F /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		A08719D9281A4E1100113F3F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
@@ -192,7 +194,7 @@
 				A06516E52956A08F00227A95 /* elements */,
 				A02F590927B09A7A00D3330F /* slowdown.entitlements */,
 				A02F58DF27A6F14500D3330F /* slowdownApp.swift */,
-				A02F58E127A6F14500D3330F /* ContentView.swift */,
+				A02F58E127A6F14500D3330F /* MainView.swift */,
 				A02F58E327A6F14500D3330F /* Assets.xcassets */,
 				A02F58E527A6F14500D3330F /* Preview Content */,
 				A08719D7281A4CE500113F3F /* SplashView.swift */,
@@ -201,6 +203,7 @@
 				A0BF9201293FCF1700C090E9 /* SettingsStore.swift */,
 				A080EDF9294F9B1C005401E4 /* SettingsController.swift */,
 				A0BF9203294175AE00C090E9 /* CheatController.swift */,
+				A081F231295BB3D700863FE3 /* SetupView.swift */,
 			);
 			path = slowdown;
 			sourceTree = "<group>";
@@ -439,8 +442,9 @@
 			files = (
 				A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */,
 				A08719D8281A4CE500113F3F /* SplashView.swift in Sources */,
-				A02F58E227A6F14500D3330F /* ContentView.swift in Sources */,
+				A02F58E227A6F14500D3330F /* MainView.swift in Sources */,
 				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,
+				A081F232295BB3D700863FE3 /* SetupView.swift in Sources */,
 				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
 				A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */,
 				A080EDFA294F9B1C005401E4 /* SettingsController.swift in Sources */,

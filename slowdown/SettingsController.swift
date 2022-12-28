@@ -22,8 +22,7 @@ struct SettingsController {
     public func syncSettings() {
         Task.init(priority: .background) {
             try await service.SetSettings(settings: store.settings)
-            store.save {_ in
-            }
+            try self.store.save()
         }
     }
 }

@@ -14,10 +14,10 @@
             filePath = "tunnel/PacketTunnelProvider.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "113"
-            endingLineNumber = "113"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
             landmarkName = "readOutboundPackets()"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -46,10 +46,10 @@
             filePath = "tunnel/PacketTunnelProvider.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "114"
-            endingLineNumber = "114"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
             landmarkName = "readOutboundPackets()"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -66,6 +66,189 @@
             endingLineNumber = "40"
             landmarkName = "init(service:cheatController:settingsController:settingsStore:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "slowdown/SettingsStore.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "12"
+            endingLineNumber = "12"
+            landmarkName = "settings"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - 55c5a3497dbc851e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "property wrapper backing initializer of slowdown.SettingsStore.settings : ProxyService.Proxyservice_Settings"
+                  moduleName = "slowdown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/SettingsStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "52">
+               </Location>
+               <Location
+                  uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - 915740c9c3ea16fc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "slowdown.SettingsStore.settings.getter : ProxyService.Proxyservice_Settings"
+                  moduleName = "slowdown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/SettingsStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "128">
+               </Location>
+               <Location
+                  uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - 92405603a084ee0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "slowdown.SettingsStore.settings.setter : ProxyService.Proxyservice_Settings"
+                  moduleName = "slowdown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/SettingsStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "188">
+               </Location>
+               <Location
+                  uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - 310fc6480c0e90f1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "slowdown.SettingsStore.settings.modify : ProxyService.Proxyservice_Settings"
+                  moduleName = "slowdown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/SettingsStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - afa9c23c7dac4524"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "slowdown.SettingsStore.settings.modify : ProxyService.Proxyservice_Settings with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "slowdown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/SettingsStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "20">
+               </Location>
+               <Location
+                  uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - 2d318ca00ef3a4b1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; ProxyService.Proxyservice_Settings in variable initialization expression of slowdown.SettingsStore._settings : Combine.Published&lt;ProxyService.Proxyservice_Settings&gt;"
+                  moduleName = "slowdown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/SettingsStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "13"
+                  endingLineNumber = "13"
+                  offsetFromSymbolStart = "32">
+               </Location>
+               <Location
+                  uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - b9ddb7c479409a1c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "slowdown.SettingsStore.$settings.getter : Combine.Published&lt;ProxyService.Proxyservice_Settings&gt;.Publisher"
+                  moduleName = "slowdown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/SettingsStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "96">
+               </Location>
+               <Location
+                  uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - b9ddb7c479409a1c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "slowdown.SettingsStore.$settings.setter : Combine.Published&lt;ProxyService.Proxyservice_Settings&gt;.Publisher"
+                  moduleName = "slowdown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/SettingsStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "216">
+               </Location>
+               <Location
+                  uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - a2db8cae9e73f2b1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "slowdown.SettingsStore.$settings.modify : Combine.Published&lt;ProxyService.Proxyservice_Settings&gt;.Publisher"
+                  moduleName = "slowdown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/slee2/Desktop/slowdown/%3Ccompiler-generated%3E"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "56">
+               </Location>
+               <Location
+                  uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - 8586446f1e377560"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "slowdown.SettingsStore.$settings.modify : Combine.Published&lt;ProxyService.Proxyservice_Settings&gt;.Publisher with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "slowdown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/SettingsStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  uuid = "E1AE5B78-7C59-4DCB-AAE1-30C99D428F7D - 3d5c0f5f656c0d1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "slowdown.SettingsStore.init() -&gt; slowdown.SettingsStore"
+                  moduleName = "slowdown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/SettingsStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "180">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -1,31 +1,12 @@
 //
-//  ContentView.swift
+//  SetupView.swift
 //  slowdown
 //
-//  Created by Sean Lee on 1/30/22.
+//  Created by Sean Lee on 12/27/22.
 //
 
-import SwiftUI
-
 import Foundation
-
-
-struct ContentView: View {
-    @ObservedObject var service: VPNConfigurationService = .shared
-    var body: some View {
-        if service.isInitializing {
-            return AnyView(SplashView())
-        }
-        
-        if service.hasManager {
-            let model = AppViewModel()
-            return AnyView(AppView(model:model))
-        } else {
-            return AnyView(SetupView())
-        }
-    }
-}
-
+import SwiftUI
 
 struct SetupView: View {
     let service: VPNConfigurationService = .shared
@@ -69,11 +50,5 @@ struct SetupView: View {
                 self.isShowingError = true
             }
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }
