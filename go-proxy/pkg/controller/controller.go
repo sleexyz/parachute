@@ -54,25 +54,37 @@ func (c *Controller) RxSpeedTarget() float64 {
 
 func (c *Controller) SetSettings(settings *proxyservice.Settings) {
 	log.Printf("set settings: %s", settings)
+	oldSettings := c.settings
 	c.settings = settings
 
-	expiry := settings.TemporaryRxSpeedExpiry.AsTime()
-	if expiry.After(time.Now()) {
-		c.setTemporaryRxSpeedTimer(expiry)
+	if oldSettings == nil {
+		return
+	}
+
+	if oldSettings.TemporaryRxSpeedExpiry != settings.TemporaryRxSpeedExpiry {
+		expiry := settings.TemporaryRxSpeedExpiry.AsTime()
+		if expiry.After(time.Now()) {
+			c.setTemporaryRxSpeedTimer(expiry)
+		} else {
+			c.evictExistingTimer()
+		}
+	}
+}
+
+func (c *Controller) evictExistingTimer() {
+	if c.temporaryTimer != nil {
+		c.temporaryTimer.Stop()
+		c.temporaryTimer = nil
+		log.Printf("evicted pause timer")
 	}
 }
 
 func (c *Controller) setTemporaryRxSpeedTimer(expiry time.Time) {
-	if c.temporaryTimer != nil {
-		c.temporaryTimer.Stop()
-		c.temporaryTimer = nil
-		log.Printf("evicted existing pause timer")
-	}
+	c.evictExistingTimer()
 	c.temporaryTimer = time.NewTimer(expiry.Sub(time.Now()))
 	go func() {
 		<-c.temporaryTimer.C
-		c.temporaryTimer = nil
-		log.Printf("pause timer ended")
+		c.evictExistingTimer()
 	}()
 }
 

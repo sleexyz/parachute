@@ -149,16 +149,17 @@ struct AppView: View {
             }
             Spacer()
             HStack{
-                Button(action: model.doAsync(fn: cheatController.stopCheat)) {
-                    Text("😎")
-                        .font(.system(size: 32))
+                if cheatController.isCheating {
+                    Button(action: model.doAsync(fn: cheatController.stopCheat)) {
+                        Text("😎")
+                            .font(.system(size: 32))
+                    }
+                } else {
+                    Button(action: model.startCheat) {
+                        Text("🤤")
+                            .font(.system(size: 32))
+                    }
                 }
-                .padding([.leading])
-                Spacer()
-                Button(action: model.startCheat) {
-                    Text("🤤")
-                        .font(.system(size: 32))
-                }.padding([.trailing])
             }
             .frame(maxWidth: .infinity)
             Spacer()
