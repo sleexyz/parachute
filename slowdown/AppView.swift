@@ -143,7 +143,7 @@ struct SnapCarousel<Content: View>: View {
 
             }
             // To make the edges draggable
-            .background(Color.white)
+            .contentShape(Rectangle())
             .padding(.horizontal, spacing)
             .offset(x: (CGFloat(currentIndex) * -width) + gestureOffset + programmaticOffset)
             .onChange(of: self.index) { _ in

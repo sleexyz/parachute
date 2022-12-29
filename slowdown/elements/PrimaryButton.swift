@@ -39,8 +39,8 @@ struct PrimaryButton<LoadingView: View>: View {
             .disabled(isLoading)
             .padding()
             .frame(maxWidth: .infinity)
-            .foregroundColor(Color.black)
-            .background(Color.black.opacity(0.1))
+            .foregroundColor(Color.white)
+            .background(Color.accentColor.grayscale(1))
             .cornerRadius(8)
     }
 }
