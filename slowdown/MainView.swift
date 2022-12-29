@@ -33,6 +33,7 @@ struct MainView: View {
         
         if service.hasManager {
             return AnyView(AppView(model: appViewModel))
+            
         } else {
             return AnyView(SetupView())
         }
