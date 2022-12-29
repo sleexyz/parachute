@@ -17,7 +17,7 @@
             startingLineNumber = "111"
             endingLineNumber = "111"
             landmarkName = "readOutboundPackets()"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -49,7 +49,7 @@
             startingLineNumber = "112"
             endingLineNumber = "112"
             landmarkName = "readOutboundPackets()"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

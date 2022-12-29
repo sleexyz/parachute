@@ -40,7 +40,7 @@ struct PrimaryButton<LoadingView: View>: View {
             .padding()
             .frame(maxWidth: .infinity)
             .foregroundColor(Color.black)
-            .background(Color(hue: 0, saturation: 0, brightness: 0.9))
+            .background(Color.black.opacity(0.1))
             .cornerRadius(8)
     }
 }
