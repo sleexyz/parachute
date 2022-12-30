@@ -11,6 +11,12 @@ import Logging
 import LoggingOSLog
 import UIKit
 import Ffi
+            
+#if DEBUG
+            let env = "dev"
+#else
+            let env = "prod"
+#endif
 
 public struct ProxyServerOptions {
     public let ipv4Address: String
@@ -68,9 +74,9 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             }
             
             if (!debug) {
-                self.proxy = Proxy(bridge: Ffi.FfiInit()!, logger: self.logger)
+                self.proxy = Proxy(bridge: Ffi.FfiInit(env)!, logger: self.logger)
             } else {
-                self.proxy = Proxy(bridge: Ffi.FfiInitDebug("\(ProxyServerOptions.debugControlServer.ipv4Address):\(ProxyServerOptions.debugControlServer.ipv4Port)")!, logger: self.logger)
+                self.proxy = Proxy(bridge: Ffi.FfiInitDebug(env, "\(ProxyServerOptions.debugControlServer.ipv4Address):\(ProxyServerOptions.debugControlServer.ipv4Port)")!, logger: self.logger)
             }
             
             self.logger.info("starting server")
