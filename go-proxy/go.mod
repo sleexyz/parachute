@@ -8,7 +8,7 @@ require (
 	golang.org/x/sys v0.1.0
 	google.golang.org/protobuf v1.28.1
 	gvisor.dev/gvisor v0.0.0-20221028220859-157f5835f336
-
+	github.com/getsentry/sentry-go v0.16.0
 )
 
 require (
@@ -20,6 +20,7 @@ require (
 	github.com/stretchr/testify v1.8.1 // indirect
 	golang.org/x/mod v0.6.0 // indirect
 	golang.org/x/net v0.1.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/time v0.1.0 // indirect
 	golang.org/x/tools v0.2.0 // indirect
 	gopkg.in/cenkalti/backoff.v1 v1.1.0 // indirect

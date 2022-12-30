@@ -12,6 +12,7 @@ import (
 
 	// "github.com/pyroscope-io/client/pyroscope"
 
+	"github.com/getsentry/sentry-go"
 	"strange.industries/go-proxy/pkg/controller"
 	ffi "strange.industries/go-proxy/pkg/ffi"
 	"strange.industries/go-proxy/pkg/proxy"
@@ -63,6 +64,8 @@ func main() {
 	debug.SetMemoryLimit(20 << 20)
 	debug.SetGCPercent(50)
 
+	ffi.InitSentry("dev")
+	defer sentry.Recover()
 	a := InitAnalyticsServer(8084)
 	c := controller.Init(a)
 	a.C = c
