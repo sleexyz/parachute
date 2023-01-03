@@ -53,7 +53,7 @@ func (f *ControllableFlow) UpdateTx(n int, now time.Time) {
 		return
 	}
 	toAdd := 1.0
-	_ = am.AddPoints(toAdd, &now)
+	_ = am.AddUsagePoints(toAdd, &now)
 	// log.Printf("%s points: %.2f, txBytes: %d, reason: %s", am.Name(), points, n, am.Reason())
 }
 
