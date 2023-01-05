@@ -8,16 +8,21 @@ import (
 )
 
 func makeTestAppResolver() *AppResolver {
-	ar := InitAppResolver(&AppResolverOptions{
-		failedIpMatchCacheSize:  1,
-		failedDnsMatchCacheSize: 1,
-		apps: []*App{
-			InitApp("social", &AppMatcher{
+	sp := InitSettingsManager()
+	apps := InitApps([]*AppConfig{
+		{
+			name: "social",
+			matchers: &AppMatcher{
 				dnsMatchers: []*regexp.Regexp{
 					regexp.MustCompile(`hello\.com\.$`),
 				},
-			}),
+			},
 		},
+	}, sp)
+	ar := InitAppResolver(&AppResolverOptions{
+		failedIpMatchCacheSize:  1,
+		failedDnsMatchCacheSize: 1,
+		apps:                    apps,
 	})
 	return ar
 }

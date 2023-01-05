@@ -9,7 +9,7 @@ import (
 )
 
 func TestLinPointsCanAddPoints(t *testing.T) {
-	p := InitLinPoints(0.5, 6, 0)
+	p := InitLinPoints(0.5, 6)
 	now := time.Now()
 	assert.Equal(t, 0.0, p.Points(&now))
 
@@ -21,7 +21,7 @@ func TestLinPointsCanAddPoints(t *testing.T) {
 }
 
 func TestLinPointsOldFdate(t *testing.T) {
-	p := InitLinPoints(0.25, 6, 0)
+	p := InitLinPoints(0.25, 6)
 	now := time.Now()
 
 	future := now.Add(time.Minute)

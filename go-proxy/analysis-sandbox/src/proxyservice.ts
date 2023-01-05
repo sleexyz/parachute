@@ -6,9 +6,16 @@ import { Timestamp } from "./google/protobuf/timestamp";
 export const protobufPackage = "proxyservice";
 
 export interface Settings {
+  /** latest version: 1 */
+  version: number;
   baseRxSpeedTarget: number;
   temporaryRxSpeedTarget: number;
-  temporaryRxSpeedExpiry: Date | undefined;
+  temporaryRxSpeedExpiry:
+    | Date
+    | undefined;
+  /** HP per second */
+  usageHealRate: number;
+  usageMaxHP: number;
 }
 
 export interface Request {
@@ -48,11 +55,21 @@ export interface Sample {
 }
 
 function createBaseSettings(): Settings {
-  return { baseRxSpeedTarget: 0, temporaryRxSpeedTarget: 0, temporaryRxSpeedExpiry: undefined };
+  return {
+    version: 0,
+    baseRxSpeedTarget: 0,
+    temporaryRxSpeedTarget: 0,
+    temporaryRxSpeedExpiry: undefined,
+    usageHealRate: 0,
+    usageMaxHP: 0,
+  };
 }
 
 export const Settings = {
   encode(message: Settings, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.version !== 0) {
+      writer.uint32(32).int32(message.version);
+    }
     if (message.baseRxSpeedTarget !== 0) {
       writer.uint32(9).double(message.baseRxSpeedTarget);
     }
@@ -61,6 +78,12 @@ export const Settings = {
     }
     if (message.temporaryRxSpeedExpiry !== undefined) {
       Timestamp.encode(toTimestamp(message.temporaryRxSpeedExpiry), writer.uint32(26).fork()).ldelim();
+    }
+    if (message.usageHealRate !== 0) {
+      writer.uint32(41).double(message.usageHealRate);
+    }
+    if (message.usageMaxHP !== 0) {
+      writer.uint32(49).double(message.usageMaxHP);
     }
     return writer;
   },
@@ -72,6 +95,9 @@ export const Settings = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 4:
+          message.version = reader.int32();
+          break;
         case 1:
           message.baseRxSpeedTarget = reader.double();
           break;
@@ -80,6 +106,12 @@ export const Settings = {
           break;
         case 3:
           message.temporaryRxSpeedExpiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          break;
+        case 5:
+          message.usageHealRate = reader.double();
+          break;
+        case 6:
+          message.usageMaxHP = reader.double();
           break;
         default:
           reader.skipType(tag & 7);
@@ -91,28 +123,37 @@ export const Settings = {
 
   fromJSON(object: any): Settings {
     return {
+      version: isSet(object.version) ? Number(object.version) : 0,
       baseRxSpeedTarget: isSet(object.baseRxSpeedTarget) ? Number(object.baseRxSpeedTarget) : 0,
       temporaryRxSpeedTarget: isSet(object.temporaryRxSpeedTarget) ? Number(object.temporaryRxSpeedTarget) : 0,
       temporaryRxSpeedExpiry: isSet(object.temporaryRxSpeedExpiry)
         ? fromJsonTimestamp(object.temporaryRxSpeedExpiry)
         : undefined,
+      usageHealRate: isSet(object.usageHealRate) ? Number(object.usageHealRate) : 0,
+      usageMaxHP: isSet(object.usageMaxHP) ? Number(object.usageMaxHP) : 0,
     };
   },
 
   toJSON(message: Settings): unknown {
     const obj: any = {};
+    message.version !== undefined && (obj.version = Math.round(message.version));
     message.baseRxSpeedTarget !== undefined && (obj.baseRxSpeedTarget = message.baseRxSpeedTarget);
     message.temporaryRxSpeedTarget !== undefined && (obj.temporaryRxSpeedTarget = message.temporaryRxSpeedTarget);
     message.temporaryRxSpeedExpiry !== undefined &&
       (obj.temporaryRxSpeedExpiry = message.temporaryRxSpeedExpiry.toISOString());
+    message.usageHealRate !== undefined && (obj.usageHealRate = message.usageHealRate);
+    message.usageMaxHP !== undefined && (obj.usageMaxHP = message.usageMaxHP);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Settings>, I>>(object: I): Settings {
     const message = createBaseSettings();
+    message.version = object.version ?? 0;
     message.baseRxSpeedTarget = object.baseRxSpeedTarget ?? 0;
     message.temporaryRxSpeedTarget = object.temporaryRxSpeedTarget ?? 0;
     message.temporaryRxSpeedExpiry = object.temporaryRxSpeedExpiry ?? undefined;
+    message.usageHealRate = object.usageHealRate ?? 0;
+    message.usageMaxHP = object.usageMaxHP ?? 0;
     return message;
   },
 };

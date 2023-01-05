@@ -3,81 +3,17 @@ package controller
 import (
 	"math"
 	"net/netip"
-	"regexp"
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"strange.industries/go-proxy/pb/proxyservice"
 )
 
-type AppMatcher struct {
-	dnsMatchers         []*regexp.Regexp
-	possibleDnsMatchers []*regexp.Regexp
-	addresses           []*netip.Prefix
-}
-
-var prodApps = []*App{
-	InitApp("tiktok", &AppMatcher{
-		dnsMatchers: []*regexp.Regexp{
-			regexp.MustCompile(`.*bytedance\.map\.fastly\.net\.$`),
-			regexp.MustCompile(`.*\.tiktokcdn-us\.com\.c\.footprint\.net\.$`),
-			regexp.MustCompile(`.*\.byteoversea\.net\.$`),
-			regexp.MustCompile(`.*\.bytefcdn-oversea\.com\.$`),
-			regexp.MustCompile(`.*\.ttoverseaus\.net\.$`),
-			regexp.MustCompile(`.*\.bytetcdn\.com\.$`),
-			regexp.MustCompile(`.*\.worldfcdn\.com\.$`),
-			regexp.MustCompile(`.*\.worldfcdn2\.com\.$`),
-		},
-		possibleDnsMatchers: []*regexp.Regexp{
-			regexp.MustCompile(`.*\.cdn77\.org\.$`),
-			regexp.MustCompile(`.*\.akamai\.net\.$`),
-			regexp.MustCompile(`.*\.akamaiedge\.net\.$`),
-			regexp.MustCompile(`.*\.static\.akamaitechnologies\.com\.$`),
-		},
-	}),
-	InitApp("instagram", &AppMatcher{
-		dnsMatchers: []*regexp.Regexp{
-			regexp.MustCompile(`.*\.instagram\.com\.$`),
-			regexp.MustCompile(`.*\.cdninstagram\.com\.$`),
-			regexp.MustCompile(`instagram.*\.fbcdn\.net\.$`),
-			// regexp.MustCompile(`.*\.facebook\.com\.$`),
-		},
-	}),
-	InitApp("twitter", &AppMatcher{
-		dnsMatchers: []*regexp.Regexp{
-			regexp.MustCompile(`t\.co\.$`),
-			regexp.MustCompile(`.*\.twitter\.com\.$`),
-			regexp.MustCompile(`.*\.twitter\.map\.fastly\.net\.$`),
-		},
-		possibleDnsMatchers: []*regexp.Regexp{
-			regexp.MustCompile(`.*\.cloudfront\.net\.$`),
-			regexp.MustCompile(`.*\.edgecastcdn\.net\.$`),
-		},
-		addresses: ParseAddresses([]string{"104.244.42.0/24"}),
-		// addresses: append(
-		// 	// fastly
-		// 	ParseAddresses([]string{"23.235.32.0/20", "43.249.72.0/22", "103.244.50.0/24", "103.245.222.0/23", "103.245.224.0/24", "104.156.80.0/20", "140.248.64.0/18", "140.248.128.0/17", "146.75.0.0/17", "151.101.0.0/16", "157.52.64.0/18", "167.82.0.0/17", "167.82.128.0/20", "167.82.160.0/20", "167.82.224.0/20", "172.111.64.0/18", "185.31.16.0/22", "199.27.72.0/21", "199.232.0.0/16"}),
-		// 	// twitter
-		// 	ParseAddresses([]string{"104.244.42.0/24"})...,
-		// ),
-	}),
-}
-
-func ParseAddresses(strs []string) []*netip.Prefix {
-	var ret []*netip.Prefix
-	for _, s := range strs {
-		p, err := netip.ParsePrefix(s)
-		if err != nil {
-			panic(err)
-		}
-		ret = append(ret, &p)
-	}
-	return ret
-}
-
 type App struct {
-	matchers    *AppMatcher
-	name        string
+	*AppConfig
+
+	sp SettingsProvider
+
 	usagePoints *LinPoints
 	// Max txPoints since usagePoints was sampled
 	txPointsMax float64
@@ -85,21 +21,34 @@ type App struct {
 	rxPoints    *ExpPoints
 }
 
-func InitApp(name string, matchers *AppMatcher) *App {
-	return &App{
-		name:     name,
-		matchers: matchers,
-		// TODO: get this from a controller setting
-		// Setting:
-		// - Duration (e.g. 5min)
-		// - Healing duration (e.g. 10min)
-		//
-		//
-		usagePoints: InitLinPoints(0.5, 6, 0),
+func InitApps(appConfigs []*AppConfig, sp SettingsProvider) []*App {
+	apps := []*App{}
+	for _, ac := range appConfigs {
+		app := InitApp(ac, sp)
+		apps = append(apps, app)
+	}
+	return apps
+}
+
+func InitApp(ac *AppConfig, sp SettingsProvider) *App {
+	s := sp.Settings()
+	app := &App{
+		AppConfig:   ac,
+		sp:          sp,
+		usagePoints: InitLinPoints(s.UsageHealRate, s.UsageMaxHP),
 		txPointsMax: 0,
 		txPoints:    InitExpPoints(math.Pow(0.5, 1.0/5.0), 2),
 		rxPoints:    InitExpPoints(math.Pow(0.5, 1.0/5.0), 2),
 	}
+	sp.RegisterChangeListener(app)
+	return app
+}
+
+func (a *App) BeforeSettingsChange() {
+}
+func (a *App) OnSettingsChange(oldSettings *proxyservice.Settings, settings *proxyservice.Settings) {
+	a.usagePoints.SetHealRate(settings.UsageHealRate)
+	a.usagePoints.SetCap(settings.UsageMaxHP)
 }
 
 func (a *App) AppUsed() bool {
@@ -167,5 +116,8 @@ func (a *App) UpdateUsagePoints(dt time.Duration, now *time.Time) {
 		toAdd := float64(dt)/float64(time.Minute) + lostPoints
 		a.usagePoints.AddPoints(toAdd, now)
 	}
+}
+
+func (a *App) ResetSampleState() {
 	a.txPointsMax = 0
 }

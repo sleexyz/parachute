@@ -23,18 +23,24 @@ type Points interface {
 type LinPoints struct {
 	healRate float64
 	cap      float64
-	floor    float64
 	fdate    *time.Time
 }
 
-func InitLinPoints(healRate float64, cap float64, floor float64) *LinPoints {
+func InitLinPoints(healRate float64, cap float64) *LinPoints {
 	now := time.Now()
 	return &LinPoints{
 		healRate: healRate, // points per minute
 		cap:      cap,
-		floor:    floor,
 		fdate:    &now,
 	}
+}
+
+func (p *LinPoints) SetHealRate(healRate float64) {
+	p.healRate = healRate
+}
+
+func (p *LinPoints) SetCap(cap float64) {
+	p.cap = cap
 }
 
 func (p *LinPoints) Fdate() *time.Time {
@@ -46,7 +52,7 @@ func (p *LinPoints) Points(now *time.Time) float64 {
 }
 
 func (p *LinPoints) clampPoints(points float64) float64 {
-	return math.Max(math.Min(points, p.cap), p.floor)
+	return math.Max(math.Min(points, p.cap), 0)
 }
 
 func (p *LinPoints) fdateToPoints(fdate *time.Time, now *time.Time) float64 {

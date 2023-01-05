@@ -2,6 +2,7 @@ package controller
 
 import (
 	"math"
+	"regexp"
 	"testing"
 	"time"
 
@@ -11,8 +12,19 @@ import (
 	"strange.industries/go-proxy/pkg/analytics"
 )
 
+var testAppConfigs = []*AppConfig{
+	{
+		name: "social",
+		matchers: &AppMatcher{
+			dnsMatchers: []*regexp.Regexp{
+				regexp.MustCompile(`hello\.com\.$`),
+			},
+		},
+	},
+}
+
 func TestSetSettingsFiresCheatTimersOnInit(t *testing.T) {
-	c := Init(&analytics.NoOpAnalytics{})
+	c := Init(&analytics.NoOpAnalytics{}, testAppConfigs)
 	c.SetSettings(&proxyservice.Settings{
 		BaseRxSpeedTarget:      1e6,
 		TemporaryRxSpeedTarget: math.Inf(1),
@@ -23,7 +35,7 @@ func TestSetSettingsFiresCheatTimersOnInit(t *testing.T) {
 }
 
 func TestSetSettingsFiresCheatTimersOnChange(t *testing.T) {
-	c := Init(&analytics.NoOpAnalytics{})
+	c := Init(&analytics.NoOpAnalytics{}, testAppConfigs)
 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6})
 	assert.Nil(t, c.temporaryTimer)
 	assert.Equal(t, c.RxSpeedTarget(), 1e6)
@@ -43,4 +55,18 @@ func TestSetSettingsFiresCheatTimersOnChange(t *testing.T) {
 	})
 	assert.Nil(t, c.temporaryTimer)
 	assert.Equal(t, c.RxSpeedTarget(), 1e6)
+}
+
+func TestSettingsChangeCausesSample(t *testing.T) {
+	c := Init(&analytics.NoOpAnalytics{}, testAppConfigs)
+	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
+	c.RegisterDnsEntry("1.2.3.4", "hello.com.")
+	now := time.Now()
+
+	c.appMap["1.2.3.4"].AddTxPoints(1.0, &now)
+	// time.Sleep(time.Second)
+	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
+
+	// expect miniscule change from dt
+	assert.Greater(t, c.appMap["1.2.3.4"].usagePoints.Points(&now), 0.0)
 }

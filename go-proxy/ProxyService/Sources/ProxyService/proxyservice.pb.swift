@@ -25,6 +25,9 @@ public struct Proxyservice_Settings {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  /// latest version: 1
+  public var version: Int32 = 0
+
   public var baseRxSpeedTarget: Double = 0
 
   public var temporaryRxSpeedTarget: Double = 0
@@ -37,6 +40,11 @@ public struct Proxyservice_Settings {
   public var hasTemporaryRxSpeedExpiry: Bool {return self._temporaryRxSpeedExpiry != nil}
   /// Clears the value of `temporaryRxSpeedExpiry`. Subsequent reads from it will return its default value.
   public mutating func clearTemporaryRxSpeedExpiry() {self._temporaryRxSpeedExpiry = nil}
+
+  /// HP per second
+  public var usageHealRate: Double = 0
+
+  public var usageMaxHp: Double = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -205,9 +213,12 @@ fileprivate let _protobuf_package = "proxyservice"
 extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Settings"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    4: .same(proto: "version"),
     1: .same(proto: "baseRxSpeedTarget"),
     2: .same(proto: "temporaryRxSpeedTarget"),
     3: .same(proto: "temporaryRxSpeedExpiry"),
+    5: .same(proto: "usageHealRate"),
+    6: .same(proto: "usageMaxHP"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -219,6 +230,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case 1: try { try decoder.decodeSingularDoubleField(value: &self.baseRxSpeedTarget) }()
       case 2: try { try decoder.decodeSingularDoubleField(value: &self.temporaryRxSpeedTarget) }()
       case 3: try { try decoder.decodeSingularMessageField(value: &self._temporaryRxSpeedExpiry) }()
+      case 4: try { try decoder.decodeSingularInt32Field(value: &self.version) }()
+      case 5: try { try decoder.decodeSingularDoubleField(value: &self.usageHealRate) }()
+      case 6: try { try decoder.decodeSingularDoubleField(value: &self.usageMaxHp) }()
       default: break
       }
     }
@@ -238,13 +252,25 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     try { if let v = self._temporaryRxSpeedExpiry {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
     } }()
+    if self.version != 0 {
+      try visitor.visitSingularInt32Field(value: self.version, fieldNumber: 4)
+    }
+    if self.usageHealRate != 0 {
+      try visitor.visitSingularDoubleField(value: self.usageHealRate, fieldNumber: 5)
+    }
+    if self.usageMaxHp != 0 {
+      try visitor.visitSingularDoubleField(value: self.usageMaxHp, fieldNumber: 6)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Proxyservice_Settings, rhs: Proxyservice_Settings) -> Bool {
+    if lhs.version != rhs.version {return false}
     if lhs.baseRxSpeedTarget != rhs.baseRxSpeedTarget {return false}
     if lhs.temporaryRxSpeedTarget != rhs.temporaryRxSpeedTarget {return false}
     if lhs._temporaryRxSpeedExpiry != rhs._temporaryRxSpeedExpiry {return false}
+    if lhs.usageHealRate != rhs.usageHealRate {return false}
+    if lhs.usageMaxHp != rhs.usageMaxHp {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
