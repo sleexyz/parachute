@@ -24,8 +24,12 @@ export interface ServerState {
 }
 
 export interface AppState {
-  points: number;
+  txPoints: number;
   name: string;
+  rxPoints: number;
+  usagePoints: number;
+  txPointsMax: number;
+  usagePointsDate: Date | undefined;
 }
 
 export interface Sample {
@@ -268,16 +272,28 @@ export const ServerState = {
 };
 
 function createBaseAppState(): AppState {
-  return { points: 0, name: "" };
+  return { txPoints: 0, name: "", rxPoints: 0, usagePoints: 0, txPointsMax: 0, usagePointsDate: undefined };
 }
 
 export const AppState = {
   encode(message: AppState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.points !== 0) {
-      writer.uint32(9).double(message.points);
+    if (message.txPoints !== 0) {
+      writer.uint32(9).double(message.txPoints);
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
+    }
+    if (message.rxPoints !== 0) {
+      writer.uint32(25).double(message.rxPoints);
+    }
+    if (message.usagePoints !== 0) {
+      writer.uint32(33).double(message.usagePoints);
+    }
+    if (message.txPointsMax !== 0) {
+      writer.uint32(41).double(message.txPointsMax);
+    }
+    if (message.usagePointsDate !== undefined) {
+      Timestamp.encode(toTimestamp(message.usagePointsDate), writer.uint32(50).fork()).ldelim();
     }
     return writer;
   },
@@ -290,10 +306,22 @@ export const AppState = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.points = reader.double();
+          message.txPoints = reader.double();
           break;
         case 2:
           message.name = reader.string();
+          break;
+        case 3:
+          message.rxPoints = reader.double();
+          break;
+        case 4:
+          message.usagePoints = reader.double();
+          break;
+        case 5:
+          message.txPointsMax = reader.double();
+          break;
+        case 6:
+          message.usagePointsDate = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -305,22 +333,34 @@ export const AppState = {
 
   fromJSON(object: any): AppState {
     return {
-      points: isSet(object.points) ? Number(object.points) : 0,
+      txPoints: isSet(object.txPoints) ? Number(object.txPoints) : 0,
       name: isSet(object.name) ? String(object.name) : "",
+      rxPoints: isSet(object.rxPoints) ? Number(object.rxPoints) : 0,
+      usagePoints: isSet(object.usagePoints) ? Number(object.usagePoints) : 0,
+      txPointsMax: isSet(object.txPointsMax) ? Number(object.txPointsMax) : 0,
+      usagePointsDate: isSet(object.usagePointsDate) ? fromJsonTimestamp(object.usagePointsDate) : undefined,
     };
   },
 
   toJSON(message: AppState): unknown {
     const obj: any = {};
-    message.points !== undefined && (obj.points = message.points);
+    message.txPoints !== undefined && (obj.txPoints = message.txPoints);
     message.name !== undefined && (obj.name = message.name);
+    message.rxPoints !== undefined && (obj.rxPoints = message.rxPoints);
+    message.usagePoints !== undefined && (obj.usagePoints = message.usagePoints);
+    message.txPointsMax !== undefined && (obj.txPointsMax = message.txPointsMax);
+    message.usagePointsDate !== undefined && (obj.usagePointsDate = message.usagePointsDate.toISOString());
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<AppState>, I>>(object: I): AppState {
     const message = createBaseAppState();
-    message.points = object.points ?? 0;
+    message.txPoints = object.txPoints ?? 0;
     message.name = object.name ?? "";
+    message.rxPoints = object.rxPoints ?? 0;
+    message.usagePoints = object.usagePoints ?? 0;
+    message.txPointsMax = object.txPointsMax ?? 0;
+    message.usagePointsDate = object.usagePointsDate ?? undefined;
     return message;
   },
 };

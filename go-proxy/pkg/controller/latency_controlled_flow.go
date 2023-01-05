@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"log"
-	"math"
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -11,13 +9,15 @@ import (
 )
 
 type LatencyControlledFlow struct {
-	// rxBytes since last sample time
-	dRx int
 	// txBytes since last sample time
-	dTx            int
-	lastSampleTime *time.Time
-	rxSpeed        float64
-	refCount       int
+	dTx              int
+	lastTxSampleTime *time.Time
+
+	// rxBytes since last sample time
+	dRx              int
+	lastRxSampleTime *time.Time
+	rxSpeed          float64
+	refCount         int
 
 	rxLatencyPerByte time.Duration
 	latencyProvider  LatencyProvider
@@ -47,7 +47,8 @@ func InitLatencyControlledFlow(latencyProvider LatencyProvider, sp analytics.Sam
 	ret := &LatencyControlledFlow{
 		refCount:         0,
 		rxSpeed:          0,
-		lastSampleTime:   &now,
+		lastTxSampleTime: &now,
+		lastRxSampleTime: &now,
 		rxLatencyPerByte: latencyProvider.InitialLatency(),
 		latencyProvider:  latencyProvider,
 		sp:               sp,
@@ -56,9 +57,15 @@ func InitLatencyControlledFlow(latencyProvider LatencyProvider, sp analytics.Sam
 }
 
 func (s *LatencyControlledFlow) RecordTxBytes(n int, now time.Time) {
+	if s.updateTxProvider == nil {
+		return
+	}
 	s.dTx += n
-	if s.updateTxProvider != nil {
+	dt := now.Sub(*s.lastTxSampleTime)
+	if dt > time.Second/4 {
 		s.updateTxProvider.UpdateTx(n, now)
+		s.lastTxSampleTime = &now
+		s.dTx = 0
 	}
 }
 
@@ -71,7 +78,7 @@ type UpdateRxCtx struct {
 
 func (s *LatencyControlledFlow) RecordRxBytes(n int, now time.Time) {
 	s.dRx += n
-	dt := now.Sub(*s.lastSampleTime)
+	dt := now.Sub(*s.lastRxSampleTime)
 	// update ever quarter second
 	if dt > time.Second/4 {
 		s.rxSpeed = float64(s.dRx) / float64(dt) * float64(time.Second) * 8
@@ -85,17 +92,17 @@ func (s *LatencyControlledFlow) RecordRxBytes(n int, now time.Time) {
 		updateCtx := &UpdateRxCtx{sample: sample, now: &now, rxBytes: s.dRx, rxSpeed: s.rxSpeed}
 		s.rxLatencyPerByte = s.latencyProvider.UpdateLatency(updateCtx, s.dRx, now, dt, s.rxLatencyPerByte, s.rxSpeed)
 		go s.publishSample(sample)
-		s.lastSampleTime = &now
+		s.lastRxSampleTime = &now
 		s.dRx = 0
 	}
 }
 
 func (s *LatencyControlledFlow) publishSample(sample *proxyservice.Sample) {
-	if math.IsInf(sample.RxSpeedTarget, 1) {
-		log.Printf("(Skipped): %v", sample)
-	} else {
-		log.Printf("Slowed: %v", sample)
-	}
+	// if math.IsInf(sample.RxSpeedTarget, 1) {
+	// 	log.Printf("(Skipped): %v", sample)
+	// } else {
+	// 	log.Printf("Slowed: %v", sample)
+	// }
 	go s.sp.PublishSample(sample)
 }
 
