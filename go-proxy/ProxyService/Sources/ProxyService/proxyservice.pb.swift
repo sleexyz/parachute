@@ -124,13 +124,30 @@ public struct Proxyservice_AppState {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var points: Double = 0
+  public var txPoints: Double = 0
 
   public var name: String = String()
+
+  public var rxPoints: Double = 0
+
+  public var usagePoints: Double = 0
+
+  public var txPointsMax: Double = 0
+
+  public var usagePointsDate: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _usagePointsDate ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_usagePointsDate = newValue}
+  }
+  /// Returns true if `usagePointsDate` has been explicitly set.
+  public var hasUsagePointsDate: Bool {return self._usagePointsDate != nil}
+  /// Clears the value of `usagePointsDate`. Subsequent reads from it will return its default value.
+  public mutating func clearUsagePointsDate() {self._usagePointsDate = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
+
+  fileprivate var _usagePointsDate: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 }
 
 public struct Proxyservice_Sample {
@@ -357,8 +374,12 @@ extension Proxyservice_ServerState: SwiftProtobuf.Message, SwiftProtobuf._Messag
 extension Proxyservice_AppState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".AppState"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "points"),
+    1: .same(proto: "txPoints"),
     2: .same(proto: "name"),
+    3: .same(proto: "rxPoints"),
+    4: .same(proto: "usagePoints"),
+    5: .same(proto: "txPointsMax"),
+    6: .same(proto: "usagePointsDate"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -367,26 +388,50 @@ extension Proxyservice_AppState: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularDoubleField(value: &self.points) }()
+      case 1: try { try decoder.decodeSingularDoubleField(value: &self.txPoints) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 3: try { try decoder.decodeSingularDoubleField(value: &self.rxPoints) }()
+      case 4: try { try decoder.decodeSingularDoubleField(value: &self.usagePoints) }()
+      case 5: try { try decoder.decodeSingularDoubleField(value: &self.txPointsMax) }()
+      case 6: try { try decoder.decodeSingularMessageField(value: &self._usagePointsDate) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.points != 0 {
-      try visitor.visitSingularDoubleField(value: self.points, fieldNumber: 1)
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if self.txPoints != 0 {
+      try visitor.visitSingularDoubleField(value: self.txPoints, fieldNumber: 1)
     }
     if !self.name.isEmpty {
       try visitor.visitSingularStringField(value: self.name, fieldNumber: 2)
     }
+    if self.rxPoints != 0 {
+      try visitor.visitSingularDoubleField(value: self.rxPoints, fieldNumber: 3)
+    }
+    if self.usagePoints != 0 {
+      try visitor.visitSingularDoubleField(value: self.usagePoints, fieldNumber: 4)
+    }
+    if self.txPointsMax != 0 {
+      try visitor.visitSingularDoubleField(value: self.txPointsMax, fieldNumber: 5)
+    }
+    try { if let v = self._usagePointsDate {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Proxyservice_AppState, rhs: Proxyservice_AppState) -> Bool {
-    if lhs.points != rhs.points {return false}
+    if lhs.txPoints != rhs.txPoints {return false}
     if lhs.name != rhs.name {return false}
+    if lhs.rxPoints != rhs.rxPoints {return false}
+    if lhs.usagePoints != rhs.usagePoints {return false}
+    if lhs.txPointsMax != rhs.txPointsMax {return false}
+    if lhs._usagePointsDate != rhs._usagePointsDate {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

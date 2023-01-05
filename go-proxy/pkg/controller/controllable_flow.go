@@ -49,15 +49,17 @@ func (f *ControllableFlow) InitialSpeed() float64 {
 
 func (f *ControllableFlow) UpdateTx(n int, now time.Time) {
 	am := f.GetDefiniteAppMatch(f.ip)
-	if am == nil {
-		return
+	if am != nil {
+		_ = am.AddTxPoints(1.0, &now)
 	}
-	toAdd := 1.0
-	_ = am.AddUsagePoints(toAdd, &now)
 	// log.Printf("%s points: %.2f, txBytes: %d, reason: %s", am.Name(), points, n, am.Reason())
 }
 
 func (f *ControllableFlow) UpdateSpeed(ctx *UpdateRxCtx) float64 {
+	am := f.GetDefiniteAppMatch(f.ip)
+	if am != nil {
+		_ = am.AddRxPoints(1.0, ctx.now)
+	}
 	f.RecordIp(f.ip)
 	st, app, reason := f.rxSpeedTarget()
 	ctx.sample.RxSpeedTarget = st

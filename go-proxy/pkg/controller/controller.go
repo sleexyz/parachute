@@ -27,7 +27,11 @@ type Controller struct {
 	temporaryTimer *time.Timer
 	fm             map[string]*ControllableFlow
 	gcTicker       *time.Ticker
-	stopGcTicker   func()
+
+	lastSampledTime *time.Time
+	appUpdateTicker *time.Ticker
+
+	stopTickers func()
 }
 
 func Init(sp analytics.SamplePublisher) *Controller {
@@ -98,9 +102,13 @@ func (c *Controller) GetFlow(ip string) *ControllableFlow {
 
 func (c *Controller) Start() {
 	c.gcTicker = time.NewTicker(1 * time.Minute)
+	now := time.Now()
+	c.lastSampledTime = &now
+	c.appUpdateTicker = time.NewTicker(30 * time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
-	c.stopGcTicker = func() {
+	c.stopTickers = func() {
 		c.gcTicker.Stop()
+		c.appUpdateTicker.Stop()
 		cancel()
 	}
 	go func() {
@@ -110,24 +118,32 @@ func (c *Controller) Start() {
 				return
 			case <-c.gcTicker.C:
 				c.GarbageCollect()
+			case <-c.appUpdateTicker.C:
+				c.UpdateApps()
 			}
 		}
 	}()
 }
 
 func (c *Controller) Close() {
-	c.stopGcTicker()
+	c.stopTickers()
 }
 
 func (c *Controller) GarbageCollect() {
-	// now := time.Now()
-	log.Printf("garbage collection started")
 	for k, v := range c.fm {
 		if v != nil && v.refCount == 0 {
-			log.Printf("deleting %s", c.fm[k].ip)
 			delete(c.fm, k)
 		}
 	}
+}
+
+func (c *Controller) UpdateApps() {
+	now := time.Now()
+	dt := now.Sub(*c.lastSampledTime)
+	for _, app := range c.apps {
+		app.UpdateUsagePoints(dt, &now)
+	}
+	c.lastSampledTime = &now
 }
 
 func (c *Controller) ResetState() {

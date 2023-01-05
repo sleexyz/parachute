@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"time"
 
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"strange.industries/go-proxy/pb/proxyservice"
 )
 
@@ -75,26 +76,49 @@ func ParseAddresses(strs []string) []*netip.Prefix {
 }
 
 type App struct {
-	matchers *AppMatcher
-	name     string
-	usage    *ExpPoints
+	matchers    *AppMatcher
+	name        string
+	usagePoints *LinPoints
+	// Max txPoints since usagePoints was sampled
+	txPointsMax float64
+	txPoints    *ExpPoints
+	rxPoints    *ExpPoints
 }
 
 func InitApp(name string, matchers *AppMatcher) *App {
 	return &App{
 		name:     name,
 		matchers: matchers,
-		usage:    InitExpPoints(math.Pow(0.5, 1.0/5.0), 2),
+		// TODO: get this from a controller setting
+		// Setting:
+		// - Duration (e.g. 5min)
+		// - Healing duration (e.g. 10min)
+		//
+		//
+		usagePoints: InitLinPoints(0.5, 6, 0),
+		txPointsMax: 0,
+		txPoints:    InitExpPoints(math.Pow(0.5, 1.0/5.0), 2),
+		rxPoints:    InitExpPoints(math.Pow(0.5, 1.0/5.0), 2),
 	}
 }
 
 func (a *App) AppUsed() bool {
-	return a.usage.fdate.After(time.Now())
+	// points > 1
+	return a.txPoints.fdate.After(time.Now())
 }
 
 // returns new points
-func (a *App) AddUsagePoints(points float64, now *time.Time) float64 {
-	return a.usage.AddPoints(points, now)
+func (a *App) AddTxPoints(points float64, now *time.Time) float64 {
+	newPoints := a.txPoints.AddPoints(points, now)
+	if newPoints > a.txPointsMax {
+		a.txPointsMax = newPoints
+	}
+	return newPoints
+}
+
+// returns new points
+func (a *App) AddRxPoints(points float64, now *time.Time) float64 {
+	return a.rxPoints.AddPoints(points, now)
 }
 
 func (a *App) Name() string {
@@ -127,6 +151,21 @@ func (a *App) MatchByIp(ip netip.Addr) *netip.Prefix {
 func (a *App) RecordState() *proxyservice.AppState {
 	s := &proxyservice.AppState{}
 	s.Name = a.name
-	s.Points = a.usage.Points()
+	now := time.Now()
+	s.UsagePoints = a.usagePoints.Points(&now)
+	s.UsagePointsDate = timestamppb.New(*a.usagePoints.fdate)
+	s.TxPoints = a.txPoints.Points()
+	s.TxPointsMax = a.txPointsMax
+	s.RxPoints = a.rxPoints.Points()
 	return s
+}
+
+func (a *App) UpdateUsagePoints(dt time.Duration, now *time.Time) {
+	if a.txPointsMax >= 1 {
+		// Add points at 1 point per minute + lost points due to healing.
+		lostPoints := a.usagePoints.DurationToPoints(dt)
+		toAdd := float64(dt)/float64(time.Minute) + lostPoints
+		a.usagePoints.AddPoints(toAdd, now)
+	}
+	a.txPointsMax = 0
 }
