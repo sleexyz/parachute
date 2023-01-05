@@ -8,10 +8,18 @@ import "google/protobuf/timestamp.proto";
 
 
 message Settings {
+    // latest version: 1
+    int32 version = 4;
+
     double baseRxSpeedTarget = 1;
+
     double temporaryRxSpeedTarget = 2;
     google.protobuf.Timestamp temporaryRxSpeedExpiry = 3;
+
+    double usageHealRate = 5; // HP per second
+    double usageMaxHP = 6;
 }
+
 
 
 message Request {
