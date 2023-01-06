@@ -11,6 +11,7 @@ import (
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pkg/adapter"
 	"strange.industries/go-proxy/pkg/controller"
+	"strange.industries/go-proxy/pkg/controller/flow"
 )
 
 const (
@@ -55,7 +56,7 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 			IP:   net.IP(id.LocalAddress),
 			Port: int(id.LocalPort),
 		}
-		targetConn = &controller.FlowPacketConn{PacketConn: targetConn, S: localConn}
+		targetConn = &flow.FlowPacketConn{PacketConn: targetConn, S: localConn}
 	}
 
 	wg := sync.WaitGroup{}
