@@ -27,6 +27,11 @@
 		A080EDF8294F9868005401E4 /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF7294F9868005401E4 /* LoggingOSLog */; };
 		A080EDFA294F9B1C005401E4 /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A080EDF9294F9B1C005401E4 /* SettingsController.swift */; };
 		A081F232295BB3D700863FE3 /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F231295BB3D700863FE3 /* SetupView.swift */; };
+		A081F2362966A6BA00863FE3 /* SettingsMigrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F2352966A6BA00863FE3 /* SettingsMigrations.swift */; };
+		A081F2382967B10600863FE3 /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A081F2372967B10600863FE3 /* ProxyService */; };
+		A081F23A2967B10F00863FE3 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A081F2392967B10F00863FE3 /* SwiftProtobuf */; };
+		A081F23C2967B10F00863FE3 /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = A081F23B2967B10F00863FE3 /* SwiftProtobufPluginLibrary */; };
+		A081F23E2967B27A00863FE3 /* SnapCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F23D2967B27A00863FE3 /* SnapCarousel.swift */; };
 		A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D5281A4BF900113F3F /* PrimaryButton.swift */; };
 		A08719D8281A4CE500113F3F /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D7281A4CE500113F3F /* SplashView.swift */; };
 		A08719DA281A4E1100113F3F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D9281A4E1100113F3F /* AppView.swift */; };
@@ -106,6 +111,8 @@
 		A080EDF9294F9B1C005401E4 /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		A081F230295B732900863FE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A081F231295BB3D700863FE3 /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
+		A081F2352966A6BA00863FE3 /* SettingsMigrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMigrations.swift; sourceTree = "<group>"; };
+		A081F23D2967B27A00863FE3 /* SnapCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCarousel.swift; sourceTree = "<group>"; };
 		A08719D5281A4BF900113F3F /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
 		A08719D7281A4CE500113F3F /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		A08719D9281A4E1100113F3F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
@@ -154,8 +161,11 @@
 			files = (
 				A06516E42953667900227A95 /* Ffi.xcframework in Frameworks */,
 				A08719E4281A617500113F3F /* NetworkExtension.framework in Frameworks */,
+				A081F23C2967B10F00863FE3 /* SwiftProtobufPluginLibrary in Frameworks */,
 				A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */,
+				A081F2382967B10600863FE3 /* ProxyService in Frameworks */,
 				A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */,
+				A081F23A2967B10F00863FE3 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,6 +214,7 @@
 				A080EDF9294F9B1C005401E4 /* SettingsController.swift */,
 				A0BF9203294175AE00C090E9 /* CheatController.swift */,
 				A081F231295BB3D700863FE3 /* SetupView.swift */,
+				A081F2352966A6BA00863FE3 /* SettingsMigrations.swift */,
 			);
 			path = slowdown;
 			sourceTree = "<group>";
@@ -246,6 +257,7 @@
 			children = (
 				A08719D5281A4BF900113F3F /* PrimaryButton.swift */,
 				A08719DD281A54A900113F3F /* Spinner.swift */,
+				A081F23D2967B27A00863FE3 /* SnapCarousel.swift */,
 			);
 			path = elements;
 			sourceTree = "<group>";
@@ -344,6 +356,9 @@
 			packageProductDependencies = (
 				A0458BF9285FB5A300CE4CCB /* Logging */,
 				A0458C0028614D6500CE4CCB /* LoggingOSLog */,
+				A081F2372967B10600863FE3 /* ProxyService */,
+				A081F2392967B10F00863FE3 /* SwiftProtobuf */,
+				A081F23B2967B10F00863FE3 /* SwiftProtobufPluginLibrary */,
 			);
 			productName = tunnel;
 			productReference = A08719E3281A617500113F3F /* tunnel.appex */;
@@ -444,11 +459,13 @@
 				A08719D8281A4CE500113F3F /* SplashView.swift in Sources */,
 				A02F58E227A6F14500D3330F /* MainView.swift in Sources */,
 				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,
+				A081F23E2967B27A00863FE3 /* SnapCarousel.swift in Sources */,
 				A081F232295BB3D700863FE3 /* SetupView.swift in Sources */,
 				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
 				A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */,
 				A080EDFA294F9B1C005401E4 /* SettingsController.swift in Sources */,
 				A0BF9204294175AE00C090E9 /* CheatController.swift in Sources */,
+				A081F2362966A6BA00863FE3 /* SettingsMigrations.swift in Sources */,
 				A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */,
 				A08719DC281A513200113F3F /* VPNConfigurationService.swift in Sources */,
 			);
@@ -943,6 +960,20 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A0458BFF28614D6500CE4CCB /* XCRemoteSwiftPackageReference "swift-log-oslog" */;
 			productName = LoggingOSLog;
+		};
+		A081F2372967B10600863FE3 /* ProxyService */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProxyService;
+		};
+		A081F2392967B10F00863FE3 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		A081F23B2967B10F00863FE3 /* SwiftProtobufPluginLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobufPluginLibrary;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

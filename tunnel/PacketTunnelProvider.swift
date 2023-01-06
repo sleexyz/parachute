@@ -11,6 +11,7 @@ import Logging
 import LoggingOSLog
 import UIKit
 import Ffi
+import ProxyService
             
 #if DEBUG
             let env = "dev"
@@ -65,15 +66,15 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
         do {
-            let debug = options?["debug"] != nil  ? (options?["debug"]! as! NSNumber).boolValue : false
             let settingsData = try loadSettingsData()
+            let settings = try Proxyservice_Settings(serializedData: settingsData)
             
             self.logger.info("starting tunnel")
             self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
                 completionHandler(NEVPNError(.connectionFailed))
             }
             
-            if (!debug) {
+            if (!settings.debug) {
                 self.proxy = Proxy(bridge: Ffi.FfiInit(env)!, logger: self.logger)
             } else {
                 self.proxy = Proxy(bridge: Ffi.FfiInitDebug(env, "\(ProxyServerOptions.debugControlServer.ipv4Address):\(ProxyServerOptions.debugControlServer.ipv4Port)")!, logger: self.logger)
@@ -85,11 +86,11 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             }
             self.logger.info("server started")
             
-            self.options = debug ? .debugDataServer : .localServer
+            self.options = settings.debug ? .debugDataServer : .localServer
             
-            let settings = self.initTunnelSettings(proxyHost: self.options.ipv4Address, proxyPort: self.options.ipv4Port)
+            let tunnelSettings = self.initTunnelSettings(proxyHost: self.options.ipv4Address, proxyPort: self.options.ipv4Port)
             
-            self.setTunnelNetworkSettings(settings) { error in
+            self.setTunnelNetworkSettings(tunnelSettings) { error in
                 completionHandler(error)
                 let endpoint = NWHostEndpoint(hostname: self.options.ipv4Address, port: String(self.options.ipv4Port))
                 self.session = self.createUDPSession(to: endpoint, from: nil)
