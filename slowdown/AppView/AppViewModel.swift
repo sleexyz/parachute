@@ -8,9 +8,11 @@
 import Foundation
 import SwiftUI
 import Combine
+import Logging
  
 final class AppViewModel: ObservableObject {
-    @Published var currentIndex: Int = 0
+    private var logger: Logger = Logger(label: "industries.strange.slowdown.AppViewModel")
+    @Published var currentCarouselIndex: Int = 0
     @Published var logSpeed: Double
     @Published var isShowingError = false
     @Published private(set) var errorTitle = ""
@@ -31,6 +33,21 @@ final class AppViewModel: ObservableObject {
         $logSpeed.sink {
             settingsStore.settings.baseRxSpeedTarget = exp($0)
         }.store(in: &bag)
+        self.store.onLoad {
+            self.currentCarouselIndex = self.canonicalCarouselIndex()
+            self.logger.info("index: \(self.currentCarouselIndex)")
+        }
+    }
+    
+    // Finds the canonical carousel index for the given state
+    func canonicalCarouselIndex() -> Int {
+        if store.settings.mode == .progressive {
+            return 0
+        }
+        if !cheatController.isCheating {
+            return 1
+        }
+        return 2
     }
     
     func toggleConnection() {
@@ -60,16 +77,11 @@ final class AppViewModel: ObservableObject {
         }
     }
     
-    @MainActor
-    func setCurrentIndex(value: Int) {
-        self.currentIndex = value
-    }
     
     func startCheat() {
         Task {
             do {
                 try await self.cheatController.addCheat()
-//                await setCurrentIndex(value: 1)
             } catch {
                 self.showError(
                     title: "Failed to start cheat",
@@ -83,7 +95,6 @@ final class AppViewModel: ObservableObject {
             Task {
                 do {
                     try await self.cheatController.stopCheat()
-//                    await setCurrentIndex(value: 0)
                 } catch {
                     self.showError(
                         title: "Failed to stop cheat",

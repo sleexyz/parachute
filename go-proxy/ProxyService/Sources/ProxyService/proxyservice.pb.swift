@@ -20,6 +20,46 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+public enum Proxyservice_Mode: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+  case progressive // = 0
+  case focus // = 1
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .progressive
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .progressive
+    case 1: self = .focus
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .progressive: return 0
+    case .focus: return 1
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension Proxyservice_Mode: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [Proxyservice_Mode] = [
+    .progressive,
+    .focus,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
 public struct Proxyservice_Settings {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -47,6 +87,8 @@ public struct Proxyservice_Settings {
   public var usageMaxHp: Double = 0
 
   public var debug: Bool = false
+
+  public var mode: Proxyservice_Mode = .progressive
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -199,6 +241,7 @@ public struct Proxyservice_Sample {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
+extension Proxyservice_Mode: @unchecked Sendable {}
 extension Proxyservice_Settings: @unchecked Sendable {}
 extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
@@ -212,6 +255,13 @@ extension Proxyservice_Sample: @unchecked Sendable {}
 
 fileprivate let _protobuf_package = "proxyservice"
 
+extension Proxyservice_Mode: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "PROGRESSIVE"),
+    1: .same(proto: "FOCUS"),
+  ]
+}
+
 extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Settings"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -222,6 +272,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     5: .same(proto: "usageHealRate"),
     6: .same(proto: "usageMaxHP"),
     7: .same(proto: "debug"),
+    8: .same(proto: "mode"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -237,6 +288,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case 5: try { try decoder.decodeSingularDoubleField(value: &self.usageHealRate) }()
       case 6: try { try decoder.decodeSingularDoubleField(value: &self.usageMaxHp) }()
       case 7: try { try decoder.decodeSingularBoolField(value: &self.debug) }()
+      case 8: try { try decoder.decodeSingularEnumField(value: &self.mode) }()
       default: break
       }
     }
@@ -268,6 +320,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if self.debug != false {
       try visitor.visitSingularBoolField(value: self.debug, fieldNumber: 7)
     }
+    if self.mode != .progressive {
+      try visitor.visitSingularEnumField(value: self.mode, fieldNumber: 8)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -279,6 +334,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if lhs.usageHealRate != rhs.usageHealRate {return false}
     if lhs.usageMaxHp != rhs.usageMaxHp {return false}
     if lhs.debug != rhs.debug {return false}
+    if lhs.mode != rhs.mode {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

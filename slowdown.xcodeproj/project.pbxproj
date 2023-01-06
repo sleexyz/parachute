@@ -219,12 +219,8 @@
 				A02F58E327A6F14500D3330F /* Assets.xcassets */,
 				A02F58E527A6F14500D3330F /* Preview Content */,
 				A08719D7281A4CE500113F3F /* SplashView.swift */,
-				A08719DB281A513200113F3F /* VPNConfigurationService.swift */,
-				A0BF9201293FCF1700C090E9 /* SettingsStore.swift */,
-				A080EDF9294F9B1C005401E4 /* SettingsController.swift */,
-				A0BF9203294175AE00C090E9 /* CheatController.swift */,
 				A081F231295BB3D700863FE3 /* SetupView.swift */,
-				A081F2352966A6BA00863FE3 /* SettingsMigrations.swift */,
+				A081F24C2967DA3C00863FE3 /* Controllers */,
 			);
 			path = slowdown;
 			sourceTree = "<group>";
@@ -283,6 +279,18 @@
 				A081F2472967C83800863FE3 /* AppModeCarousel.swift */,
 			);
 			path = AppView;
+			sourceTree = "<group>";
+		};
+		A081F24C2967DA3C00863FE3 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				A081F2352966A6BA00863FE3 /* SettingsMigrations.swift */,
+				A08719DB281A513200113F3F /* VPNConfigurationService.swift */,
+				A0BF9201293FCF1700C090E9 /* SettingsStore.swift */,
+				A080EDF9294F9B1C005401E4 /* SettingsController.swift */,
+				A0BF9203294175AE00C090E9 /* CheatController.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 		A08719E5281A617500113F3F /* tunnel */ = {
