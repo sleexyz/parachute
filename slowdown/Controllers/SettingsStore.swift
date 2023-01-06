@@ -42,9 +42,6 @@ class SettingsStore: ObservableObject {
     func load() throws {
         do {
             try loadFromFile()
-            for fn in onLoadFns {
-                fn()
-            }
         } catch CocoaError.fileNoSuchFile {
             try save()
             return try loadFromFile()
@@ -62,6 +59,9 @@ class SettingsStore: ObservableObject {
         Task {
             await self.setSettings(value: upgradedNewSettings)
             await self.setLoaded(value: true)
+            for fn in onLoadFns {
+                fn()
+            }
         }
     }
     

@@ -19,20 +19,28 @@ struct SnapCarousel<Content: View>: View {
     var trailingSpace: CGFloat
     @Binding var index: Int
     
+    // Offset...
+    @GestureState var gestureOffset: CGFloat = 0
+    @State private var programmaticOffset: CGFloat = 0
+    @State private var currentIndex: Int
+    
+    @State private var animationCompleteTimer: Timer?
+    
     init(spacing: CGFloat = 0, trailingSpace: CGFloat = 0, index: Binding<Int>, items: [Mode], @ViewBuilder content: @escaping (Mode)->Content){
         self.list = items
         self.spacing = spacing
         self.trailingSpace = trailingSpace
         self._index = index
         self.content = content
+        self._currentIndex = State(initialValue: index.wrappedValue)
     }
     
-    // Offset...
-    @GestureState var gestureOffset: CGFloat = 0
-    @State var programmaticOffset: CGFloat = 0
-    @State var currentIndex: Int = 0
-    
-    @State var animationCompleteTimer: Timer?
+    func initializeCurrentIndex() {
+        Task {
+            self.currentIndex = self.index
+            logger.info("currentindex \(self.currentIndex) \(self.index)")
+        }
+    }
     
     var body: some View {
         GeometryReader{proxy in

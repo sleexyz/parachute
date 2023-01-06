@@ -5,6 +5,11 @@ option go_package = "pb/proxyservice";
 
 import "google/protobuf/timestamp.proto";
 
+enum Mode {
+    PROGRESSIVE = 0;
+    FOCUS = 1;
+}
+
 message Settings {
     // latest version: 1
     int32 version = 4;
@@ -18,6 +23,8 @@ message Settings {
     double usageMaxHP = 6;
 
     bool debug = 7;
+
+    Mode mode = 8;
 }
 
 

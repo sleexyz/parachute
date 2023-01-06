@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ProxyService
 
 struct SettingsController {
     private let store: SettingsStore
@@ -16,6 +17,13 @@ struct SettingsController {
     init(store: SettingsStore, service: VPNConfigurationService) {
         self.store = store
         self.service = service
+    }
+    
+    public func switchMode(mode: Proxyservice_Mode) {
+        if mode != store.settings.mode {
+            store.settings.mode = mode
+            syncSettings()
+        }
     }
     
     public func syncSettings() {

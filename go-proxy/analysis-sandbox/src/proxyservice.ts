@@ -5,6 +5,39 @@ import { Timestamp } from "./google/protobuf/timestamp";
 
 export const protobufPackage = "proxyservice";
 
+export enum Mode {
+  PROGRESSIVE = 0,
+  FOCUS = 1,
+  UNRECOGNIZED = -1,
+}
+
+export function modeFromJSON(object: any): Mode {
+  switch (object) {
+    case 0:
+    case "PROGRESSIVE":
+      return Mode.PROGRESSIVE;
+    case 1:
+    case "FOCUS":
+      return Mode.FOCUS;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Mode.UNRECOGNIZED;
+  }
+}
+
+export function modeToJSON(object: Mode): string {
+  switch (object) {
+    case Mode.PROGRESSIVE:
+      return "PROGRESSIVE";
+    case Mode.FOCUS:
+      return "FOCUS";
+    case Mode.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export interface Settings {
   /** latest version: 1 */
   version: number;
@@ -17,6 +50,7 @@ export interface Settings {
   usageHealRate: number;
   usageMaxHP: number;
   debug: boolean;
+  mode: Mode;
 }
 
 export interface Request {
@@ -64,6 +98,7 @@ function createBaseSettings(): Settings {
     usageHealRate: 0,
     usageMaxHP: 0,
     debug: false,
+    mode: 0,
   };
 }
 
@@ -89,6 +124,9 @@ export const Settings = {
     }
     if (message.debug === true) {
       writer.uint32(56).bool(message.debug);
+    }
+    if (message.mode !== 0) {
+      writer.uint32(64).int32(message.mode);
     }
     return writer;
   },
@@ -121,6 +159,9 @@ export const Settings = {
         case 7:
           message.debug = reader.bool();
           break;
+        case 8:
+          message.mode = reader.int32() as any;
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -140,6 +181,7 @@ export const Settings = {
       usageHealRate: isSet(object.usageHealRate) ? Number(object.usageHealRate) : 0,
       usageMaxHP: isSet(object.usageMaxHP) ? Number(object.usageMaxHP) : 0,
       debug: isSet(object.debug) ? Boolean(object.debug) : false,
+      mode: isSet(object.mode) ? modeFromJSON(object.mode) : 0,
     };
   },
 
@@ -153,6 +195,7 @@ export const Settings = {
     message.usageHealRate !== undefined && (obj.usageHealRate = message.usageHealRate);
     message.usageMaxHP !== undefined && (obj.usageMaxHP = message.usageMaxHP);
     message.debug !== undefined && (obj.debug = message.debug);
+    message.mode !== undefined && (obj.mode = modeToJSON(message.mode));
     return obj;
   },
 
@@ -165,6 +208,7 @@ export const Settings = {
     message.usageHealRate = object.usageHealRate ?? 0;
     message.usageMaxHP = object.usageMaxHP ?? 0;
     message.debug = object.debug ?? false;
+    message.mode = object.mode ?? 0;
     return message;
   },
 };
