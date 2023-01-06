@@ -12,7 +12,7 @@ import (
 
 	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pkg/adapter"
-	"strange.industries/go-proxy/pkg/controller"
+	"strange.industries/go-proxy/pkg/controller/flow"
 )
 
 const (
@@ -71,7 +71,7 @@ func HandleTCPConn(localConn adapter.TCPConn) {
 
 	defer targetConn.Close()
 
-	slowedTargetConn := &controller.FlowConn{Conn: targetConn, S: localConn}
+	slowedTargetConn := &flow.FlowConn{Conn: targetConn, S: localConn}
 	_, _ = relay(localConn, slowedTargetConn) /* relay connections */
 	_ = time.Since(startTime)
 	localConn.DecRef()

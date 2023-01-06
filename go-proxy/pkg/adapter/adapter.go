@@ -5,13 +5,14 @@ import (
 
 	"gvisor.dev/gvisor/pkg/tcpip/stack"
 	"strange.industries/go-proxy/pkg/controller"
+	"strange.industries/go-proxy/pkg/controller/flow"
 )
 
 // UDPConn implements net.Conn and net.PacketConn.
 type UDPConn interface {
 	net.Conn
 	net.PacketConn
-	controller.Flow
+	flow.Flow
 	Controller() *controller.Controller
 	// ID returns the transport endpoint id of UDPConn.
 	ID() *stack.TransportEndpointID
@@ -20,7 +21,7 @@ type UDPConn interface {
 // TCPConn implements the net.Conn interface.
 type TCPConn interface {
 	net.Conn
-	controller.Flow
+	flow.Flow
 	Controller() *controller.Controller
 	// ID returns the transport endpoint id of TCPConn.
 	ID() *stack.TransportEndpointID

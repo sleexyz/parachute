@@ -17,9 +17,8 @@ import (
 )
 
 var debugMarshalOptions = &prototext.MarshalOptions{
-	Multiline:   true,
-	Indent:      "  ",
-	EmitUnknown: true,
+	Multiline: true,
+	Indent:    "  ",
 }
 
 type ProxyBridge interface {

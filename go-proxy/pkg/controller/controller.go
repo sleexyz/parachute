@@ -145,7 +145,7 @@ func (c *Controller) Close() {
 
 func (c *Controller) garbageCollect() {
 	for k, v := range c.fm {
-		if v != nil && v.refCount == 0 {
+		if v != nil && v.IsUnused() {
 			delete(c.fm, k)
 		}
 	}
@@ -175,4 +175,8 @@ func (c *Controller) ResetState() {
 
 func (c *Controller) RecordState() *proxyservice.ServerState {
 	return c.AppResolver.RecordState()
+}
+
+func (c *Controller) DebugGetEntries(ip string) []string {
+	return c.failedDnsMatchCache.DebugGetEntries(ip)
 }

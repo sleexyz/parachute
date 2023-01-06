@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"math"
 	"time"
+
+	"strange.industries/go-proxy/pkg/controller/flow"
 )
 
 type ControllableFlow struct {
-	*SpeedControlledFlow
+	*flow.SpeedControlledFlow
 	*Controller
 	ip string
 }
@@ -17,8 +19,8 @@ func InitControllableFlow(c *Controller, ip string) *ControllableFlow {
 		Controller: c,
 		ip:         ip,
 	}
-	f.SpeedControlledFlow = InitSpeedControlledFlow(c, f)
-	f.updateTxProvider = f
+	f.SpeedControlledFlow = flow.InitSpeedControlledFlow(c, f)
+	f.UpdateTxProvider = f
 	return f
 }
 
@@ -55,19 +57,19 @@ func (f *ControllableFlow) UpdateTx(n int, now time.Time) {
 	// log.Printf("%s points: %.2f, txBytes: %d, reason: %s", am.Name(), points, n, am.Reason())
 }
 
-func (f *ControllableFlow) UpdateSpeed(ctx *UpdateRxCtx) float64 {
+func (f *ControllableFlow) UpdateSpeed(ctx *flow.UpdateRxCtx) float64 {
 	am := f.GetDefiniteAppMatch(f.ip)
 	if am != nil {
-		_ = am.AddRxPoints(1.0, ctx.now)
+		_ = am.AddRxPoints(1.0, ctx.Now)
 	}
 	f.RecordIp(f.ip)
 	st, app, reason := f.rxSpeedTarget()
-	ctx.sample.RxSpeedTarget = st
-	ctx.sample.Ip = f.ip
-	ctx.sample.SlowReason = reason
-	ctx.sample.DnsMatchers = f.failedDnsMatchCache.DebugGetEntries(f.ip)
+	ctx.Sample.RxSpeedTarget = st
+	ctx.Sample.Ip = f.ip
+	ctx.Sample.SlowReason = reason
+	ctx.Sample.DnsMatchers = f.DebugGetEntries(f.ip)
 	if app != nil {
-		ctx.sample.AppMatch = app.name
+		ctx.Sample.AppMatch = app.Name()
 	}
 	return st
 }
