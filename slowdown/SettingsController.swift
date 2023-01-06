@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct SettingsController {
     private let store: SettingsStore
     private let service: VPNConfigurationService
