@@ -8,12 +8,19 @@ import (
 	"runtime/debug"
 
 	"github.com/getsentry/sentry-go"
+	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
 	"strange.industries/go-proxy/pb/proxyservice"
 	"strange.industries/go-proxy/pkg/analytics"
 	"strange.industries/go-proxy/pkg/controller"
 	proxy "strange.industries/go-proxy/pkg/proxy"
 )
+
+var debugMarshalOptions = &prototext.MarshalOptions{
+	Multiline:   true,
+	Indent:      "  ",
+	EmitUnknown: true,
+}
 
 type ProxyBridge interface {
 	StartProxy(port int, settingsData []byte)
@@ -42,7 +49,8 @@ func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("/Rpc %s", r)
+	debugText, _ := debugMarshalOptions.Marshal(r)
+	log.Printf("/Rpc %s", debugText)
 	switch r.Message.(type) {
 	case *proxyservice.Request_SetSettings:
 		m := r.GetSetSettings()
