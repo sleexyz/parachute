@@ -16,6 +16,7 @@ export interface Settings {
   /** HP per second */
   usageHealRate: number;
   usageMaxHP: number;
+  debug: boolean;
 }
 
 export interface Request {
@@ -62,6 +63,7 @@ function createBaseSettings(): Settings {
     temporaryRxSpeedExpiry: undefined,
     usageHealRate: 0,
     usageMaxHP: 0,
+    debug: false,
   };
 }
 
@@ -84,6 +86,9 @@ export const Settings = {
     }
     if (message.usageMaxHP !== 0) {
       writer.uint32(49).double(message.usageMaxHP);
+    }
+    if (message.debug === true) {
+      writer.uint32(56).bool(message.debug);
     }
     return writer;
   },
@@ -113,6 +118,9 @@ export const Settings = {
         case 6:
           message.usageMaxHP = reader.double();
           break;
+        case 7:
+          message.debug = reader.bool();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -131,6 +139,7 @@ export const Settings = {
         : undefined,
       usageHealRate: isSet(object.usageHealRate) ? Number(object.usageHealRate) : 0,
       usageMaxHP: isSet(object.usageMaxHP) ? Number(object.usageMaxHP) : 0,
+      debug: isSet(object.debug) ? Boolean(object.debug) : false,
     };
   },
 
@@ -143,6 +152,7 @@ export const Settings = {
       (obj.temporaryRxSpeedExpiry = message.temporaryRxSpeedExpiry.toISOString());
     message.usageHealRate !== undefined && (obj.usageHealRate = message.usageHealRate);
     message.usageMaxHP !== undefined && (obj.usageMaxHP = message.usageMaxHP);
+    message.debug !== undefined && (obj.debug = message.debug);
     return obj;
   },
 
@@ -154,6 +164,7 @@ export const Settings = {
     message.temporaryRxSpeedExpiry = object.temporaryRxSpeedExpiry ?? undefined;
     message.usageHealRate = object.usageHealRate ?? 0;
     message.usageMaxHP = object.usageMaxHP ?? 0;
+    message.debug = object.debug ?? false;
     return message;
   },
 };

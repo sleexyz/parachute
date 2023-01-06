@@ -16,7 +16,7 @@ class SettingsStore: ObservableObject {
     
     @Published var settings: Proxyservice_Settings = {
         var settings = Proxyservice_Settings()
-        settings.baseRxSpeedTarget = 56000
+        SettingsMigrations.setDefaults(settings: &settings)
         return settings
     }()
     @Published var loaded = false
@@ -54,9 +54,13 @@ class SettingsStore: ObservableObject {
     private func loadFromFile() throws {
         let fileUrl = try SettingsStore.fileUrl()
         let file = try FileHandle(forReadingFrom: fileUrl)
-        let newSettings = try Proxyservice_Settings(serializedData: file.availableData)
+        var newSettings = try Proxyservice_Settings(serializedData: file.availableData)
+        // run migrations
+        SettingsMigrations.upgradeToLatestVersion(settings: &newSettings)
+        
+        let upgradedNewSettings = newSettings
         Task {
-            await self.setSettings(value: newSettings)
+            await self.setSettings(value: upgradedNewSettings)
             await self.setLoaded(value: true)
         }
     }

@@ -61,12 +61,8 @@ open class VPNConfigurationService: ObservableObject {
     
     
     @MainActor
-    func startConnection(debug: Bool) async throws {
-        logger.info("\(store.settings.debugDescription)")
-        
-        try self.manager?.connection.startVPNTunnel(options: [
-            "debug": NSNumber(booleanLiteral: debug),
-        ])
+    func startConnection() async throws {
+        try self.manager?.connection.startVPNTunnel()
         self.isTransitioning = true
         self.manager?.isOnDemandEnabled = true
         try await self.saveManagerPreferences()
@@ -135,6 +131,7 @@ open class VPNConfigurationService: ObservableObject {
         message.setSettings = settings
         return try await Rpc(message: message)
     }
+    
     private func Rpc(message: Proxyservice_Request) async throws {
         guard let session = self.manager?.connection as? NETunnelProviderSession else {
             return
@@ -145,7 +142,7 @@ open class VPNConfigurationService: ObservableObject {
                 try session.sendProviderMessage(message.serializedData()) { response in
                     if response != nil {
                         let responseString = NSString(data: response!, encoding: String.Encoding.utf8.rawValue)
-                        self.logger.info("Received response frommm the provider: \(responseString.debugDescription)")
+                        self.logger.info("Received response from the provider: \(responseString.debugDescription)")
                         continuation.resume(returning: ())
                     } else {
                         self.logger.info("Got a nil response from the provider")
