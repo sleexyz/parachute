@@ -11,7 +11,7 @@ import Foundation
 import Logging
 
 
-struct MainView: View {
+struct ContentView: View {
     private let logger: Logger = Logger(label: "industries.strange.slowdown.ContentView")
     @ObservedObject var service: VPNConfigurationService = .shared
     @ObservedObject var store: SettingsStore = .shared
@@ -32,7 +32,8 @@ struct MainView: View {
         }
         
         if service.hasManager {
-            return AnyView(AppView(model: appViewModel))
+            return AnyView(AppView()
+                .environmentObject(appViewModel))
             
         } else {
             return AnyView(SetupView())
@@ -44,6 +45,6 @@ struct MainView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView()
+        ContentView()
     }
 }

@@ -7,8 +7,10 @@
 
 import Foundation
 import SwiftUI
+import Logging
 
 struct SnapCarousel<Content: View>: View {
+    let logger = Logger.init(label: "industries.strange.slowdown.SnapCarousel")
     var content: (Mode) -> Content
     var list: [Mode]
     
@@ -18,7 +20,6 @@ struct SnapCarousel<Content: View>: View {
     @Binding var index: Int
     
     init(spacing: CGFloat = 0, trailingSpace: CGFloat = 0, index: Binding<Int>, items: [Mode], @ViewBuilder content: @escaping (Mode)->Content){
-        
         self.list = items
         self.spacing = spacing
         self.trailingSpace = trailingSpace
@@ -39,8 +40,7 @@ struct SnapCarousel<Content: View>: View {
             HStack (spacing: spacing) {
                 ForEach(list) { item in
                     content(item)
-                    // .frame(width: proxy.size.width - trailingSpace)
-                        .frame(width: UIScreen.main.bounds.size.width / 2, height: UIScreen.main.bounds.size.height/2)
+                        .frame(minWidth: UIScreen.main.bounds.size.width, maxHeight: .infinity)
 
                 }
 
@@ -60,7 +60,7 @@ struct SnapCarousel<Content: View>: View {
                     }
                 }
             }
-            .gesture(
+            .highPriorityGesture(
                 DragGesture(minimumDistance: 8, coordinateSpace: .local)
                     .updating($gestureOffset, body: { value, out, _ in
                         out = value.translation.width
@@ -70,6 +70,7 @@ struct SnapCarousel<Content: View>: View {
                         if abs(offsetX) < 50 {
                             return
                         }
+                        let lastIndex = currentIndex
                         if offsetX > 0 {
                             currentIndex = max(min(currentIndex - 1, list.count - 1), 0)
                         }
@@ -77,7 +78,8 @@ struct SnapCarousel<Content: View>: View {
                             currentIndex = max(min(currentIndex + 1, list.count - 1), 0)
                         }
                         if index != currentIndex {
-                            list[currentIndex].onEnter()
+                            list[lastIndex].onExit?()
+                            list[currentIndex].onEnter?()
                         }
                         index = currentIndex
                     })
@@ -94,5 +96,6 @@ struct SnapCarousel<Content: View>: View {
 
 struct Mode: Identifiable {
     var id: String
-    var onEnter : () -> Void
+    var onEnter: (() -> Void)?
+    var onExit: (() -> Void)?
 }
