@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"math"
 	"time"
 
@@ -10,47 +9,44 @@ import (
 
 type ControllableFlow struct {
 	*flow.SpeedControlledFlow
-	*Controller
+	c  *Controller
 	ip string
 }
 
 func InitControllableFlow(c *Controller, ip string) *ControllableFlow {
 	f := &ControllableFlow{
-		Controller: c,
-		ip:         ip,
+		c:  c,
+		ip: ip,
 	}
 	f.SpeedControlledFlow = flow.InitSpeedControlledFlow(c, f)
 	f.UpdateTxProvider = f
 	return f
 }
 
-func (f *ControllableFlow) rxSpeedTarget() (float64, *App, string) {
-	app, reason := f.getAppReason()
-	if app == nil {
-		return math.Inf(1), nil, reason
-	}
-	return f.RxSpeedTarget(), app, reason
+type plan struct {
+	rxSpeedTarget float64
+	app           *App
+	reason        string
 }
 
-func (f *ControllableFlow) getAppReason() (*App, string) {
-	appMatch, probability := f.GetFuzzyAppMatch(f.ip)
+func (f *ControllableFlow) makePlan() *plan {
+	appMatch, probability := f.c.GetFuzzyAppMatch(f.ip)
 	if appMatch != nil {
 		if probability > 0.5 {
-			return appMatch.App, appMatch.Reason()
-		} else {
-			return nil, fmt.Sprintf("too low: %.2f, correlation: %.2f", probability, Logit(probability))
+			return &plan{rxSpeedTarget: f.c.RxSpeedTarget(), app: appMatch.App, reason: appMatch.Reason()}
 		}
+		return &plan{rxSpeedTarget: math.Inf(1), app: appMatch.App, reason: appMatch.Reason()}
 	}
-	return nil, ""
+	return &plan{rxSpeedTarget: math.Inf(1), reason: "no match"}
 }
 
 func (f *ControllableFlow) InitialSpeed() float64 {
-	target, _, _ := f.rxSpeedTarget()
-	return target
+	plan := f.makePlan()
+	return plan.rxSpeedTarget
 }
 
 func (f *ControllableFlow) UpdateTx(n int, now time.Time) {
-	am := f.GetDefiniteAppMatch(f.ip)
+	am := f.c.GetDefiniteAppMatch(f.ip)
 	if am != nil {
 		_ = am.AddTxPoints(1.0, &now)
 	}
@@ -58,18 +54,18 @@ func (f *ControllableFlow) UpdateTx(n int, now time.Time) {
 }
 
 func (f *ControllableFlow) UpdateSpeed(ctx *flow.UpdateRxCtx) float64 {
-	am := f.GetDefiniteAppMatch(f.ip)
+	am := f.c.GetDefiniteAppMatch(f.ip)
 	if am != nil {
 		_ = am.AddRxPoints(1.0, ctx.Now)
 	}
-	f.RecordIp(f.ip)
-	st, app, reason := f.rxSpeedTarget()
-	ctx.Sample.RxSpeedTarget = st
+	f.c.RecordIp(f.ip)
+	plan := f.makePlan()
+	ctx.Sample.RxSpeedTarget = plan.rxSpeedTarget
 	ctx.Sample.Ip = f.ip
-	ctx.Sample.SlowReason = reason
-	ctx.Sample.DnsMatchers = f.DebugGetEntries(f.ip)
-	if app != nil {
-		ctx.Sample.AppMatch = app.Name()
+	ctx.Sample.SlowReason = plan.reason
+	ctx.Sample.DnsMatchers = f.c.DebugGetEntries(f.ip)
+	if plan.app != nil {
+		ctx.Sample.AppMatch = plan.app.Name()
 	}
-	return st
+	return plan.rxSpeedTarget
 }
