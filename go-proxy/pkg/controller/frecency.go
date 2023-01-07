@@ -76,6 +76,25 @@ func (p *LinPoints) AddPoints(points float64, now *time.Time) float64 {
 	return newPoints
 }
 
+func (p *LinPoints) ProgressiveRxSpeedTarget() float64 {
+	ratio := p.HP() / p.cap
+	if ratio < 1.0/6.0 {
+		return 50e3
+	}
+	if ratio < 2.0/6.0 {
+		return 100e3
+	}
+	if ratio < 3.0/6.0 {
+		return 200e3
+	}
+	return math.Inf(1)
+}
+
+func (p *LinPoints) HP() float64 {
+	now := time.Now()
+	return p.cap - p.Points(&now)
+}
+
 // Exponentially decaying points
 type ExpPoints struct {
 	lambda float64

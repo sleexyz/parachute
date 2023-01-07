@@ -8,7 +8,6 @@ import (
 )
 
 func makeTestAppResolver() *AppResolver {
-	sp := InitSettingsManager()
 	apps := InitApps([]*AppConfig{
 		{
 			name: "social",
@@ -18,7 +17,7 @@ func makeTestAppResolver() *AppResolver {
 				},
 			},
 		},
-	}, sp)
+	})
 	ar := InitAppResolver(&AppResolverOptions{
 		failedIpMatchCacheSize:  1,
 		failedDnsMatchCacheSize: 1,

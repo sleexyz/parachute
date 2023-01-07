@@ -5,50 +5,39 @@ import (
 	"net/netip"
 	"time"
 
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"strange.industries/go-proxy/pb/proxyservice"
 )
 
 type App struct {
 	*AppConfig
 
-	sp SettingsProvider
+	// Amount of points of damage taken.
+	// Heals towards 0.
+	// usagePoints *LinPoints
 
-	usagePoints *LinPoints
 	// Max txPoints since usagePoints was sampled
 	txPointsMax float64
 	txPoints    *ExpPoints
 	rxPoints    *ExpPoints
 }
 
-func InitApps(appConfigs []*AppConfig, sp SettingsProvider) []*App {
+func InitApps(appConfigs []*AppConfig) []*App {
 	apps := []*App{}
 	for _, ac := range appConfigs {
-		app := InitApp(ac, sp)
+		app := InitApp(ac)
 		apps = append(apps, app)
 	}
 	return apps
 }
 
-func InitApp(ac *AppConfig, sp SettingsProvider) *App {
-	s := sp.Settings()
+func InitApp(ac *AppConfig) *App {
 	app := &App{
 		AppConfig:   ac,
-		sp:          sp,
-		usagePoints: InitLinPoints(s.UsageHealRate, s.UsageMaxHP),
 		txPointsMax: 0,
 		txPoints:    InitExpPoints(math.Pow(0.5, 1.0/5.0), 2),
 		rxPoints:    InitExpPoints(math.Pow(0.5, 1.0/5.0), 2),
 	}
-	sp.RegisterChangeListener(app)
 	return app
-}
-
-func (a *App) BeforeSettingsChange() {
-}
-func (a *App) OnSettingsChange(oldSettings *proxyservice.Settings, settings *proxyservice.Settings) {
-	a.usagePoints.SetHealRate(settings.UsageHealRate)
-	a.usagePoints.SetCap(settings.UsageMaxHP)
 }
 
 func (a *App) AppUsed() bool {
@@ -100,22 +89,15 @@ func (a *App) MatchByIp(ip netip.Addr) *netip.Prefix {
 func (a *App) RecordState() *proxyservice.AppState {
 	s := &proxyservice.AppState{}
 	s.Name = a.name
-	now := time.Now()
-	s.UsagePoints = a.usagePoints.Points(&now)
-	s.UsagePointsDate = timestamppb.New(*a.usagePoints.fdate)
+	// now := time.Now()
+	// s.UsagePoints = a.usagePoints.Points(&now)
+	// s.UsagePointsDate = timestamppb.New(*a.usagePoints.fdate)
 	s.TxPoints = a.txPoints.Points()
 	s.TxPointsMax = a.txPointsMax
 	s.RxPoints = a.rxPoints.Points()
+	// s.ProgressiveRxSpeedTarget = a.usagePoints.ProgressiveRxSpeedTarget()
+	// log.Printf("ratio: %.2f, speed: %.2f", a.usagePoints.HP()/a.usagePoints.cap, s.ProgressiveRxSpeedTarget)
 	return s
-}
-
-func (a *App) UpdateUsagePoints(dt time.Duration, now *time.Time) {
-	if a.txPointsMax >= 1 {
-		// Add points at 1 point per minute + lost points due to healing.
-		lostPoints := a.usagePoints.DurationToPoints(dt)
-		toAdd := float64(dt)/float64(time.Minute) + lostPoints
-		a.usagePoints.AddPoints(toAdd, now)
-	}
 }
 
 func (a *App) ResetSampleState() {

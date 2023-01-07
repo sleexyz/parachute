@@ -4,6 +4,7 @@ import (
 	"math"
 	"time"
 
+	"strange.industries/go-proxy/pb/proxyservice"
 	"strange.industries/go-proxy/pkg/controller/flow"
 )
 
@@ -23,25 +24,53 @@ func InitControllableFlow(c *Controller, ip string) *ControllableFlow {
 	return f
 }
 
-type plan struct {
-	rxSpeedTarget float64
-	app           *App
-	reason        string
+type DecisionInfo struct {
+	Use    bool
+	App    *App
+	Reason string
 }
 
-func (f *ControllableFlow) makePlan() *plan {
+type Decision struct {
+	*DecisionInfo
+	rxSpeedTarget float64
+}
+
+func (f *ControllableFlow) makeDecision() *Decision {
+	if f.c.sm.Settings().Mode == proxyservice.Mode_FOCUS {
+		return f.makeFocusDecision()
+	}
+	return f.makeProgressiveDecision()
+}
+
+func (f *ControllableFlow) makeProgressiveDecision() *Decision {
+	di := f.getDecisionInfo()
+	if di.Use && di.App != nil {
+		return &Decision{rxSpeedTarget: f.c.usagePoints.ProgressiveRxSpeedTarget(), DecisionInfo: di}
+	}
+	return &Decision{rxSpeedTarget: math.Inf(1), DecisionInfo: di}
+}
+
+func (f *ControllableFlow) makeFocusDecision() *Decision {
+	di := f.getDecisionInfo()
+	if di.Use {
+		return &Decision{rxSpeedTarget: f.c.RxSpeedTarget(), DecisionInfo: di}
+	}
+	return &Decision{rxSpeedTarget: math.Inf(1), DecisionInfo: di}
+}
+
+func (f *ControllableFlow) getDecisionInfo() *DecisionInfo {
 	appMatch, probability := f.c.GetFuzzyAppMatch(f.ip)
 	if appMatch != nil {
 		if probability > 0.5 {
-			return &plan{rxSpeedTarget: f.c.RxSpeedTarget(), app: appMatch.App, reason: appMatch.Reason()}
+			return &DecisionInfo{Use: true, App: appMatch.App, Reason: appMatch.Reason()}
 		}
-		return &plan{rxSpeedTarget: math.Inf(1), app: appMatch.App, reason: appMatch.Reason()}
+		return &DecisionInfo{Use: false, App: appMatch.App, Reason: appMatch.Reason()}
 	}
-	return &plan{rxSpeedTarget: math.Inf(1), reason: "no match"}
+	return &DecisionInfo{Use: false, Reason: "no match"}
 }
 
 func (f *ControllableFlow) InitialSpeed() float64 {
-	plan := f.makePlan()
+	plan := f.makeDecision()
 	return plan.rxSpeedTarget
 }
 
@@ -59,13 +88,13 @@ func (f *ControllableFlow) UpdateSpeed(ctx *flow.UpdateRxCtx) float64 {
 		_ = am.AddRxPoints(1.0, ctx.Now)
 	}
 	f.c.RecordIp(f.ip)
-	plan := f.makePlan()
-	ctx.Sample.RxSpeedTarget = plan.rxSpeedTarget
+	d := f.makeDecision()
+	ctx.Sample.RxSpeedTarget = d.rxSpeedTarget
 	ctx.Sample.Ip = f.ip
-	ctx.Sample.SlowReason = plan.reason
+	ctx.Sample.SlowReason = d.Reason
 	ctx.Sample.DnsMatchers = f.c.DebugGetEntries(f.ip)
-	if plan.app != nil {
-		ctx.Sample.AppMatch = plan.app.Name()
+	if d.App != nil {
+		ctx.Sample.AppMatch = d.App.Name()
 	}
-	return plan.rxSpeedTarget
+	return d.rxSpeedTarget
 }
