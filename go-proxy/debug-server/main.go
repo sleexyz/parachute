@@ -67,7 +67,8 @@ func main() {
 	ffi.InitSentry("dev")
 	defer sentry.Recover()
 	a := InitAnalyticsServer(8084)
-	c := controller.Init(a, controller.ProdAppConfigs)
+	sm := InitDebugSettingsManager()
+	c := controller.Init(a, sm, controller.ProdAppConfigs)
 	a.C = c
 	// a := &analytics.NoOpAnalytics{}
 	proxy := proxy.InitOnDeviceProxy(a, c)

@@ -10,7 +10,8 @@ import (
 )
 
 func TestAppUpdateUsagePointsAboveThreshold(t *testing.T) {
-	c := Init(&analytics.NoOpAnalytics{}, testAppConfigs)
+	sm := InitSettingsManager()
+	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
 	now := time.Now()
 	a := c.apps[0]
@@ -26,7 +27,8 @@ func TestAppUpdateUsagePointsAboveThreshold(t *testing.T) {
 }
 
 func TestAppUsagePointsNoopsUnderThreshold(t *testing.T) {
-	c := Init(&analytics.NoOpAnalytics{}, testAppConfigs)
+	sm := InitSettingsManager()
+	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
 	now := time.Now()
 	a := c.apps[0]
@@ -42,7 +44,8 @@ func TestAppUsagePointsNoopsUnderThreshold(t *testing.T) {
 }
 
 func TestAppUsagePointsRespondsToUpdate(t *testing.T) {
-	c := Init(&analytics.NoOpAnalytics{}, testAppConfigs)
+	sm := InitSettingsManager()
+	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
 	now := time.Now()
 	a := c.apps[0]

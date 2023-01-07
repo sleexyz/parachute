@@ -84,7 +84,8 @@ func Init(env string) ProxyBridge {
 	InitSentry(env)
 	defer sentry.Recover()
 	a := &analytics.NoOpAnalytics{}
-	c := controller.Init(a, controller.ProdAppConfigs)
+	sm := controller.InitSettingsManager()
+	c := controller.Init(a, sm, controller.ProdAppConfigs)
 	return &OnDeviceProxyBridge{
 		Proxy: proxy.InitOnDeviceProxy(a, c),
 	}

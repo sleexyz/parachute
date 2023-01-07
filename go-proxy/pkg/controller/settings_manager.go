@@ -1,6 +1,10 @@
 package controller
 
-import "strange.industries/go-proxy/pb/proxyservice"
+import (
+	"log"
+
+	"strange.industries/go-proxy/pb/proxyservice"
+)
 
 type SettingsChangeListener interface {
 	BeforeSettingsChange()
@@ -12,31 +16,37 @@ type SettingsProvider interface {
 	RegisterChangeListener(listener SettingsChangeListener)
 }
 
-type SettingsManager struct {
+type SettingsManager interface {
+	SettingsProvider
+	SetSettings(settings *proxyservice.Settings)
+}
+
+type SettingsManagerImpl struct {
 	changeListeners []SettingsChangeListener
 	settings        *proxyservice.Settings
 }
 
-func InitSettingsManager() *SettingsManager {
-	return &SettingsManager{
+func InitSettingsManager() *SettingsManagerImpl {
+	return &SettingsManagerImpl{
 		settings:        &proxyservice.Settings{},
 		changeListeners: []SettingsChangeListener{},
 	}
 }
 
-func (sm *SettingsManager) RegisterChangeListener(listener SettingsChangeListener) {
+func (sm *SettingsManagerImpl) RegisterChangeListener(listener SettingsChangeListener) {
 	sm.changeListeners = append(sm.changeListeners, listener)
 }
 
-func (sm *SettingsManager) Settings() *proxyservice.Settings {
+func (sm *SettingsManagerImpl) Settings() *proxyservice.Settings {
 	return sm.settings
 }
 
-func (sm *SettingsManager) SetSettings(settings *proxyservice.Settings) {
+func (sm *SettingsManagerImpl) SetSettings(settings *proxyservice.Settings) {
 	for _, listener := range sm.changeListeners {
 		listener.BeforeSettingsChange()
 	}
 
+	log.Printf("settings: %v", settings)
 	oldSettings := sm.settings
 	sm.settings = settings
 

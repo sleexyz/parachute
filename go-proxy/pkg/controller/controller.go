@@ -22,7 +22,7 @@ type ControllerSettingsReadWrite interface {
 type Controller struct {
 	*AppResolver
 	analytics.SamplePublisher
-	sm             *SettingsManager
+	sm             SettingsManager
 	temporaryTimer *time.Timer
 	fm             map[string]*ControllableFlow
 	gcTicker       *time.Ticker
@@ -35,8 +35,7 @@ type Controller struct {
 	stopTickers func()
 }
 
-func Init(sp analytics.SamplePublisher, appConfigs []*AppConfig) *Controller {
-	sm := InitSettingsManager()
+func Init(sp analytics.SamplePublisher, sm SettingsManager, appConfigs []*AppConfig) *Controller {
 	ao := &AppResolverOptions{
 		failedIpMatchCacheSize:  1024,
 		failedDnsMatchCacheSize: 1024,
