@@ -26,10 +26,14 @@ struct AppView: View {
         VStack{
             if !service.isConnected {
                 VStack {
+                    Spacer()
                     PrimaryButton(title: "Start", action: model.toggleConnection, isLoading: service.isTransitioning)
                     Spacer()
                     Toggle(isOn: $store.settings.debug, label: { Text("Debug")})
                         .disabled(service.isTransitioning)
+                        .onChange(of: store.settings.debug) { _ in
+                            model.saveSettings()
+                        }
                 }.padding()
             } else {
                 VStack {
@@ -57,6 +61,14 @@ struct AppView_Previews: PreviewProvider {
     static var previews: some View {
         let service = MockVPNConfigurationService(store: .shared)
         service.setIsConnected(value: true)
+        return AppView(service: service).environmentObject(AppViewModel())
+    }
+}
+
+struct AppViewOff_Previews: PreviewProvider {
+    static var previews: some View {
+        let service = MockVPNConfigurationService(store: .shared)
+        service.setIsConnected(value: false)
         return AppView(service: service).environmentObject(AppViewModel())
     }
 }

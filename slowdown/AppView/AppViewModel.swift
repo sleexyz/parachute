@@ -104,8 +104,21 @@ final class AppViewModel: ObservableObject {
             }
     }
     
+    func saveSettings() {
+            Task {
+                do {
+                    try self.store.save()
+                } catch {
+                    self.showError(
+                        title: "Failed to save settings",
+                        message: error.localizedDescription
+                    )
+                }
+            }
+    }
     
-    private func showError(title: String, message: String) {
+    
+    func showError(title: String, message: String) {
         self.errorTitle = title
         self.errorMessage = message
         self.isShowingError = true
