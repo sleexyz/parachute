@@ -10,6 +10,7 @@ import SwiftUI
 
 
 
+
 struct ProgressiveModeView: View {
     @ObservedObject var store: SettingsStore = .shared
     @ObservedObject var stateController: StateController = .shared
@@ -24,11 +25,7 @@ struct ProgressiveModeView: View {
                 .padding()
                 .frame(maxWidth: .infinity)
             HStack {
-                Text("Damage")
-                TextField("Damage", value: $stateController.state.usagePoints, format: .number)
-                    .disabled(true)
-                    .textFieldStyle(.roundedBorder)
-                    .padding()
+                DamageBar(damage: stateController.state.usagePoints, maxHP: store.settings.usageMaxHp)
             }
             HStack {
                 Text("Max HP")
