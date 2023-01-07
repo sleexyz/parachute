@@ -32,13 +32,16 @@ message Settings {
 message Request {
     oneof message {
         Settings setSettings = 1;
-        ResetStateRequest resetState = 2;
+        GetStateRequest getState = 2;
     }
 }
 
-message ResetStateRequest {
+message GetStateRequest {
 }
 
+message GetStateResponse {
+    double usagePoints = 1;
+}
 
 message ServerState {
     repeated AppState apps = 1;

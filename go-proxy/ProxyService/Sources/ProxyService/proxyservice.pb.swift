@@ -112,19 +112,19 @@ public struct Proxyservice_Request {
     set {message = .setSettings(newValue)}
   }
 
-  public var resetState: Proxyservice_ResetStateRequest {
+  public var getState: Proxyservice_GetStateRequest {
     get {
-      if case .resetState(let v)? = message {return v}
-      return Proxyservice_ResetStateRequest()
+      if case .getState(let v)? = message {return v}
+      return Proxyservice_GetStateRequest()
     }
-    set {message = .resetState(newValue)}
+    set {message = .getState(newValue)}
   }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Message: Equatable {
     case setSettings(Proxyservice_Settings)
-    case resetState(Proxyservice_ResetStateRequest)
+    case getState(Proxyservice_GetStateRequest)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proxyservice_Request.OneOf_Message, rhs: Proxyservice_Request.OneOf_Message) -> Bool {
@@ -136,8 +136,8 @@ public struct Proxyservice_Request {
         guard case .setSettings(let l) = lhs, case .setSettings(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
-      case (.resetState, .resetState): return {
-        guard case .resetState(let l) = lhs, case .resetState(let r) = rhs else { preconditionFailure() }
+      case (.getState, .getState): return {
+        guard case .getState(let l) = lhs, case .getState(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       default: return false
@@ -149,10 +149,22 @@ public struct Proxyservice_Request {
   public init() {}
 }
 
-public struct Proxyservice_ResetStateRequest {
+public struct Proxyservice_GetStateRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Proxyservice_GetStateResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var usagePoints: Double = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -238,7 +250,8 @@ extension Proxyservice_Mode: @unchecked Sendable {}
 extension Proxyservice_Settings: @unchecked Sendable {}
 extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
-extension Proxyservice_ResetStateRequest: @unchecked Sendable {}
+extension Proxyservice_GetStateRequest: @unchecked Sendable {}
+extension Proxyservice_GetStateResponse: @unchecked Sendable {}
 extension Proxyservice_ServerState: @unchecked Sendable {}
 extension Proxyservice_AppState: @unchecked Sendable {}
 extension Proxyservice_Sample: @unchecked Sendable {}
@@ -337,7 +350,7 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
   public static let protoMessageName: String = _protobuf_package + ".Request"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "setSettings"),
-    2: .same(proto: "resetState"),
+    2: .same(proto: "getState"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -360,16 +373,16 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
         }
       }()
       case 2: try {
-        var v: Proxyservice_ResetStateRequest?
+        var v: Proxyservice_GetStateRequest?
         var hadOneofValue = false
         if let current = self.message {
           hadOneofValue = true
-          if case .resetState(let m) = current {v = m}
+          if case .getState(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {
           if hadOneofValue {try decoder.handleConflictingOneOf()}
-          self.message = .resetState(v)
+          self.message = .getState(v)
         }
       }()
       default: break
@@ -387,8 +400,8 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       guard case .setSettings(let v)? = self.message else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     }()
-    case .resetState?: try {
-      guard case .resetState(let v)? = self.message else { preconditionFailure() }
+    case .getState?: try {
+      guard case .getState(let v)? = self.message else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     }()
     case nil: break
@@ -403,8 +416,8 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
   }
 }
 
-extension Proxyservice_ResetStateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ResetStateRequest"
+extension Proxyservice_GetStateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".GetStateRequest"
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -416,7 +429,39 @@ extension Proxyservice_ResetStateRequest: SwiftProtobuf.Message, SwiftProtobuf._
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proxyservice_ResetStateRequest, rhs: Proxyservice_ResetStateRequest) -> Bool {
+  public static func ==(lhs: Proxyservice_GetStateRequest, rhs: Proxyservice_GetStateRequest) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_GetStateResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".GetStateResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "usagePoints"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularDoubleField(value: &self.usagePoints) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.usagePoints != 0 {
+      try visitor.visitSingularDoubleField(value: self.usagePoints, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_GetStateResponse, rhs: Proxyservice_GetStateResponse) -> Bool {
+    if lhs.usagePoints != rhs.usagePoints {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

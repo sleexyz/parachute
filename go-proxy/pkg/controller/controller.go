@@ -14,11 +14,6 @@ const (
 	DefaultRxSpeedTarget float64 = 56000.0 // 100kbps
 )
 
-type ControllerSettingsReadWrite interface {
-	ResetState()
-	SetSettings(settings *proxyservice.Settings)
-}
-
 type Controller struct {
 	*AppResolver
 	analytics.SamplePublisher
@@ -179,14 +174,14 @@ func (c *Controller) resetAppSampleStates() {
 	}
 }
 
-// TODO: delete
-func (c *Controller) ResetState() {
-	for k := range c.fm {
-		delete(c.fm, k)
+func (c *Controller) GetState() *proxyservice.GetStateResponse {
+	now := time.Now()
+	return &proxyservice.GetStateResponse{
+		UsagePoints: c.usagePoints.Points(&now),
 	}
 }
 
-func (c *Controller) RecordState() *proxyservice.ServerState {
+func (c *Controller) DebugRecordState() *proxyservice.ServerState {
 	state := c.AppResolver.RecordState()
 	now := time.Now()
 	state.UsagePoints = c.usagePoints.Points(&now)

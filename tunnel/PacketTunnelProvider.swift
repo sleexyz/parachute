@@ -167,10 +167,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     override func handleAppMessage(_ messageData: Data, completionHandler: ((Data?) -> Void)?) {
         do {
-            try proxy?.rpc(input: messageData)
-            // Add code here to handle the message.
-            let responseData = "ack".data(using: String.Encoding.utf8)
-            completionHandler?(responseData)
+            let response = try proxy?.rpc(input: messageData)
+            completionHandler?(response)
         } catch {
             self.logger.error("Error: \(error.localizedDescription)")
             completionHandler?(nil)

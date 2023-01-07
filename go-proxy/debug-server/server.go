@@ -20,10 +20,10 @@ var (
 
 type DebugServerProxy struct {
 	proxyBridge ffi.ProxyBridge
-	proxy       proxy.Proxy
+	proxy       *proxy.Proxy
 }
 
-func InitDebugServerProxy(proxyBridge ffi.ProxyBridge, proxy proxy.Proxy) *DebugServerProxy {
+func InitDebugServerProxy(proxyBridge ffi.ProxyBridge, proxy *proxy.Proxy) *DebugServerProxy {
 	return &DebugServerProxy{proxyBridge: proxyBridge, proxy: proxy}
 }
 
@@ -53,7 +53,7 @@ func (p *DebugServerProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, fmt.Sprintf("command returned error: %v", err), http.StatusInternalServerError)
 	}
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/octet-stream")
 	_, err = w.Write(out)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
