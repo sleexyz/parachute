@@ -58,7 +58,7 @@ func (a *AnalyticsServer) Start() {
 				a.ticker.Stop()
 				return
 			case <-a.ticker.C:
-				state := a.C.RecordState()
+				state := a.C.DebugRecordState()
 				data, err := protojson.Marshal(state)
 				if err != nil {
 					log.Fatalf("Error marshalling app state: %s", state)

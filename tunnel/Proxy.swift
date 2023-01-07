@@ -24,7 +24,7 @@ public struct Proxy {
         bridge.close()
     }
     
-    func rpc(input: Data?) throws {
-        try bridge.rpc(input)
+    func rpc(input: Data?) throws -> Data {
+        return try bridge.rpc(input)
     }
 }

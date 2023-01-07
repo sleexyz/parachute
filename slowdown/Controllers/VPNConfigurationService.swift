@@ -129,25 +129,25 @@ open class VPNConfigurationService: ObservableObject {
     func SetSettings(settings: Proxyservice_Settings) async throws {
         var message = Proxyservice_Request()
         message.setSettings = settings
-        return try await Rpc(message: message)
+        _ = try await Rpc(message: message)
     }
     
-    private func Rpc(message: Proxyservice_Request) async throws {
+    func GetState() async throws -> Proxyservice_GetStateResponse {
+        var message = Proxyservice_Request()
+        message.getState = Proxyservice_GetStateRequest()
+        let respData = try await Rpc(message: message)
+        return try Proxyservice_GetStateResponse(serializedData: respData ?? Data.init())
+    }
+    
+    private func Rpc(message: Proxyservice_Request) async throws -> Data? {
         guard let session = self.manager?.connection as? NETunnelProviderSession else {
-            return
+            return nil
         }
         return try await withCheckedThrowingContinuation { continuation in
             do {
                 self.logger.info("\(message.debugDescription)")
                 try session.sendProviderMessage(message.serializedData()) { response in
-                    if response != nil {
-                        let responseString = NSString(data: response!, encoding: String.Encoding.utf8.rawValue)
-                        self.logger.info("Received response from the provider: \(responseString.debugDescription)")
-                        continuation.resume(returning: ())
-                    } else {
-                        self.logger.info("Got a nil response from the provider")
-                        continuation.resume(throwing: UserError.message(message: "Got a nil response from the provider"))
-                    }
+                    continuation.resume(returning: response)
                 }
             } catch let error {
                 continuation.resume(with: .failure(error))

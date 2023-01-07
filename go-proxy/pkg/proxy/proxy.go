@@ -14,27 +14,21 @@ const (
 	proxyAddr = "10.0.0.8"
 )
 
-type Proxy interface {
-	controller.ControllerSettingsReadWrite
-	Start(port int, startRequest *proxyservice.Settings)
-	Close()
-}
-
-type ServerProxy struct {
+type Proxy struct {
 	analytics.Analytics
 	*controller.Controller
 	i      tunconn.TunConn
 	router *router.Router
 }
 
-func InitOnDeviceProxy(a analytics.Analytics, controller *controller.Controller) *ServerProxy {
-	return &ServerProxy{
+func InitOnDeviceProxy(a analytics.Analytics, controller *controller.Controller) *Proxy {
+	return &Proxy{
 		Controller: controller,
 		Analytics:  a,
 	}
 }
 
-func (p *ServerProxy) Start(port int, s *proxyservice.Settings) {
+func (p *Proxy) Start(port int, s *proxyservice.Settings) {
 	p.Controller.SetSettings(s)
 	i, err := tunconn.InitUDPServerConn(port)
 	if err != nil {
@@ -46,7 +40,7 @@ func (p *ServerProxy) Start(port int, s *proxyservice.Settings) {
 	p.router.Start()
 }
 
-func (p *ServerProxy) Close() {
+func (p *Proxy) Close() {
 	p.Analytics.Close()
 	p.i.Close()
 	p.router.Close()

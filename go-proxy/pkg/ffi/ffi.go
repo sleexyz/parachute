@@ -1,7 +1,6 @@
 package ffi
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"runtime"
@@ -10,6 +9,7 @@ import (
 	"github.com/getsentry/sentry-go"
 	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 	"strange.industries/go-proxy/pb/proxyservice"
 	"strange.industries/go-proxy/pkg/analytics"
 	"strange.industries/go-proxy/pkg/controller"
@@ -28,7 +28,7 @@ type ProxyBridge interface {
 }
 
 type OnDeviceProxyBridge struct {
-	proxy.Proxy
+	*proxy.Proxy
 }
 
 func (p *OnDeviceProxyBridge) StartProxy(port int, settingsData []byte) {
@@ -50,23 +50,30 @@ func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
 	}
 	debugText, _ := debugMarshalOptions.Marshal(r)
 	log.Printf("/Rpc %s", debugText)
+
+	var resp protoreflect.ProtoMessage
 	switch r.Message.(type) {
 	case *proxyservice.Request_SetSettings:
 		m := r.GetSetSettings()
 		p.Proxy.SetSettings(m)
-	case *proxyservice.Request_ResetState:
-		p.Proxy.ResetState()
+	case *proxyservice.Request_GetState:
+		resp = p.Proxy.GetState()
 	default:
 		return nil, fmt.Errorf("could not parse rpc command")
 	}
-	return p.encodeResponse(struct{}{}), nil
+	if resp != nil {
+		debugText, _ := debugMarshalOptions.Marshal(resp)
+		log.Printf("/RpcResponse %s", debugText)
+		return p.encodeResponse(resp), nil
+	}
+	return nil, nil
 }
 
-func (p *OnDeviceProxyBridge) encodeResponse(resp any) []byte {
-	out, err := json.MarshalIndent(resp, "", "  ")
+func (p *OnDeviceProxyBridge) encodeResponse(resp protoreflect.ProtoMessage) []byte {
+	out, err := proto.Marshal(resp)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
-		return make([]byte, 0)
+		return nil
 	}
 	return out
 }

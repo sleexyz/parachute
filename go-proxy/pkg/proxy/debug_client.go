@@ -52,9 +52,17 @@ func (p *DebugClientProxyBridge) Close() {
 func (p *DebugClientProxyBridge) Rpc(input []byte) ([]byte, error) {
 	url := fmt.Sprintf("http://%s/Rpc", p.debugServerAddr)
 	log.Printf("POST %s", url)
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(input))
+	resp, err := http.Post(url, "application/octet-stream", bytes.NewBuffer(input))
 	if err != nil {
 		return nil, err
 	}
-	return io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("request failed with status code: %d", resp.StatusCode)
+		return nil, err
+	}
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
