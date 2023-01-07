@@ -30,6 +30,7 @@ type Controller struct {
 	lastAppUsageUpdatedTime *time.Time
 	appUsageUpdateTicker    *time.Ticker
 	appUsageUpdateCounter   int
+	usagePoints             *LinPoints
 
 	stopTickers func()
 }
@@ -39,12 +40,13 @@ func Init(sp analytics.SamplePublisher, appConfigs []*AppConfig) *Controller {
 	ao := &AppResolverOptions{
 		failedIpMatchCacheSize:  1024,
 		failedDnsMatchCacheSize: 1024,
-		apps:                    InitApps(appConfigs, sm),
+		apps:                    InitApps(appConfigs),
 	}
 	c := &Controller{
 		sm:              sm,
 		AppResolver:     InitAppResolver(ao),
 		SamplePublisher: sp,
+		usagePoints:     InitLinPoints(sm.Settings().UsageHealRate, sm.Settings().UsageMaxHP),
 		fm:              make(map[string]*ControllableFlow),
 	}
 	sm.RegisterChangeListener(c)
@@ -64,7 +66,7 @@ func (c *Controller) SetSettings(settings *proxyservice.Settings) {
 }
 
 func (c *Controller) BeforeSettingsChange() {
-	c.updateAppUsagePoints()
+	// c.updateAppUsagePoints()
 }
 
 func (c *Controller) OnSettingsChange(oldSettings *proxyservice.Settings, settings *proxyservice.Settings) {
@@ -76,6 +78,8 @@ func (c *Controller) OnSettingsChange(oldSettings *proxyservice.Settings, settin
 			c.evictExistingTimer()
 		}
 	}
+	c.usagePoints.SetHealRate(settings.UsageHealRate)
+	c.usagePoints.SetCap(settings.UsageMaxHP)
 }
 
 func (c *Controller) evictExistingTimer() {
@@ -154,10 +158,20 @@ func (c *Controller) garbageCollect() {
 func (c *Controller) updateAppUsagePoints() {
 	now := time.Now()
 	dt := now.Sub(*c.lastAppUsageUpdatedTime)
-	for _, app := range c.apps {
-		app.UpdateUsagePoints(dt, &now)
-	}
+	c.UpdateUsagePoints(dt, &now)
 	c.lastAppUsageUpdatedTime = &now
+}
+
+func (c *Controller) UpdateUsagePoints(dt time.Duration, now *time.Time) {
+	for _, app := range c.apps {
+		if app.txPointsMax >= 1 {
+			// Add points at 1 point per minute + lost points due to healing.
+			lostPoints := c.usagePoints.DurationToPoints(dt)
+			toAdd := float64(dt)/float64(time.Minute) + lostPoints
+			c.usagePoints.AddPoints(toAdd, now)
+			break
+		}
+	}
 }
 
 func (c *Controller) resetAppSampleStates() {
@@ -174,7 +188,12 @@ func (c *Controller) ResetState() {
 }
 
 func (c *Controller) RecordState() *proxyservice.ServerState {
-	return c.AppResolver.RecordState()
+	state := c.AppResolver.RecordState()
+	now := time.Now()
+	state.UsagePoints = c.usagePoints.Points(&now)
+	state.Ratio = c.usagePoints.HP() / c.usagePoints.cap
+	state.ProgressiveRxSpeedTarget = c.usagePoints.ProgressiveRxSpeedTarget()
+	return state
 }
 
 func (c *Controller) DebugGetEntries(ip string) []string {

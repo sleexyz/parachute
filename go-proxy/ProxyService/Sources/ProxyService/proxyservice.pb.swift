@@ -166,6 +166,12 @@ public struct Proxyservice_ServerState {
 
   public var apps: [Proxyservice_AppState] = []
 
+  public var usagePoints: Double = 0
+
+  public var ratio: Double = 0
+
+  public var progressiveRxSpeedTarget: Double = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -182,24 +188,11 @@ public struct Proxyservice_AppState {
 
   public var rxPoints: Double = 0
 
-  public var usagePoints: Double = 0
-
   public var txPointsMax: Double = 0
-
-  public var usagePointsDate: SwiftProtobuf.Google_Protobuf_Timestamp {
-    get {return _usagePointsDate ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
-    set {_usagePointsDate = newValue}
-  }
-  /// Returns true if `usagePointsDate` has been explicitly set.
-  public var hasUsagePointsDate: Bool {return self._usagePointsDate != nil}
-  /// Clears the value of `usagePointsDate`. Subsequent reads from it will return its default value.
-  public mutating func clearUsagePointsDate() {self._usagePointsDate = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
-
-  fileprivate var _usagePointsDate: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 }
 
 public struct Proxyservice_Sample {
@@ -433,6 +426,9 @@ extension Proxyservice_ServerState: SwiftProtobuf.Message, SwiftProtobuf._Messag
   public static let protoMessageName: String = _protobuf_package + ".ServerState"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "apps"),
+    2: .same(proto: "usagePoints"),
+    3: .same(proto: "ratio"),
+    4: .same(proto: "progressiveRxSpeedTarget"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -442,6 +438,9 @@ extension Proxyservice_ServerState: SwiftProtobuf.Message, SwiftProtobuf._Messag
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeRepeatedMessageField(value: &self.apps) }()
+      case 2: try { try decoder.decodeSingularDoubleField(value: &self.usagePoints) }()
+      case 3: try { try decoder.decodeSingularDoubleField(value: &self.ratio) }()
+      case 4: try { try decoder.decodeSingularDoubleField(value: &self.progressiveRxSpeedTarget) }()
       default: break
       }
     }
@@ -451,11 +450,23 @@ extension Proxyservice_ServerState: SwiftProtobuf.Message, SwiftProtobuf._Messag
     if !self.apps.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.apps, fieldNumber: 1)
     }
+    if self.usagePoints != 0 {
+      try visitor.visitSingularDoubleField(value: self.usagePoints, fieldNumber: 2)
+    }
+    if self.ratio != 0 {
+      try visitor.visitSingularDoubleField(value: self.ratio, fieldNumber: 3)
+    }
+    if self.progressiveRxSpeedTarget != 0 {
+      try visitor.visitSingularDoubleField(value: self.progressiveRxSpeedTarget, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Proxyservice_ServerState, rhs: Proxyservice_ServerState) -> Bool {
     if lhs.apps != rhs.apps {return false}
+    if lhs.usagePoints != rhs.usagePoints {return false}
+    if lhs.ratio != rhs.ratio {return false}
+    if lhs.progressiveRxSpeedTarget != rhs.progressiveRxSpeedTarget {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -467,9 +478,7 @@ extension Proxyservice_AppState: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     1: .same(proto: "txPoints"),
     2: .same(proto: "name"),
     3: .same(proto: "rxPoints"),
-    4: .same(proto: "usagePoints"),
-    5: .same(proto: "txPointsMax"),
-    6: .same(proto: "usagePointsDate"),
+    4: .same(proto: "txPointsMax"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -481,19 +490,13 @@ extension Proxyservice_AppState: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case 1: try { try decoder.decodeSingularDoubleField(value: &self.txPoints) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
       case 3: try { try decoder.decodeSingularDoubleField(value: &self.rxPoints) }()
-      case 4: try { try decoder.decodeSingularDoubleField(value: &self.usagePoints) }()
-      case 5: try { try decoder.decodeSingularDoubleField(value: &self.txPointsMax) }()
-      case 6: try { try decoder.decodeSingularMessageField(value: &self._usagePointsDate) }()
+      case 4: try { try decoder.decodeSingularDoubleField(value: &self.txPointsMax) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
     if self.txPoints != 0 {
       try visitor.visitSingularDoubleField(value: self.txPoints, fieldNumber: 1)
     }
@@ -503,15 +506,9 @@ extension Proxyservice_AppState: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if self.rxPoints != 0 {
       try visitor.visitSingularDoubleField(value: self.rxPoints, fieldNumber: 3)
     }
-    if self.usagePoints != 0 {
-      try visitor.visitSingularDoubleField(value: self.usagePoints, fieldNumber: 4)
-    }
     if self.txPointsMax != 0 {
-      try visitor.visitSingularDoubleField(value: self.txPointsMax, fieldNumber: 5)
+      try visitor.visitSingularDoubleField(value: self.txPointsMax, fieldNumber: 4)
     }
-    try { if let v = self._usagePointsDate {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -519,9 +516,7 @@ extension Proxyservice_AppState: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if lhs.txPoints != rhs.txPoints {return false}
     if lhs.name != rhs.name {return false}
     if lhs.rxPoints != rhs.rxPoints {return false}
-    if lhs.usagePoints != rhs.usagePoints {return false}
     if lhs.txPointsMax != rhs.txPointsMax {return false}
-    if lhs._usagePointsDate != rhs._usagePointsDate {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

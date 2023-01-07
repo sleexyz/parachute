@@ -63,15 +63,16 @@ export interface ResetStateRequest {
 
 export interface ServerState {
   apps: AppState[];
+  usagePoints: number;
+  ratio: number;
+  progressiveRxSpeedTarget: number;
 }
 
 export interface AppState {
   txPoints: number;
   name: string;
   rxPoints: number;
-  usagePoints: number;
   txPointsMax: number;
-  usagePointsDate: Date | undefined;
 }
 
 export interface Sample {
@@ -317,13 +318,22 @@ export const ResetStateRequest = {
 };
 
 function createBaseServerState(): ServerState {
-  return { apps: [] };
+  return { apps: [], usagePoints: 0, ratio: 0, progressiveRxSpeedTarget: 0 };
 }
 
 export const ServerState = {
   encode(message: ServerState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.apps) {
       AppState.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.usagePoints !== 0) {
+      writer.uint32(17).double(message.usagePoints);
+    }
+    if (message.ratio !== 0) {
+      writer.uint32(25).double(message.ratio);
+    }
+    if (message.progressiveRxSpeedTarget !== 0) {
+      writer.uint32(33).double(message.progressiveRxSpeedTarget);
     }
     return writer;
   },
@@ -338,6 +348,15 @@ export const ServerState = {
         case 1:
           message.apps.push(AppState.decode(reader, reader.uint32()));
           break;
+        case 2:
+          message.usagePoints = reader.double();
+          break;
+        case 3:
+          message.ratio = reader.double();
+          break;
+        case 4:
+          message.progressiveRxSpeedTarget = reader.double();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -347,7 +366,12 @@ export const ServerState = {
   },
 
   fromJSON(object: any): ServerState {
-    return { apps: Array.isArray(object?.apps) ? object.apps.map((e: any) => AppState.fromJSON(e)) : [] };
+    return {
+      apps: Array.isArray(object?.apps) ? object.apps.map((e: any) => AppState.fromJSON(e)) : [],
+      usagePoints: isSet(object.usagePoints) ? Number(object.usagePoints) : 0,
+      ratio: isSet(object.ratio) ? Number(object.ratio) : 0,
+      progressiveRxSpeedTarget: isSet(object.progressiveRxSpeedTarget) ? Number(object.progressiveRxSpeedTarget) : 0,
+    };
   },
 
   toJSON(message: ServerState): unknown {
@@ -357,18 +381,24 @@ export const ServerState = {
     } else {
       obj.apps = [];
     }
+    message.usagePoints !== undefined && (obj.usagePoints = message.usagePoints);
+    message.ratio !== undefined && (obj.ratio = message.ratio);
+    message.progressiveRxSpeedTarget !== undefined && (obj.progressiveRxSpeedTarget = message.progressiveRxSpeedTarget);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<ServerState>, I>>(object: I): ServerState {
     const message = createBaseServerState();
     message.apps = object.apps?.map((e) => AppState.fromPartial(e)) || [];
+    message.usagePoints = object.usagePoints ?? 0;
+    message.ratio = object.ratio ?? 0;
+    message.progressiveRxSpeedTarget = object.progressiveRxSpeedTarget ?? 0;
     return message;
   },
 };
 
 function createBaseAppState(): AppState {
-  return { txPoints: 0, name: "", rxPoints: 0, usagePoints: 0, txPointsMax: 0, usagePointsDate: undefined };
+  return { txPoints: 0, name: "", rxPoints: 0, txPointsMax: 0 };
 }
 
 export const AppState = {
@@ -382,14 +412,8 @@ export const AppState = {
     if (message.rxPoints !== 0) {
       writer.uint32(25).double(message.rxPoints);
     }
-    if (message.usagePoints !== 0) {
-      writer.uint32(33).double(message.usagePoints);
-    }
     if (message.txPointsMax !== 0) {
-      writer.uint32(41).double(message.txPointsMax);
-    }
-    if (message.usagePointsDate !== undefined) {
-      Timestamp.encode(toTimestamp(message.usagePointsDate), writer.uint32(50).fork()).ldelim();
+      writer.uint32(33).double(message.txPointsMax);
     }
     return writer;
   },
@@ -411,13 +435,7 @@ export const AppState = {
           message.rxPoints = reader.double();
           break;
         case 4:
-          message.usagePoints = reader.double();
-          break;
-        case 5:
           message.txPointsMax = reader.double();
-          break;
-        case 6:
-          message.usagePointsDate = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -432,9 +450,7 @@ export const AppState = {
       txPoints: isSet(object.txPoints) ? Number(object.txPoints) : 0,
       name: isSet(object.name) ? String(object.name) : "",
       rxPoints: isSet(object.rxPoints) ? Number(object.rxPoints) : 0,
-      usagePoints: isSet(object.usagePoints) ? Number(object.usagePoints) : 0,
       txPointsMax: isSet(object.txPointsMax) ? Number(object.txPointsMax) : 0,
-      usagePointsDate: isSet(object.usagePointsDate) ? fromJsonTimestamp(object.usagePointsDate) : undefined,
     };
   },
 
@@ -443,9 +459,7 @@ export const AppState = {
     message.txPoints !== undefined && (obj.txPoints = message.txPoints);
     message.name !== undefined && (obj.name = message.name);
     message.rxPoints !== undefined && (obj.rxPoints = message.rxPoints);
-    message.usagePoints !== undefined && (obj.usagePoints = message.usagePoints);
     message.txPointsMax !== undefined && (obj.txPointsMax = message.txPointsMax);
-    message.usagePointsDate !== undefined && (obj.usagePointsDate = message.usagePointsDate.toISOString());
     return obj;
   },
 
@@ -454,9 +468,7 @@ export const AppState = {
     message.txPoints = object.txPoints ?? 0;
     message.name = object.name ?? "";
     message.rxPoints = object.rxPoints ?? 0;
-    message.usagePoints = object.usagePoints ?? 0;
     message.txPointsMax = object.txPointsMax ?? 0;
-    message.usagePointsDate = object.usagePointsDate ?? undefined;
     return message;
   },
 };

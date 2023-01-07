@@ -6,7 +6,12 @@ import { useHighlightOnChange } from "./utils";
 export function ServerStateView() {
   const ssc = ServerStateController.dep.use();
   const serverState = ssc.state.use();
-  return <div>{serverState.apps.map(app => <AppView key={app.name} value={app} />)}</div>
+  return (<pre>
+    <div>
+    {JSON.stringify({...serverState, apps: undefined}, null, 2)}
+    </div>
+    apps: {serverState.apps.map(app => <AppView key={app.name} value={app} />)}
+    </pre>)
 }
 
 function AppView(props: {value: AppState}) {
