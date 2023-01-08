@@ -83,7 +83,6 @@ func (p *OnDeviceProxyBridge) encodeResponse(resp protoreflect.ProtoMessage) []b
 		log.Fatalf("Error: %s", err)
 		return nil
 	}
-	log.Printf("out: %s", out)
 	return out
 }
 
