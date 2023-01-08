@@ -1,1 +1,1 @@
-*.xcframework linguist-generated
+*.xcframework linguist-generated filter=lfs diff=lfs merge=lfs -text
