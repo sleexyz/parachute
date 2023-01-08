@@ -10,14 +10,9 @@ import NetworkExtension
 import Logging
 import LoggingOSLog
 import UIKit
-import Ffi
 import ProxyService
+import Server
             
-#if DEBUG
-            let env = "dev"
-#else
-            let env = "prod"
-#endif
 
 public struct ProxyServerOptions {
     public let ipv4Address: String
@@ -41,14 +36,11 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     private var options: ProxyServerOptions = .localServer
     
-    private var proxy: Proxy?
+    private var server: Server?
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
         let logger = Logger(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
-        logger.info("go max procs: \(Ffi.FfiMaxProcs(1))")
-        logger.info("go memory limit: \(Ffi.FfiSetMemoryLimit(20<<20))")
-        logger.info("go gc percent: \(Ffi.FfiSetGCPercent(50))")
         self.logger = logger
     }
     
@@ -74,15 +66,11 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                 completionHandler(NEVPNError(.connectionFailed))
             }
             
-            if (!settings.debug) {
-                self.proxy = Proxy(bridge: Ffi.FfiInit(env)!, logger: self.logger)
-            } else {
-                self.proxy = Proxy(bridge: Ffi.FfiInitDebug(env, "\(ProxyServerOptions.debugControlServer.ipv4Address):\(ProxyServerOptions.debugControlServer.ipv4Port)")!, logger: self.logger)
-            }
+            self.server = Server.InitTunnelServer(settings: settings)
             
             self.logger.info("starting server")
             DispatchQueue.global(qos: .background).async {
-                self.proxy!.startProxy(port: 8080, settingsData: settingsData)
+                self.server!.startProxy(port: 8080, settingsData: settingsData)
             }
             self.logger.info("server started")
             
@@ -161,13 +149,13 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     override func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
         self.logger.info("tunnel stopped")
         // Add code here to start the process of stopping the tunnel.
-        self.proxy!.close()
+        self.server!.close()
         completionHandler()
     }
     
     override func handleAppMessage(_ messageData: Data, completionHandler: ((Data?) -> Void)?) {
         do {
-            let response = try proxy?.rpc(input: messageData)
+            let response = try server?.rpc(input: messageData)
             completionHandler?(response)
         } catch {
             self.logger.error("Error: \(error.localizedDescription)")

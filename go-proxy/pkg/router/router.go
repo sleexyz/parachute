@@ -153,6 +153,9 @@ func (r *Router) Start() {
 }
 
 func (r *Router) Close() {
+	if r == nil {
+		return
+	}
 	if r.cancel != nil {
 		r.cancel()
 	}

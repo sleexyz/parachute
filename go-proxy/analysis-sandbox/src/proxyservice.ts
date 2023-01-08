@@ -58,6 +58,14 @@ export interface Request {
   getState?: GetStateRequest | undefined;
 }
 
+export interface Response {
+  setSettings?: SetSettingsResponse | undefined;
+  getState?: GetStateResponse | undefined;
+}
+
+export interface SetSettingsResponse {
+}
+
 export interface GetStateRequest {
 }
 
@@ -278,6 +286,109 @@ export const Request = {
     message.getState = (object.getState !== undefined && object.getState !== null)
       ? GetStateRequest.fromPartial(object.getState)
       : undefined;
+    return message;
+  },
+};
+
+function createBaseResponse(): Response {
+  return { setSettings: undefined, getState: undefined };
+}
+
+export const Response = {
+  encode(message: Response, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.setSettings !== undefined) {
+      SetSettingsResponse.encode(message.setSettings, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.getState !== undefined) {
+      GetStateResponse.encode(message.getState, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Response {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.setSettings = SetSettingsResponse.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.getState = GetStateResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Response {
+    return {
+      setSettings: isSet(object.setSettings) ? SetSettingsResponse.fromJSON(object.setSettings) : undefined,
+      getState: isSet(object.getState) ? GetStateResponse.fromJSON(object.getState) : undefined,
+    };
+  },
+
+  toJSON(message: Response): unknown {
+    const obj: any = {};
+    message.setSettings !== undefined &&
+      (obj.setSettings = message.setSettings ? SetSettingsResponse.toJSON(message.setSettings) : undefined);
+    message.getState !== undefined &&
+      (obj.getState = message.getState ? GetStateResponse.toJSON(message.getState) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<Response>, I>>(object: I): Response {
+    const message = createBaseResponse();
+    message.setSettings = (object.setSettings !== undefined && object.setSettings !== null)
+      ? SetSettingsResponse.fromPartial(object.setSettings)
+      : undefined;
+    message.getState = (object.getState !== undefined && object.getState !== null)
+      ? GetStateResponse.fromPartial(object.getState)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseSetSettingsResponse(): SetSettingsResponse {
+  return {};
+}
+
+export const SetSettingsResponse = {
+  encode(_: SetSettingsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SetSettingsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSetSettingsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): SetSettingsResponse {
+    return {};
+  },
+
+  toJSON(_: SetSettingsResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<SetSettingsResponse>, I>>(_: I): SetSettingsResponse {
+    const message = createBaseSetSettingsResponse();
     return message;
   },
 };

@@ -12,8 +12,7 @@ import Logging
 
 public struct Proxy {
     let bridge: FfiProxyBridgeProtocol
-    let logger: Logger
-    
+    let logger: Logger = Logger(label: "industries.strange.slowdown.tunnel.Proxy")
     let encoder = JSONEncoder()
     
     func startProxy(port: Int, settingsData: Data) {

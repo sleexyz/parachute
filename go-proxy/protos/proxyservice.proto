@@ -36,6 +36,16 @@ message Request {
     }
 }
 
+message Response {
+    oneof message {
+        SetSettingsResponse setSettings = 1;
+        GetStateResponse getState = 2;
+    }
+}
+
+message SetSettingsResponse {
+}
+
 message GetStateRequest {
 }
 
