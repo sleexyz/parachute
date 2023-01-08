@@ -29,6 +29,7 @@
 		A0774F77296A6F3A001F278B /* libServer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A0774F65296A6F0D001F278B /* libServer.a */; };
 		A0774F7E296A6F45001F278B /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A0774F7D296A6F45001F278B /* ProxyService */; };
 		A0774F7F296A7046001F278B /* libServer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A0774F65296A6F0D001F278B /* libServer.a */; };
+		A0774F85296A85DF001F278B /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A0774F84296A85DF001F278B /* ProxyService */; };
 		A080EDF0294F7B89005401E4 /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDEF294F7B89005401E4 /* ProxyService */; };
 		A080EDF6294F9864005401E4 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF5294F9864005401E4 /* Logging */; };
 		A080EDF8294F9868005401E4 /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF7294F9868005401E4 /* LoggingOSLog */; };
@@ -236,6 +237,7 @@
 			files = (
 				A0774F6E296A6F2A001F278B /* Logging in Frameworks */,
 				A0774F6C296A6F24001F278B /* Ffi.xcframework in Frameworks */,
+				A0774F85296A85DF001F278B /* ProxyService in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,6 +495,7 @@
 			name = Server;
 			packageProductDependencies = (
 				A0774F6D296A6F2A001F278B /* Logging */,
+				A0774F84296A85DF001F278B /* ProxyService */,
 			);
 			productName = Server;
 			productReference = A0774F65296A6F0D001F278B /* libServer.a */;
@@ -1279,6 +1282,10 @@
 			productName = Logging;
 		};
 		A0774F7D296A6F45001F278B /* ProxyService */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProxyService;
+		};
+		A0774F84296A85DF001F278B /* ProxyService */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ProxyService;
 		};
