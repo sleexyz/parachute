@@ -118,6 +118,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         }
     }
     
+    
     private func initTunnelSettings(proxyHost: String, proxyPort: Int) -> NEPacketTunnelNetworkSettings {
         let settings: NEPacketTunnelNetworkSettings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: self.options.ipv4Address)
         let ipv4Settings: NEIPv4Settings = NEIPv4Settings(
