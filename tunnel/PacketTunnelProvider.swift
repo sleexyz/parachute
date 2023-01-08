@@ -24,7 +24,6 @@ public struct ProxyServerOptions {
     static let localServer = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080)
     
     static let debugDataServer = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080)
-    static let debugControlServer = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8083)
 }
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
@@ -158,7 +157,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             let response = try server?.rpc(input: messageData)
             completionHandler?(response)
         } catch {
-            self.logger.error("Error: \(error.localizedDescription)")
+            self.logger.error("RPC error: \(error.localizedDescription)")
             completionHandler?(nil)
         }
     }
