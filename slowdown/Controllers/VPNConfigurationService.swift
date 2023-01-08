@@ -135,25 +135,38 @@ open class VPNConfigurationService: ObservableObject {
     func GetState() async throws -> Proxyservice_GetStateResponse {
         var message = Proxyservice_Request()
         message.getState = Proxyservice_GetStateRequest()
-        let respData = try await Rpc(message: message)
-        return try Proxyservice_GetStateResponse(serializedData: respData ?? Data.init())
+        return (try await Rpc(message: message)).getState
     }
     
-    private func Rpc(message: Proxyservice_Request) async throws -> Data? {
+    private func Rpc(message: Proxyservice_Request) async throws -> Proxyservice_Response {
         guard let session = self.manager?.connection as? NETunnelProviderSession else {
-            return nil
+            throw RpcError.serverNotInitializedError
         }
         return try await withCheckedThrowingContinuation { continuation in
             do {
                 self.logger.info("\(message.debugDescription)")
-                try session.sendProviderMessage(message.serializedData()) { response in
-                    continuation.resume(returning: response)
+                try session.sendProviderMessage(message.serializedData()) { data in
+                    if data == nil {
+                        continuation.resume(throwing: RpcError.invalidResponseError)
+                        return
+                    }
+                    do {
+                        let resp = try Proxyservice_Response(serializedData: data!)
+                        continuation.resume(returning: resp)
+                    } catch let error {
+                        continuation.resume(with: .failure(error))
+                    }
                 }
             } catch let error {
                 continuation.resume(with: .failure(error))
             }
         }
     }
+}
+
+enum RpcError: Error {
+    case serverNotInitializedError
+    case invalidResponseError
 }
 
 

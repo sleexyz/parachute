@@ -149,6 +149,68 @@ public struct Proxyservice_Request {
   public init() {}
 }
 
+public struct Proxyservice_Response {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var message: Proxyservice_Response.OneOf_Message? = nil
+
+  public var setSettings: Proxyservice_SetSettingsResponse {
+    get {
+      if case .setSettings(let v)? = message {return v}
+      return Proxyservice_SetSettingsResponse()
+    }
+    set {message = .setSettings(newValue)}
+  }
+
+  public var getState: Proxyservice_GetStateResponse {
+    get {
+      if case .getState(let v)? = message {return v}
+      return Proxyservice_GetStateResponse()
+    }
+    set {message = .getState(newValue)}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum OneOf_Message: Equatable {
+    case setSettings(Proxyservice_SetSettingsResponse)
+    case getState(Proxyservice_GetStateResponse)
+
+  #if !swift(>=4.1)
+    public static func ==(lhs: Proxyservice_Response.OneOf_Message, rhs: Proxyservice_Response.OneOf_Message) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch (lhs, rhs) {
+      case (.setSettings, .setSettings): return {
+        guard case .setSettings(let l) = lhs, case .setSettings(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.getState, .getState): return {
+        guard case .getState(let l) = lhs, case .getState(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      default: return false
+      }
+    }
+  #endif
+  }
+
+  public init() {}
+}
+
+public struct Proxyservice_SetSettingsResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct Proxyservice_GetStateRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -250,6 +312,9 @@ extension Proxyservice_Mode: @unchecked Sendable {}
 extension Proxyservice_Settings: @unchecked Sendable {}
 extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
+extension Proxyservice_Response: @unchecked Sendable {}
+extension Proxyservice_Response.OneOf_Message: @unchecked Sendable {}
+extension Proxyservice_SetSettingsResponse: @unchecked Sendable {}
 extension Proxyservice_GetStateRequest: @unchecked Sendable {}
 extension Proxyservice_GetStateResponse: @unchecked Sendable {}
 extension Proxyservice_ServerState: @unchecked Sendable {}
@@ -411,6 +476,95 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
 
   public static func ==(lhs: Proxyservice_Request, rhs: Proxyservice_Request) -> Bool {
     if lhs.message != rhs.message {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_Response: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Response"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "setSettings"),
+    2: .same(proto: "getState"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try {
+        var v: Proxyservice_SetSettingsResponse?
+        var hadOneofValue = false
+        if let current = self.message {
+          hadOneofValue = true
+          if case .setSettings(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.message = .setSettings(v)
+        }
+      }()
+      case 2: try {
+        var v: Proxyservice_GetStateResponse?
+        var hadOneofValue = false
+        if let current = self.message {
+          hadOneofValue = true
+          if case .getState(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.message = .getState(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    switch self.message {
+    case .setSettings?: try {
+      guard case .setSettings(let v)? = self.message else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    }()
+    case .getState?: try {
+      guard case .getState(let v)? = self.message else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_Response, rhs: Proxyservice_Response) -> Bool {
+    if lhs.message != rhs.message {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_SetSettingsResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".SetSettingsResponse"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_SetSettingsResponse, rhs: Proxyservice_SetSettingsResponse) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

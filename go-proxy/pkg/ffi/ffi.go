@@ -31,6 +31,11 @@ type OnDeviceProxyBridge struct {
 	*proxy.Proxy
 }
 
+func (p *OnDeviceProxyBridge) Close() {
+	p.Proxy.Close()
+
+}
+
 func (p *OnDeviceProxyBridge) StartProxy(port int, settingsData []byte) {
 	defer sentry.Recover()
 	r := &proxyservice.Settings{}
@@ -51,22 +56,25 @@ func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
 	debugText, _ := debugMarshalOptions.Marshal(r)
 	log.Printf("/Rpc %s", debugText)
 
-	var resp protoreflect.ProtoMessage
+	resp := &proxyservice.Response{}
 	switch r.Message.(type) {
 	case *proxyservice.Request_SetSettings:
 		m := r.GetSetSettings()
 		p.Proxy.SetSettings(m)
+		resp.Message = &proxyservice.Response_SetSettings{
+			SetSettings: &proxyservice.SetSettingsResponse{},
+		}
 	case *proxyservice.Request_GetState:
-		resp = p.Proxy.GetState()
+		resp.Message = &proxyservice.Response_GetState{
+			GetState: p.Proxy.GetState(),
+		}
 	default:
 		return nil, fmt.Errorf("could not parse rpc command")
 	}
-	if resp != nil {
-		debugText, _ := debugMarshalOptions.Marshal(resp)
-		log.Printf("/RpcResponse %s", debugText)
-		return p.encodeResponse(resp), nil
-	}
-	return nil, nil
+	debugText, _ = debugMarshalOptions.Marshal(resp)
+	log.Printf("/RpcResponse %s", debugText)
+	return p.encodeResponse(resp), nil
+	// return nil, nil
 }
 
 func (p *OnDeviceProxyBridge) encodeResponse(resp protoreflect.ProtoMessage) []byte {
@@ -75,6 +83,7 @@ func (p *OnDeviceProxyBridge) encodeResponse(resp protoreflect.ProtoMessage) []b
 		log.Fatalf("Error: %s", err)
 		return nil
 	}
+	log.Printf("out: %s", out)
 	return out
 }
 

@@ -42,6 +42,6 @@ func (p *Proxy) Start(port int, s *proxyservice.Settings) {
 
 func (p *Proxy) Close() {
 	p.Analytics.Close()
-	p.i.Close()
 	p.router.Close()
+	p.i.Close()
 }

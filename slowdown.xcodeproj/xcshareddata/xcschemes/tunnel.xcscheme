@@ -42,6 +42,50 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A009B58F296A46C6008DE488"
+               BuildableName = "tunnelTests.xctest"
+               BlueprintName = "tunnelTests"
+               ReferencedContainer = "container:slowdown.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A009B5B5296A4F78008DE488"
+               BuildableName = "tunnelServerTests.xctest"
+               BlueprintName = "tunnelServerTests"
+               ReferencedContainer = "container:slowdown.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A0927C25296A650B0066C6F6"
+               BuildableName = "TunnelServerTests.xctest"
+               BlueprintName = "TunnelServerTests"
+               ReferencedContainer = "container:slowdown.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A0E5B1CB296A6B38003F484E"
+               BuildableName = "ServerTests.xctest"
+               BlueprintName = "ServerTests"
+               ReferencedContainer = "container:slowdown.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
