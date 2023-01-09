@@ -20,9 +20,6 @@ struct slowdownApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            Button("Crash") {
-              fatalError("Crash was triggered")
-            }
             ContentView()
         }
     }

@@ -12,8 +12,7 @@ import LoggingOSLog
 import UIKit
 import ProxyService
 import Server
-
-            
+import Firebase
 
 public struct ProxyServerOptions {
     public let ipv4Address: String
@@ -42,6 +41,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         LoggingSystem.bootstrap(LoggingOSLog.init)
         let logger = Logger(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
         self.logger = logger
+        FirebaseApp.configure()
     }
     
     private static func fileUrl() throws -> URL {
@@ -69,9 +69,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             self.server = Server.InitTunnelServer(settings: settings)
             
             self.logger.info("starting server")
-            DispatchQueue.global(qos: .background).async {
-                self.server!.startProxy(port: 8080, settingsData: settingsData)
-            }
+            self.server!.startProxy(port: 8080, settingsData: settingsData)
             self.logger.info("server started")
             
             self.options = settings.debug ? .debugDataServer : .localServer
@@ -97,7 +95,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                     }
                 }
             }
-        } catch {
+        } catch let error {
+            Crashlytics.crashlytics().record(error: error)
             fatalError("Encountered error")
         }
     }
@@ -158,9 +157,9 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         do {
             let response = try server?.rpc(input: messageData)
             completionHandler?(response)
-        } catch {
-            self.logger.error("RPC error: \(error.localizedDescription)")
-            completionHandler?(nil)
+        } catch let error {
+            Crashlytics.crashlytics().record(error: error)
+            fatalError("Encountered RPC error")
         }
     }
     

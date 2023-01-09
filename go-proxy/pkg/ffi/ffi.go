@@ -6,7 +6,6 @@ import (
 	"runtime"
 	"runtime/debug"
 
-	"github.com/getsentry/sentry-go"
 	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -37,17 +36,17 @@ func (p *OnDeviceProxyBridge) Close() {
 }
 
 func (p *OnDeviceProxyBridge) StartProxy(port int, settingsData []byte) {
-	defer sentry.Recover()
+	// defer sentry.Recover()
 	r := &proxyservice.Settings{}
 	err := proto.Unmarshal(settingsData, r)
 	if err != nil {
 		log.Panicf("could not start server: %s", err)
 	}
-	p.Proxy.Start(port, r)
+	go p.Proxy.Start(port, r)
 }
 
 func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
-	defer sentry.Recover()
+	// defer sentry.Recover()
 	r := &proxyservice.Request{}
 	err := proto.Unmarshal(input, r)
 	if err != nil {
@@ -88,16 +87,16 @@ func (p *OnDeviceProxyBridge) encodeResponse(resp protoreflect.ProtoMessage) []b
 
 func InitDebug(env string, debugServerAddr string) ProxyBridge {
 	log.SetOutput(MobileLogger{})
-	InitSentry(env)
-	defer sentry.Recover()
+	// InitSentry(env)
+	// defer sentry.Recover()
 	return proxy.InitDebugClientProxyBridge(debugServerAddr)
 }
 
 func Init(env string) ProxyBridge {
 	// log.SetOutput(io.Discard)
 	log.SetOutput(MobileLogger{})
-	InitSentry(env)
-	defer sentry.Recover()
+	// InitSentry(env)
+	// defer sentry.Recover()
 	a := &analytics.NoOpAnalytics{}
 	sm := controller.InitSettingsManager()
 	c := controller.Init(a, sm, controller.ProdAppConfigs)
@@ -106,20 +105,20 @@ func Init(env string) ProxyBridge {
 	}
 }
 
-func InitSentry(env string) {
-	err := sentry.Init(sentry.ClientOptions{
-		Environment:      env,
-		AttachStacktrace: true,
-		Dsn:              "https://30011f92c5f545dbb68d373ddd1179ed@o4504415494602752.ingest.sentry.io/4504415507709952",
-		// Set TracesSampleRate to 1.0 to capture 100%
-		// of transactions for performance monitoring.
-		// We recommend adjusting this value in production,
-		TracesSampleRate: 1.0,
-	})
-	if err != nil {
-		log.Fatalf("sentry.Init: %s", err)
-	}
-}
+// func InitSentry(env string) {
+// 	err := sentry.Init(sentry.ClientOptions{
+// 		Environment:      env,
+// 		AttachStacktrace: true,
+// 		Dsn:              "https://30011f92c5f545dbb68d373ddd1179ed@o4504415494602752.ingest.sentry.io/4504415507709952",
+// 		// Set TracesSampleRate to 1.0 to capture 100%
+// 		// of transactions for performance monitoring.
+// 		// We recommend adjusting this value in production,
+// 		TracesSampleRate: 1.0,
+// 	})
+// 	if err != nil {
+// 		log.Fatalf("sentry.Init: %s", err)
+// 	}
+// }
 
 func MaxProcs(max int) int {
 	return runtime.GOMAXPROCS(max)
