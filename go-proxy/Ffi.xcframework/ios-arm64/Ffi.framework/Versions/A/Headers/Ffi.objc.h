@@ -79,8 +79,6 @@ FOUNDATION_EXPORT id<FfiProxyBridge> _Nullable FfiInit(NSString* _Nullable env);
 
 FOUNDATION_EXPORT id<FfiProxyBridge> _Nullable FfiInitDebug(NSString* _Nullable env, NSString* _Nullable debugServerAddr);
 
-FOUNDATION_EXPORT void FfiInitSentry(NSString* _Nullable env);
-
 FOUNDATION_EXPORT long FfiMaxProcs(long max);
 
 FOUNDATION_EXPORT long FfiSetGCPercent(long pct);

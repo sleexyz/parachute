@@ -15,6 +15,9 @@
 		A02F58FB27A6F14600D3330F /* slowdownUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58FA27A6F14600D3330F /* slowdownUITests.swift */; };
 		A02F58FD27A6F14600D3330F /* slowdownUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58FC27A6F14600D3330F /* slowdownUITestsLaunchTests.swift */; };
 		A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
+		A04332CA296BA21A00D69210 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A04332C9296BA21A00D69210 /* FirebaseCrashlytics */; };
+		A04332CC296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
+		A04332CD296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
 		A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A0458BF9285FB5A300CE4CCB /* Logging */; };
 		A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A0458C0028614D6500CE4CCB /* LoggingOSLog */; };
 		A04FAD98294D477B0002C19B /* Proxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04FAD97294D477B0002C19B /* Proxy.swift */; };
@@ -58,7 +61,6 @@
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
 		A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9201293FCF1700C090E9 /* SettingsStore.swift */; };
 		A0BF9204294175AE00C090E9 /* CheatController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9203294175AE00C090E9 /* CheatController.swift */; };
-		A0D79C3F296B9545009726A3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0D79C3E296B9545009726A3 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -172,6 +174,7 @@
 		A02F58FC27A6F14600D3330F /* slowdownUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A02F590927B09A7A00D3330F /* slowdown.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = slowdown.entitlements; sourceTree = "<group>"; };
 		A02F590B27B09A7A00D3330F /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		A04332CB296BA2A400D69210 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A04FAD97294D477B0002C19B /* Proxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proxy.swift; sourceTree = "<group>"; };
 		A04FADA2294F7A9F0002C19B /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ProxyService; path = "go-proxy/ProxyService"; sourceTree = "<group>"; };
 		A0774F65296A6F0D001F278B /* libServer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libServer.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -202,7 +205,6 @@
 		A08719E9281A617500113F3F /* tunnel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tunnel.entitlements; sourceTree = "<group>"; };
 		A0BF9201293FCF1700C090E9 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		A0BF9203294175AE00C090E9 /* CheatController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatController.swift; sourceTree = "<group>"; };
-		A0D79C3E296B9545009726A3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -264,6 +266,7 @@
 				A081F23C2967B10F00863FE3 /* SwiftProtobufPluginLibrary in Frameworks */,
 				A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */,
 				A081F2382967B10600863FE3 /* ProxyService in Frameworks */,
+				A04332CA296BA21A00D69210 /* FirebaseCrashlytics in Frameworks */,
 				A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */,
 				A081F23A2967B10F00863FE3 /* SwiftProtobuf in Frameworks */,
 			);
@@ -304,7 +307,7 @@
 		A02F58DE27A6F14500D3330F /* slowdown */ = {
 			isa = PBXGroup;
 			children = (
-				A0D79C3E296B9545009726A3 /* GoogleService-Info.plist */,
+				A04332CB296BA2A400D69210 /* GoogleService-Info.plist */,
 				A081F2492967CB5C00863FE3 /* AppView */,
 				A081F230295B732900863FE3 /* Info.plist */,
 				A06516E52956A08F00227A95 /* elements */,
@@ -538,6 +541,7 @@
 				A08719E0281A617500113F3F /* Frameworks */,
 				A08719E1281A617500113F3F /* Resources */,
 				A0E88BDC296A5E4F00E83C18 /* Embed Frameworks */,
+				A04332C1296BA04800D69210 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -551,6 +555,7 @@
 				A081F2372967B10600863FE3 /* ProxyService */,
 				A081F2392967B10F00863FE3 /* SwiftProtobuf */,
 				A081F23B2967B10F00863FE3 /* SwiftProtobufPluginLibrary */,
+				A04332C9296BA21A00D69210 /* FirebaseCrashlytics */,
 			);
 			productName = tunnel;
 			productReference = A08719E3281A617500113F3F /* tunnel.appex */;
@@ -626,7 +631,7 @@
 			files = (
 				A02F58E727A6F14500D3330F /* Preview Assets.xcassets in Resources */,
 				A02F58E427A6F14500D3330F /* Assets.xcassets in Resources */,
-				A0D79C3F296B9545009726A3 /* GoogleService-Info.plist in Resources */,
+				A04332CC296BA2A400D69210 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -655,12 +660,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A04332CD296BA2A400D69210 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		A04332C1296BA04800D69210 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}\n",
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
 		A0A81D5D296B9A8000B9E1DD /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -913,7 +939,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = slowdown/slowdown.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"slowdown/Preview Content\"";
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
@@ -952,7 +978,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = slowdown/slowdown.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_ASSET_PATHS = "\"slowdown/Preview Content\"";
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				ENABLE_PREVIEWS = YES;
@@ -986,7 +1012,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
@@ -1006,7 +1032,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
@@ -1025,7 +1051,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -1043,7 +1069,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -1061,6 +1087,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				OTHER_LDFLAGS = "-ObjC";
@@ -1091,7 +1118,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
@@ -1110,7 +1137,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
@@ -1129,7 +1156,8 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = tunnel/tunnel.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = tunnel/Info.plist;
@@ -1141,7 +1169,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.tunnel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1157,7 +1185,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = tunnel/tunnel.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = tunnel/Info.plist;
@@ -1169,7 +1197,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.tunnel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1291,6 +1319,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A04332C9296BA21A00D69210 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A0A81D5A296B98D800B9E1DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
 		A0458BF9285FB5A300CE4CCB /* Logging */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */;

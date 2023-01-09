@@ -16,9 +16,7 @@ final class ServerTests: XCTestCase {
     override func setUpWithError() throws {
         let settings = Proxyservice_Settings()
         server = Server.InitTunnelServer(settings: settings)
-        Task {
-            server!.startProxy(port: 8080, settingsData: try settings.serializedData())
-        }
+        server!.startProxy(port: 8080, settingsData: try settings.serializedData())
     }
 
     override func tearDownWithError() throws {
