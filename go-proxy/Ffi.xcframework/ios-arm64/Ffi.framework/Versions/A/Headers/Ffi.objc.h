@@ -11,15 +11,53 @@
 #include "Universe.objc.h"
 
 
+@class FfiDebugClientProxyBridge;
 @class FfiMobileLogger;
 @class FfiOnDeviceProxyBridge;
+@class FfiOutboundChannel;
+@class FfiTunConnAdapter;
+@protocol FfiCallbacks;
+@class FfiCallbacks;
 @protocol FfiProxyBridge;
 @class FfiProxyBridge;
 
+@protocol FfiCallbacks <NSObject>
+- (void)writeInboundPacket:(NSData* _Nullable)b;
+@end
+
 @protocol FfiProxyBridge <NSObject>
 - (void)close;
+/**
+ * Control plane
+ */
 - (NSData* _Nullable)rpc:(NSData* _Nullable)input error:(NSError* _Nullable* _Nullable)error;
-- (void)startProxy:(long)port settingsData:(NSData* _Nullable)settingsData;
+- (void)startDirectProxyConnection:(id<FfiCallbacks> _Nullable)cbs settingsData:(NSData* _Nullable)settingsData;
+/**
+ * Deprecate
+ */
+- (void)startUDPServer:(long)port settingsData:(NSData* _Nullable)settingsData;
+/**
+ * Data plane
+ */
+- (void)writeOutboundPacket:(NSData* _Nullable)b;
+@end
+
+@interface FfiDebugClientProxyBridge : NSObject <goSeqRefInterface, FfiProxyBridge> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+@property (nonatomic) FfiOutboundChannel* _Nullable outboundChannel;
+- (void)close;
+- (NSData* _Nullable)readOutboundPacket;
+- (NSData* _Nullable)rpc:(NSData* _Nullable)input error:(NSError* _Nullable* _Nullable)error;
+- (void)startDirectProxyConnection:(id<FfiCallbacks> _Nullable)cbs settingsData:(NSData* _Nullable)settingsData;
+/**
+ * deprecated.
+ */
+- (void)startUDPServer:(long)port settingsData:(NSData* _Nullable)settingsData;
+- (void)writeOutboundPacket:(NSData* _Nullable)b;
 @end
 
 @interface FfiMobileLogger : NSObject <goSeqRefInterface> {
@@ -39,6 +77,7 @@
 - (nonnull instancetype)init;
 // skipped field OnDeviceProxyBridge.Proxy with unsupported type: *strange.industries/go-proxy/pkg/proxy.Proxy
 
+@property (nonatomic) FfiOutboundChannel* _Nullable outboundChannel;
 // skipped method OnDeviceProxyBridge.AppUsed with unsupported parameter or return types
 
 - (void)beforeSettingsChange;
@@ -59,6 +98,7 @@
 
 // skipped method OnDeviceProxyBridge.PublishSample with unsupported parameter or return types
 
+- (NSData* _Nullable)readOutboundPacket;
 - (void)recordIp:(NSString* _Nullable)ip;
 // skipped method OnDeviceProxyBridge.RecordState with unsupported parameter or return types
 
@@ -70,14 +110,46 @@
 
 // skipped method OnDeviceProxyBridge.Start with unsupported parameter or return types
 
-- (void)startProxy:(long)port settingsData:(NSData* _Nullable)settingsData;
+- (void)startDirectProxyConnection:(id<FfiCallbacks> _Nullable)cbs settingsData:(NSData* _Nullable)settingsData;
+- (void)startUDPServer:(long)port settingsData:(NSData* _Nullable)settingsData;
 // skipped method OnDeviceProxyBridge.UpdateUsagePoints with unsupported parameter or return types
 
+- (void)writeOutboundPacket:(NSData* _Nullable)b;
+@end
+
+@interface FfiOutboundChannel : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+- (NSData* _Nullable)readOutboundPacket;
+- (void)writeOutboundPacket:(NSData* _Nullable)b;
+@end
+
+@interface FfiTunConnAdapter : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+- (void)close;
+/**
+ * Read outbound packets
+ */
+- (BOOL)read:(NSData* _Nullable)b ret0_:(long* _Nullable)ret0_ error:(NSError* _Nullable* _Nullable)error;
+- (BOOL)write:(NSData* _Nullable)b ret0_:(long* _Nullable)ret0_ error:(NSError* _Nullable* _Nullable)error;
 @end
 
 FOUNDATION_EXPORT id<FfiProxyBridge> _Nullable FfiInit(NSString* _Nullable env);
 
-FOUNDATION_EXPORT id<FfiProxyBridge> _Nullable FfiInitDebug(NSString* _Nullable env, NSString* _Nullable debugServerAddr);
+FOUNDATION_EXPORT id<FfiProxyBridge> _Nullable FfiInitDebug(NSString* _Nullable env, NSString* _Nullable dataAddr, NSString* _Nullable controlAddr);
+
+FOUNDATION_EXPORT FfiDebugClientProxyBridge* _Nullable FfiInitDebugClientProxyBridge(NSString* _Nullable dataAddr, NSString* _Nullable controlAddr);
+
+FOUNDATION_EXPORT FfiOutboundChannel* _Nullable FfiInitOutboundChannel(void);
+
+FOUNDATION_EXPORT FfiTunConnAdapter* _Nullable FfiInitTunConnAdapter(id<FfiCallbacks> _Nullable cbs, FfiOutboundChannel* _Nullable oc);
 
 FOUNDATION_EXPORT long FfiMaxProcs(long max);
 
@@ -85,7 +157,17 @@ FOUNDATION_EXPORT long FfiSetGCPercent(long pct);
 
 FOUNDATION_EXPORT int64_t FfiSetMemoryLimit(int64_t limit);
 
+@class FfiCallbacks;
+
 @class FfiProxyBridge;
+
+@interface FfiCallbacks : NSObject <goSeqRefInterface, FfiCallbacks> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (void)writeInboundPacket:(NSData* _Nullable)b;
+@end
 
 @interface FfiProxyBridge : NSObject <goSeqRefInterface, FfiProxyBridge> {
 }
@@ -93,8 +175,19 @@ FOUNDATION_EXPORT int64_t FfiSetMemoryLimit(int64_t limit);
 
 - (nonnull instancetype)initWithRef:(_Nonnull id)ref;
 - (void)close;
+/**
+ * Control plane
+ */
 - (NSData* _Nullable)rpc:(NSData* _Nullable)input error:(NSError* _Nullable* _Nullable)error;
-- (void)startProxy:(long)port settingsData:(NSData* _Nullable)settingsData;
+- (void)startDirectProxyConnection:(id<FfiCallbacks> _Nullable)cbs settingsData:(NSData* _Nullable)settingsData;
+/**
+ * Deprecate
+ */
+- (void)startUDPServer:(long)port settingsData:(NSData* _Nullable)settingsData;
+/**
+ * Data plane
+ */
+- (void)writeOutboundPacket:(NSData* _Nullable)b;
 @end
 
 #endif

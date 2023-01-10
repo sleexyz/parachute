@@ -30,13 +30,21 @@ public struct Server {
         Ffi.FfiSetGCPercent(50)
         
         if settings.debug {
-            return Server(bridge: Ffi.FfiInitDebug(env, "192.168.1.225:8083")!)
+            return Server(bridge: Ffi.FfiInitDebug(env, "192.168.1.225:8080", "192.168.1.225:8083")!)
         }
         return Server(bridge: Ffi.FfiInit(env)!)
     }
     
     public func startProxy(port: Int, settingsData: Data) {
-        bridge.startProxy(port, settingsData: settingsData)
+        bridge.startUDPServer(port, settingsData: settingsData)
+    }
+    
+    public func startDirectProxyConnection(tunConn: Ffi.FfiCallbacksProtocol, settingsData: Data) {
+        bridge.startDirectProxyConnection(tunConn, settingsData: settingsData)
+    }
+    
+    public func writeOutboundPacket(_ data: Data) {
+        bridge.writeOutboundPacket(data)
     }
     
     public func close() {

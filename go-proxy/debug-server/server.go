@@ -31,7 +31,7 @@ func (p *DebugServerProxy) Start(port int) {
 	startRequest := &proxyservice.Settings{
 		BaseRxSpeedTarget: controller.DefaultRxSpeedTarget,
 	}
-	go p.proxy.Start(port, startRequest)
+	go p.proxy.StartUDPServer(port, startRequest)
 	p.serveDebugHandlers()
 	// Start http server
 }

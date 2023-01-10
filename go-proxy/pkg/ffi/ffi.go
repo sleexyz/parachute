@@ -6,54 +6,116 @@ import (
 	"runtime"
 	"runtime/debug"
 
-	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
+	"gvisor.dev/gvisor/pkg/bufferv2"
 	"strange.industries/go-proxy/pb/proxyservice"
 	"strange.industries/go-proxy/pkg/analytics"
 	"strange.industries/go-proxy/pkg/controller"
 	proxy "strange.industries/go-proxy/pkg/proxy"
 )
 
-var debugMarshalOptions = &prototext.MarshalOptions{
-	Multiline: true,
-	Indent:    "  ",
-}
-
 type ProxyBridge interface {
-	StartProxy(port int, settingsData []byte)
+	// Deprecate
+	StartUDPServer(port int, settingsData []byte)
+	StartDirectProxyConnection(cbs Callbacks, settingsData []byte)
 	Close()
+	// Data plane
+	WriteOutboundPacket(b []byte)
+	// Control plane
 	Rpc(input []byte) ([]byte, error)
 }
 
 type OnDeviceProxyBridge struct {
 	*proxy.Proxy
+	*OutboundChannel
+}
+
+type Callbacks interface {
+	WriteInboundPacket(b []byte)
+}
+
+type TunConnAdapter struct {
+	cbs Callbacks
+	oc  *OutboundChannel
+}
+
+func InitTunConnAdapter(cbs Callbacks, oc *OutboundChannel) *TunConnAdapter {
+	return &TunConnAdapter{cbs, oc}
+}
+
+func (t *TunConnAdapter) Write(b []byte) (int, error) {
+	// tee.LogPacket("inbound", b)
+	t.cbs.WriteInboundPacket(b)
+	return len(b), nil
+}
+
+// Read outbound packets
+func (t *TunConnAdapter) Read(b []byte) (int, error) {
+	packet := t.oc.ReadOutboundPacket()
+	// tee.LogPacket("outbound (read)", packet)
+	i := copy(b, packet)
+	return i, nil
+}
+
+func (t *TunConnAdapter) Close() {
 }
 
 func (p *OnDeviceProxyBridge) Close() {
 	p.Proxy.Close()
-
 }
 
-func (p *OnDeviceProxyBridge) StartProxy(port int, settingsData []byte) {
-	// defer sentry.Recover()
+type OutboundChannel struct {
+	outbound chan *bufferv2.View
+}
+
+func InitOutboundChannel() *OutboundChannel {
+	return &OutboundChannel{
+		outbound: make(chan *bufferv2.View),
+	}
+}
+
+func (p *OutboundChannel) WriteOutboundPacket(b []byte) {
+	// tee.LogPacket("outbound (write)", b)
+	v := bufferv2.NewViewSize(len(b))
+	slice := v.AsSlice()
+	copy(slice, b)
+	p.outbound <- v
+}
+
+func (p *OutboundChannel) ReadOutboundPacket() []byte {
+	result := <-p.outbound
+	defer result.Release()
+	return result.AsSlice()
+}
+
+func (p *OnDeviceProxyBridge) StartDirectProxyConnection(cbs Callbacks, settingsData []byte) {
+	log.Printf("starting direct proxy connection")
+	r := &proxyservice.Settings{}
+	err := proto.Unmarshal(settingsData, r)
+	if err != nil {
+		log.Panicf("could not unmarshal settings on connection start : %s", err)
+	}
+	p.Proxy.Start(InitTunConnAdapter(cbs, p.OutboundChannel), r)
+}
+
+func (p *OnDeviceProxyBridge) StartUDPServer(port int, settingsData []byte) {
 	r := &proxyservice.Settings{}
 	err := proto.Unmarshal(settingsData, r)
 	if err != nil {
 		log.Panicf("could not start server: %s", err)
 	}
-	go p.Proxy.Start(port, r)
+	p.Proxy.StartUDPServer(port, r)
 }
 
 func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
-	// defer sentry.Recover()
 	r := &proxyservice.Request{}
 	err := proto.Unmarshal(input, r)
 	if err != nil {
 		return nil, err
 	}
-	debugText, _ := debugMarshalOptions.Marshal(r)
-	log.Printf("/Rpc %s", debugText)
+	// debugText, _ := debugMarshalOptions.Marshal(r)
+	// log.Printf("/Rpc %s", debugText)
 
 	resp := &proxyservice.Response{}
 	switch r.Message.(type) {
@@ -70,8 +132,8 @@ func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
 	default:
 		return nil, fmt.Errorf("could not parse rpc command")
 	}
-	debugText, _ = debugMarshalOptions.Marshal(resp)
-	log.Printf("/RpcResponse %s", debugText)
+	// debugText, _ = debugMarshalOptions.Marshal(resp)
+	// log.Printf("/RpcResponse %s", debugText)
 	return p.encodeResponse(resp), nil
 	// return nil, nil
 }
@@ -85,40 +147,22 @@ func (p *OnDeviceProxyBridge) encodeResponse(resp protoreflect.ProtoMessage) []b
 	return out
 }
 
-func InitDebug(env string, debugServerAddr string) ProxyBridge {
+func InitDebug(env string, dataAddr string, controlAddr string) ProxyBridge {
 	log.SetOutput(MobileLogger{})
-	// InitSentry(env)
-	// defer sentry.Recover()
-	return proxy.InitDebugClientProxyBridge(debugServerAddr)
+	return InitDebugClientProxyBridge(dataAddr, controlAddr)
 }
 
 func Init(env string) ProxyBridge {
 	// log.SetOutput(io.Discard)
 	log.SetOutput(MobileLogger{})
-	// InitSentry(env)
-	// defer sentry.Recover()
 	a := &analytics.NoOpAnalytics{}
 	sm := controller.InitSettingsManager()
 	c := controller.Init(a, sm, controller.ProdAppConfigs)
 	return &OnDeviceProxyBridge{
-		Proxy: proxy.InitOnDeviceProxy(a, c),
+		OutboundChannel: InitOutboundChannel(),
+		Proxy:           proxy.InitOnDeviceProxy(a, c),
 	}
 }
-
-// func InitSentry(env string) {
-// 	err := sentry.Init(sentry.ClientOptions{
-// 		Environment:      env,
-// 		AttachStacktrace: true,
-// 		Dsn:              "https://30011f92c5f545dbb68d373ddd1179ed@o4504415494602752.ingest.sentry.io/4504415507709952",
-// 		// Set TracesSampleRate to 1.0 to capture 100%
-// 		// of transactions for performance monitoring.
-// 		// We recommend adjusting this value in production,
-// 		TracesSampleRate: 1.0,
-// 	})
-// 	if err != nil {
-// 		log.Fatalf("sentry.Init: %s", err)
-// 	}
-// }
 
 func MaxProcs(max int) int {
 	return runtime.GOMAXPROCS(max)
