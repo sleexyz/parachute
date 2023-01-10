@@ -1,15 +1,21 @@
 package tee
 
 import (
+	"encoding/base64"
 	"fmt"
+	"log"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 )
 
+func LogPacket(label string, data []byte) {
+	sEnc := base64.StdEncoding.EncodeToString(data)
+	log.Printf("%s -------- %s\n", label, sEnc)
+	log.Printf("%s: %s", label, MakeDebugString(data))
+}
+
 func MakeDebugString(data []byte) string {
-	// sEnc := base64.StdEncoding.EncodeToString([]byte(data[:n]))
-	// fmt.Printf("-------- %s\n", sEnc)
 	ipVersion := (data[0] & 0xf0) >> 4
 	var packet gopacket.Packet
 	if ipVersion == 6 {

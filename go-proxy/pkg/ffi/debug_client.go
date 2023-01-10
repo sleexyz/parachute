@@ -1,4 +1,4 @@
-package proxy
+package ffi
 
 import (
 	"bytes"
@@ -9,19 +9,43 @@ import (
 
 	"google.golang.org/protobuf/proto"
 	"strange.industries/go-proxy/pb/proxyservice"
+	"strange.industries/go-proxy/tee"
 )
 
 type DebugClientProxyBridge struct {
-	debugServerAddr string
+	*OutboundChannel
+	dataAddr    string
+	controlAddr string
+	tee         *tee.Tee
 }
 
-func InitDebugClientProxyBridge(debugServerAddr string) *DebugClientProxyBridge {
-	return &DebugClientProxyBridge{debugServerAddr: debugServerAddr}
+func InitDebugClientProxyBridge(dataAddr string, controlAddr string) *DebugClientProxyBridge {
+	return &DebugClientProxyBridge{
+		OutboundChannel: InitOutboundChannel(),
+		dataAddr:        dataAddr,
+		controlAddr:     controlAddr,
+	}
 }
 
-func (p *DebugClientProxyBridge) StartProxy(port int, settingsData []byte) {
+func (p *DebugClientProxyBridge) StartDirectProxyConnection(cbs Callbacks, settingsData []byte) {
+	tee, err := tee.InitTee(InitTunConnAdapter(cbs, p.OutboundChannel), p.dataAddr)
+	if err != nil {
+		panic(err)
+	}
+	p.tee = tee
+
+	go p.tee.Listen()
+	p.forwardSettings(settingsData)
+}
+
+// deprecated.
+func (p *DebugClientProxyBridge) StartUDPServer(port int, settingsData []byte) {
 	// TODO: forward start data params to server
 	log.Printf("debug mode so nothing to start")
+	p.forwardSettings(settingsData)
+}
+
+func (p *DebugClientProxyBridge) forwardSettings(settingsData []byte) {
 	s := &proxyservice.Settings{}
 	err := proto.Unmarshal(settingsData, s)
 
@@ -43,14 +67,17 @@ func (p *DebugClientProxyBridge) StartProxy(port int, settingsData []byte) {
 		log.Printf("could not forward proxy settings: %s", err)
 		panic(1)
 	}
+
 }
 
 func (p *DebugClientProxyBridge) Close() {
-	log.Printf("debug mode so nothing to close")
+	if p.tee != nil {
+		p.tee.Close()
+	}
 }
 
 func (p *DebugClientProxyBridge) Rpc(input []byte) ([]byte, error) {
-	url := fmt.Sprintf("http://%s/Rpc", p.debugServerAddr)
+	url := fmt.Sprintf("http://%s/Rpc", p.controlAddr)
 	log.Printf("POST %s", url)
 	resp, err := http.Post(url, "application/octet-stream", bytes.NewBuffer(input))
 	if err != nil {

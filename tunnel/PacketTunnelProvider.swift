@@ -13,35 +13,46 @@ import UIKit
 import ProxyService
 import Server
 import Firebase
+import Ffi
 
-public struct ProxyServerOptions {
-    public let ipv4Address: String
-    public let ipv4Port: Int
-    public init(ipv4Address: String, ipv4Port: Int) {
-        self.ipv4Address = ipv4Address
-        self.ipv4Port = ipv4Port
+class TunConn: NSObject, FfiCallbacksProtocol {
+    var packetFlow: NEPacketTunnelFlow {
+        return packetFlowGetter()
     }
-    static let localServer = ProxyServerOptions(ipv4Address: "127.0.0.1", ipv4Port: 8080)
     
-    static let debugDataServer = ProxyServerOptions(ipv4Address: "192.168.1.225", ipv4Port: 8080)
+    var packetFlowGetter: () -> NEPacketTunnelFlow
+    
+    init(packetFlowGetter: @escaping () -> NEPacketTunnelFlow) {
+        self.packetFlowGetter = packetFlowGetter
+    }
+    
+    func writeInboundPacket(_ data: Data?) {
+        guard let data = data else {
+            fatalError("data is nil")
+        }
+        self.packetFlow.writePackets([data], withProtocols: [PacketTunnelProvider.protocolNumber(for: data)])
+    }
 }
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
     private weak var timeoutTimer: Timer?
-    private var session: NWUDPSession?
     private var observer: AnyObject?
     private let queue = DispatchQueue(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
     private let logger: Logger
-    
-    private var options: ProxyServerOptions = .localServer
-    
     private var server: Server?
+    
+    private var tunConn: TunConn?
     
     override init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
         let logger = Logger(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
         self.logger = logger
         FirebaseApp.configure()
+        super.init()
+        self.tunConn = TunConn {
+            return self.packetFlow
+        }
+        logger.info("init PacketTunnelProvider")
     }
     
     private static func fileUrl() throws -> URL {
@@ -69,31 +80,12 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             self.server = Server.InitTunnelServer(settings: settings)
             
             self.logger.info("starting server")
-            self.server!.startProxy(port: 8080, settingsData: settingsData)
+            self.server!.startDirectProxyConnection(tunConn: self.tunConn!, settingsData: settingsData)
             self.logger.info("server started")
             
-            self.options = settings.debug ? .debugDataServer : .localServer
-            
-            let tunnelSettings = self.initTunnelSettings(proxyHost: self.options.ipv4Address, proxyPort: self.options.ipv4Port)
-            
-            self.setTunnelNetworkSettings(tunnelSettings) { error in
+            self.setTunnelNetworkSettings(PacketTunnelProvider.tunnelSettings) { error in
                 completionHandler(error)
-                let endpoint = NWHostEndpoint(hostname: self.options.ipv4Address, port: String(self.options.ipv4Port))
-                self.session = self.createUDPSession(to: endpoint, from: nil)
-                self.observer = self.session?.observe(\.state, options: [.new]) { session, _ in
-                    if session.state == .ready {
-                        session.setReadHandler({ [weak self] datagrams, error in
-                            guard let self = self else { return }
-                            for datagram in datagrams ?? [] {
-                                self.packetFlow.writePackets([datagram], withProtocols: [self.protocolNumber(for: datagram)])
-                            }
-                        }, maxDatagrams: Int.max)
-                        self.logger.info("tunnel started")
-                        
-                        // The session is ready to exchange UDP datagrams with the server
-                        self.readOutboundPackets()
-                    }
-                }
+                self.readOutboundPackets()
             }
         } catch let error {
             Crashlytics.crashlytics().record(error: error)
@@ -105,12 +97,14 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         self.packetFlow.readPacketObjects {[weak self] packets in
             guard let self = self else { return }
             for packet in packets {
-                //                let protocolNumber = self.protocolNumber(for: packet.data) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
-                //                self.logger.info("Outbound \(protocolNumber) packet: \(packet.data.base64EncodedString())")
-                self.session?.writeDatagram(packet.data) { error in
-                    guard let error = error else { return }
-                    self.logger.error("Error: \(String(describing: error))")
-                }
+//                let protocolNumber = PacketTunnelProvider.protocolNumber(for: packet.data) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
+//                self.logger.info("Outbound \(protocolNumber) packet: \(packet.data.base64EncodedString())")
+                
+                self.server?.writeOutboundPacket(packet.data)
+//                self.session?.writeDatagram(packet.data) { error in
+//                    guard let error = error else { return }
+//                    self.logger.error("Error: \(String(describing: error))")
+//                }
             }
             self.queue.async {
                 self.readOutboundPackets()
@@ -119,8 +113,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
     
     
-    private func initTunnelSettings(proxyHost: String, proxyPort: Int) -> NEPacketTunnelNetworkSettings {
-        let settings: NEPacketTunnelNetworkSettings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: self.options.ipv4Address)
+    private static var tunnelSettings: NEPacketTunnelNetworkSettings {
+        let settings: NEPacketTunnelNetworkSettings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: "127.0.0.1")
         let ipv4Settings: NEIPv4Settings = NEIPv4Settings(
             addresses: ["10.0.0.8"],
             subnetMasks: ["255.255.255.0"]
@@ -172,7 +166,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         // Add code here to wake up.
     }
     
-    private func protocolNumber(for packet: Data) -> NSNumber {
+    static func protocolNumber(for packet: Data) -> NSNumber {
         guard !packet.isEmpty else {
             return AF_INET as NSNumber
         }
