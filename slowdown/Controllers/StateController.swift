@@ -21,6 +21,24 @@ class StateController: ObservableObject  {
         state = value
     }
     
+    @MainActor
+    private func setUsagePoints(value: Double) {
+        state.usagePoints = value
+    }
+    
+    func heal() {
+        Task {
+            do {
+                let value = try await service.Heal()
+                await self.setUsagePoints(value: value.usagePoints)
+                logger.info("state: \(state.debugDescription)")
+            } catch let error {
+                logger.info("error: \(error.localizedDescription)")
+                
+            }
+        }
+    }
+    
     func fetchState() {
         Task {
             do {

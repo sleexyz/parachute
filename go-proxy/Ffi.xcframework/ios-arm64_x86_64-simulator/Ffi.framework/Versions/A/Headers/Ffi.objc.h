@@ -94,6 +94,7 @@
 
 // skipped method OnDeviceProxyBridge.GetState with unsupported parameter or return types
 
+- (void)heal;
 // skipped method OnDeviceProxyBridge.OnSettingsChange with unsupported parameter or return types
 
 // skipped method OnDeviceProxyBridge.PublishSample with unsupported parameter or return types
