@@ -2,8 +2,6 @@ package controller
 
 import (
 	"context"
-	"log"
-	"math"
 	"time"
 
 	"strange.industries/go-proxy/pb/proxyservice"
@@ -158,6 +156,9 @@ func (c *Controller) updateAppUsagePoints() {
 }
 
 func (c *Controller) UpdateUsagePoints(dt time.Duration) {
+	oldValue := c.usagePoints.Points()
+	defer c.usagePoints.LogDelta(oldValue)
+
 	// Compute damage
 	txPointsMax := 0.0
 	for _, app := range c.apps {
@@ -171,20 +172,20 @@ func (c *Controller) UpdateUsagePoints(dt time.Duration) {
 		// Negative damage aka heal
 		multiplier = -1 * c.sm.Settings().UsageHealRate
 	}
-	damage := toAdd * multiplier
-	if damage < 0 {
-		log.Printf("Healed %.2f hp", math.Abs(damage))
-	}
-	if damage > 0 {
-		log.Printf("Took %.2f damage", math.Abs(damage))
-	}
-	c.usagePoints.AddPoints(damage)
+	c.usagePoints.AddPoints(toAdd * multiplier)
 }
 
 func (c *Controller) resetAppSampleStates() {
 	for _, app := range c.apps {
 		app.ResetSampleState()
 	}
+}
+
+func (c *Controller) Heal() {
+	oldValue := c.usagePoints.Points()
+	defer c.usagePoints.LogDelta(oldValue)
+	c.usagePoints.HealTo(c.usagePoints.cap * 0.5)
+	c.usagePoints.AddPoints(-1) // heal a minute
 }
 
 func (c *Controller) GetState() *proxyservice.GetStateResponse {

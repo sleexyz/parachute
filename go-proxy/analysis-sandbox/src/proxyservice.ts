@@ -56,11 +56,13 @@ export interface Settings {
 export interface Request {
   setSettings?: Settings | undefined;
   getState?: GetStateRequest | undefined;
+  heal?: HealRequest | undefined;
 }
 
 export interface Response {
   setSettings?: SetSettingsResponse | undefined;
   getState?: GetStateResponse | undefined;
+  heal?: HealResponse | undefined;
 }
 
 export interface SetSettingsResponse {
@@ -70,6 +72,13 @@ export interface GetStateRequest {
 }
 
 export interface GetStateResponse {
+  usagePoints: number;
+}
+
+export interface HealRequest {
+}
+
+export interface HealResponse {
   usagePoints: number;
 }
 
@@ -227,7 +236,7 @@ export const Settings = {
 };
 
 function createBaseRequest(): Request {
-  return { setSettings: undefined, getState: undefined };
+  return { setSettings: undefined, getState: undefined, heal: undefined };
 }
 
 export const Request = {
@@ -237,6 +246,9 @@ export const Request = {
     }
     if (message.getState !== undefined) {
       GetStateRequest.encode(message.getState, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.heal !== undefined) {
+      HealRequest.encode(message.heal, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -254,6 +266,9 @@ export const Request = {
         case 2:
           message.getState = GetStateRequest.decode(reader, reader.uint32());
           break;
+        case 3:
+          message.heal = HealRequest.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -266,6 +281,7 @@ export const Request = {
     return {
       setSettings: isSet(object.setSettings) ? Settings.fromJSON(object.setSettings) : undefined,
       getState: isSet(object.getState) ? GetStateRequest.fromJSON(object.getState) : undefined,
+      heal: isSet(object.heal) ? HealRequest.fromJSON(object.heal) : undefined,
     };
   },
 
@@ -275,6 +291,7 @@ export const Request = {
       (obj.setSettings = message.setSettings ? Settings.toJSON(message.setSettings) : undefined);
     message.getState !== undefined &&
       (obj.getState = message.getState ? GetStateRequest.toJSON(message.getState) : undefined);
+    message.heal !== undefined && (obj.heal = message.heal ? HealRequest.toJSON(message.heal) : undefined);
     return obj;
   },
 
@@ -286,12 +303,15 @@ export const Request = {
     message.getState = (object.getState !== undefined && object.getState !== null)
       ? GetStateRequest.fromPartial(object.getState)
       : undefined;
+    message.heal = (object.heal !== undefined && object.heal !== null)
+      ? HealRequest.fromPartial(object.heal)
+      : undefined;
     return message;
   },
 };
 
 function createBaseResponse(): Response {
-  return { setSettings: undefined, getState: undefined };
+  return { setSettings: undefined, getState: undefined, heal: undefined };
 }
 
 export const Response = {
@@ -301,6 +321,9 @@ export const Response = {
     }
     if (message.getState !== undefined) {
       GetStateResponse.encode(message.getState, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.heal !== undefined) {
+      HealResponse.encode(message.heal, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -318,6 +341,9 @@ export const Response = {
         case 2:
           message.getState = GetStateResponse.decode(reader, reader.uint32());
           break;
+        case 3:
+          message.heal = HealResponse.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -330,6 +356,7 @@ export const Response = {
     return {
       setSettings: isSet(object.setSettings) ? SetSettingsResponse.fromJSON(object.setSettings) : undefined,
       getState: isSet(object.getState) ? GetStateResponse.fromJSON(object.getState) : undefined,
+      heal: isSet(object.heal) ? HealResponse.fromJSON(object.heal) : undefined,
     };
   },
 
@@ -339,6 +366,7 @@ export const Response = {
       (obj.setSettings = message.setSettings ? SetSettingsResponse.toJSON(message.setSettings) : undefined);
     message.getState !== undefined &&
       (obj.getState = message.getState ? GetStateResponse.toJSON(message.getState) : undefined);
+    message.heal !== undefined && (obj.heal = message.heal ? HealResponse.toJSON(message.heal) : undefined);
     return obj;
   },
 
@@ -349,6 +377,9 @@ export const Response = {
       : undefined;
     message.getState = (object.getState !== undefined && object.getState !== null)
       ? GetStateResponse.fromPartial(object.getState)
+      : undefined;
+    message.heal = (object.heal !== undefined && object.heal !== null)
+      ? HealResponse.fromPartial(object.heal)
       : undefined;
     return message;
   },
@@ -474,6 +505,92 @@ export const GetStateResponse = {
 
   fromPartial<I extends Exact<DeepPartial<GetStateResponse>, I>>(object: I): GetStateResponse {
     const message = createBaseGetStateResponse();
+    message.usagePoints = object.usagePoints ?? 0;
+    return message;
+  },
+};
+
+function createBaseHealRequest(): HealRequest {
+  return {};
+}
+
+export const HealRequest = {
+  encode(_: HealRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): HealRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseHealRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): HealRequest {
+    return {};
+  },
+
+  toJSON(_: HealRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<HealRequest>, I>>(_: I): HealRequest {
+    const message = createBaseHealRequest();
+    return message;
+  },
+};
+
+function createBaseHealResponse(): HealResponse {
+  return { usagePoints: 0 };
+}
+
+export const HealResponse = {
+  encode(message: HealResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.usagePoints !== 0) {
+      writer.uint32(9).double(message.usagePoints);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): HealResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseHealResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.usagePoints = reader.double();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): HealResponse {
+    return { usagePoints: isSet(object.usagePoints) ? Number(object.usagePoints) : 0 };
+  },
+
+  toJSON(message: HealResponse): unknown {
+    const obj: any = {};
+    message.usagePoints !== undefined && (obj.usagePoints = message.usagePoints);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<HealResponse>, I>>(object: I): HealResponse {
+    const message = createBaseHealResponse();
     message.usagePoints = object.usagePoints ?? 0;
     return message;
   },

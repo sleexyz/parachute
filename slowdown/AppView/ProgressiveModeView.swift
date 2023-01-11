@@ -20,10 +20,6 @@ struct ProgressiveModeView: View {
     
     var body: some View {
         VStack {
-            Text("Progressive")
-                .font(.system(size: 36))
-                .padding()
-                .frame(maxWidth: .infinity)
             HStack {
                 DamageBar(damage: stateController.state.usagePoints, maxHP: store.settings.usageMaxHp)
             }
@@ -36,7 +32,6 @@ struct ProgressiveModeView: View {
                         controller.syncSettings()
                     }
             }
-            
             HStack {
                 Text("Heal rate")
                 TextField("Heal rate (HP / min)", value: $store.settings.usageHealRate, format: .number)
@@ -46,6 +41,14 @@ struct ProgressiveModeView: View {
                         controller.syncSettings()
                     }
             }
+            Spacer()
+            Button(action: stateController.heal) {
+                Text("🤤")
+            }
+            .font(.system(size: 72))
+            .padding()
+            .frame(maxWidth: .infinity)
+            Spacer()
         }.onReceive(timer) {_ in
             self.stateController.fetchState()
         }

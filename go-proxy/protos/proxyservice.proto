@@ -33,6 +33,7 @@ message Request {
     oneof message {
         Settings setSettings = 1;
         GetStateRequest getState = 2;
+        HealRequest heal = 3;
     }
 }
 
@@ -40,6 +41,7 @@ message Response {
     oneof message {
         SetSettingsResponse setSettings = 1;
         GetStateResponse getState = 2;
+        HealResponse heal = 3;
     }
 }
 
@@ -50,6 +52,13 @@ message GetStateRequest {
 }
 
 message GetStateResponse {
+    double usagePoints = 1;
+}
+
+message HealRequest {
+}
+
+message HealResponse {
     double usagePoints = 1;
 }
 

@@ -129,6 +129,13 @@ func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
 		resp.Message = &proxyservice.Response_GetState{
 			GetState: p.Proxy.GetState(),
 		}
+	case *proxyservice.Request_Heal:
+		p.Proxy.Heal()
+		resp.Message = &proxyservice.Response_Heal{
+			Heal: &proxyservice.HealResponse{
+				UsagePoints: p.Proxy.GetState().UsagePoints,
+			},
+		}
 	default:
 		return nil, fmt.Errorf("could not parse rpc command")
 	}

@@ -40,7 +40,7 @@ struct AppView: View {
                     PrimaryButton(title: "Stop", action: model.toggleConnection, isLoading: service.isTransitioning)
                 }.padding()
                 Spacer()
-                AppModeCarousel(model: model)
+                ProgressiveModeView()
             }
         }
         .disabled(service.isTransitioning)

@@ -138,6 +138,12 @@ open class VPNConfigurationService: ObservableObject {
         return (try await Rpc(message: message)).getState
     }
     
+    func Heal() async throws -> Proxyservice_HealResponse{
+        var message = Proxyservice_Request()
+        message.heal = Proxyservice_HealRequest()
+        return (try await Rpc(message: message)).heal
+    }
+    
     private func Rpc(message: Proxyservice_Request) async throws -> Proxyservice_Response {
         guard let session = self.manager?.connection as? NETunnelProviderSession else {
             throw RpcError.serverNotInitializedError

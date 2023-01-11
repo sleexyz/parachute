@@ -120,11 +120,20 @@ public struct Proxyservice_Request {
     set {message = .getState(newValue)}
   }
 
+  public var heal: Proxyservice_HealRequest {
+    get {
+      if case .heal(let v)? = message {return v}
+      return Proxyservice_HealRequest()
+    }
+    set {message = .heal(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Message: Equatable {
     case setSettings(Proxyservice_Settings)
     case getState(Proxyservice_GetStateRequest)
+    case heal(Proxyservice_HealRequest)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proxyservice_Request.OneOf_Message, rhs: Proxyservice_Request.OneOf_Message) -> Bool {
@@ -138,6 +147,10 @@ public struct Proxyservice_Request {
       }()
       case (.getState, .getState): return {
         guard case .getState(let l) = lhs, case .getState(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.heal, .heal): return {
+        guard case .heal(let l) = lhs, case .heal(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       default: return false
@@ -172,11 +185,20 @@ public struct Proxyservice_Response {
     set {message = .getState(newValue)}
   }
 
+  public var heal: Proxyservice_HealResponse {
+    get {
+      if case .heal(let v)? = message {return v}
+      return Proxyservice_HealResponse()
+    }
+    set {message = .heal(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Message: Equatable {
     case setSettings(Proxyservice_SetSettingsResponse)
     case getState(Proxyservice_GetStateResponse)
+    case heal(Proxyservice_HealResponse)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proxyservice_Response.OneOf_Message, rhs: Proxyservice_Response.OneOf_Message) -> Bool {
@@ -190,6 +212,10 @@ public struct Proxyservice_Response {
       }()
       case (.getState, .getState): return {
         guard case .getState(let l) = lhs, case .getState(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.heal, .heal): return {
+        guard case .heal(let l) = lhs, case .heal(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       default: return false
@@ -222,6 +248,28 @@ public struct Proxyservice_GetStateRequest {
 }
 
 public struct Proxyservice_GetStateResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var usagePoints: Double = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Proxyservice_HealRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Proxyservice_HealResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -317,6 +365,8 @@ extension Proxyservice_Response.OneOf_Message: @unchecked Sendable {}
 extension Proxyservice_SetSettingsResponse: @unchecked Sendable {}
 extension Proxyservice_GetStateRequest: @unchecked Sendable {}
 extension Proxyservice_GetStateResponse: @unchecked Sendable {}
+extension Proxyservice_HealRequest: @unchecked Sendable {}
+extension Proxyservice_HealResponse: @unchecked Sendable {}
 extension Proxyservice_ServerState: @unchecked Sendable {}
 extension Proxyservice_AppState: @unchecked Sendable {}
 extension Proxyservice_Sample: @unchecked Sendable {}
@@ -416,6 +466,7 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "setSettings"),
     2: .same(proto: "getState"),
+    3: .same(proto: "heal"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -450,6 +501,19 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
           self.message = .getState(v)
         }
       }()
+      case 3: try {
+        var v: Proxyservice_HealRequest?
+        var hadOneofValue = false
+        if let current = self.message {
+          hadOneofValue = true
+          if case .heal(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.message = .heal(v)
+        }
+      }()
       default: break
       }
     }
@@ -469,6 +533,10 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       guard case .getState(let v)? = self.message else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     }()
+    case .heal?: try {
+      guard case .heal(let v)? = self.message else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    }()
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -486,6 +554,7 @@ extension Proxyservice_Response: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "setSettings"),
     2: .same(proto: "getState"),
+    3: .same(proto: "heal"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -520,6 +589,19 @@ extension Proxyservice_Response: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
           self.message = .getState(v)
         }
       }()
+      case 3: try {
+        var v: Proxyservice_HealResponse?
+        var hadOneofValue = false
+        if let current = self.message {
+          hadOneofValue = true
+          if case .heal(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.message = .heal(v)
+        }
+      }()
       default: break
       }
     }
@@ -538,6 +620,10 @@ extension Proxyservice_Response: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     case .getState?: try {
       guard case .getState(let v)? = self.message else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }()
+    case .heal?: try {
+      guard case .heal(let v)? = self.message else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
     }()
     case nil: break
     }
@@ -615,6 +701,57 @@ extension Proxyservice_GetStateResponse: SwiftProtobuf.Message, SwiftProtobuf._M
   }
 
   public static func ==(lhs: Proxyservice_GetStateResponse, rhs: Proxyservice_GetStateResponse) -> Bool {
+    if lhs.usagePoints != rhs.usagePoints {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_HealRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".HealRequest"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_HealRequest, rhs: Proxyservice_HealRequest) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_HealResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".HealResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "usagePoints"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularDoubleField(value: &self.usagePoints) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.usagePoints != 0 {
+      try visitor.visitSingularDoubleField(value: self.usagePoints, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_HealResponse, rhs: Proxyservice_HealResponse) -> Bool {
     if lhs.usagePoints != rhs.usagePoints {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

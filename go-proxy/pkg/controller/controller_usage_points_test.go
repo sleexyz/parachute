@@ -16,14 +16,30 @@ func TestAppUpdateUsagePointsAboveThreshold(t *testing.T) {
 	now := time.Now()
 	a := c.apps[0]
 
-	assert.Equal(t, 0.0, c.usagePoints.Points(&now))
+	assert.Equal(t, 0.0, c.usagePoints.Points())
 
 	a.AddTxPoints(1.0, &now)
-	c.UpdateUsagePoints(time.Minute, &now)
+	c.UpdateUsagePoints(time.Minute)
+	a.ResetSampleState()
+}
+
+func TestAppUpdateUsagePointsHealsAtHealRate(t *testing.T) {
+	sm := InitSettingsManager()
+	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
+	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
+	now := time.Now()
+	a := c.apps[0]
+
+	a.AddTxPoints(1.0, &now)
+	c.UpdateUsagePoints(time.Minute)
+	a.ResetSampleState()
+	assert.Equal(t, 1.0, c.usagePoints.Points())
+
+	// Heals
+	c.UpdateUsagePoints(time.Minute)
 	a.ResetSampleState()
 
-	// 1 minute * 0.5 points per minute + 1 minute * 1 point per minute = 1.5
-	assert.Equal(t, 1.5, c.usagePoints.Points(&now))
+	assert.Equal(t, 0.5, c.usagePoints.Points())
 }
 
 func TestAppUsagePointsNoopsUnderThreshold(t *testing.T) {
@@ -33,17 +49,17 @@ func TestAppUsagePointsNoopsUnderThreshold(t *testing.T) {
 	now := time.Now()
 	a := c.apps[0]
 
-	c.UpdateUsagePoints(time.Minute, &now)
+	c.UpdateUsagePoints(time.Minute)
 	a.ResetSampleState()
-	assert.Equal(t, 0.0, c.usagePoints.Points(&now))
+	assert.Equal(t, 0.0, c.usagePoints.Points())
 
 	a.AddTxPoints(0.9, &now)
-	c.UpdateUsagePoints(time.Minute, &now)
+	c.UpdateUsagePoints(time.Minute)
 	a.ResetSampleState()
-	assert.Equal(t, 0.0, c.usagePoints.Points(&now))
+	assert.Equal(t, 0.0, c.usagePoints.Points())
 }
 
-func TestAppUsagePointsRespondsToUpdate(t *testing.T) {
+func TestAppUsagePointsRespondsToSettingsUpdate(t *testing.T) {
 	sm := InitSettingsManager()
 	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
@@ -55,24 +71,38 @@ func TestAppUsagePointsRespondsToUpdate(t *testing.T) {
 		UsageHealRate: 1,
 		UsageMaxHP:    3,
 	})
-	c.UpdateUsagePoints(time.Minute, &now)
+	c.UpdateUsagePoints(time.Minute)
 	a.ResetSampleState()
 
-	// NOTE: This has the interesting property of healing more than
-	// we waited for since we compensate against the new heal rate.
-	// We can instead heal.
-	// To ameliorate this, we have a few choices:
-	// 1) Adjust usage HP more often, while keeping sample rate fixed
-	// 2) Adjust usageHP immediately when setting changes, at the old rate.
-	//    Note we don't want to sample again
-	// Choice -- (2) is the more correct solution.
-	assert.Equal(t, 2.0, c.usagePoints.Points(&now), "should reflect change in heal rate")
+	assert.Equal(t, 1.0, c.usagePoints.Points())
 
 	a.AddTxPoints(1.0, &now)
-	c.UpdateUsagePoints(time.Minute, &now)
+	c.UpdateUsagePoints(5 * time.Minute)
 	a.ResetSampleState()
 
-	assert.Equal(t, 3.0, c.usagePoints.Points(&now), "should be capped")
+	assert.Equal(t, 3.0, c.usagePoints.Points(), "should be capped")
+}
+
+func TestHealHealsToHpMin(t *testing.T) {
+	sm := InitSettingsManager()
+	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
+	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
+	now := time.Now()
+	a := c.apps[0]
+
+	a.AddTxPoints(1.0, &now)
+	c.UpdateUsagePoints(6 * time.Minute)
+	a.ResetSampleState()
+	assert.Equal(t, 6.0, c.usagePoints.Points())
+
+	c.Heal()
+	assert.Equal(t, 2.0, c.usagePoints.Points())
+
+	c.Heal()
+	assert.Equal(t, 1.0, c.usagePoints.Points())
+
+	c.Heal()
+	assert.Equal(t, 0.0, c.usagePoints.Points())
 }
 
 // func TestSettingsChangeCausesSample(t *testing.T) {
