@@ -2,6 +2,8 @@ package controller
 
 import (
 	"context"
+	"log"
+	"math"
 	"time"
 
 	"strange.industries/go-proxy/pb/proxyservice"
@@ -25,7 +27,7 @@ type Controller struct {
 	lastAppUsageUpdatedTime *time.Time
 	appUsageUpdateTicker    *time.Ticker
 	appUsageUpdateCounter   int
-	usagePoints             *LinPoints
+	usagePoints             *Points
 
 	stopTickers func()
 }
@@ -40,7 +42,7 @@ func Init(sp analytics.SamplePublisher, sm SettingsManager, appConfigs []*AppCon
 		sm:              sm,
 		AppResolver:     InitAppResolver(ao),
 		SamplePublisher: sp,
-		usagePoints:     InitLinPoints(sm.Settings().UsageHealRate, sm.Settings().UsageMaxHP),
+		usagePoints:     InitPoints(sm.Settings().UsageMaxHP),
 		fm:              make(map[string]*ControllableFlow),
 	}
 	sm.RegisterChangeListener(c)
@@ -72,7 +74,6 @@ func (c *Controller) OnSettingsChange(oldSettings *proxyservice.Settings, settin
 			c.evictExistingTimer()
 		}
 	}
-	c.usagePoints.SetHealRate(settings.UsageHealRate)
 	c.usagePoints.SetCap(settings.UsageMaxHP)
 }
 
@@ -152,20 +153,32 @@ func (c *Controller) garbageCollect() {
 func (c *Controller) updateAppUsagePoints() {
 	now := time.Now()
 	dt := now.Sub(*c.lastAppUsageUpdatedTime)
-	c.UpdateUsagePoints(dt, &now)
+	c.UpdateUsagePoints(dt)
 	c.lastAppUsageUpdatedTime = &now
 }
 
-func (c *Controller) UpdateUsagePoints(dt time.Duration, now *time.Time) {
+func (c *Controller) UpdateUsagePoints(dt time.Duration) {
+	// Compute damage
+	txPointsMax := 0.0
 	for _, app := range c.apps {
-		if app.txPointsMax >= 1 {
-			// Add points at 1 point per minute + lost points due to healing.
-			lostPoints := c.usagePoints.DurationToPoints(dt)
-			toAdd := float64(dt)/float64(time.Minute) + lostPoints
-			c.usagePoints.AddPoints(toAdd, now)
-			break
+		if app.txPointsMax > txPointsMax {
+			txPointsMax = app.txPointsMax
 		}
 	}
+	toAdd := float64(dt) / float64(time.Minute)
+	multiplier := 1.0
+	if txPointsMax < 1 {
+		// Negative damage aka heal
+		multiplier = -1 * c.sm.Settings().UsageHealRate
+	}
+	damage := toAdd * multiplier
+	if damage < 0 {
+		log.Printf("Healed %.2f hp", math.Abs(damage))
+	}
+	if damage > 0 {
+		log.Printf("Took %.2f damage", math.Abs(damage))
+	}
+	c.usagePoints.AddPoints(damage)
 }
 
 func (c *Controller) resetAppSampleStates() {
@@ -175,16 +188,14 @@ func (c *Controller) resetAppSampleStates() {
 }
 
 func (c *Controller) GetState() *proxyservice.GetStateResponse {
-	now := time.Now()
 	return &proxyservice.GetStateResponse{
-		UsagePoints: c.usagePoints.Points(&now),
+		UsagePoints: c.usagePoints.Points(),
 	}
 }
 
 func (c *Controller) DebugRecordState() *proxyservice.ServerState {
 	state := c.AppResolver.RecordState()
-	now := time.Now()
-	state.UsagePoints = c.usagePoints.Points(&now)
+	state.UsagePoints = c.usagePoints.Points()
 	state.Ratio = c.usagePoints.HP() / c.usagePoints.cap
 	state.ProgressiveRxSpeedTarget = c.usagePoints.ProgressiveRxSpeedTarget()
 	return state
