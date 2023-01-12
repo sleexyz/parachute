@@ -40,6 +40,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private let queue = DispatchQueue(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
     private let logger: Logger
     private var server: Server?
+    private var asleep: Bool = false
     
     private var tunConn: TunConn?
     
@@ -97,18 +98,12 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         self.packetFlow.readPacketObjects {[weak self] packets in
             guard let self = self else { return }
             for packet in packets {
-//                let protocolNumber = PacketTunnelProvider.protocolNumber(for: packet.data) === AF_INET6 as NSNumber ? "ipv6" : "ipv4"
-//                self.logger.info("Outbound \(protocolNumber) packet: \(packet.data.base64EncodedString())")
-                
                 self.server?.writeOutboundPacket(packet.data)
-//                self.session?.writeDatagram(packet.data) { error in
-//                    guard let error = error else { return }
-//                    self.logger.error("Error: \(String(describing: error))")
-//                }
             }
-            self.queue.async {
-                self.readOutboundPackets()
+            if self.asleep {
+                return
             }
+            self.readOutboundPackets()
         }
     }
     
@@ -158,11 +153,16 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
     
     override func sleep(completionHandler: @escaping () -> Void) {
+        logger.info("sleeping")
+        self.asleep = true
         // Add code here to get ready to sleep.
         completionHandler()
     }
     
     override func wake() {
+        logger.info("waking")
+        self.asleep = false
+        self.readOutboundPackets()
         // Add code here to wake up.
     }
     

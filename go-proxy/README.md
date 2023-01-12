@@ -79,3 +79,13 @@ Ingress:
     - PacketTunnel writes it to `TUN`.
 - iOS routes it to the app.
 - App receives a packet.
+
+## Run packet capture
+
+```
+/Library/Apple/usr/bin/rvictl -s 00008101-000E09142E69001E
+
+sudo tcpdump -i rvi0 -w trace_wifi.pcap
+```
+
+
