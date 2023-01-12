@@ -47,7 +47,7 @@ func HandleUDPConn(localConn adapter.UDPConn) {
 	var remote *net.UDPAddr
 	if dnsServerIP.Equal(net.IP(id.LocalAddress)) && id.LocalPort == 53 {
 		remote = &net.UDPAddr{
-			IP:   net.IP{8, 8, 8, 8},
+			IP:   net.IP{1, 1, 1, 1},
 			Port: int(id.LocalPort),
 		}
 		targetConn = &DnsSnifferConn{PacketConn: targetConn, c: localConn.Controller().AppResolver, IP: &remote.IP}

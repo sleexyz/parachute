@@ -111,6 +111,7 @@ open class VPNConfigurationService: ObservableObject {
         proto.providerBundleIdentifier = "industries.strange.slowdown.tunnel"
         proto.serverAddress = "127.0.0.1:8080"
         proto.providerConfiguration = [:]
+        proto.disconnectOnSleep = true
         
         tunnel.protocolConfiguration = proto
         let rule = NEOnDemandRuleConnect()
