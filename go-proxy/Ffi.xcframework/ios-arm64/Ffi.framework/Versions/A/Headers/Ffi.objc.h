@@ -118,6 +118,11 @@
 - (void)writeOutboundPacket:(NSData* _Nullable)b;
 @end
 
+/**
+ * Allows outbound packets to
+1) be written to by a producer, and
+2) be read from by a consumer
+ */
 @interface FfiOutboundChannel : NSObject <goSeqRefInterface> {
 }
 @property(strong, readonly) _Nonnull id _ref;
@@ -128,6 +133,9 @@
 - (void)writeOutboundPacket:(NSData* _Nullable)b;
 @end
 
+/**
+ * Provides a TunConn
+ */
 @interface FfiTunConnAdapter : NSObject <goSeqRefInterface> {
 }
 @property(strong, readonly) _Nonnull id _ref;
