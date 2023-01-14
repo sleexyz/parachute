@@ -10,19 +10,8 @@ import (
 	proxy "strange.industries/go-proxy/pkg/proxy"
 )
 
-type Callbacks interface {
-	WriteInboundPacket(b []byte)
-}
-
-type ProxyBridge interface {
-	// Deprecate
-	StartUDPServer(port int, settingsData []byte)
-	StartDirectProxyConnection(cbs Callbacks, settingsData []byte)
-	Close()
-	// Data plane
-	WriteOutboundPacket(b []byte)
-	// Control plane
-	Rpc(input []byte) ([]byte, error)
+type DeviceCallbacks interface {
+	SendNotification(title string, message string)
 }
 
 func InitDebug(env string, dataAddr string, controlAddr string) ProxyBridge {
@@ -30,12 +19,12 @@ func InitDebug(env string, dataAddr string, controlAddr string) ProxyBridge {
 	return InitDebugClientProxyBridge(dataAddr, controlAddr)
 }
 
-func Init(env string) ProxyBridge {
+func Init(env string, dc DeviceCallbacks) ProxyBridge {
 	// log.SetOutput(io.Discard)
 	log.SetOutput(MobileLogger{})
 	a := &analytics.NoOpAnalytics{}
 	sm := controller.InitSettingsManager()
-	c := controller.Init(a, sm, controller.ProdAppConfigs)
+	c := controller.Init(a, sm, controller.ProdAppConfigs, dc)
 	return &OnDeviceProxyBridge{
 		OutboundChannel: InitOutboundChannel(),
 		Proxy:           proxy.InitOnDeviceProxy(a, c),

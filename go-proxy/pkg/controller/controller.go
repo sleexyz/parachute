@@ -18,19 +18,20 @@ type Controller struct {
 	*AppResolver
 	analytics.SamplePublisher
 	sm             SettingsManager
+	dc             DeviceCallbacks
 	temporaryTimer *time.Timer
 	fm             map[string]*ControllableFlow
 	gcTicker       *time.Ticker
 
 	lastAppUsageUpdatedTime *time.Time
-	appUsageUpdateTicker    *time.Ticker
-	appUsageUpdateCounter   int
+	usageUpdateTicker       *time.Ticker
+	usageUpdateCounter      int
 	usagePoints             *Points
 
 	stopTickers func()
 }
 
-func Init(sp analytics.SamplePublisher, sm SettingsManager, appConfigs []*AppConfig) *Controller {
+func Init(sp analytics.SamplePublisher, sm SettingsManager, appConfigs []*AppConfig, dc DeviceCallbacks) *Controller {
 	ao := &AppResolverOptions{
 		failedIpMatchCacheSize:  1024,
 		failedDnsMatchCacheSize: 1024,
@@ -38,6 +39,7 @@ func Init(sp analytics.SamplePublisher, sm SettingsManager, appConfigs []*AppCon
 	}
 	c := &Controller{
 		sm:              sm,
+		dc:              dc,
 		AppResolver:     InitAppResolver(ao),
 		SamplePublisher: sp,
 		usagePoints:     InitPoints(sm.Settings().UsageMaxHP),
@@ -108,11 +110,11 @@ func (c *Controller) Start() {
 	c.gcTicker = time.NewTicker(1 * time.Minute)
 	now := time.Now()
 	c.lastAppUsageUpdatedTime = &now
-	c.appUsageUpdateTicker = time.NewTicker(5 * time.Second)
+	c.usageUpdateTicker = time.NewTicker(5 * time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
 	c.stopTickers = func() {
 		c.gcTicker.Stop()
-		c.appUsageUpdateTicker.Stop()
+		c.usageUpdateTicker.Stop()
 		cancel()
 	}
 	go func() {
@@ -122,13 +124,13 @@ func (c *Controller) Start() {
 				return
 			case <-c.gcTicker.C:
 				c.garbageCollect()
-			case <-c.appUsageUpdateTicker.C:
+			case <-c.usageUpdateTicker.C:
 				// Currently we use overload this ticker to both
 				// 1) update app health, and
 				// 2) sample app tx points
-				c.updateAppUsagePoints()
-				c.appUsageUpdateCounter = (c.appUsageUpdateCounter + 1) % 6
-				if c.appUsageUpdateCounter == 0 {
+				c.updateUsagePoints()
+				c.usageUpdateCounter = (c.usageUpdateCounter + 1) % 6
+				if c.usageUpdateCounter == 0 {
 					c.resetAppSampleStates()
 				}
 			}
@@ -148,16 +150,33 @@ func (c *Controller) garbageCollect() {
 	}
 }
 
-func (c *Controller) updateAppUsagePoints() {
+func (c *Controller) updateUsagePoints() {
 	now := time.Now()
 	dt := now.Sub(*c.lastAppUsageUpdatedTime)
 	c.UpdateUsagePoints(dt)
 	c.lastAppUsageUpdatedTime = &now
 }
 
+func (c *Controller) alert(oldValue float64) {
+	newValue := c.usagePoints.Points()
+
+	damageThreshold := c.usagePoints.cap / 2
+	if oldValue < damageThreshold && newValue >= damageThreshold {
+		c.dc.SendNotification("Slowing it down now...", "Time to take a break?")
+		return
+	}
+
+	damageThreshold = c.usagePoints.cap - (c.usagePoints.cap / 6.0)
+	if oldValue < damageThreshold && newValue >= damageThreshold {
+		c.dc.SendNotification("Really slowing it down now...", "Time to take a break?")
+		return
+	}
+}
+
 func (c *Controller) UpdateUsagePoints(dt time.Duration) {
 	oldValue := c.usagePoints.Points()
 	defer c.usagePoints.LogDelta(oldValue)
+	defer c.alert(oldValue)
 
 	// Compute damage
 	txPointsMax := 0.0

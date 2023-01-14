@@ -5,13 +5,15 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	mock "github.com/stretchr/testify/mock"
 	"strange.industries/go-proxy/pb/proxyservice"
 	"strange.industries/go-proxy/pkg/analytics"
 )
 
 func TestAppUpdateUsagePointsAboveThreshold(t *testing.T) {
-	sm := InitSettingsManager()
-	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
+	dc := NewMockDeviceCallbacks(t)
+	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
+
 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
 	now := time.Now()
 	a := c.apps[0]
@@ -24,8 +26,9 @@ func TestAppUpdateUsagePointsAboveThreshold(t *testing.T) {
 }
 
 func TestAppUpdateUsagePointsHealsAtHealRate(t *testing.T) {
-	sm := InitSettingsManager()
-	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
+	dc := NewMockDeviceCallbacks(t)
+	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
+
 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
 	now := time.Now()
 	a := c.apps[0]
@@ -43,8 +46,9 @@ func TestAppUpdateUsagePointsHealsAtHealRate(t *testing.T) {
 }
 
 func TestAppUsagePointsNoopsUnderThreshold(t *testing.T) {
-	sm := InitSettingsManager()
-	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
+	dc := NewMockDeviceCallbacks(t)
+	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
+
 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
 	now := time.Now()
 	a := c.apps[0]
@@ -60,8 +64,10 @@ func TestAppUsagePointsNoopsUnderThreshold(t *testing.T) {
 }
 
 func TestAppUsagePointsRespondsToSettingsUpdate(t *testing.T) {
-	sm := InitSettingsManager()
-	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
+	dc := NewMockDeviceCallbacks(t)
+	dc.On("SendNotification", mock.Anything, mock.Anything).Maybe().Return()
+	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
+
 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
 	now := time.Now()
 	a := c.apps[0]
@@ -84,8 +90,10 @@ func TestAppUsagePointsRespondsToSettingsUpdate(t *testing.T) {
 }
 
 func TestHealHealsToHpMin(t *testing.T) {
-	sm := InitSettingsManager()
-	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
+	dc := NewMockDeviceCallbacks(t)
+	dc.On("SendNotification", mock.Anything, mock.Anything).Maybe().Return()
+	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
+
 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
 	now := time.Now()
 	a := c.apps[0]
@@ -104,17 +112,3 @@ func TestHealHealsToHpMin(t *testing.T) {
 	c.Heal()
 	assert.Equal(t, 0.0, c.usagePoints.Points())
 }
-
-// func TestSettingsChangeCausesSample(t *testing.T) {
-// 	c := Init(&analytics.NoOpAnalytics{}, testAppConfigs)
-// 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
-// 	c.RegisterDnsEntry("1.2.3.4", "hello.com.")
-// 	now := time.Now()
-
-// 	c.appMap["1.2.3.4"].AddTxPoints(1.0, &now)
-// 	// time.Sleep(time.Second)
-// 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
-
-// 	// expect miniscule change from dt
-// 	assert.Greater(t, c.usagePoints.Points(&now), 0.0)
-// }

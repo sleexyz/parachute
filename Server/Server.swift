@@ -24,7 +24,7 @@ public struct Server {
         self.bridge = bridge
     }
     
-    public static func InitTunnelServer(settings: Proxyservice_Settings) -> Server {
+    public static func InitTunnelServer(settings: Proxyservice_Settings, device: Ffi.FfiDeviceCallbacksProtocol) -> Server {
         Ffi.FfiMaxProcs(1)
         Ffi.FfiSetMemoryLimit(20<<20)
         Ffi.FfiSetGCPercent(50)
@@ -32,7 +32,7 @@ public struct Server {
         if settings.debug {
             return Server(bridge: Ffi.FfiInitDebug(env, "192.168.1.225:8080", "192.168.1.225:8083")!)
         }
-        return Server(bridge: Ffi.FfiInit(env)!)
+        return Server(bridge: Ffi.FfiInit(env, device)!)
     }
     
     public func startProxy(port: Int, settingsData: Data) {

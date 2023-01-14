@@ -14,6 +14,7 @@ import ProxyService
 import Server
 import Firebase
 import Ffi
+import UserNotifications
 
 class TunConn: NSObject, FfiCallbacksProtocol {
     var packetFlow: NEPacketTunnelFlow {
@@ -34,20 +35,99 @@ class TunConn: NSObject, FfiCallbacksProtocol {
     }
 }
 
+class Device: NSObject, FfiDeviceCallbacksProtocol {
+    private let logger: Logger = Logger(label: "industries.strange.slowdown.tunnel.Device")
+    private var notificationsEnabled: Bool = false
+    
+    override init() {
+        super.init()
+        Task {
+            do {
+                self.notificationsEnabled = try await enableNotifications()
+                logger.info("notification status: \(notificationsEnabled)")
+            } catch {
+                logger.error("notifications not enabled")
+            }
+        }
+    }
+    
+    func sendNotification(_ title: String?, message: String?) {
+        guard let title = title else {
+            fatalError("not title: \(title.debugDescription)")
+        }
+        guard let message = message else {
+            fatalError("not message: \(message.debugDescription)")
+        }
+        logger.info("Got message to send as notification: \(title):  \(message)")
+        if notificationsEnabled {
+            Task(priority: .background) {
+                do {
+                    clearNotifications()
+                    try await sendMessage(title: title, body: message, fromNow: 1) // minimum time seems to be 1 second.
+                } catch let error {
+                    logger.error("error sending notification: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    private func clearNotifications() {
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.removeAllPendingNotificationRequests()
+        notificationCenter.removeAllDeliveredNotifications()
+    }
+    
+    private func sendMessage(title: String, body: String, fromNow: TimeInterval) async throws {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: fromNow, repeats: false)
+        let uuidString = UUID().uuidString
+        let request = UNNotificationRequest(identifier: uuidString,
+                                            content: content, trigger: trigger)
+        let notificationCenter = UNUserNotificationCenter.current()
+        return try await notificationCenter.add(request)
+    }
+    
+    private func enableNotifications() async throws -> Bool {
+        let center = UNUserNotificationCenter.current()
+        let enabled = try await withCheckedThrowingContinuation { continuation in
+            center.getNotificationSettings { settings in
+                continuation.resume(with: .success(settings.alertSetting == .enabled))
+            }
+        }
+        if enabled {
+            return true
+        }
+        let granted: Bool = try await withCheckedThrowingContinuation { continuation in
+            center.requestAuthorization(options: [.alert]) { granted, error in
+                if let error = error {
+                    continuation.resume(with: .failure(error))
+                    return
+                } else {
+                    continuation.resume(with: .success(granted))
+                }
+            }
+        }
+        return granted
+    }
+}
+
 class PacketTunnelProvider: NEPacketTunnelProvider {
+    private let logger: Logger = {
+        LoggingSystem.bootstrap(LoggingOSLog.init)
+        return Logger(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
+    }()
     private weak var timeoutTimer: Timer?
     private var observer: AnyObject?
     private let queue = DispatchQueue(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
-    private let logger: Logger
     private var server: Server?
     private var asleep: Bool = false
     
     private var tunConn: TunConn?
+    private var device: Device = Device()
     
     override init() {
-        LoggingSystem.bootstrap(LoggingOSLog.init)
-        let logger = Logger(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
-        self.logger = logger
         FirebaseApp.configure()
         super.init()
         self.tunConn = TunConn {
@@ -78,7 +158,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                 completionHandler(NEVPNError(.connectionFailed))
             }
             
-            self.server = Server.InitTunnelServer(settings: settings)
+            self.server = Server.InitTunnelServer(settings: settings, device: device)
             
             self.logger.info("starting server")
             self.server!.startDirectProxyConnection(tunConn: self.tunConn!, settingsData: settingsData)

@@ -65,7 +65,7 @@ func main() {
 
 	a := InitAnalyticsServer(8084)
 	sm := InitDebugSettingsManager()
-	c := controller.Init(a, sm, controller.ProdAppConfigs)
+	c := controller.Init(a, sm, controller.ProdAppConfigs, &MockDeviceCallbacks{})
 	a.C = c
 	// a := &analytics.NoOpAnalytics{}
 	proxy := proxy.InitOnDeviceProxy(a, c)

@@ -6,16 +6,22 @@
 //
 
 import XCTest
+import Ffi
 @testable import Server
 
 import ProxyService
+
+class MockDevice: NSObject, FfiDeviceCallbacksProtocol {
+    func sendNotification(_ title: String?, message: String?) {
+    }
+}
 
 final class ServerTests: XCTestCase {
     var server: Server?
 
     override func setUpWithError() throws {
         let settings = Proxyservice_Settings()
-        server = Server.InitTunnelServer(settings: settings)
+        server = Server.InitTunnelServer(settings: settings, device: MockDevice())
         server!.startProxy(port: 8080, settingsData: try settings.serializedData())
     }
 
