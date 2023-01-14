@@ -62,6 +62,8 @@ message HealResponse {
     double usagePoints = 1;
 }
 
+/** Debugging */
+
 message ServerState {
     repeated AppState apps = 1;
     double usagePoints = 2;

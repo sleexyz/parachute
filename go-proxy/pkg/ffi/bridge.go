@@ -10,6 +10,21 @@ import (
 	proxy "strange.industries/go-proxy/pkg/proxy"
 )
 
+type Callbacks interface {
+	WriteInboundPacket(b []byte)
+}
+
+type ProxyBridge interface {
+	// Deprecate
+	StartUDPServer(port int, settingsData []byte)
+	StartDirectProxyConnection(cbs Callbacks, settingsData []byte)
+	Close()
+	// Data plane
+	WriteOutboundPacket(b []byte)
+	// Control plane
+	Rpc(input []byte) ([]byte, error)
+}
+
 type OnDeviceProxyBridge struct {
 	*proxy.Proxy
 	*OutboundChannel
@@ -21,21 +36,21 @@ func (p *OnDeviceProxyBridge) Close() {
 
 func (p *OnDeviceProxyBridge) StartDirectProxyConnection(cbs Callbacks, settingsData []byte) {
 	log.Printf("starting direct proxy connection")
-	r := &proxyservice.Settings{}
-	err := proto.Unmarshal(settingsData, r)
+	s := &proxyservice.Settings{}
+	err := proto.Unmarshal(settingsData, s)
 	if err != nil {
 		log.Panicf("could not unmarshal settings on connection start : %s", err)
 	}
-	p.Proxy.Start(InitTunConnAdapter(cbs, p.OutboundChannel), r)
+	p.Proxy.Start(InitTunConnAdapter(cbs, p.OutboundChannel), s)
 }
 
 func (p *OnDeviceProxyBridge) StartUDPServer(port int, settingsData []byte) {
-	r := &proxyservice.Settings{}
-	err := proto.Unmarshal(settingsData, r)
+	s := &proxyservice.Settings{}
+	err := proto.Unmarshal(settingsData, s)
 	if err != nil {
 		log.Panicf("could not start server: %s", err)
 	}
-	p.Proxy.StartUDPServer(port, r)
+	p.Proxy.StartUDPServer(port, s)
 }
 
 func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {

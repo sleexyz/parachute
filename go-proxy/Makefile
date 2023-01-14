@@ -11,19 +11,22 @@ compilers: .external/swift-protobuf/.build/release/protoc-gen-swift .analysis-sa
 	(cd .external/swift-protobuf; git checkout tags/1.20.3)
 	(cd .external/swift-protobuf; swift build -c release)	
 
-
 Ffi.xcframework: $(shell git ls-files | grep .go$) 
 	# Changed files
 	echo $?
 	./build.sh
 
-test:
+pkg/controller/mock_DeviceCallbacks.go:
+	mockery --name=DeviceCallbacks  --recursive --inpackage --dir pkg/controller
+
+test: pkg/controller/mock_DeviceCallbacks.go
 	go test ./...
 
 .PHONY = clean test
 clean: 
 	rm pb/proxyservice/proxyservice.pb.go
 	rm -rf Ffi.xcframework
+	rm pkg/controller/mock_DeviceCallbacks.go
 
 analysis-sandbox/src/proxyservice.ts pb/proxyservice/proxyservice.pb.go ProxyService/Sources/ProxyService/proxyservice.pb.swift: protos/proxyservice.proto
 	./build_protos.sh

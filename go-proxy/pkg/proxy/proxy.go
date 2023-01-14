@@ -14,6 +14,7 @@ const (
 	proxyAddr = "10.0.0.8"
 )
 
+// Data plane
 type Proxy struct {
 	analytics.Analytics
 	*controller.Controller

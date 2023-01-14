@@ -18,11 +18,17 @@
 @class FfiTunConnAdapter;
 @protocol FfiCallbacks;
 @class FfiCallbacks;
+@protocol FfiDeviceCallbacks;
+@class FfiDeviceCallbacks;
 @protocol FfiProxyBridge;
 @class FfiProxyBridge;
 
 @protocol FfiCallbacks <NSObject>
 - (void)writeInboundPacket:(NSData* _Nullable)b;
+@end
+
+@protocol FfiDeviceCallbacks <NSObject>
+- (void)sendNotification:(NSString* _Nullable)title message:(NSString* _Nullable)message;
 @end
 
 @protocol FfiProxyBridge <NSObject>
@@ -150,7 +156,7 @@
 - (BOOL)write:(NSData* _Nullable)b ret0_:(long* _Nullable)ret0_ error:(NSError* _Nullable* _Nullable)error;
 @end
 
-FOUNDATION_EXPORT id<FfiProxyBridge> _Nullable FfiInit(NSString* _Nullable env);
+FOUNDATION_EXPORT id<FfiProxyBridge> _Nullable FfiInit(NSString* _Nullable env, id<FfiDeviceCallbacks> _Nullable dc);
 
 FOUNDATION_EXPORT id<FfiProxyBridge> _Nullable FfiInitDebug(NSString* _Nullable env, NSString* _Nullable dataAddr, NSString* _Nullable controlAddr);
 
@@ -168,6 +174,8 @@ FOUNDATION_EXPORT int64_t FfiSetMemoryLimit(int64_t limit);
 
 @class FfiCallbacks;
 
+@class FfiDeviceCallbacks;
+
 @class FfiProxyBridge;
 
 @interface FfiCallbacks : NSObject <goSeqRefInterface, FfiCallbacks> {
@@ -176,6 +184,14 @@ FOUNDATION_EXPORT int64_t FfiSetMemoryLimit(int64_t limit);
 
 - (nonnull instancetype)initWithRef:(_Nonnull id)ref;
 - (void)writeInboundPacket:(NSData* _Nullable)b;
+@end
+
+@interface FfiDeviceCallbacks : NSObject <goSeqRefInterface, FfiDeviceCallbacks> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (void)sendNotification:(NSString* _Nullable)title message:(NSString* _Nullable)message;
 @end
 
 @interface FfiProxyBridge : NSObject <goSeqRefInterface, FfiProxyBridge> {

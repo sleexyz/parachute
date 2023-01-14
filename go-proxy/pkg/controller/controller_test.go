@@ -24,8 +24,9 @@ var testAppConfigs = []*AppConfig{
 }
 
 func TestSetSettingsFiresCheatTimersOnInit(t *testing.T) {
-	sm := InitSettingsManager()
-	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
+	dc := NewMockDeviceCallbacks(t)
+	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
+
 	c.SetSettings(&proxyservice.Settings{
 		BaseRxSpeedTarget:      1e6,
 		TemporaryRxSpeedTarget: math.Inf(1),
@@ -36,8 +37,9 @@ func TestSetSettingsFiresCheatTimersOnInit(t *testing.T) {
 }
 
 func TestSetSettingsFiresCheatTimersOnChange(t *testing.T) {
-	sm := InitSettingsManager()
-	c := Init(&analytics.NoOpAnalytics{}, sm, testAppConfigs)
+	dc := NewMockDeviceCallbacks(t)
+	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
+
 	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6})
 	assert.Nil(t, c.temporaryTimer)
 	assert.Equal(t, c.RxSpeedTarget(), 1e6)
