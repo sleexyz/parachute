@@ -3,4 +3,3 @@ build/
 go-proxy
 .external
 *.xcframework
-*.xcframework.tgz
