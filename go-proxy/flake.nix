@@ -15,6 +15,7 @@
       devShells.aarch64-darwin.default = pkgs.mkShell {
         name = "slowdown-dev-shell";
         nativeBuildInputs = with pkgs; [
+          google-cloud-sdk
           nodejs
           go_1_19
           protobuf3_20
@@ -31,6 +32,7 @@
           export GOPATH=$(pwd)/.gopath
           export PATH=$PATH:$GOPATH/bin
           export CGO_ENABLED=1
+          export CLOUDSDK_ACTIVE_CONFIG_NAME=slowdown
         '';
       };
     };

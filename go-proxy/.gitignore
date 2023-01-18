@@ -2,3 +2,5 @@ build/
 .gopath/
 go-proxy
 .external
+*.xcframework
+*.xcframework.tgz
