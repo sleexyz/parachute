@@ -1,4 +1,2 @@
 pb linguist-generated
 ProxyService linguist-generated
-*.xcframework linguist-generated
-Ffi.xcframework/**/Ffi linguist-generated filter=lfs diff=lfs merge=lfs -text
