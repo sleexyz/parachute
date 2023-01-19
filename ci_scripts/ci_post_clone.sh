@@ -11,7 +11,7 @@
 
 set -e
 
-CI_SCRIPTS_DIR="$(PWD)"
+CI_SCRIPTS_DIR="$(pwd)"
 
 # See https://developer.apple.com/documentation/xcode/environment-variable-reference
 if [ -z "${CI_COMMIT}" ];

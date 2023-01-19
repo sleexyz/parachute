@@ -4,7 +4,7 @@
 
 set -e
 
-cd "$(git rev-parse --show-toplevel)/go-proxy"
+cd "$(git rev-parse --show-toplevel)"
 eval "$(direnv export bash)"
 
 COMMIT=$(git rev-parse HEAD)
@@ -17,5 +17,5 @@ function cleanup {
 }
 trap cleanup EXIT
 
-(cd ../ci_scripts; tar -czvf "$FILENAME" Ffi.xcframework)
+(cd ci_scripts; tar -czvf "$FILENAME" Ffi.xcframework)
 gcloud storage cp "$FILENAME" gs://slowdown-ci

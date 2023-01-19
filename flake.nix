@@ -14,6 +14,7 @@
     {
       devShells.aarch64-darwin.default = pkgs.mkShell {
         name = "slowdown-dev-shell";
+        # 
         nativeBuildInputs = with pkgs; [
           google-cloud-sdk
           nodejs
@@ -28,7 +29,6 @@
         ];
         shellHook = ''
           export PATH=${xcodewrapper}/bin:$PATH
-          
           export GOPATH=$(pwd)/.gopath
           export PATH=$PATH:$GOPATH/bin
           export CGO_ENABLED=1

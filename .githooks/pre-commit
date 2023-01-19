@@ -3,4 +3,4 @@
 set -e
 exec 1>&2
 
-(cd "$(git rev-parse --show-toplevel)/go-proxy"; ./pre_commit.sh)
+(cd "$(git rev-parse --show-toplevel)"; ./pre_commit.sh)
