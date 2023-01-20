@@ -25,12 +25,10 @@ func main() {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*30)
 	defer cancel()
 
-	commit := os.Getenv("CI_COMMIT")
-	buildNumber := os.Getenv("CI_BUILD_NUMBER")
-	baseName := os.Getenv("CI_ARCHIVE_PATH_BASENAME")
+	archiveName := os.Getenv("ARCHIVE_NAME")
 
 	l := log.New(os.Stderr, "", 0)
-	objPath := fmt.Sprintf("%s_%s.xcarchive_%s.tgz", baseName, buildNumber, commit)
+	objPath := fmt.Sprintf("%s.tgz", archiveName)
 	l.Printf("objPath: %s", objPath)
 
 	o := client.Bucket("slowdown-ci-archives").Object(objPath)

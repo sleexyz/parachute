@@ -23,17 +23,12 @@ export GOOGLE_APPLICATION_CREDENTIALS="$CREDS_FILENAME"
 if [[ -n $CI_ARCHIVE_PATH ]];
 then
     CI_ARCHIVE_PATH_DIRNAME=$(dirname "${CI_ARCHIVE_PATH}")
-    export CI_ARCHIVE_PATH_BASENAME=$(basename "${CI_ARCHIVE_PATH}")
+    CI_ARCHIVE_PATH_BASENAME=$(basename "${CI_ARCHIVE_PATH}")
     echo "Archive path is available"
-    (cd "${CI_ARCHIVE_PATH_DIRNAME}"; tar -czvf - "${CI_ARCHIVE_PATH_BASENAME}") | ./push_bin
-
-    # # Move up to parent directory
-    # cd ..
-    # # Debug
-    # echo "Derived data path: $CI_DERIVED_DATA_PATH"
-    # echo "Archive path: $CI_ARCHIVE_PATH"
-    # # Crashlytics dSYMs script
-    # $CI_DERIVED_DATA_PATH/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols -gsp /GoogleService-Info.plist -p ios $CI_ARCHIVE_PATH/dSYMs
+    export ARCHIVE_NAME="slowdown_build_${CI_BUILD_NUMBER}_${CI_COMMIT}.xcarchive"
+    (cd "${CI_ARCHIVE_PATH_DIRNAME}"; /usr/bin/tar -s "/${CI_ARCHIVE_PATH_BASENAME}/${ARCHIVE_NAME}/" -czvf - "${CI_ARCHIVE_PATH_BASENAME}") | ./push_bin
 else
     echo "Archive path isn't available."
 fi
+
+exit 0
