@@ -1,4 +1,4 @@
-module strange.industries/ci-pull
+module strange.industries/ci_scripts
 
 go 1.19
 

@@ -1,5 +1,7 @@
 all: ci_scripts/Ffi.xcframework
 
+everything: ci_scripts/pull_bin ci_scripts/push_bin all
+
 compilers := $(proto-compilers) .gopath/bin/gomobile
 
 proto-compilers := .external/swift-protobuf/.build/release/protoc-gen-swift go-proxy/analysis-sandbox/node_modules/.bin/protoc-gen-ts_proto .gopath/bin/protoc-gen-go
@@ -11,8 +13,11 @@ proto-compilers := .external/swift-protobuf/.build/release/protoc-gen-swift go-p
 .gopath/bin/protoc-gen-go:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1
 
-ci_scripts/ci-pull: ci_scripts/ci-pull.go
-	(cd ci_scripts; GOOS=darwin GOARCH=amd64 go build ./ci-pull.go)
+ci_scripts/pull_bin: ci_scripts/pull/main.go
+	GOOS=darwin GOARCH=amd64 go build -o ./ci_scripts/pull_bin ./ci_scripts/pull/main.go
+
+ci_scripts/push_bin: ci_scripts/push/main.go
+	GOOS=darwin GOARCH=amd64 go build -o ./ci_scripts/push_bin ./ci_scripts/push/main.go
 
 go-files := $(shell git ls-files | grep ^go-proxy/.*\.go$ ) 
 
@@ -41,7 +46,7 @@ test: $(test-tools) go-proxy/pkg/controller/mock_DeviceCallbacks.go
 	go test ./go-proxy/...
 
 
-.PHONY = clean test clean-tools clean-test-tools clean-all
+.PHONY = all everything clean test clean-tools clean-test-tools clean-all
 clean: 
 	rm -f go-proxy/pb/proxyservice/proxyservice.pb.go
 	rm -rf ci_scripts/Ffi.xcframework

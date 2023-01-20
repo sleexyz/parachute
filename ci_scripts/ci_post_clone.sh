@@ -23,7 +23,7 @@ CREDS_FILENAME="$CI_SCRIPTS_DIR/creds.json"
 echo "$SLOWDOWN_CI_CREDS" | openssl enc -base64 -d > "$CREDS_FILENAME"
 export GOOGLE_APPLICATION_CREDENTIALS="$CREDS_FILENAME"
 
-./ci-pull | tar -xzvf - -C "$CI_SCRIPTS_DIR"
+./pull_bin | tar -xzvf - -C "$CI_SCRIPTS_DIR"
     
 echo "done"
 exit 0
