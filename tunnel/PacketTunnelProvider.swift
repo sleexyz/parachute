@@ -228,7 +228,8 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             completionHandler?(response)
         } catch let error {
             Crashlytics.crashlytics().record(error: error)
-            fatalError("Encountered RPC error")
+            completionHandler?(nil)
+            logger.error("Encountered RPC error: \(error)")
         }
     }
     
