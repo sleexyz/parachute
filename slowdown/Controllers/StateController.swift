@@ -13,7 +13,12 @@ class StateController: ObservableObject  {
     private let logger: Logger = Logger(label: "industries.strange.slowdown.StateController")
     @Published var state: Proxyservice_GetStateResponse = Proxyservice_GetStateResponse()
     private let service: VPNConfigurationService = .shared
+    private let settings: SettingsStore = .shared
     static let shared = StateController()
+    
+    var isSlowing: Bool {
+        return state.usagePoints / settings.settings.usageMaxHp > 0.5
+    }
     
     
     @MainActor

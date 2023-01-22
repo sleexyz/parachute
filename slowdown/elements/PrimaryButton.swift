@@ -10,27 +10,21 @@ import Foundation
 import UIKit
 
 
-struct PrimaryButton<LoadingView: View>: View {
+struct PrimaryButton: View {
     let title: String
     let action: () -> Void
     var isLoading: Bool
-    var loadingMessage: LoadingView
     
-    init(title: String, action: @escaping () -> Void, isLoading: Bool, loadingMessage: LoadingView = EmptyView()) {
+    init(title: String, action: @escaping () -> Void, isLoading: Bool) {
         self.title = title
         self.action = action
         self.isLoading = isLoading
-        self.loadingMessage = loadingMessage
     }
 
     var body: some View {
         Button(action: self.action) {
             ZStack {
-                if type(of: loadingMessage) != EmptyView.self {
-                    loadingMessage.opacity(isLoading ? 1 : 0)
-                } else {
-                    Spinner(isAnimating: isLoading, color: .black, style: .medium)
-                }
+                Spinner(isAnimating: isLoading, color: .black, style: .medium)
                 Text(title)
                     .opacity(isLoading ? 0 : 1)
                     .frame(maxWidth: .infinity)

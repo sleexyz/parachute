@@ -8,6 +8,7 @@
 import Foundation
 import ProxyService
 import SwiftProtobuf
+import SwiftUI
 
 class SettingsStore: ObservableObject {
     static let shared = SettingsStore()
@@ -26,6 +27,15 @@ class SettingsStore: ObservableObject {
         settings.temporaryRxSpeedExpiry = Google_Protobuf_Timestamp(date: expiry)
         settings.temporaryRxSpeedTarget = speed
     }
+    
+    var scrollTimeLimit: Binding<Double> {
+        Binding {
+            return self.settings.usageMaxHp / 2
+        } set: {
+            self.settings.usageMaxHp = $0 * 2
+        }
+    }
+    
     
     
     private static func fileUrl() throws -> URL {

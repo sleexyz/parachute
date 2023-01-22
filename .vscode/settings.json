@@ -3,5 +3,6 @@
         "**/.direnv": true,
         "**/.external": true,
         "**/.gopath": true
-    }
+    },
+    "lldb.library": "/Applications/Xcode.app/Contents/SharedFrameworks/LLDB.framework/Versions/A/LLDB"
 }

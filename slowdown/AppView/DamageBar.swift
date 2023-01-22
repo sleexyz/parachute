@@ -19,6 +19,8 @@ struct DamageBar: View {
         return currentHP / maxHP
     }
     
+    var height: Double = 20
+    
     var color: Color {
         if ratio < 0.33 {
             return .red
@@ -31,23 +33,22 @@ struct DamageBar: View {
     var body: some View {
         ZStack {
             GeometryReader { geometry in
-                RoundedRectangle(cornerRadius: 5)
+                RoundedRectangle(cornerRadius: 100, style: .continuous)
                     .fill(color)
-                    .frame(width: geometry.size.width * ratio, height: 20)
-                RoundedRectangle(cornerRadius: 5)
+                    .frame(width: geometry.size.width * ratio, height: height)
+                RoundedRectangle(cornerRadius: 100, style: .continuous)
                     .fill(color)
                     .opacity(0.1)
-                    .frame(width: geometry.size.width, height: 20)
+                    .frame(width: geometry.size.width, height: height)
             }
         }
-            .padding()
-            .frame(maxWidth: .infinity, maxHeight: 20)
+        .frame(maxWidth: .infinity, maxHeight: height)
     }
 }
 
 struct DamageBar_Previews: PreviewProvider {
     static var previews: some View {
-        VStack(spacing: 5) {
+        VStack(spacing: 20) {
             DamageBar(damage: 0, maxHP: 6)
             DamageBar(damage: 1, maxHP: 6)
             DamageBar(damage: 2, maxHP: 6)
