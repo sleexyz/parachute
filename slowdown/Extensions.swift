@@ -8,11 +8,39 @@
 import Foundation
 import SwiftUI
 
+
+enum Warp {
+    case linear
+    case exponential
+}
+
 extension Double {
-    // TODO: add curve
-    func linlin(_ a: Double,_ b: Double,_ c: Double,_ d: Double) -> Double {
-        return (self - a) * (d - c)/(b - a) + c
+    func linmap(_ a: Double,_ b: Double,_ c: Double,_ d: Double, warp: Warp = .linear, clip: Bool = false) -> Double {
+        // normalized
+        var y = (self - a) / (b - a)
+        // scaled
+        switch warp {
+        case .linear:
+            y = d * y + c * (1 - y)
+        case .exponential:
+            y = pow(d, y) * pow(c, 1 - y)
+        }
+        if clip {
+            let lowerBound = min(c, d)
+            let upperBound = max(c, d)
+            y = max(min(y, upperBound), lowerBound)
+        }
+        return y
     }
+}
+
+extension FloatingPoint {
+  @inlinable
+  func signum( ) -> Self {
+    if self < 0 { return -1 }
+    if self > 0 { return 1 }
+    return 0
+  }
 }
 
 extension View {

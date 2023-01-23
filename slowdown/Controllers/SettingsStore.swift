@@ -36,7 +36,13 @@ class SettingsStore: ObservableObject {
         }
     }
     
-    
+    var restTime: Binding<Double> {
+        Binding {
+            return self.settings.usageMaxHp / 2 / self.settings.usageHealRate
+        } set: {
+            self.settings.usageHealRate = self.settings.usageMaxHp / 2 / $0
+        }
+    }
     
     private static func fileUrl() throws -> URL {
         guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.industries.strange.slowdown") else {

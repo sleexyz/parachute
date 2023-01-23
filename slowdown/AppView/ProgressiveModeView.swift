@@ -22,13 +22,14 @@ struct ProgressiveModeView: View {
         if levelOverride != nil {
             return levelOverride!
         }
-        return store.settings.usageMaxHp.linlin(10, 0, 0, 3)
+        return store.scrollTimeLimit.wrappedValue
+            .linmap(10, 0, 0, 3, clip: true)
     }
     var levelOverride: Double?
     var mainColor: Color {
         let h: Double = 259/360
-        let s = level.linlin(0, 3, 0.2, 1)
-        let b = level.linlin(0, 3, 0.67, 0.4)
+        let s = level.linmap(0, 3, 0.2, 1, warp: .linear)
+        let b = level.linmap(0, 3, 0.67, 0.4, warp: .linear)
         return Color(hue: h, saturation: s, brightness: b)
     }
     
@@ -87,7 +88,7 @@ struct ProgressiveModeView: View {
 struct HealSettings: View {
     @ObservedObject var store: SettingsStore = .shared
     @FocusState private var scrollTimeFocused: Bool
-    @FocusState private var healRateFocused: Bool
+    @FocusState private var restTimeFocused: Bool
     var controller: SettingsController = .shared
     var body: some View {
         VStack {
@@ -104,13 +105,13 @@ struct HealSettings: View {
                     }
             }
             HStack {
-                Text("Heal rate")
-                TextField("Heal rate (HP / min)", value: $store.settings.usageHealRate, format: .number)
-                    .focused($healRateFocused)
+                Text("Rest time")
+                TextField("Rest time", value: store.restTime, format: .number)
+                    .focused($restTimeFocused)
                     .textFieldStyle(.roundedBorder)
                     .foregroundColor(nil)
                     .padding()
-                    .removeFocusOnTap(enabled: healRateFocused)
+                    .removeFocusOnTap(enabled: restTimeFocused)
                     .onSubmit {
                         controller.syncSettings()
                     }

@@ -11,11 +11,11 @@
 		A02F58E227A6F14500D3330F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58E127A6F14500D3330F /* ContentView.swift */; };
 		A02F58E427A6F14500D3330F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02F58E327A6F14500D3330F /* Assets.xcassets */; };
 		A02F58E727A6F14500D3330F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02F58E627A6F14500D3330F /* Preview Assets.xcassets */; };
-		A02F58F127A6F14600D3330F /* slowdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58F027A6F14600D3330F /* slowdownTests.swift */; };
 		A02F58FB27A6F14600D3330F /* slowdownUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58FA27A6F14600D3330F /* slowdownUITests.swift */; };
 		A02F58FD27A6F14600D3330F /* slowdownUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58FC27A6F14600D3330F /* slowdownUITestsLaunchTests.swift */; };
 		A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
 		A0312E2C297D07D300EB0B8A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E2B297D07D300EB0B8A /* Extensions.swift */; };
+		A0312E2E297F16ED00EB0B8A /* linmapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E2D297F16ED00EB0B8A /* linmapTests.swift */; };
 		A04332CA296BA21A00D69210 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A04332C9296BA21A00D69210 /* FirebaseCrashlytics */; };
 		A04332CC296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
 		A04332CD296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
@@ -171,13 +171,13 @@
 		A02F58E327A6F14500D3330F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A02F58E627A6F14500D3330F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A02F58EC27A6F14600D3330F /* slowdownTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = slowdownTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A02F58F027A6F14600D3330F /* slowdownTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownTests.swift; sourceTree = "<group>"; };
 		A02F58F627A6F14600D3330F /* slowdownUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = slowdownUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02F58FA27A6F14600D3330F /* slowdownUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownUITests.swift; sourceTree = "<group>"; };
 		A02F58FC27A6F14600D3330F /* slowdownUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A02F590927B09A7A00D3330F /* slowdown.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = slowdown.entitlements; sourceTree = "<group>"; };
 		A02F590B27B09A7A00D3330F /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		A0312E2B297D07D300EB0B8A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		A0312E2D297F16ED00EB0B8A /* linmapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = linmapTests.swift; sourceTree = "<group>"; };
 		A04332CB296BA2A400D69210 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A04FADA2294F7A9F0002C19B /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ProxyService; path = "go-proxy/ProxyService"; sourceTree = "<group>"; };
 		A0774F65296A6F0D001F278B /* libServer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libServer.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -341,7 +341,7 @@
 		A02F58EF27A6F14600D3330F /* slowdownTests */ = {
 			isa = PBXGroup;
 			children = (
-				A02F58F027A6F14600D3330F /* slowdownTests.swift */,
+				A0312E2D297F16ED00EB0B8A /* linmapTests.swift */,
 			);
 			path = slowdownTests;
 			sourceTree = "<group>";
@@ -761,7 +761,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A02F58F127A6F14600D3330F /* slowdownTests.swift in Sources */,
+				A0312E2E297F16ED00EB0B8A /* linmapTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
