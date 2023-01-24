@@ -10,8 +10,8 @@ import SwiftUI
     
 struct FocusModeView : View {
     @EnvironmentObject var model: AppViewModel
-    @ObservedObject var store: SettingsStore = .shared
-    var controller: SettingsController = .shared
+    @EnvironmentObject var store: SettingsStore
+    @EnvironmentObject var controller: SettingsController
     var body: some View {
         VStack {
             Slider(
@@ -34,6 +34,7 @@ struct FocusModeView : View {
 
 struct Previews_FocusModeView_Previews: PreviewProvider {
     static var previews: some View {
-        FocusModeView().environmentObject(AppViewModel())
+        FocusModeView()
+            .modifier(AppViewModel.Provider())
     }
 }

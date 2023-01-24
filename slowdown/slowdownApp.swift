@@ -14,13 +14,15 @@ import Firebase
 @main
 struct slowdownApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-
+    
+    
     init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
     }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentViewLoader()
         }
     }
 }

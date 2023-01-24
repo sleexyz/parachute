@@ -18,13 +18,36 @@ final class AppViewModel: ObservableObject {
     @Published private(set) var errorTitle = ""
     @Published private(set) var errorMessage = ""
     private var bag = [AnyCancellable]()
+    
     let service: VPNConfigurationService
     let cheatController: CheatController
     let settingsController: SettingsController
     let store: SettingsStore
     
+    struct Provider: ViewModifier {
+        @EnvironmentObject var settings: SettingsStore
+        @EnvironmentObject var cheatController: CheatController
+        @EnvironmentObject var service: VPNConfigurationService
+        @EnvironmentObject var settingsController: SettingsController
+        
+        @State var value: AppViewModel?
+        
+        @ViewBuilder
+        func body(content: Content)  -> some View {
+            let _ = Self._printChanges()
+            Group {
+                if value == nil {
+                    Rectangle().hidden()
+                } else {
+                    content.environmentObject(value!)
+                }
+            }.onAppear {
+                value = AppViewModel(service: service, cheatController: cheatController, settingsController: settingsController, settingsStore: settings)
+            }
+        }
+    }
     
-    init(service: VPNConfigurationService = .shared, cheatController: CheatController = .shared, settingsController: SettingsController = .shared, settingsStore: SettingsStore = .shared) {
+    init(service: VPNConfigurationService, cheatController: CheatController, settingsController: SettingsController, settingsStore: SettingsStore) {
         self.service = service
         self.cheatController = cheatController
         self.settingsController = settingsController

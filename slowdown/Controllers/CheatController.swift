@@ -12,11 +12,41 @@ import UserNotifications
 import Logging
 
 final class CheatController: ObservableObject {
-    static let shared = CheatController()
+    struct Provider: ViewModifier {
+        @EnvironmentObject var store: SettingsStore
+        @EnvironmentObject var service: VPNConfigurationService
+        @EnvironmentObject var settingsController: SettingsController
+        
+        @State var value: CheatController?
+        
+        @ViewBuilder
+        func body(content: Content)  -> some View {
+            let _ = Self._printChanges()
+            Group {
+                if value == nil {
+                    Rectangle().hidden()
+                } else {
+                    content.environmentObject(value!)
+                }
+            }.onAppear {
+                    value = CheatController(store:store, service: service, settingsController: settingsController)
+            }
+        }
+    }
     
-    private let service: VPNConfigurationService = .shared
-    @ObservedObject private var store: SettingsStore = .shared
-    private var settingsController: SettingsController = .shared
+    private var settingsController: SettingsController
+    private let service: VPNConfigurationService
+    @ObservedObject private var store: SettingsStore
+    
+    init(store: SettingsStore, service: VPNConfigurationService, settingsController: SettingsController) {
+        self.store = store
+        self.service = service
+        self.settingsController = settingsController
+        self.store.onLoad {
+            self.syncUpdateTimer()
+        }
+    }
+    
     private var logger = Logger(label: "industries.strange.slowdown.CheatController")
     private var timer: Timer?
     
@@ -36,13 +66,6 @@ final class CheatController: ObservableObject {
     
     var isCheating: Bool {
         return cheatTimeLeft > 0
-    }
-    
-    
-    init() {
-        self.store.onLoad {
-            self.syncUpdateTimer()
-        }
     }
     
     private func syncUpdateTimer() {

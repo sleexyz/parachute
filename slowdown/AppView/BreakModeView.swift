@@ -10,7 +10,7 @@ import SwiftUI
 
 struct BreakModeView: View {
     @EnvironmentObject var model: AppViewModel
-    @ObservedObject var cheatController: CheatController = .shared
+    @EnvironmentObject var cheatController: CheatController
     
     
     var body: some View {
@@ -41,7 +41,7 @@ struct BreakModeView: View {
 
 struct Previews_BreakModeView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = AppViewModel()
-        BreakModeView().environmentObject(model)
+        BreakModeView()
+            .modifier(AppViewModel.Provider())
     }
 }

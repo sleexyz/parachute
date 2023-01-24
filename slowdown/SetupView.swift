@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct SetupView: View {
-    let service: VPNConfigurationService = .shared
+    @EnvironmentObject private var service: VPNConfigurationService
 
     @State private var isLoading = false
     @State private var isShowingError = false

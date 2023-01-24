@@ -9,13 +9,34 @@ import NetworkExtension
 import Foundation
 import ProxyService
 import Logging
+import SwiftUI
 
 enum UserError: Error {
     case message(message: String)
 }
 
+
 open class VPNConfigurationService: ObservableObject {
-    private let logger: Logger
+    struct Provider: ViewModifier {
+        @EnvironmentObject var settings: SettingsStore
+        @State var value: VPNConfigurationService?
+        
+        @ViewBuilder
+        func body(content: Content)  -> some View {
+            let _ = Self._printChanges()
+            Group {
+                if value == nil {
+                    Rectangle().hidden()
+                } else {
+                    content.environmentObject(value!)
+                }
+            }.onAppear {
+                value = VPNConfigurationService(store: settings)
+            }
+        }
+    }
+    
+    private let logger: Logger = Logger(label: "industries.strange.slowdown.VPNConfigurationService")
     @Published private(set) var isInitializing = true
     @Published var isConnected = false
     @Published var isTransitioning = false
@@ -27,11 +48,9 @@ open class VPNConfigurationService: ObservableObject {
     
     private let store: SettingsStore
     
-    static let shared = VPNConfigurationService(store: .shared)
-    
     init(store: SettingsStore) {
-        self.logger = Logger(label: "industries.strange.slowdown.VPNConfigurationService")
         self.store = store
+        logger.info(" init vpnconfigurationservice")
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.manager = managers?.first
             self.isInitializing = false
@@ -178,6 +197,16 @@ enum RpcError: Error {
 
 
 class MockVPNConfigurationService: VPNConfigurationService {
+    struct Provider: ViewModifier {
+        @EnvironmentObject var settings: SettingsStore
+        func body(content: Content)  -> some View {
+            return content.environmentObject(MockVPNConfigurationService(store: settings))
+        }
+    }
+    var hasManagerOverride: Bool?
+    override var hasManager: Bool {
+        return hasManagerOverride ?? super.hasManager
+    }
     func setIsConnected(value: Bool) {
         self.isConnected = value
     }

@@ -9,20 +9,14 @@ import SwiftUI
 
 struct AppView: View {
     @EnvironmentObject var model: AppViewModel
-    @ObservedObject var store: SettingsStore = .shared
-    @ObservedObject var service: VPNConfigurationService = .shared
-    @ObservedObject var cheatController: CheatController = .shared
-    var controller: SettingsController = .shared
+    @EnvironmentObject var store: SettingsStore
+    @EnvironmentObject var service: VPNConfigurationService
+    @EnvironmentObject var cheatController: CheatController
+    @EnvironmentObject var controller: SettingsController
     
-    init(store: SettingsStore = .shared, service: VPNConfigurationService = .shared, cheatController: CheatController = .shared, controller: SettingsController = .shared) {
-        self.store = store
-        self.service = service
-        self.cheatController = cheatController
-        self.controller = controller
-        self.service = service
-    }
     
     var body: some View {
+        let _  = Self._printChanges()
         VStack{
             if !service.isConnected {
                 VStack {
@@ -59,16 +53,20 @@ struct AppView: View {
 
 struct AppView_Previews: PreviewProvider {
     static var previews: some View {
-        let service = MockVPNConfigurationService(store: .shared)
-        service.setIsConnected(value: true)
-        return AppView(service: service).environmentObject(AppViewModel())
+        return AppView()
+            .modifier(Consumer(type: MockVPNConfigurationService.self) { value in
+                value.setIsConnected(value: true)
+            })
+            .modifier(MockVPNConfigurationService.Provider())
     }
 }
 
 struct AppViewOff_Previews: PreviewProvider {
     static var previews: some View {
-        let service = MockVPNConfigurationService(store: .shared)
-        service.setIsConnected(value: false)
-        return AppView(service: service).environmentObject(AppViewModel())
+        return AppView()
+            .modifier(Consumer(type: MockVPNConfigurationService.self) { value in
+                value.setIsConnected(value: false)
+            })
+            .modifier(MockVPNConfigurationService.Provider())
     }
 }

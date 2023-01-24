@@ -9,9 +9,27 @@ import Foundation
 import ProxyService
 import SwiftProtobuf
 import SwiftUI
+import Logging
+
 
 class SettingsStore: ObservableObject {
-    static let shared = SettingsStore()
+    struct Provider : ViewModifier {
+        @State var value: SettingsStore?
+        
+        @ViewBuilder
+        func body(content: Content)  -> some View {
+            let _ = Self._printChanges()
+            Group {
+                if value == nil {
+                    Rectangle().hidden()
+                } else {
+                    content.environmentObject(value!)
+                }
+            }.onAppear {
+                value = SettingsStore()
+            }
+        }
+    }
     
     private var onLoadFns: Array<() -> Void> = []
     
@@ -21,6 +39,13 @@ class SettingsStore: ObservableObject {
         return settings
     }()
     @Published var loaded = false
+    
+    private let logger = Logger(label: "industries.strange.slowdown.SettingsStore")
+    
+    init() {
+        logger.info("init settings store")
+        
+    }
     
     @MainActor
     func setCheatSettings(expiry: Date, speed: Double) {

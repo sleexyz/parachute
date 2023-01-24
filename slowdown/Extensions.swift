@@ -8,6 +8,16 @@
 import Foundation
 import SwiftUI
 
+struct Consumer<T: ObservableObject>: ViewModifier {
+    let type: T.Type
+    @EnvironmentObject private var obj: T
+    let effect: (_ value: T) -> ()
+    func body(content: Content) -> some View {
+        return content.onAppear {
+            effect(obj)
+        }
+    }
+}
 
 enum Warp {
     case linear

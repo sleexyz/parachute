@@ -7,14 +7,16 @@
 
 import Foundation
 import SwiftUI
+import ProxyService
 
 struct ProgressiveModeView: View {
     @Environment(\.colorScheme) var colorScheme
 
-    @ObservedObject var store: SettingsStore = .shared
-    @ObservedObject var stateController: StateController = .shared
+    @EnvironmentObject var store: SettingsStore
+    @EnvironmentObject var stateController: StateController
+    @EnvironmentObject var controller: SettingsController
+    
     @State var expanded: Bool = false
-    var controller: SettingsController = .shared
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
 //    var theme: Theme = Theme.navy
@@ -59,7 +61,6 @@ struct ProgressiveModeView: View {
             Spacer()
             StagedDamageBar(
                 ratio: ratio,
-                slowAmount: stateController.slowAmount,
                 height: 30
             )
             .padding()
@@ -90,10 +91,12 @@ struct ProgressiveModeView: View {
 }
 
 struct HealSettings: View {
-    @ObservedObject var store: SettingsStore = .shared
+    @EnvironmentObject var store: SettingsStore
+    @EnvironmentObject var controller: SettingsController
+    
     @FocusState private var scrollTimeFocused: Bool
     @FocusState private var restTimeFocused: Bool
-    var controller: SettingsController = .shared
+    
     var body: some View {
         VStack {
             HStack {
@@ -125,15 +128,17 @@ struct HealSettings: View {
 }
 
 struct HealButton: View {
-    @ObservedObject var stateController: StateController = .shared
+    @EnvironmentObject var stateController: StateController
+
     var body: some View {
+        let opacity = stateController.isSlowing ? 1 : 0.5
         Text("One more minute!")
             .font(.system(.body))
             .padding()
             .foregroundColor(Color.white)
             .background(Color.accentColor.grayscale(1))
             .clipShape(RoundedRectangle(cornerRadius: 100, style:.continuous))
-            .opacity(stateController.isSlowing ? 1 : 0.5)
+            .opacity(opacity)
             .disabled(!stateController.isSlowing)
             .onTapGesture {
                 stateController.heal()
@@ -143,16 +148,20 @@ struct HealButton: View {
 }
 
 struct ProgressiveModeView_Previews: PreviewProvider {
+    
     static var previews: some View {
-        VStack {
-            ProgressiveModeView(levelOverride: 0)
-                .padding()
-            ProgressiveModeView(levelOverride: 1)
-                .padding()
-            ProgressiveModeView(levelOverride: 2)
-                .padding()
-            ProgressiveModeView(levelOverride: 3)
-                .padding()
+        VStack(spacing: 20) {
+            ForEach([2, 3, 4, 5], id: \.self) { i in
+                ProgressiveModeView()
+                    .modifier(Consumer(type: StateController.self) { value in
+                        value.setState(value: Proxyservice_GetStateResponse.with {
+                            $0.usagePoints = Double(i)
+                        })
+                    })
+                    .modifier(StateController.Provider())
+            }
         }
+        .modifier(VPNConfigurationService.Provider())
+        .modifier(SettingsStore.Provider())
     }
 }
