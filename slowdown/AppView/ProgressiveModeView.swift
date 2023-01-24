@@ -51,13 +51,17 @@ struct ProgressiveModeView: View {
     
     var body: some View {
         let scrollTimeLimit = Int(store.scrollTimeLimit.wrappedValue)
+        let ratio = 1 - stateController.state.usagePoints / store.settings.usageMaxHp
         VStack {
             Text("Scroll Limit: \(scrollTimeLimit) minute\(scrollTimeLimit > 1 ? "s" : "")")
                 .font(.headline)
                 .padding()
             Spacer()
-            DamageBar(damage: stateController.state.usagePoints, maxHP: store.settings.usageMaxHp, height: 30)
-
+            StagedDamageBar(
+                ratio: ratio,
+                slowAmount: stateController.slowAmount,
+                height: 30
+            )
             .padding()
             Spacer()
             if expanded {
@@ -150,6 +154,5 @@ struct ProgressiveModeView_Previews: PreviewProvider {
             ProgressiveModeView(levelOverride: 3)
                 .padding()
         }
-//            .previewLayout(.fixed(width: 400, height: 400))
     }
 }

@@ -17,9 +17,8 @@ class StateController: ObservableObject  {
     static let shared = StateController()
     
     var isSlowing: Bool {
-        return state.usagePoints / settings.settings.usageMaxHp > 0.5
+        return state.usagePoints / settings.settings.usageMaxHp < 0.5
     }
-    
     
     @MainActor
     private func setState(value: Proxyservice_GetStateResponse) {
@@ -29,6 +28,11 @@ class StateController: ObservableObject  {
     @MainActor
     private func setUsagePoints(value: Double) {
         state.usagePoints = value
+    }
+    
+    var slowAmount: Double {
+        let ratio = state.usagePoints / settings.settings.usageMaxHp
+        return ratio
     }
     
     func heal() {
