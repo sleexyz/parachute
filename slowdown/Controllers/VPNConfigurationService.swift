@@ -15,24 +15,12 @@ enum UserError: Error {
     case message(message: String)
 }
 
-
 open class VPNConfigurationService: ObservableObject {
-    struct Provider: ViewModifier {
+    struct Provider: Dep {
         @EnvironmentObject var settings: SettingsStore
         @State var value: VPNConfigurationService?
-        
-        @ViewBuilder
-        func body(content: Content)  -> some View {
-            let _ = Self._printChanges()
-            Group {
-                if value == nil {
-                    Rectangle().hidden()
-                } else {
-                    content.environmentObject(value!)
-                }
-            }.onAppear {
-                value = VPNConfigurationService(store: settings)
-            }
+        func create() -> T {
+            return VPNConfigurationService(store: settings)
         }
     }
     

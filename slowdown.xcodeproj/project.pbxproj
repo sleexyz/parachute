@@ -16,6 +16,7 @@
 		A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
 		A0312E2C297D07D300EB0B8A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E2B297D07D300EB0B8A /* Extensions.swift */; };
 		A0312E2E297F16ED00EB0B8A /* linmapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E2D297F16ED00EB0B8A /* linmapTests.swift */; };
+		A0312E342983AD5C00EB0B8A /* Dep.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E332983AD5C00EB0B8A /* Dep.swift */; };
 		A04332CA296BA21A00D69210 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A04332C9296BA21A00D69210 /* FirebaseCrashlytics */; };
 		A04332CC296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
 		A04332CD296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
@@ -178,6 +179,7 @@
 		A02F590B27B09A7A00D3330F /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		A0312E2B297D07D300EB0B8A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		A0312E2D297F16ED00EB0B8A /* linmapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = linmapTests.swift; sourceTree = "<group>"; };
+		A0312E332983AD5C00EB0B8A /* Dep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dep.swift; sourceTree = "<group>"; };
 		A04332CB296BA2A400D69210 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A04FADA2294F7A9F0002C19B /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ProxyService; path = "go-proxy/ProxyService"; sourceTree = "<group>"; };
 		A0774F65296A6F0D001F278B /* libServer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libServer.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -326,6 +328,7 @@
 				A081F231295BB3D700863FE3 /* SetupView.swift */,
 				A081F24C2967DA3C00863FE3 /* Controllers */,
 				A0312E2B297D07D300EB0B8A /* Extensions.swift */,
+				A0312E332983AD5C00EB0B8A /* Dep.swift */,
 			);
 			path = slowdown;
 			sourceTree = "<group>";
@@ -485,6 +488,8 @@
 				A02F58EE27A6F14600D3330F /* PBXTargetDependency */,
 			);
 			name = slowdownTests;
+			packageProductDependencies = (
+			);
 			productName = slowdownTests;
 			productReference = A02F58EC27A6F14600D3330F /* slowdownTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -746,6 +751,7 @@
 				A081F232295BB3D700863FE3 /* SetupView.swift in Sources */,
 				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
 				A081F2482967C83800863FE3 /* AppModeCarousel.swift in Sources */,
+				A0312E342983AD5C00EB0B8A /* Dep.swift in Sources */,
 				A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */,
 				A080EDFA294F9B1C005401E4 /* SettingsController.swift in Sources */,
 				A0BF9204294175AE00C090E9 /* CheatController.swift in Sources */,

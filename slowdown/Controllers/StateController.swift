@@ -12,23 +12,12 @@ import SwiftUI
 
 
 class StateController: ObservableObject  {
-    struct Provider: ViewModifier {
+    struct Provider: Dep {
         @EnvironmentObject var service: VPNConfigurationService
         @EnvironmentObject var settings: SettingsStore
         @State var value: StateController?
-        
-        @ViewBuilder
-        func body(content: Content)  -> some View {
-            let _ = Self._printChanges()
-            Group {
-                if value == nil {
-                    Rectangle().hidden()
-                } else {
-                    content.environmentObject(value!)
-                }
-            }.onAppear {
-                value = StateController(settings: settings, service: service)
-            }
+        func create() -> T {
+            return StateController(settings: settings, service: service)
         }
     }
     

@@ -467,8 +467,8 @@
             filePath = "slowdown/Controllers/StateController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
             landmarkName = "isSlowing"
             landmarkType = "24">
          </BreakpointContent>
@@ -483,8 +483,8 @@
             filePath = "slowdown/Controllers/VPNConfigurationService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
+            startingLineNumber = "44"
+            endingLineNumber = "44"
             landmarkName = "init(store:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -499,8 +499,8 @@
             filePath = "slowdown/Controllers/VPNConfigurationService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "54"
-            endingLineNumber = "54"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
             landmarkName = "init(store:)"
             landmarkType = "7">
             <Locations>
@@ -556,22 +556,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "5A6C1598-EA8F-4E63-A83E-B67781FCB052"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "slowdown/Controllers/SettingsStore.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "body(content:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "09022FCE-BDFD-41FD-B040-7171DA914B4D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -620,22 +604,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3B61E298-7B08-4123-B6A5-11621C92C0D6"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "slowdown/Controllers/SettingsController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "body(content:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "1F924D7B-D54B-4E7A-B6C8-5F92B70EB594"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -643,73 +611,10 @@
             filePath = "slowdown/Controllers/SettingsController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "21"
-            endingLineNumber = "21"
+            startingLineNumber = "20"
+            endingLineNumber = "20"
             landmarkName = "body(content:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "83BA1419-21AB-4C94-9C41-6E4915F01BC7"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "slowdown/Controllers/SettingsController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "28"
-            endingLineNumber = "28"
-            landmarkName = "body(content:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "83BA1419-21AB-4C94-9C41-6E4915F01BC7 - cdcbf45183669ff1"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "slowdown.SettingsController.Provider.body(content: SwiftUI._ViewModifier_Content&lt;slowdown.SettingsController.Provider&gt;) -&gt; some"
-                  moduleName = "slowdown"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/Controllers/SettingsController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "28"
-                  endingLineNumber = "28"
-                  offsetFromSymbolStart = "1020">
-               </Location>
-               <Location
-                  uuid = "83BA1419-21AB-4C94-9C41-6E4915F01BC7 - 582329e0520af4e2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; SwiftUI._ConditionalContent&lt;SwiftUI.EmptyView, &lt;&lt;opaque return type of SwiftUI.View.environmentObject&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Combine.ObservableObject&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0&gt; in slowdown.SettingsController.Provider.body(content: SwiftUI._ViewModifier_Content&lt;slowdown.SettingsController.Provider&gt;) -&gt; some"
-                  moduleName = "slowdown"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/Controllers/SettingsController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "28"
-                  endingLineNumber = "28"
-                  offsetFromSymbolStart = "1304">
-               </Location>
-               <Location
-                  uuid = "83BA1419-21AB-4C94-9C41-6E4915F01BC7 - 83d9942667301b6a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 () -&gt; () in slowdown.SettingsController.Provider.body(content: SwiftUI._ViewModifier_Content&lt;slowdown.SettingsController.Provider&gt;) -&gt; some"
-                  moduleName = "slowdown"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/slee2/Desktop/slowdown/slowdown/Controllers/SettingsController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "29"
-                  endingLineNumber = "29"
-                  offsetFromSymbolStart = "40">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

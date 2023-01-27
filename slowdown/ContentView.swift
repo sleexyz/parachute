@@ -18,20 +18,19 @@ struct ContentView: View {
     
     @ViewBuilder
     var body: some View {
-        let _ = Self._printChanges()
-            if !store.loaded  {
-                SplashView(text: "Loading settings...")
-            } else if service.isInitializing {
-                SplashView(text: "Loading VPN state...")
-            } else if !service.hasManager {
-                SetupView()
-            } else {
-                AppView()
-                    .modifier(AppViewModel.Provider())
-                    .modifier(StateController.Provider())
-                    .modifier(CheatController.Provider())
-                    .modifier(SettingsController.Provider())
-            }
+        if !store.loaded  {
+            SplashView(text: "Loading settings...")
+        } else if service.isInitializing {
+            SplashView(text: "Loading VPN state...")
+        } else if !service.hasManager {
+            SetupView()
+        } else {
+            AppView()
+                .modifier(AppViewModel.Provider())
+                .modifier(StateController.Provider())
+                .modifier(CheatController.Provider())
+                .modifier(SettingsController.Provider())
+        }
     }
 }
 
@@ -39,18 +38,17 @@ struct ContentViewLoader: View {
     private let logger = Logger(label: "industries.strange.slowdown.ContentViewLoader")
     
     var body: some View {
-        let _ = Self._printChanges()
         ContentView()
-                .modifier(Consumer(type: SettingsStore.self) { store in
-                    do {
-                        try store.load()
-                        logger.info("loaded!")
-                    } catch {
-                        logger.info("error loading settings: \(error)")
-                    }
-                })
-                .modifier(VPNConfigurationService.Provider())
-                .modifier(SettingsStore.Provider())
+            .modifier(Consumer(type: SettingsStore.self) { store in
+                do {
+                    try store.load()
+                    logger.info("loaded!")
+                } catch {
+                    logger.info("error loading settings: \(error)")
+                }
+            })
+            .modifier(VPNConfigurationService.Provider())
+            .modifier(SettingsStore.Provider())
     }
 }
 

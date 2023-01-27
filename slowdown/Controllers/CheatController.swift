@@ -12,25 +12,13 @@ import UserNotifications
 import Logging
 
 final class CheatController: ObservableObject {
-    struct Provider: ViewModifier {
+    struct Provider: Dep {
         @EnvironmentObject var store: SettingsStore
         @EnvironmentObject var service: VPNConfigurationService
         @EnvironmentObject var settingsController: SettingsController
-        
         @State var value: CheatController?
-        
-        @ViewBuilder
-        func body(content: Content)  -> some View {
-            let _ = Self._printChanges()
-            Group {
-                if value == nil {
-                    Rectangle().hidden()
-                } else {
-                    content.environmentObject(value!)
-                }
-            }.onAppear {
-                    value = CheatController(store:store, service: service, settingsController: settingsController)
-            }
+        func create() -> T {
+            return CheatController(store:store, service: service, settingsController: settingsController)
         }
     }
     
