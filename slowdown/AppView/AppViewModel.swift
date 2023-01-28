@@ -11,26 +11,6 @@ import Combine
 import Logging
  
 final class AppViewModel: ObservableObject {
-    private var logger: Logger = Logger(label: "industries.strange.slowdown.AppViewModel")
-    @Published var currentCarouselIndex: Int = 0
-    @Published var isShowingError = false
-    @Published private(set) var errorTitle = ""
-    @Published private(set) var errorMessage = ""
-    var logSpeed : Binding<Double> {
-        Binding {
-            return log(self.store.settings.baseRxSpeedTarget)
-        } set: {
-            self.store.settings.baseRxSpeedTarget = exp($0)
-        }
-        
-    }
-    private var bag = [AnyCancellable]()
-    
-    let service: VPNConfigurationService
-    let cheatController: CheatController
-    let settingsController: SettingsController
-    let store: SettingsStore
-    
     struct Provider: Dep {
         func create(r: Registry) -> AppViewModel {
             return AppViewModel(
@@ -41,6 +21,26 @@ final class AppViewModel: ObservableObject {
             )
         }
     }
+    
+    private var logger: Logger = Logger(label: "industries.strange.slowdown.AppViewModel")
+    @Published var currentCarouselIndex: Int = 0
+    @Published var isShowingError = false
+    @Published private(set) var errorTitle = ""
+    @Published private(set) var errorMessage = ""
+    
+    var logSpeed : Binding<Double> {
+        Binding {
+            return log(self.store.settings.baseRxSpeedTarget)
+        } set: {
+            self.store.settings.baseRxSpeedTarget = exp($0)
+        }
+    }
+    
+    let service: VPNConfigurationService
+    let cheatController: CheatController
+    let settingsController: SettingsController
+    let store: SettingsStore
+    
     
     init(service: VPNConfigurationService, cheatController: CheatController, settingsController: SettingsController, settingsStore: SettingsStore) {
         self.service = service

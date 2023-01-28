@@ -17,7 +17,6 @@ struct ProgressiveModeView: View {
     @EnvironmentObject var controller: SettingsController
     
     @State var expanded: Bool = false
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
 //    var theme: Theme = Theme.navy
     var level: Double {
@@ -83,9 +82,6 @@ struct ProgressiveModeView: View {
         .animation(.default, value: expanded)
         .onTapBackground(enabled: self.expanded) {
             self.expanded = false
-        }
-        .onReceive(timer) {_ in
-            self.stateController.fetchState()
         }
     }
 }
