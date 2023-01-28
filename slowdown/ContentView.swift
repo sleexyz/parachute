@@ -26,6 +26,7 @@ struct ContentView: View {
             SetupView()
         } else {
             AppView()
+                .modifier(StateSubscriber())
                 .provideDeps([
                     AppViewModel.Provider(),
                     StateController.Provider(),
@@ -38,7 +39,6 @@ struct ContentView: View {
 
 struct ContentViewLoader: View {
     private let logger = Logger(label: "industries.strange.slowdown.ContentViewLoader")
-    
     var body: some View {
         ContentView()
             .consumeDep(SettingsStore.self) { store in
