@@ -24,26 +24,14 @@ final class AppViewModel: ObservableObject {
     let settingsController: SettingsController
     let store: SettingsStore
     
-    struct Provider: ViewModifier {
-        @EnvironmentObject var settings: SettingsStore
-        @EnvironmentObject var cheatController: CheatController
-        @EnvironmentObject var service: VPNConfigurationService
-        @EnvironmentObject var settingsController: SettingsController
-        
-        @State var value: AppViewModel?
-        
-        @ViewBuilder
-        func body(content: Content)  -> some View {
-            let _ = Self._printChanges()
-            Group {
-                if value == nil {
-                    Rectangle().hidden()
-                } else {
-                    content.environmentObject(value!)
-                }
-            }.onAppear {
-                value = AppViewModel(service: service, cheatController: cheatController, settingsController: settingsController, settingsStore: settings)
-            }
+    struct Provider: Dep {
+        func create(resolver: Resolver) -> AppViewModel {
+            return AppViewModel(
+                service: resolver.resolve(VPNConfigurationService.self),
+                cheatController: resolver.resolve(CheatController.self),
+                settingsController: resolver.resolve(SettingsController.self),
+                settingsStore: resolver.resolve(SettingsStore.self)
+            )
         }
     }
     

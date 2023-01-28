@@ -13,12 +13,12 @@ import Logging
 
 final class CheatController: ObservableObject {
     struct Provider: Dep {
-        @EnvironmentObject var store: SettingsStore
-        @EnvironmentObject var service: VPNConfigurationService
-        @EnvironmentObject var settingsController: SettingsController
-        @State var value: CheatController?
-        func create() -> T {
-            return CheatController(store:store, service: service, settingsController: settingsController)
+        func create(resolver: Resolver) -> CheatController {
+            return CheatController(
+                store: resolver.resolve(SettingsStore.self),
+                service: resolver.resolve(VPNConfigurationService.self),
+                settingsController: resolver.resolve(SettingsController.self)
+            )
         }
     }
     

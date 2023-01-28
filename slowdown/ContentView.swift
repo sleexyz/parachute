@@ -26,10 +26,12 @@ struct ContentView: View {
             SetupView()
         } else {
             AppView()
-                .modifier(AppViewModel.Provider())
-                .modifier(StateController.Provider())
-                .modifier(CheatController.Provider())
-                .modifier(SettingsController.Provider())
+                .modifier(Provider(deps: [
+                    AppViewModel.Provider(),
+                    StateController.Provider(),
+                    CheatController.Provider(),
+                    SettingsController.Provider(),
+                ]))
         }
     }
 }
@@ -47,29 +49,31 @@ struct ContentViewLoader: View {
                     logger.info("error loading settings: \(error)")
                 }
             })
-            .modifier(VPNConfigurationService.Provider())
-            .modifier(SettingsStore.Provider())
+                .modifier(RootProvider(deps: [
+                    VPNConfigurationService.Provider(),
+                    SettingsStore.Provider(),
+                ]))
     }
 }
 
 
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .modifier(Consumer(type: SettingsStore.self) { service in
-                service.loaded = true
-            })
-            .modifier(Consumer(type: MockVPNConfigurationService.self) { service in
-                service.hasManagerOverride = false
-            })
-            .modifier(MockVPNConfigurationService.Provider())
-            .modifier(SettingsStore.Provider())
-        ContentView()
-            .modifier(Consumer(type: MockVPNConfigurationService.self) { service in
-                service.hasManagerOverride = true
-            })
-            .modifier(MockVPNConfigurationService.Provider())
-            .modifier(SettingsStore.Provider())
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView()
+//            .modifier(Consumer(type: SettingsStore.self) { service in
+//                service.loaded = true
+//            })
+//            .modifier(Consumer(type: MockVPNConfigurationService.self) { service in
+//                service.hasManagerOverride = false
+//            })
+//            .modifier(MockVPNConfigurationService.Provider())
+//            .modifier(SettingsStore.Provider())
+//        ContentView()
+//            .modifier(Consumer(type: MockVPNConfigurationService.self) { service in
+//                service.hasManagerOverride = true
+//            })
+//            .modifier(MockVPNConfigurationService.Provider())
+//            .modifier(SettingsStore.Provider())
+//    }
+//}

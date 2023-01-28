@@ -32,9 +32,9 @@ struct FocusModeView : View {
     }
 }
 
-struct Previews_FocusModeView_Previews: PreviewProvider {
-    static var previews: some View {
-        FocusModeView()
-            .modifier(AppViewModel.Provider())
-    }
-}
+//struct Previews_FocusModeView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        FocusModeView()
+//            .modifier(AppViewModel.Provider())
+//    }
+//}

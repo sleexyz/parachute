@@ -17,10 +17,8 @@ enum UserError: Error {
 
 open class VPNConfigurationService: ObservableObject {
     struct Provider: Dep {
-        @EnvironmentObject var settings: SettingsStore
-        @State var value: VPNConfigurationService?
-        func create() -> T {
-            return VPNConfigurationService(store: settings)
+        func create(resolver: Resolver) -> VPNConfigurationService {
+            return VPNConfigurationService(store: resolver.resolve(SettingsStore.self))
         }
     }
     

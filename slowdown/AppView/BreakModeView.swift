@@ -39,9 +39,9 @@ struct BreakModeView: View {
     }
 }
 
-struct Previews_BreakModeView_Previews: PreviewProvider {
-    static var previews: some View {
-        BreakModeView()
-            .modifier(AppViewModel.Provider())
-    }
-}
+//struct Previews_BreakModeView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        BreakModeView()
+//            .modifier(AppViewModel.Provider())
+//    }
+//}

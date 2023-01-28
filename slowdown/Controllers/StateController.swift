@@ -13,11 +13,11 @@ import SwiftUI
 
 class StateController: ObservableObject  {
     struct Provider: Dep {
-        @EnvironmentObject var service: VPNConfigurationService
-        @EnvironmentObject var settings: SettingsStore
-        @State var value: StateController?
-        func create() -> T {
-            return StateController(settings: settings, service: service)
+        func create(resolver: Resolver) -> StateController  {
+            return StateController(
+                settings: resolver.resolve(SettingsStore.self),
+                service: resolver.resolve(VPNConfigurationService.self)
+            )
         }
     }
     
