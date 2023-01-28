@@ -10,34 +10,49 @@ import SwiftUI
 import Foundation
 import Logging
 
-
 struct ContentView: View {
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.ContentView")
-    @ObservedObject var service: VPNConfigurationService = .shared
-    @ObservedObject var store: SettingsStore = .shared
-    private let appViewModel: AppViewModel = AppViewModel()
+    @EnvironmentObject var store: SettingsStore
+    @EnvironmentObject var service: VPNConfigurationService
     
-    init() {
-        do {
-            try store.load()
-            self.logger.info("loaded!")
-        } catch {
-            self.logger.info("error loading settings: \(error)")
+    private let logger: Logger = Logger(label: "industries.strange.slowdown.ContentView")
+    
+    @ViewBuilder
+    var body: some View {
+        if !store.loaded  {
+            SplashView(text: "Loading settings...")
+        } else if service.isInitializing {
+            SplashView(text: "Loading VPN state...")
+        } else if !service.hasManager {
+            SetupView()
+        } else {
+            AppView()
+                .provideDeps([
+                    AppViewModel.Provider(),
+                    StateController.Provider(),
+                    CheatController.Provider(),
+                    SettingsController.Provider()
+                ])
         }
     }
+}
+
+struct ContentViewLoader: View {
+    private let logger = Logger(label: "industries.strange.slowdown.ContentViewLoader")
     
     var body: some View {
-        if !store.loaded || service.isInitializing {
-            return AnyView(SplashView())
-        }
-        
-        if service.hasManager {
-            return AnyView(AppView()
-                .environmentObject(appViewModel))
-            
-        } else {
-            return AnyView(SetupView())
-        }
+        ContentView()
+            .consumeDep(SettingsStore.self) { store in
+                do {
+                    try store.load()
+                    logger.info("loaded!")
+                } catch {
+                    logger.info("error loading settings: \(error)")
+                }
+            }
+            .provideDeps([
+                VPNConfigurationService.Provider(),
+                SettingsStore.Provider()
+            ])
     }
 }
 
@@ -46,5 +61,18 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .consumeDep(SettingsStore.self) { service in
+                service.loaded = true
+            }
+            .consumeDep(MockVPNConfigurationService.self) { service in
+                service.hasManagerOverride =  false
+            }
+            .provideDeps(previewDeps)
+        
+        ContentView()
+            .consumeDep(MockVPNConfigurationService.self) { service in
+                service.hasManagerOverride = true
+            }
+            .provideDeps(previewDeps)
     }
 }

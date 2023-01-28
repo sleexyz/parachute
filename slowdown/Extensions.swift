@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-
 enum Warp {
     case linear
     case exponential

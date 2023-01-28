@@ -8,31 +8,49 @@
 import Foundation
 import ProxyService
 import Logging
+import SwiftUI
+
 
 class StateController: ObservableObject  {
+    struct Provider: Dep {
+        func create(r: Registry) -> StateController  {
+            return StateController(
+                settings: r.resolve(SettingsStore.self),
+                service: r.resolve(VPNConfigurationService.self)
+            )
+        }
+    }
+    
     private let logger: Logger = Logger(label: "industries.strange.slowdown.StateController")
     @Published var state: Proxyservice_GetStateResponse = Proxyservice_GetStateResponse()
-    private let service: VPNConfigurationService = .shared
-    private let settings: SettingsStore = .shared
-    static let shared = StateController()
+    
+    let settings: SettingsStore
+    let service: VPNConfigurationService
+    
+    init(settings: SettingsStore, service: VPNConfigurationService) {
+        self.settings = settings
+        self.service = service
+    }
     
     var isSlowing: Bool {
-        return state.usagePoints / settings.settings.usageMaxHp < 0.5
+        let usagePoints = state.usagePoints
+        let usageMaxHp = settings.settings.usageMaxHp
+        let damageRatio = usagePoints / usageMaxHp
+        return damageRatio > 0.5
+    }
+    
+    var damageRatio: Double {
+        return state.usagePoints / settings.settings.usageMaxHp
     }
     
     @MainActor
-    private func setState(value: Proxyservice_GetStateResponse) {
+    internal func setState(value: Proxyservice_GetStateResponse) {
         state = value
     }
     
     @MainActor
     private func setUsagePoints(value: Double) {
         state.usagePoints = value
-    }
-    
-    var slowAmount: Double {
-        let ratio = state.usagePoints / settings.settings.usageMaxHp
-        return ratio
     }
     
     func heal() {

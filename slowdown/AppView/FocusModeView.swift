@@ -10,12 +10,12 @@ import SwiftUI
     
 struct FocusModeView : View {
     @EnvironmentObject var model: AppViewModel
-    @ObservedObject var store: SettingsStore = .shared
-    var controller: SettingsController = .shared
+    @EnvironmentObject var store: SettingsStore
+    @EnvironmentObject var controller: SettingsController
     var body: some View {
         VStack {
             Slider(
-                value: $model.logSpeed,
+                value: model.logSpeed,
                 in: (11...16),
                 onEditingChanged: { editing in
                     if !editing {
@@ -34,6 +34,7 @@ struct FocusModeView : View {
 
 struct Previews_FocusModeView_Previews: PreviewProvider {
     static var previews: some View {
-        FocusModeView().environmentObject(AppViewModel())
+        FocusModeView()
+            .provideDeps(previewDeps)
     }
 }

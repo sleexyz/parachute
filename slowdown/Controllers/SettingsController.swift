@@ -6,13 +6,22 @@
 //
 
 import Foundation
+import SwiftUI
 import ProxyService
 
-struct SettingsController {
+// Operations for changing settings
+class SettingsController: ObservableObject {
+    struct Provider: Dep {
+        func create(r: Registry) -> SettingsController {
+            return SettingsController(
+                store: r.resolve(SettingsStore.self),
+                service: r.resolve(VPNConfigurationService.self)
+            )
+        }
+    }
+    
     private let store: SettingsStore
     private let service: VPNConfigurationService
-    
-    static let shared = SettingsController(store: .shared, service: .shared)
     
     init(store: SettingsStore, service: VPNConfigurationService) {
         self.store = store

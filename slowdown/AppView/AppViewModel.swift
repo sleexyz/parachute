@@ -13,30 +13,45 @@ import Logging
 final class AppViewModel: ObservableObject {
     private var logger: Logger = Logger(label: "industries.strange.slowdown.AppViewModel")
     @Published var currentCarouselIndex: Int = 0
-    @Published var logSpeed: Double
     @Published var isShowingError = false
     @Published private(set) var errorTitle = ""
     @Published private(set) var errorMessage = ""
+    var logSpeed : Binding<Double> {
+        Binding {
+            return log(self.store.settings.baseRxSpeedTarget)
+        } set: {
+            self.store.settings.baseRxSpeedTarget = exp($0)
+        }
+        
+    }
     private var bag = [AnyCancellable]()
+    
     let service: VPNConfigurationService
     let cheatController: CheatController
     let settingsController: SettingsController
     let store: SettingsStore
     
+    struct Provider: Dep {
+        func create(r: Registry) -> AppViewModel {
+            return AppViewModel(
+                service: r.resolve(VPNConfigurationService.self),
+                cheatController: r.resolve(CheatController.self),
+                settingsController: r.resolve(SettingsController.self),
+                settingsStore: r.resolve(SettingsStore.self)
+            )
+        }
+    }
     
-    init(service: VPNConfigurationService = .shared, cheatController: CheatController = .shared, settingsController: SettingsController = .shared, settingsStore: SettingsStore = .shared) {
+    init(service: VPNConfigurationService, cheatController: CheatController, settingsController: SettingsController, settingsStore: SettingsStore) {
         self.service = service
         self.cheatController = cheatController
         self.settingsController = settingsController
         self.store = settingsStore
-        logSpeed = log(settingsStore.settings.baseRxSpeedTarget)
-        $logSpeed.sink {
-            settingsStore.settings.baseRxSpeedTarget = exp($0)
-        }.store(in: &bag)
         self.store.onLoad {
             self.currentCarouselIndex = self.canonicalCarouselIndex()
             self.logger.info("index: \(self.currentCarouselIndex)")
         }
+        logger.info("init appviewmodel")
     }
     
     // Finds the canonical carousel index for the given state

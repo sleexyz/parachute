@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A01B059E29850A6300298976 /* Preview Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01B059D29850A6300298976 /* Preview Helpers.swift */; };
+		A02A67A02985BD4C00FF0B27 /* Consumer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A679F2985BD4C00FF0B27 /* Consumer.swift */; };
+		A02A67A22985BD7000FF0B27 /* Registry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A67A12985BD7000FF0B27 /* Registry.swift */; };
+		A02A67A42985BDD000FF0B27 /* ServiceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A67A32985BDD000FF0B27 /* ServiceKey.swift */; };
+		A02A67A62985BE3700FF0B27 /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A67A52985BE3700FF0B27 /* Provider.swift */; };
 		A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58DF27A6F14500D3330F /* slowdownApp.swift */; };
 		A02F58E227A6F14500D3330F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58E127A6F14500D3330F /* ContentView.swift */; };
 		A02F58E427A6F14500D3330F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02F58E327A6F14500D3330F /* Assets.xcassets */; };
@@ -16,6 +21,7 @@
 		A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
 		A0312E2C297D07D300EB0B8A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E2B297D07D300EB0B8A /* Extensions.swift */; };
 		A0312E2E297F16ED00EB0B8A /* linmapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E2D297F16ED00EB0B8A /* linmapTests.swift */; };
+		A0312E342983AD5C00EB0B8A /* Dep.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E332983AD5C00EB0B8A /* Dep.swift */; };
 		A04332CA296BA21A00D69210 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A04332C9296BA21A00D69210 /* FirebaseCrashlytics */; };
 		A04332CC296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
 		A04332CD296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
@@ -165,6 +171,11 @@
 
 /* Begin PBXFileReference section */
 		A019EBD0297A0D05002A6F94 /* ci_post_xcodebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_xcodebuild.sh; sourceTree = "<group>"; };
+		A01B059D29850A6300298976 /* Preview Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preview Helpers.swift"; sourceTree = "<group>"; };
+		A02A679F2985BD4C00FF0B27 /* Consumer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Consumer.swift; sourceTree = "<group>"; };
+		A02A67A12985BD7000FF0B27 /* Registry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registry.swift; sourceTree = "<group>"; };
+		A02A67A32985BDD000FF0B27 /* ServiceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceKey.swift; sourceTree = "<group>"; };
+		A02A67A52985BE3700FF0B27 /* Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provider.swift; sourceTree = "<group>"; };
 		A02F58DC27A6F14500D3330F /* slowdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = slowdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02F58DF27A6F14500D3330F /* slowdownApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownApp.swift; sourceTree = "<group>"; };
 		A02F58E127A6F14500D3330F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -178,6 +189,7 @@
 		A02F590B27B09A7A00D3330F /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		A0312E2B297D07D300EB0B8A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		A0312E2D297F16ED00EB0B8A /* linmapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = linmapTests.swift; sourceTree = "<group>"; };
+		A0312E332983AD5C00EB0B8A /* Dep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dep.swift; sourceTree = "<group>"; };
 		A04332CB296BA2A400D69210 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A04FADA2294F7A9F0002C19B /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ProxyService; path = "go-proxy/ProxyService"; sourceTree = "<group>"; };
 		A0774F65296A6F0D001F278B /* libServer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libServer.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -281,6 +293,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A02A679E2985BD3C00FF0B27 /* DI */ = {
+			isa = PBXGroup;
+			children = (
+				A0312E332983AD5C00EB0B8A /* Dep.swift */,
+				A02A679F2985BD4C00FF0B27 /* Consumer.swift */,
+				A02A67A12985BD7000FF0B27 /* Registry.swift */,
+				A02A67A32985BDD000FF0B27 /* ServiceKey.swift */,
+				A02A67A52985BE3700FF0B27 /* Provider.swift */,
+			);
+			path = DI;
+			sourceTree = "<group>";
+		};
 		A02F58D327A6F14500D3330F = {
 			isa = PBXGroup;
 			children = (
@@ -326,6 +350,7 @@
 				A081F231295BB3D700863FE3 /* SetupView.swift */,
 				A081F24C2967DA3C00863FE3 /* Controllers */,
 				A0312E2B297D07D300EB0B8A /* Extensions.swift */,
+				A02A679E2985BD3C00FF0B27 /* DI */,
 			);
 			path = slowdown;
 			sourceTree = "<group>";
@@ -333,6 +358,7 @@
 		A02F58E527A6F14500D3330F /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
+				A01B059D29850A6300298976 /* Preview Helpers.swift */,
 				A02F58E627A6F14500D3330F /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
@@ -485,6 +511,8 @@
 				A02F58EE27A6F14600D3330F /* PBXTargetDependency */,
 			);
 			name = slowdownTests;
+			packageProductDependencies = (
+			);
 			productName = slowdownTests;
 			productReference = A02F58EC27A6F14600D3330F /* slowdownTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -742,10 +770,15 @@
 				A081F250296A125300863FE3 /* DamageBar.swift in Sources */,
 				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,
 				A081F23E2967B27A00863FE3 /* SnapCarousel.swift in Sources */,
+				A02A67A02985BD4C00FF0B27 /* Consumer.swift in Sources */,
 				A081F2462967BCEE00863FE3 /* AppViewModel.swift in Sources */,
+				A02A67A22985BD7000FF0B27 /* Registry.swift in Sources */,
 				A081F232295BB3D700863FE3 /* SetupView.swift in Sources */,
 				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
+				A01B059E29850A6300298976 /* Preview Helpers.swift in Sources */,
+				A02A67A62985BE3700FF0B27 /* Provider.swift in Sources */,
 				A081F2482967C83800863FE3 /* AppModeCarousel.swift in Sources */,
+				A0312E342983AD5C00EB0B8A /* Dep.swift in Sources */,
 				A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */,
 				A080EDFA294F9B1C005401E4 /* SettingsController.swift in Sources */,
 				A0BF9204294175AE00C090E9 /* CheatController.swift in Sources */,
@@ -754,6 +787,7 @@
 				A08819AA29726A6D0052D5D6 /* NotificationsController.swift in Sources */,
 				A08719DC281A513200113F3F /* VPNConfigurationService.swift in Sources */,
 				A081F2402967B70000863FE3 /* ProgressiveModeView.swift in Sources */,
+				A02A67A42985BDD000FF0B27 /* ServiceKey.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

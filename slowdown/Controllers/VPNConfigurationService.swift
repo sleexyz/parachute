@@ -9,13 +9,20 @@ import NetworkExtension
 import Foundation
 import ProxyService
 import Logging
+import SwiftUI
 
 enum UserError: Error {
     case message(message: String)
 }
 
 open class VPNConfigurationService: ObservableObject {
-    private let logger: Logger
+    struct Provider: Dep {
+        func create(r: Registry) -> VPNConfigurationService {
+            return VPNConfigurationService(store: r.resolve(SettingsStore.self))
+        }
+    }
+    
+    private let logger: Logger = Logger(label: "industries.strange.slowdown.VPNConfigurationService")
     @Published private(set) var isInitializing = true
     @Published var isConnected = false
     @Published var isTransitioning = false
@@ -27,10 +34,7 @@ open class VPNConfigurationService: ObservableObject {
     
     private let store: SettingsStore
     
-    static let shared = VPNConfigurationService(store: .shared)
-    
     init(store: SettingsStore) {
-        self.logger = Logger(label: "industries.strange.slowdown.VPNConfigurationService")
         self.store = store
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.manager = managers?.first
@@ -176,9 +180,3 @@ enum RpcError: Error {
     case invalidResponseError
 }
 
-
-class MockVPNConfigurationService: VPNConfigurationService {
-    func setIsConnected(value: Bool) {
-        self.isConnected = value
-    }
-}

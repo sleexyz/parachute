@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct SplashView: View {
+    var text: String?
     var body: some View {
-        Text("welcome")
+        Text(text ?? "welcome")
     }
 }
 

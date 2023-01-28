@@ -11,14 +11,10 @@ import ProxyService
 
 struct AppModeCarousel: View {
     @ObservedObject var model: AppViewModel
-    @ObservedObject var cheatController: CheatController = .shared
-    var controller: SettingsController = .shared
-    var modes: [Mode]
-    
-    init(model: AppViewModel, cheatController: CheatController = .shared, controller: SettingsController = .shared) {
-        self.model = model
-        self.cheatController = cheatController
-        self.modes = [
+    @EnvironmentObject var cheatController: CheatController
+    @EnvironmentObject var controller: SettingsController
+    var modes: [Mode] {
+        return [
             Mode(
                 id:"progressive",
                 onEnter: {
@@ -44,8 +40,10 @@ struct AppModeCarousel: View {
                     }
                 }
             ),
-        ]
+            ]
+        
     }
+    
     var body: some View {
         SnapCarousel(
             spacing:  0,
