@@ -146,22 +146,20 @@ struct HealButton: View {
         
     }
 }
-//
-//struct ProgressiveModeView_Previews: PreviewProvider {
-//
-//    static var previews: some View {
-//        VStack(spacing: 20) {
-//            ForEach([2, 3, 4, 5], id: \.self) { i in
-//                ProgressiveModeView()
-//                    .modifier(Consumer(type: StateController.self) { value in
-//                        value.setState(value: Proxyservice_GetStateResponse.with {
-//                            $0.usagePoints = Double(i)
-//                        })
-//                    })
-//                    .modifier(StateController.Provider())
-//            }
-//        }
-//        .modifier(VPNConfigurationService.Provider())
-//        .modifier(SettingsStore.Provider())
-//    }
-//}
+
+struct ProgressiveModeView_Previews: PreviewProvider {
+
+    static var previews: some View {
+        VStack(spacing: 20) {
+            ForEach([2, 3, 4, 5], id: \.self) { i in
+                ProgressiveModeView()
+                    .consumeDep(StateController.self) { value in
+                        value.setState(value: Proxyservice_GetStateResponse.with {
+                            $0.usagePoints = Double(i)
+                        })
+                    }
+                    .provideDeps(previewDeps)
+            }
+        }
+    }
+}

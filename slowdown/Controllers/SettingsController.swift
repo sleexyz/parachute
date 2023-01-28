@@ -12,10 +12,10 @@ import ProxyService
 // Operations for changing settings
 class SettingsController: ObservableObject {
     struct Provider: Dep {
-        func create(resolver: Resolver) -> SettingsController {
+        func create(r: Registry) -> SettingsController {
             return SettingsController(
-                store: resolver.resolve(SettingsStore.self),
-                service: resolver.resolve(VPNConfigurationService.self)
+                store: r.resolve(SettingsStore.self),
+                service: r.resolve(VPNConfigurationService.self)
             )
         }
     }

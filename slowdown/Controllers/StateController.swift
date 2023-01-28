@@ -13,10 +13,10 @@ import SwiftUI
 
 class StateController: ObservableObject  {
     struct Provider: Dep {
-        func create(resolver: Resolver) -> StateController  {
+        func create(r: Registry) -> StateController  {
             return StateController(
-                settings: resolver.resolve(SettingsStore.self),
-                service: resolver.resolve(VPNConfigurationService.self)
+                settings: r.resolve(SettingsStore.self),
+                service: r.resolve(VPNConfigurationService.self)
             )
         }
     }

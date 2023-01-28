@@ -13,11 +13,11 @@ import Logging
 
 final class CheatController: ObservableObject {
     struct Provider: Dep {
-        func create(resolver: Resolver) -> CheatController {
+        func create(r: Registry) -> CheatController {
             return CheatController(
-                store: resolver.resolve(SettingsStore.self),
-                service: resolver.resolve(VPNConfigurationService.self),
-                settingsController: resolver.resolve(SettingsController.self)
+                store: r.resolve(SettingsStore.self),
+                service: r.resolve(VPNConfigurationService.self),
+                settingsController: r.resolve(SettingsController.self)
             )
         }
     }

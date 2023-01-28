@@ -15,7 +15,7 @@ struct FocusModeView : View {
     var body: some View {
         VStack {
             Slider(
-                value: $model.logSpeed,
+                value: model.logSpeed,
                 in: (11...16),
                 onEditingChanged: { editing in
                     if !editing {
@@ -32,9 +32,9 @@ struct FocusModeView : View {
     }
 }
 
-//struct Previews_FocusModeView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        FocusModeView()
-//            .modifier(AppViewModel.Provider())
-//    }
-//}
+struct Previews_FocusModeView_Previews: PreviewProvider {
+    static var previews: some View {
+        FocusModeView()
+            .provideDeps(previewDeps)
+    }
+}

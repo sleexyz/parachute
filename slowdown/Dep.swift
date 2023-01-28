@@ -8,28 +8,54 @@
 import Foundation
 import SwiftUI
 
+// Load the registry
 struct Consumer<T: ObservableObject>: ViewModifier {
     let type: T.Type
-    @EnvironmentObject private var obj: T
     let effect: (_ value: T) -> ()
+    @Environment(\.registry) private var registry: Registry
+    func body(content: Content) -> some View {
+        return content.modifier(ConsumerInner(type: type, effect: effect, value: registry.resolve(type)))
+    }
+}
+
+// Set up the Observed Object
+struct ConsumerInner<T: ObservableObject>: ViewModifier {
+    let type: T.Type
+    let effect: (_ value: T) -> ()
+    @ObservedObject var value: T
     func body(content: Content) -> some View {
         return content.onAppear {
-            effect(obj)
+            effect(value)
         }
     }
 }
 
-class Registry: ObservableObject, Resolver {
+protocol Resolver {
+    func resolve<T>(_ type: T.Type) -> T
+}
+
+
+class Registry: Resolver, ObservableObject {
     var services = [ServiceKey: Any]()
     
     var parent: Registry?
     
-    init(parent: Registry?) {
+    init(parent: Registry? = nil) {
         self.parent = parent
     }
     
-    func bind(service: Any) {
-        let key = ServiceKey(serviceType: type(of:service))
+    init(deps: [any Dep], parent: Registry? = nil) {
+        self.parent = parent
+        self.bindDeps(deps: deps)
+    }
+    
+    private func bindDeps(deps: [any Dep]) {
+        for dep in deps.reversed() {
+            self.bind(key: dep.getServiceKey(),  service: dep.create(r: self))
+        }
+    }
+    
+    func bind(key: ServiceKey, service: Any) {
         services[key] = service
     }
     
@@ -48,10 +74,6 @@ class Registry: ObservableObject, Resolver {
     }
 }
 
-protocol Resolver {
-    func resolve<T>(_ type: T.Type) -> T
-}
-
 internal struct ProviderViewer: ViewModifier {
     let deps: [any Dep]
     let registry: Registry
@@ -66,43 +88,48 @@ internal struct ProviderViewer: ViewModifier {
 }
 
 struct Provider: ViewModifier {
-    @EnvironmentObject var parent: Registry
     let deps: [any Dep]
+    @Environment(\.registry) private var parent: Registry
     
     func body(content: Content) -> some View {
-        content.modifier(RootProvider(deps: deps, parent: parent))
+        content.modifier(ProviderInner(deps: deps, parent: parent))
     }
 }
 
-//private struct RegistryKey: EnvironmentKey {
-//    static let defaultValue = Registry()
-//}
 
-struct RootProvider: ViewModifier {
+private struct ProviderInner: ViewModifier {
     @StateObject private var registry: Registry
-    @State var bound = false
     let deps: [any Dep]
     
     init(deps: [any Dep], parent: Registry? = nil) {
-        self._registry = StateObject(wrappedValue: Registry(parent: parent))
+        self._registry = StateObject(wrappedValue: Registry(deps: deps, parent: parent))
         self.deps = deps
     }
     
     func body(content: Content) -> some View {
-        Group {
-            if !bound {
-                Rectangle().hidden()
-            } else {
-                AnyView(content.modifier(ProviderViewer(deps: deps, registry: registry)))
-            }
-        }
-        .environmentObject(registry)
-        .onAppear {
-            for dep in deps.reversed() {
-                registry.bind(service: dep.create(resolver: registry))
-            }
-            bound = true
-        }
+        content.modifier(ProviderViewer(deps: deps, registry: registry))
+            .environment(\.registry, registry)
+    }
+}
+
+extension View {
+    func provideDeps(_ deps: [any Dep]) -> some View {
+        self.modifier(Provider(deps: deps))
+    }
+    
+    func consumeDep<T: ObservableObject>(_ type: T.Type, effect: @escaping (T) -> ()) -> some View {
+        self.modifier(Consumer(type: type, effect: effect))
+    }
+}
+
+private struct RegistryKey: EnvironmentKey {
+    static let defaultValue = Registry()
+}
+
+extension EnvironmentValues {
+    var registry: Registry {
+        get { self[RegistryKey.self] }
+        set { self[RegistryKey.self] = newValue }
     }
 }
 
@@ -122,17 +149,13 @@ func == (lhs: ServiceKey, rhs: ServiceKey) -> Bool {
 
 protocol Dep {
     associatedtype T: ObservableObject
-    func create(resolver: Resolver) -> T
+    func create(r: Registry) -> T
 }
 
-extension Dep {
-    func getType() -> T.Type {
-        T.self
+private extension Dep {
+    func getServiceKey() -> ServiceKey {
+        return ServiceKey(serviceType: T.self)
     }
-    func resolve(registry: Registry) -> T {
-        return registry.resolve(T.self)
-    }
-    
     func environmentObject<Content: View>(registry: Registry, content: Content) -> some View {
         return content.environmentObject(registry.resolve(T.self))
     }

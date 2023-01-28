@@ -53,20 +53,20 @@ struct AppView: View {
 
 struct AppView_Previews: PreviewProvider {
     static var previews: some View {
-        return AppView()
-            .modifier(Consumer(type: MockVPNConfigurationService.self) { value in
+        AppView()
+            .consumeDep(MockVPNConfigurationService.self) { value in
                 value.setIsConnected(value: true)
-            })
-            .modifier(MockVPNConfigurationService.Provider())
+            }
+            .provideDeps(previewDeps)
     }
 }
 
 struct AppViewOff_Previews: PreviewProvider {
     static var previews: some View {
-        return AppView()
-            .modifier(Consumer(type: MockVPNConfigurationService.self) { value in
+        AppView()
+            .consumeDep(MockVPNConfigurationService.self) { value in
                 value.setIsConnected(value: false)
-            })
-            .modifier(MockVPNConfigurationService.Provider())
+            }
+            .provideDeps(previewDeps)
     }
 }

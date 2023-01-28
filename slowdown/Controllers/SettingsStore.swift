@@ -14,7 +14,7 @@ import Logging
 
 class SettingsStore: ObservableObject {
     struct Provider : Dep {
-        func create(resolver: Resolver) -> SettingsStore {
+        func create(r: Registry) -> SettingsStore {
             return SettingsStore()
         }
     }
@@ -26,13 +26,13 @@ class SettingsStore: ObservableObject {
         SettingsMigrations.setDefaults(settings: &settings)
         return settings
     }()
+    
     @Published var loaded = false
     
     private let logger = Logger(label: "industries.strange.slowdown.SettingsStore")
     
     init() {
         logger.info("init settings store")
-        
     }
     
     @MainActor

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A01B059E29850A6300298976 /* PreviewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01B059D29850A6300298976 /* PreviewContainer.swift */; };
 		A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58DF27A6F14500D3330F /* slowdownApp.swift */; };
 		A02F58E227A6F14500D3330F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58E127A6F14500D3330F /* ContentView.swift */; };
 		A02F58E427A6F14500D3330F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02F58E327A6F14500D3330F /* Assets.xcassets */; };
@@ -166,6 +167,7 @@
 
 /* Begin PBXFileReference section */
 		A019EBD0297A0D05002A6F94 /* ci_post_xcodebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_xcodebuild.sh; sourceTree = "<group>"; };
+		A01B059D29850A6300298976 /* PreviewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewContainer.swift; sourceTree = "<group>"; };
 		A02F58DC27A6F14500D3330F /* slowdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = slowdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02F58DF27A6F14500D3330F /* slowdownApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownApp.swift; sourceTree = "<group>"; };
 		A02F58E127A6F14500D3330F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -283,6 +285,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A01B059C2985091600298976 /* Preview Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				A01B059D29850A6300298976 /* PreviewContainer.swift */,
+			);
+			path = "Preview Helpers";
+			sourceTree = "<group>";
+		};
 		A02F58D327A6F14500D3330F = {
 			isa = PBXGroup;
 			children = (
@@ -315,6 +325,7 @@
 		A02F58DE27A6F14500D3330F /* slowdown */ = {
 			isa = PBXGroup;
 			children = (
+				A01B059C2985091600298976 /* Preview Helpers */,
 				A04332CB296BA2A400D69210 /* GoogleService-Info.plist */,
 				A081F2492967CB5C00863FE3 /* AppView */,
 				A081F230295B732900863FE3 /* Info.plist */,
@@ -750,6 +761,7 @@
 				A081F2462967BCEE00863FE3 /* AppViewModel.swift in Sources */,
 				A081F232295BB3D700863FE3 /* SetupView.swift in Sources */,
 				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
+				A01B059E29850A6300298976 /* PreviewContainer.swift in Sources */,
 				A081F2482967C83800863FE3 /* AppModeCarousel.swift in Sources */,
 				A0312E342983AD5C00EB0B8A /* Dep.swift in Sources */,
 				A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */,

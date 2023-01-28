@@ -17,8 +17,8 @@ enum UserError: Error {
 
 open class VPNConfigurationService: ObservableObject {
     struct Provider: Dep {
-        func create(resolver: Resolver) -> VPNConfigurationService {
-            return VPNConfigurationService(store: resolver.resolve(SettingsStore.self))
+        func create(r: Registry) -> VPNConfigurationService {
+            return VPNConfigurationService(store: r.resolve(SettingsStore.self))
         }
     }
     
@@ -36,7 +36,6 @@ open class VPNConfigurationService: ObservableObject {
     
     init(store: SettingsStore) {
         self.store = store
-        logger.info(" init vpnconfigurationservice")
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.manager = managers?.first
             self.isInitializing = false
@@ -181,19 +180,3 @@ enum RpcError: Error {
     case invalidResponseError
 }
 
-
-class MockVPNConfigurationService: VPNConfigurationService {
-    struct Provider: ViewModifier {
-        @EnvironmentObject var settings: SettingsStore
-        func body(content: Content)  -> some View {
-            return content.environmentObject(MockVPNConfigurationService(store: settings))
-        }
-    }
-    var hasManagerOverride: Bool?
-    override var hasManager: Bool {
-        return hasManagerOverride ?? super.hasManager
-    }
-    func setIsConnected(value: Bool) {
-        self.isConnected = value
-    }
-}
