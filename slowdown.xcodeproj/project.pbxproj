@@ -337,6 +337,7 @@
 		A02F58DE27A6F14500D3330F /* slowdown */ = {
 			isa = PBXGroup;
 			children = (
+				A01B059D29850A6300298976 /* Preview Helpers.swift */,
 				A04332CB296BA2A400D69210 /* GoogleService-Info.plist */,
 				A081F2492967CB5C00863FE3 /* AppView */,
 				A081F230295B732900863FE3 /* Info.plist */,
@@ -358,7 +359,6 @@
 		A02F58E527A6F14500D3330F /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
-				A01B059D29850A6300298976 /* Preview Helpers.swift */,
 				A02F58E627A6F14500D3330F /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
