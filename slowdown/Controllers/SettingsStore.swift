@@ -14,8 +14,7 @@ import Logging
 
 class SettingsStore: ObservableObject {
     struct Provider : Dep {
-        @State var value: SettingsStore?
-        func create() -> T {
+        func create() -> SettingsStore {
             return SettingsStore()
         }
     }

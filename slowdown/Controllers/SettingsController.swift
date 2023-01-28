@@ -13,10 +13,8 @@ import ProxyService
 class SettingsController: ObservableObject {
     struct Provider: Dep {
         @EnvironmentObject var store: SettingsStore
-        @EnvironmentObject var service: VPNConfigurationService
-        @State var value: SettingsController?
-        
-        func create() -> T {
+        @EnvironmentObject var service: MockVPNConfigurationService
+        func create() -> SettingsController {
           return SettingsController(store: store, service: service)
         }
     }

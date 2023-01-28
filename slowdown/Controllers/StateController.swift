@@ -15,8 +15,7 @@ class StateController: ObservableObject  {
     struct Provider: Dep {
         @EnvironmentObject var service: VPNConfigurationService
         @EnvironmentObject var settings: SettingsStore
-        @State var value: StateController?
-        func create() -> T {
+        func create() -> StateController {
             return StateController(settings: settings, service: service)
         }
     }

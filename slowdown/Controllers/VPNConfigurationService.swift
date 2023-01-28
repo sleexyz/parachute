@@ -18,8 +18,7 @@ enum UserError: Error {
 open class VPNConfigurationService: ObservableObject {
     struct Provider: Dep {
         @EnvironmentObject var settings: SettingsStore
-        @State var value: VPNConfigurationService?
-        func create() -> T {
+        func create() -> VPNConfigurationService {
             return VPNConfigurationService(store: settings)
         }
     }
@@ -185,10 +184,10 @@ enum RpcError: Error {
 
 
 class MockVPNConfigurationService: VPNConfigurationService {
-    struct Provider: ViewModifier {
+    struct Provider: Dep {
         @EnvironmentObject var settings: SettingsStore
-        func body(content: Content)  -> some View {
-            return content.environmentObject(MockVPNConfigurationService(store: settings))
+        func create() -> VPNConfigurationService {
+            return MockVPNConfigurationService(store: settings)
         }
     }
     var hasManagerOverride: Bool?

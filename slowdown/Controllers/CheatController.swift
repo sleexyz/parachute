@@ -16,8 +16,7 @@ final class CheatController: ObservableObject {
         @EnvironmentObject var store: SettingsStore
         @EnvironmentObject var service: VPNConfigurationService
         @EnvironmentObject var settingsController: SettingsController
-        @State var value: CheatController?
-        func create() -> T {
+        func create() -> CheatController {
             return CheatController(store:store, service: service, settingsController: settingsController)
         }
     }

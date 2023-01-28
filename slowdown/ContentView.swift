@@ -53,23 +53,49 @@ struct ContentViewLoader: View {
 }
 
 
+struct Test: View {
+    @EnvironmentObject var service: VPNConfigurationService
+    var body: some View {
+        VStack {
+            Text("\(Double.random(in: 0.0...1.0))")
+            Text("\(service.isConnected.description)")
+        }
+    }
+}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
-            .modifier(Consumer(type: SettingsStore.self) { service in
-                service.loaded = true
+        Test()
+            .modifier(Consumer(type: VPNConfigurationService.self) { service in
+                dump(service)
             })
             .modifier(Consumer(type: MockVPNConfigurationService.self) { service in
                 service.hasManagerOverride = false
             })
             .modifier(MockVPNConfigurationService.Provider())
             .modifier(SettingsStore.Provider())
-        ContentView()
-            .modifier(Consumer(type: MockVPNConfigurationService.self) { service in
-                service.hasManagerOverride = true
-            })
-            .modifier(MockVPNConfigurationService.Provider())
-            .modifier(SettingsStore.Provider())
+//        ContentView()
+//            .modifier(AppViewModel.Provider())
+//            .modifier(StateController.Provider())
+//            .modifier(CheatController.Provider())
+//            .modifier(SettingsController.Provider())
+//            .modifier(Consumer(type: SettingsStore.self) { service in
+//                service.loaded = true
+//            })
+//            .modifier(Consumer(type: MockVPNConfigurationService.self) { service in
+//                service.hasManagerOverride = false
+//            })
+//            .modifier(MockVPNConfigurationService.Provider())
+//            .modifier(SettingsStore.Provider())
+//        ContentView()
+//            .modifier(AppViewModel.Provider())
+//            .modifier(StateController.Provider())
+//            .modifier(CheatController.Provider())
+//            .modifier(SettingsController.Provider())
+//            .modifier(Consumer(type: MockVPNConfigurationService.self) { service in
+//                service.hasManagerOverride = true
+//            })
+//            .modifier(MockVPNConfigurationService.Provider())
+//            .modifier(SettingsStore.Provider())
     }
 }

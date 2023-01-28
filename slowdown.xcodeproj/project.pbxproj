@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A02A679D2985A9D200FF0B27 /* Preview Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A679C2985A9D200FF0B27 /* Preview Utilities.swift */; };
 		A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58DF27A6F14500D3330F /* slowdownApp.swift */; };
 		A02F58E227A6F14500D3330F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58E127A6F14500D3330F /* ContentView.swift */; };
 		A02F58E427A6F14500D3330F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02F58E327A6F14500D3330F /* Assets.xcassets */; };
@@ -166,6 +167,7 @@
 
 /* Begin PBXFileReference section */
 		A019EBD0297A0D05002A6F94 /* ci_post_xcodebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_xcodebuild.sh; sourceTree = "<group>"; };
+		A02A679C2985A9D200FF0B27 /* Preview Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preview Utilities.swift"; sourceTree = "<group>"; };
 		A02F58DC27A6F14500D3330F /* slowdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = slowdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02F58DF27A6F14500D3330F /* slowdownApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownApp.swift; sourceTree = "<group>"; };
 		A02F58E127A6F14500D3330F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -337,6 +339,7 @@
 			isa = PBXGroup;
 			children = (
 				A02F58E627A6F14500D3330F /* Preview Assets.xcassets */,
+				A02A679C2985A9D200FF0B27 /* Preview Utilities.swift */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -737,6 +740,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A02A679D2985A9D200FF0B27 /* Preview Utilities.swift in Sources */,
 				A0312E2C297D07D300EB0B8A /* Extensions.swift in Sources */,
 				A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */,
 				A08719D8281A4CE500113F3F /* SplashView.swift in Sources */,

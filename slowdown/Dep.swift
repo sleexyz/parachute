@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-
 struct Consumer<T: ObservableObject>: ViewModifier {
     let type: T.Type
     @EnvironmentObject private var obj: T
@@ -21,26 +20,23 @@ struct Consumer<T: ObservableObject>: ViewModifier {
 }
 
 protocol Dep: ViewModifier {
-    var value: T? { get nonmutating set }
     associatedtype T: ObservableObject
-    
     func create() -> T
 }
 
-extension Dep {
-    func body(content: Content)  -> some View {
-        return self.bodyImpl(content: content)
+struct ProviderInner<T: ObservableObject>: ViewModifier {
+    @State var value: T
+    init(create: () -> T) {
+        self._value = State(wrappedValue: create())
     }
-    func bodyImpl(content: Content)  -> some View {
-        let _ = Self._printChanges()
-        return Group {
-            if value == nil {
-                Rectangle().hidden()
-            } else {
-                content.environmentObject(value!)
-            }
-        }.onAppear {
-            value = create()
-        }
+    func body(content: Content) -> some View {
+        return content.environmentObject(value)
+    }
+}
+
+
+extension Dep {
+    func body(content: Content) -> some View {
+        return content.modifier(ProviderInner(create: create))
     }
 }
