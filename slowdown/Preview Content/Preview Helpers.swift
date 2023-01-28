@@ -18,12 +18,10 @@ let previewDeps : [any Dep] = [
 ]
 
 class MockVPNConfigurationService: VPNConfigurationService {
-    struct Provider: Dep {
-        typealias T = VPNConfigurationService
+    struct Provider: MockDep {
+        typealias MockT = MockVPNConfigurationService
         func create(r: Registry) -> VPNConfigurationService {
-            let value = MockVPNConfigurationService(store: r.resolve(SettingsStore.self))
-            r.bind(key: ServiceKey(serviceType: MockVPNConfigurationService.self), service: value)
-            return value
+            return MockVPNConfigurationService(store: r.resolve(SettingsStore.self))
         }
     }
     

@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A01B059E29850A6300298976 /* PreviewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01B059D29850A6300298976 /* PreviewContainer.swift */; };
+		A01B059E29850A6300298976 /* Preview Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01B059D29850A6300298976 /* Preview Helpers.swift */; };
+		A02A67A02985BD4C00FF0B27 /* Consumer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A679F2985BD4C00FF0B27 /* Consumer.swift */; };
+		A02A67A22985BD7000FF0B27 /* Registry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A67A12985BD7000FF0B27 /* Registry.swift */; };
+		A02A67A42985BDD000FF0B27 /* ServiceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A67A32985BDD000FF0B27 /* ServiceKey.swift */; };
+		A02A67A62985BE3700FF0B27 /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A67A52985BE3700FF0B27 /* Provider.swift */; };
 		A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58DF27A6F14500D3330F /* slowdownApp.swift */; };
 		A02F58E227A6F14500D3330F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58E127A6F14500D3330F /* ContentView.swift */; };
 		A02F58E427A6F14500D3330F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02F58E327A6F14500D3330F /* Assets.xcassets */; };
@@ -167,7 +171,11 @@
 
 /* Begin PBXFileReference section */
 		A019EBD0297A0D05002A6F94 /* ci_post_xcodebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_xcodebuild.sh; sourceTree = "<group>"; };
-		A01B059D29850A6300298976 /* PreviewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewContainer.swift; sourceTree = "<group>"; };
+		A01B059D29850A6300298976 /* Preview Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preview Helpers.swift"; sourceTree = "<group>"; };
+		A02A679F2985BD4C00FF0B27 /* Consumer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Consumer.swift; sourceTree = "<group>"; };
+		A02A67A12985BD7000FF0B27 /* Registry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registry.swift; sourceTree = "<group>"; };
+		A02A67A32985BDD000FF0B27 /* ServiceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceKey.swift; sourceTree = "<group>"; };
+		A02A67A52985BE3700FF0B27 /* Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provider.swift; sourceTree = "<group>"; };
 		A02F58DC27A6F14500D3330F /* slowdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = slowdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02F58DF27A6F14500D3330F /* slowdownApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownApp.swift; sourceTree = "<group>"; };
 		A02F58E127A6F14500D3330F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -285,12 +293,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A01B059C2985091600298976 /* Preview Helpers */ = {
+		A02A679E2985BD3C00FF0B27 /* DI */ = {
 			isa = PBXGroup;
 			children = (
-				A01B059D29850A6300298976 /* PreviewContainer.swift */,
+				A0312E332983AD5C00EB0B8A /* Dep.swift */,
+				A02A679F2985BD4C00FF0B27 /* Consumer.swift */,
+				A02A67A12985BD7000FF0B27 /* Registry.swift */,
+				A02A67A32985BDD000FF0B27 /* ServiceKey.swift */,
+				A02A67A52985BE3700FF0B27 /* Provider.swift */,
 			);
-			path = "Preview Helpers";
+			path = DI;
 			sourceTree = "<group>";
 		};
 		A02F58D327A6F14500D3330F = {
@@ -325,7 +337,6 @@
 		A02F58DE27A6F14500D3330F /* slowdown */ = {
 			isa = PBXGroup;
 			children = (
-				A01B059C2985091600298976 /* Preview Helpers */,
 				A04332CB296BA2A400D69210 /* GoogleService-Info.plist */,
 				A081F2492967CB5C00863FE3 /* AppView */,
 				A081F230295B732900863FE3 /* Info.plist */,
@@ -339,7 +350,7 @@
 				A081F231295BB3D700863FE3 /* SetupView.swift */,
 				A081F24C2967DA3C00863FE3 /* Controllers */,
 				A0312E2B297D07D300EB0B8A /* Extensions.swift */,
-				A0312E332983AD5C00EB0B8A /* Dep.swift */,
+				A02A679E2985BD3C00FF0B27 /* DI */,
 			);
 			path = slowdown;
 			sourceTree = "<group>";
@@ -347,6 +358,7 @@
 		A02F58E527A6F14500D3330F /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
+				A01B059D29850A6300298976 /* Preview Helpers.swift */,
 				A02F58E627A6F14500D3330F /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
@@ -758,10 +770,13 @@
 				A081F250296A125300863FE3 /* DamageBar.swift in Sources */,
 				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,
 				A081F23E2967B27A00863FE3 /* SnapCarousel.swift in Sources */,
+				A02A67A02985BD4C00FF0B27 /* Consumer.swift in Sources */,
 				A081F2462967BCEE00863FE3 /* AppViewModel.swift in Sources */,
+				A02A67A22985BD7000FF0B27 /* Registry.swift in Sources */,
 				A081F232295BB3D700863FE3 /* SetupView.swift in Sources */,
 				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
-				A01B059E29850A6300298976 /* PreviewContainer.swift in Sources */,
+				A01B059E29850A6300298976 /* Preview Helpers.swift in Sources */,
+				A02A67A62985BE3700FF0B27 /* Provider.swift in Sources */,
 				A081F2482967C83800863FE3 /* AppModeCarousel.swift in Sources */,
 				A0312E342983AD5C00EB0B8A /* Dep.swift in Sources */,
 				A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */,
@@ -772,6 +787,7 @@
 				A08819AA29726A6D0052D5D6 /* NotificationsController.swift in Sources */,
 				A08719DC281A513200113F3F /* VPNConfigurationService.swift in Sources */,
 				A081F2402967B70000863FE3 /* ProgressiveModeView.swift in Sources */,
+				A02A67A42985BDD000FF0B27 /* ServiceKey.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
