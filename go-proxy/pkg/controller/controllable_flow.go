@@ -45,7 +45,7 @@ func (f *ControllableFlow) makeDecision() *Decision {
 func (f *ControllableFlow) makeProgressiveDecision() *Decision {
 	di := f.getDecisionInfo()
 	if di.Use && di.App != nil {
-		return &Decision{rxSpeedTarget: f.c.usagePoints.ProgressiveRxSpeedTarget(), DecisionInfo: di}
+		return &Decision{rxSpeedTarget: f.c.ProgressiveRxSpeedTarget(), DecisionInfo: di}
 	}
 	return &Decision{rxSpeedTarget: math.Inf(1), DecisionInfo: di}
 }

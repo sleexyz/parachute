@@ -86,6 +86,8 @@ public struct Proxyservice_Settings {
 
   public var usageMaxHp: Double = 0
 
+  public var usageBaseRxSpeedTarget: Double = 0
+
   public var debug: Bool = false
 
   public var mode: Proxyservice_Mode = .progressive
@@ -392,6 +394,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     3: .same(proto: "temporaryRxSpeedExpiry"),
     5: .same(proto: "usageHealRate"),
     6: .same(proto: "usageMaxHP"),
+    9: .same(proto: "usageBaseRxSpeedTarget"),
     7: .same(proto: "debug"),
     8: .same(proto: "mode"),
   ]
@@ -410,6 +413,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case 6: try { try decoder.decodeSingularDoubleField(value: &self.usageMaxHp) }()
       case 7: try { try decoder.decodeSingularBoolField(value: &self.debug) }()
       case 8: try { try decoder.decodeSingularEnumField(value: &self.mode) }()
+      case 9: try { try decoder.decodeSingularDoubleField(value: &self.usageBaseRxSpeedTarget) }()
       default: break
       }
     }
@@ -444,6 +448,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if self.mode != .progressive {
       try visitor.visitSingularEnumField(value: self.mode, fieldNumber: 8)
     }
+    if self.usageBaseRxSpeedTarget != 0 {
+      try visitor.visitSingularDoubleField(value: self.usageBaseRxSpeedTarget, fieldNumber: 9)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -454,6 +461,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if lhs._temporaryRxSpeedExpiry != rhs._temporaryRxSpeedExpiry {return false}
     if lhs.usageHealRate != rhs.usageHealRate {return false}
     if lhs.usageMaxHp != rhs.usageMaxHp {return false}
+    if lhs.usageBaseRxSpeedTarget != rhs.usageBaseRxSpeedTarget {return false}
     if lhs.debug != rhs.debug {return false}
     if lhs.mode != rhs.mode {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}

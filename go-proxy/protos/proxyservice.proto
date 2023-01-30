@@ -15,15 +15,14 @@ message Settings {
     int32 version = 4;
 
     double baseRxSpeedTarget = 1;
-
     double temporaryRxSpeedTarget = 2;
     google.protobuf.Timestamp temporaryRxSpeedExpiry = 3;
 
     double usageHealRate = 5; // HP per second
     double usageMaxHP = 6;
+    double usageBaseRxSpeedTarget = 9;
 
     bool debug = 7;
-
     Mode mode = 8;
 }
 

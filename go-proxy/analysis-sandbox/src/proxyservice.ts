@@ -49,6 +49,7 @@ export interface Settings {
   /** HP per second */
   usageHealRate: number;
   usageMaxHP: number;
+  usageBaseRxSpeedTarget: number;
   debug: boolean;
   mode: Mode;
 }
@@ -119,6 +120,7 @@ function createBaseSettings(): Settings {
     temporaryRxSpeedExpiry: undefined,
     usageHealRate: 0,
     usageMaxHP: 0,
+    usageBaseRxSpeedTarget: 0,
     debug: false,
     mode: 0,
   };
@@ -143,6 +145,9 @@ export const Settings = {
     }
     if (message.usageMaxHP !== 0) {
       writer.uint32(49).double(message.usageMaxHP);
+    }
+    if (message.usageBaseRxSpeedTarget !== 0) {
+      writer.uint32(73).double(message.usageBaseRxSpeedTarget);
     }
     if (message.debug === true) {
       writer.uint32(56).bool(message.debug);
@@ -178,6 +183,9 @@ export const Settings = {
         case 6:
           message.usageMaxHP = reader.double();
           break;
+        case 9:
+          message.usageBaseRxSpeedTarget = reader.double();
+          break;
         case 7:
           message.debug = reader.bool();
           break;
@@ -202,6 +210,7 @@ export const Settings = {
         : undefined,
       usageHealRate: isSet(object.usageHealRate) ? Number(object.usageHealRate) : 0,
       usageMaxHP: isSet(object.usageMaxHP) ? Number(object.usageMaxHP) : 0,
+      usageBaseRxSpeedTarget: isSet(object.usageBaseRxSpeedTarget) ? Number(object.usageBaseRxSpeedTarget) : 0,
       debug: isSet(object.debug) ? Boolean(object.debug) : false,
       mode: isSet(object.mode) ? modeFromJSON(object.mode) : 0,
     };
@@ -216,6 +225,7 @@ export const Settings = {
       (obj.temporaryRxSpeedExpiry = message.temporaryRxSpeedExpiry.toISOString());
     message.usageHealRate !== undefined && (obj.usageHealRate = message.usageHealRate);
     message.usageMaxHP !== undefined && (obj.usageMaxHP = message.usageMaxHP);
+    message.usageBaseRxSpeedTarget !== undefined && (obj.usageBaseRxSpeedTarget = message.usageBaseRxSpeedTarget);
     message.debug !== undefined && (obj.debug = message.debug);
     message.mode !== undefined && (obj.mode = modeToJSON(message.mode));
     return obj;
@@ -229,6 +239,7 @@ export const Settings = {
     message.temporaryRxSpeedExpiry = object.temporaryRxSpeedExpiry ?? undefined;
     message.usageHealRate = object.usageHealRate ?? 0;
     message.usageMaxHP = object.usageMaxHP ?? 0;
+    message.usageBaseRxSpeedTarget = object.usageBaseRxSpeedTarget ?? 0;
     message.debug = object.debug ?? false;
     message.mode = object.mode ?? 0;
     return message;

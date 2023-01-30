@@ -155,7 +155,7 @@ open class VPNConfigurationService: ObservableObject {
         }
         return try await withCheckedThrowingContinuation { continuation in
             do {
-                self.logger.info("\(message.debugDescription)")
+//                self.logger.info("\(message.debugDescription)")
                 try session.sendProviderMessage(message.serializedData()) { data in
                     if data == nil {
                         continuation.resume(throwing: RpcError.invalidResponseError)

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"math"
 	"time"
 
 	"strange.industries/go-proxy/pb/proxyservice"
@@ -217,10 +218,27 @@ func (c *Controller) DebugRecordState() *proxyservice.ServerState {
 	state := c.AppResolver.RecordState()
 	state.UsagePoints = c.usagePoints.Points()
 	state.Ratio = c.usagePoints.HP() / c.usagePoints.cap
-	state.ProgressiveRxSpeedTarget = c.usagePoints.ProgressiveRxSpeedTarget()
+	state.ProgressiveRxSpeedTarget = c.ProgressiveRxSpeedTarget()
 	return state
 }
 
 func (c *Controller) DebugGetEntries(ip string) []string {
 	return c.failedDnsMatchCache.DebugGetEntries(ip)
+}
+
+func (c *Controller) ProgressiveRxSpeedTarget() float64 {
+	ratio := c.usagePoints.HP() / c.usagePoints.cap
+	if ratio < 1.0/6.0 {
+		return 50e3
+	}
+	if ratio < 2.0/6.0 {
+		return 100e3
+	}
+	if ratio < 3.0/6.0 {
+		return 200e3
+	}
+	if st := c.sm.Settings().UsageBaseRxSpeedTarget; st != 0 {
+		return st
+	}
+	return math.Inf(1)
 }

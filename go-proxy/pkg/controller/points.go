@@ -50,17 +50,3 @@ func (p *Points) HealTo(hpMin float64) {
 	// Cannot have more damage than cap - targetHP
 	p.CapDamage(p.cap - hpMin)
 }
-
-func (p *Points) ProgressiveRxSpeedTarget() float64 {
-	ratio := p.HP() / p.cap
-	if ratio < 1.0/6.0 {
-		return 50e3
-	}
-	if ratio < 2.0/6.0 {
-		return 100e3
-	}
-	if ratio < 3.0/6.0 {
-		return 200e3
-	}
-	return math.Inf(1)
-}
