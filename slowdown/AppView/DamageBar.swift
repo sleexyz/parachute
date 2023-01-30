@@ -12,6 +12,16 @@ import SwiftUI
 struct DamageBar: View {
     var ratio:Double
     
+    var magnitude: Double {
+        return abs(ratio)
+    }
+    var alignment: Alignment {
+        if ratio < 0 {
+            return .trailing
+        }
+        return .leading
+    }
+    
     var slowAmount: Double = 0
     
     var height: Double = 20
@@ -25,12 +35,13 @@ struct DamageBar: View {
         }
         return .green
     }
+    
     var body: some View {
-        ZStack {
-            GeometryReader { geometry in
+        GeometryReader { geometry in
+            ZStack(alignment: alignment) {
                 RoundedRectangle(cornerRadius: 100, style: .continuous)
                     .fill(color)
-                    .frame(width: geometry.size.width * ratio, height: height)
+                    .frame(width: geometry.size.width * magnitude, height: height)
                 RoundedRectangle(cornerRadius: 100, style: .continuous)
                     .fill(color)
                     .opacity(0.1)
@@ -49,19 +60,7 @@ struct StagedDamageBar: View {
     var height: Double = 20
     
     var ratioShown: Double {
-        let remainder = ratio.truncatingRemainder(dividingBy: 0.5) * 2
-        let whole = floor(ratio*2) / 2
-        if remainder == 0 && whole == 1 {
-            return 1
-        }
-        if remainder == 0 && whole > 0 {
-            return 0
-        }
-        return remainder
-//        if ratio == 0 {
-//            return 0
-//        }
-//        return ( ((ratio).truncatingRemainder(dividingBy: 0.5)) * 2)
+        return ratio.linmap(0, 1, -1, 1)
     }
     
     var body: some View {
