@@ -116,7 +116,7 @@ struct HealSettings: View {
                     .foregroundColor(nil)
                     .padding()
                     .removeFocusOnTap(enabled: scrollTimeFocused)
-                    .onSubmit {
+                    .onChange(of: store.scrollTimeLimit.wrappedValue) { _ in
                         controller.syncSettings()
                     }
             }
@@ -128,12 +128,12 @@ struct HealSettings: View {
                     .foregroundColor(nil)
                     .padding()
                     .removeFocusOnTap(enabled: restTimeFocused)
-                    .onSubmit {
+                    .onChange(of: store.restTime.wrappedValue) { _ in
                         controller.syncSettings()
                     }
             }
             VStack {
-                Toggle("Max speed limit", isOn: baselineSpeedEnabled)
+                Toggle("Set max speed", isOn: baselineSpeedEnabled)
                     .onChange(of: baselineSpeedEnabled.wrappedValue) { _ in
                         controller.syncSettings()
                     }

@@ -228,17 +228,19 @@ func (c *Controller) DebugGetEntries(ip string) []string {
 
 func (c *Controller) ProgressiveRxSpeedTarget() float64 {
 	ratio := c.usagePoints.HP() / c.usagePoints.cap
-	if ratio < 1.0/6.0 {
-		return 50e3
-	}
-	if ratio < 2.0/6.0 {
-		return 100e3
-	}
-	if ratio < 3.0/6.0 {
-		return 200e3
-	}
+	maxSpeed := math.Inf(1)
 	if st := c.sm.Settings().UsageBaseRxSpeedTarget; st != 0 {
-		return st
+		maxSpeed = st
 	}
-	return math.Inf(1)
+	minSpeed := math.Min(40e3, maxSpeed)
+	if ratio <= 0.5 {
+		maxSpeed = math.Min(maxSpeed, 10e6) // 10mbps
+		return linexp(ratio, 0, 0.5, minSpeed, maxSpeed)
+	}
+	return maxSpeed
+}
+
+func linexp(x float64, a float64, b float64, c float64, d float64) float64 {
+	xHat := (x - a) / (b - a)
+	return math.Pow(c, 1-xHat) * math.Pow(d, xHat)
 }

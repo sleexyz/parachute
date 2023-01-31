@@ -10,6 +10,7 @@ import SwiftUI
 
 
 struct DamageBar: View {
+    // current hp / hp max
     var ratio:Double
     
     var magnitude: Double {
@@ -33,7 +34,7 @@ struct DamageBar: View {
     var height: Double = 20
     
     var color: Color {
-        if 1 - slowAmount < 0.33 {
+        if 1 - slowAmount < 0.25 {
             return .red
         }
         if 1 - slowAmount < 0.5 {
@@ -74,7 +75,7 @@ struct DamageBar: View {
 struct StagedDamageBar: View {
     var ratio: Double
     var slowAmount: Double {
-        1 - ratio
+        ratio.applyMapping(Mapping(a: 0, b: 1, c: 1, d: 0))
     }
     var height: Double = 20
     
@@ -111,7 +112,7 @@ struct StagedDamageBar_Previews: PreviewProvider {
             StagedDamageBar(ratio: 0.51)
             StagedDamageBar(ratio: 3/6)
             StagedDamageBar(ratio: 0.49)
-            StagedDamageBar(ratio: 2/6)
+            StagedDamageBar(ratio: 2/8)
             StagedDamageBar(ratio: 1/6)
             StagedDamageBar(ratio: 0/6)
         }
