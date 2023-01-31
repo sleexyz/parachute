@@ -21,6 +21,12 @@ struct DamageBar: View {
         }
         return .leading
     }
+    var offsetMultiplier: Double {
+        if ratio < 0 {
+            return -1
+        }
+        return 1
+    }
     
     var slowAmount: Double = 0
     
@@ -39,10 +45,23 @@ struct DamageBar: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: alignment) {
-                RoundedRectangle(cornerRadius: 100, style: .continuous)
+                Rectangle()
                     .fill(color)
-                    .frame(width: geometry.size.width * magnitude, height: height)
-                RoundedRectangle(cornerRadius: 100, style: .continuous)
+                    .frame(width: geometry.size.width, height: height)
+                    .mask(alignment: alignment) {
+                        RoundedRectangle(cornerRadius: 100)
+                            .opacity(1)
+                            .frame(width: geometry.size.width, height: height)
+                    }
+                    .mask(alignment: alignment) {
+                        RoundedRectangle(cornerRadius: 100)
+                                .fill(color)
+                                .offset(x: magnitude * geometry.size.width < height
+                                        ? (magnitude * geometry.size.width - height) * offsetMultiplier
+                                        : 0)
+                                .frame(width: max(height, geometry.size.width * magnitude), height: height)
+                    }
+                RoundedRectangle(cornerRadius: 100)
                     .fill(color)
                     .opacity(0.1)
                     .frame(width: geometry.size.width, height: height)
@@ -78,7 +97,7 @@ struct DamageBar_Previews: PreviewProvider {
             DamageBar(ratio: 3/6, slowAmount: 3/6)
             DamageBar(ratio: 2/6, slowAmount: 4/6)
             DamageBar(ratio: 1/6, slowAmount: 5/6)
-            DamageBar(ratio: 0/6, slowAmount: 6/6)
+            DamageBar(ratio: 0.06, slowAmount: 6/6)
         }
     }
 }
@@ -89,7 +108,9 @@ struct StagedDamageBar_Previews: PreviewProvider {
             StagedDamageBar(ratio: 6/6)
             StagedDamageBar(ratio: 5/6)
             StagedDamageBar(ratio: 4/6)
+            StagedDamageBar(ratio: 0.51)
             StagedDamageBar(ratio: 3/6)
+            StagedDamageBar(ratio: 0.49)
             StagedDamageBar(ratio: 2/6)
             StagedDamageBar(ratio: 1/6)
             StagedDamageBar(ratio: 0/6)
