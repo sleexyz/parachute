@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import ProxyService
+import Combine
 
 struct ProgressiveModeView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -63,9 +64,17 @@ struct ProgressiveModeView: View {
                     .padding(30)
             }
             if stateController.isSlowing {
-                HealButton()
-                    .padding()
-                    .frame(maxWidth: .infinity)
+                TimerLock { timeLeft in
+                    ZStack (alignment: .topTrailing) {
+                        HealButton(disabledOverride: timeLeft > 0)
+                        if timeLeft > 0 {
+                            Badge(timeLeft: timeLeft)
+                                .offset(x: 25, y:-18)
+                        }
+                    }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                }
             }
         }
         .contentShape(shape)
@@ -145,10 +154,13 @@ struct HealSettings: View {
 }
 
 struct HealButton: View {
+    var disabledOverride: Bool
+    
     @EnvironmentObject var stateController: StateController
 
     var body: some View {
-        let opacity = stateController.isSlowing ? 1 : 0.5
+        let disabled = disabledOverride || !stateController.isSlowing
+        let opacity = disabled ? 0.5 : 1
         Button("One more minute!") {
                 stateController.heal()
             }
@@ -158,10 +170,59 @@ struct HealButton: View {
         .background(Color.accentColor.grayscale(1))
         .clipShape(RoundedRectangle(cornerRadius: 100, style:.continuous))
         .opacity(opacity)
-        .disabled(!stateController.isSlowing)
+        .disabled(disabled)
         .onTapGesture {
         }
         
+    }
+}
+
+struct Badge: View {
+    var timeLeft: Int
+    var body: some View {
+        Text("🔒 " + timeLeft.description)
+            .frame(width: 60, height: 30)
+            .foregroundColor(Color.white)
+            .background(Color.accentColor.grayscale(1))
+            .clipShape(Capsule())
+    }
+}
+
+struct TimerLock<Content: View>: View{
+    var content: (_ timeLeft: Int) -> Content
+    @Environment(\.scenePhase) var scenePhase
+
+    @State var timer = StateSubscriber.initializeTimer()
+    @State var timeLeft: Int = 10
+    
+    static func initializeTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
+         return Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    }
+
+    var body: some View {
+        content(timeLeft)
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
+                    startSubscription()
+                } else {
+                    timer.upstream.connect().cancel()
+                }
+            }
+            .onAppear {
+                startSubscription()
+            }
+            .onReceive(timer) {_ in
+                if timeLeft == 0 {
+                    timer.upstream.connect().cancel()
+                    return
+                }
+                timeLeft -= 1
+            }
+    }
+    
+    func startSubscription() {
+        timeLeft = 10
+        timer = StateSubscriber.initializeTimer()
     }
 }
 
