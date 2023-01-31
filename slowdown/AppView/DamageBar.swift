@@ -60,7 +60,7 @@ struct StagedDamageBar: View {
     var height: Double = 20
     
     var ratioShown: Double {
-        return ratio.linmap(0, 1, -1, 1)
+        return ratio.applyMapping(Mapping(a: 0, b: 1, c: -1, d: 1))
     }
     
     var body: some View {

@@ -13,12 +13,27 @@ enum Warp {
     case exponential
 }
 
-extension Double {
-    func linmap(_ a: Double,_ b: Double,_ c: Double,_ d: Double, warp: Warp = .linear, clip: Bool = false) -> Double {
-        // normalized
-        var y = (self - a) / (b - a)
-        // scaled
-        switch warp {
+struct Mapping {
+    let a: Double
+    let b: Double
+    let c: Double
+    let d: Double
+    var inWarp: Warp = .linear
+    var outWarp: Warp = .linear
+    var clip: Bool = false
+    
+    func map(_ x: Double) -> Double {
+        var y = x
+        // 1) normalize
+        switch inWarp {
+        case .linear:
+            y = (y - a) / (b - a)
+        case .exponential:
+            y = (log(y) - log(a)) / (log(b) - log(a))
+        }
+        
+        // 2) scale
+        switch outWarp {
         case .linear:
             y = d * y + c * (1 - y)
         case .exponential:
@@ -30,6 +45,19 @@ extension Double {
             y = max(min(y, upperBound), lowerBound)
         }
         return y
+    }
+    
+    var inverse: Mapping {
+        if clip {
+            fatalError("cannot invert clipped mapping")
+        }
+        return Mapping(a: c, b: d, c: a, d: b, inWarp: outWarp, outWarp: inWarp)
+    }
+}
+
+extension Double {
+    func applyMapping(_ mapping: Mapping) -> Double {
+        return mapping.map(self)
     }
 }
 

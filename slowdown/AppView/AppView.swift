@@ -35,6 +35,7 @@ struct AppView: View {
                 }.padding()
                 Spacer()
                 ProgressiveModeView()
+                Spacer()
             }
         }
         .disabled(service.isTransitioning)

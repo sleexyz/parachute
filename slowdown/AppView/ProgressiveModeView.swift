@@ -24,13 +24,13 @@ struct ProgressiveModeView: View {
             return levelOverride!
         }
         return store.scrollTimeLimit.wrappedValue
-            .linmap(10, 0, 0, 3, clip: true)
+            .applyMapping(Mapping(a: 10, b: 0, c: 0, d: 3, clip: true))
     }
     var levelOverride: Double?
     var mainColor: Color {
         let h: Double = 259/360
-        let s = level.linmap(0, 3, 0.2, 1, warp: .linear)
-        let b = level.linmap(0, 3, 0.67, 0.4, warp: .linear)
+        let s = level.applyMapping(Mapping(a: 0, b: 3, c: 0.2, d: 1, outWarp: .linear))
+        let b = level.applyMapping(Mapping(a: 0, b: 3, c: 0.67, d: 0.4, outWarp: .linear))
         return Color(hue: h, saturation: s, brightness: b)
     }
     
@@ -93,6 +93,19 @@ struct HealSettings: View {
     @FocusState private var scrollTimeFocused: Bool
     @FocusState private var restTimeFocused: Bool
     
+    
+    private var baselineSpeedEnabled: Binding<Bool> {
+        Binding {
+            return store.settings.usageBaseRxSpeedTarget != 0.0
+        } set: {
+            if $0 {
+                store.settings.usageBaseRxSpeedTarget = 1e6
+            } else {
+                store.settings.usageBaseRxSpeedTarget = 0
+            }
+        }
+    }
+    
     var body: some View {
         VStack {
             HStack {
@@ -119,6 +132,19 @@ struct HealSettings: View {
                         controller.syncSettings()
                     }
             }
+            VStack {
+                Toggle("Max speed limit", isOn: baselineSpeedEnabled)
+                    .onChange(of: baselineSpeedEnabled.wrappedValue) { _ in
+                        controller.syncSettings()
+                    }
+                    .tint(.purple)
+                if baselineSpeedEnabled.wrappedValue {
+                    SpeedBar(speed: $store.settings.usageBaseRxSpeedTarget, minSpeed: 40e3, maxSpeed: 10e6) {
+                        controller.syncSettings()
+                    }
+                    .tint(.purple)
+                }
+            }
         }
     }
 }
@@ -143,8 +169,19 @@ struct HealButton: View {
     }
 }
 
-struct ProgressiveModeView_Previews: PreviewProvider {
+struct ProgressiveModeView_Expanded: PreviewProvider {
+    static var previews: some View {
+        ProgressiveModeView(expanded: true)
+            .consumeDep(StateController.self) { value in
+                value.setState(value: Proxyservice_GetStateResponse.with {
+                    $0.usagePoints = 1
+                })
+            }
+            .provideDeps(previewDeps)
+    }
+}
 
+struct ProgressiveModeView_Stacked: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
             ForEach([2, 3, 4, 5], id: \.self) { i in
