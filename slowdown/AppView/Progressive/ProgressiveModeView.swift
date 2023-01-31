@@ -47,31 +47,26 @@ struct ProgressiveModeView: View {
     }
     
     var shape: some Shape {
-        RoundedRectangle(cornerRadius: 50, style: .continuous)
+        RoundedRectangle(cornerRadius: 60, style: .continuous)
     }
     
     var body: some View {
-        let scrollTimeLimit = Int(store.scrollTimeLimit.wrappedValue)
         let ratio = 1 - stateController.state.usagePoints / store.settings.usageMaxHp
         VStack {
-            Text("Scroll Limit: \(scrollTimeLimit) minute\(scrollTimeLimit > 1 ? "s" : "")")
-                .font(.headline)
-                .padding()
-            Spacer()
             StagedDamageBar(
                 ratio: ratio,
                 height: 30
             )
-            .padding()
-            Spacer()
+            .padding(30)
             if expanded {
                 HealSettings()
-                    .padding()
-                Spacer()
+                    .padding(30)
             }
-            HealButton()
-                .padding()
-                .frame(maxWidth: .infinity)
+            if stateController.isSlowing {
+                HealButton()
+                    .padding()
+                    .frame(maxWidth: .infinity)
+            }
         }
         .contentShape(shape)
         .gesture(tap)
@@ -154,30 +149,35 @@ struct HealButton: View {
 
     var body: some View {
         let opacity = stateController.isSlowing ? 1 : 0.5
-        Text("One more minute!")
-            .font(.system(.body))
-            .padding()
-            .foregroundColor(Color.white)
-            .background(Color.accentColor.grayscale(1))
-            .clipShape(RoundedRectangle(cornerRadius: 100, style:.continuous))
-            .opacity(opacity)
-            .disabled(!stateController.isSlowing)
-            .onTapGesture {
+        Button("One more minute!") {
                 stateController.heal()
             }
+        .font(.system(.body))
+        .padding()
+        .foregroundColor(Color.white)
+        .background(Color.accentColor.grayscale(1))
+        .clipShape(RoundedRectangle(cornerRadius: 100, style:.continuous))
+        .opacity(opacity)
+        .disabled(!stateController.isSlowing)
+        .onTapGesture {
+        }
         
     }
 }
 
 struct ProgressiveModeView_Expanded: PreviewProvider {
     static var previews: some View {
-        ProgressiveModeView(expanded: true)
-            .consumeDep(StateController.self) { value in
-                value.setState(value: Proxyservice_GetStateResponse.with {
-                    $0.usagePoints = 1
-                })
+        VStack(spacing: 20) {
+            ForEach([1, 5], id: \.self) { i in
+                ProgressiveModeView(expanded: true)
+                    .consumeDep(StateController.self) { value in
+                        value.setState(value: Proxyservice_GetStateResponse.with {
+                            $0.usagePoints = Double(i)
+                        })
+                    }
+                    .provideDeps(previewDeps)
             }
-            .provideDeps(previewDeps)
+        }
     }
 }
 

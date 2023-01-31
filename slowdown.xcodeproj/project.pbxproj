@@ -307,6 +307,16 @@
 			path = DI;
 			sourceTree = "<group>";
 		};
+		A02A67A92989605F00FF0B27 /* Progressive */ = {
+			isa = PBXGroup;
+			children = (
+				A081F24F296A125300863FE3 /* DamageBar.swift */,
+				A02A67A7298820B300FF0B27 /* SpeedBar.swift */,
+				A081F23F2967B70000863FE3 /* ProgressiveModeView.swift */,
+			);
+			path = Progressive;
+			sourceTree = "<group>";
+		};
 		A02F58D327A6F14500D3330F = {
 			isa = PBXGroup;
 			children = (
@@ -430,14 +440,12 @@
 		A081F2492967CB5C00863FE3 /* AppView */ = {
 			isa = PBXGroup;
 			children = (
+				A02A67A92989605F00FF0B27 /* Progressive */,
 				A081F2452967BCEE00863FE3 /* AppViewModel.swift */,
 				A081F2412967BC5500863FE3 /* FocusModeView.swift */,
 				A08719D9281A4E1100113F3F /* AppView.swift */,
 				A081F2432967BC9800863FE3 /* BreakModeView.swift */,
-				A081F23F2967B70000863FE3 /* ProgressiveModeView.swift */,
 				A081F2472967C83800863FE3 /* AppModeCarousel.swift */,
-				A081F24F296A125300863FE3 /* DamageBar.swift */,
-				A02A67A7298820B300FF0B27 /* SpeedBar.swift */,
 			);
 			path = AppView;
 			sourceTree = "<group>";
