@@ -192,12 +192,9 @@ struct TimerLock<Content: View>: View{
     var content: (_ timeLeft: Int) -> Content
     @Environment(\.scenePhase) var scenePhase
 
-    @State var timer = StateSubscriber.initializeTimer()
     @State var timeLeft: Int = 10
+    @State var timer: AnyCancellable?
     
-    static func initializeTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
-         return Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    }
 
     var body: some View {
         content(timeLeft)
@@ -205,24 +202,25 @@ struct TimerLock<Content: View>: View{
                 if newPhase == .active {
                     startSubscription()
                 } else {
-                    timer.upstream.connect().cancel()
+                    timer?.cancel()
                 }
             }
             .onAppear {
                 startSubscription()
             }
-            .onReceive(timer) {_ in
-                if timeLeft == 0 {
-                    timer.upstream.connect().cancel()
-                    return
-                }
-                timeLeft -= 1
-            }
     }
     
     func startSubscription() {
         timeLeft = 10
-        timer = StateSubscriber.initializeTimer()
+        timer?.cancel()
+        timer = Timer.publish(every: 1, tolerance: 0, on: .main, in: .common).autoconnect()
+            .sink { _ in
+                if timeLeft == 0 {
+                    timer?.cancel()
+                    return
+                }
+                timeLeft -= 1
+            }
     }
 }
 
