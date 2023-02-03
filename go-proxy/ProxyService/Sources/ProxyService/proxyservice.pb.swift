@@ -195,12 +195,21 @@ public struct Proxyservice_Response {
     set {message = .heal(newValue)}
   }
 
+  public var error: Proxyservice_UncaughtError {
+    get {
+      if case .error(let v)? = message {return v}
+      return Proxyservice_UncaughtError()
+    }
+    set {message = .error(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Message: Equatable {
     case setSettings(Proxyservice_SetSettingsResponse)
     case getState(Proxyservice_GetStateResponse)
     case heal(Proxyservice_HealResponse)
+    case error(Proxyservice_UncaughtError)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proxyservice_Response.OneOf_Message, rhs: Proxyservice_Response.OneOf_Message) -> Bool {
@@ -220,11 +229,27 @@ public struct Proxyservice_Response {
         guard case .heal(let l) = lhs, case .heal(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
+      case (.error, .error): return {
+        guard case .error(let l) = lhs, case .error(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
   #endif
   }
+
+  public init() {}
+}
+
+public struct Proxyservice_UncaughtError {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var error: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 }
@@ -364,6 +389,7 @@ extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
 extension Proxyservice_Response: @unchecked Sendable {}
 extension Proxyservice_Response.OneOf_Message: @unchecked Sendable {}
+extension Proxyservice_UncaughtError: @unchecked Sendable {}
 extension Proxyservice_SetSettingsResponse: @unchecked Sendable {}
 extension Proxyservice_GetStateRequest: @unchecked Sendable {}
 extension Proxyservice_GetStateResponse: @unchecked Sendable {}
@@ -563,6 +589,7 @@ extension Proxyservice_Response: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     1: .same(proto: "setSettings"),
     2: .same(proto: "getState"),
     3: .same(proto: "heal"),
+    4: .same(proto: "error"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -610,6 +637,19 @@ extension Proxyservice_Response: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
           self.message = .heal(v)
         }
       }()
+      case 4: try {
+        var v: Proxyservice_UncaughtError?
+        var hadOneofValue = false
+        if let current = self.message {
+          hadOneofValue = true
+          if case .error(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.message = .error(v)
+        }
+      }()
       default: break
       }
     }
@@ -633,6 +673,10 @@ extension Proxyservice_Response: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       guard case .heal(let v)? = self.message else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
     }()
+    case .error?: try {
+      guard case .error(let v)? = self.message else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    }()
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -640,6 +684,38 @@ extension Proxyservice_Response: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
 
   public static func ==(lhs: Proxyservice_Response, rhs: Proxyservice_Response) -> Bool {
     if lhs.message != rhs.message {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_UncaughtError: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".UncaughtError"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "error"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.error) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.error.isEmpty {
+      try visitor.visitSingularStringField(value: self.error, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_UncaughtError, rhs: Proxyservice_UncaughtError) -> Bool {
+    if lhs.error != rhs.error {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

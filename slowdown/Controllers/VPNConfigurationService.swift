@@ -230,11 +230,15 @@ open class VPNConfigurationService: ObservableObject {
             do {
                 try session.sendProviderMessage(message.serializedData()) { data in
                     if data == nil {
-                        promise(.failure(RpcError.invalidResponseError))
+                        promise(.failure(RpcError.nilResponseError))
                         return
                     }
                     do {
                         let resp = try Proxyservice_Response(serializedData: data!)
+                        if case .error(let errorMessage) = resp.message {
+                            promise(.failure(RpcError.downstreamError(errorMessage.error)))
+                            return
+                        }
                         promise(.success(resp))
                     } catch let error {
                         promise(.failure(error))
@@ -249,14 +253,16 @@ open class VPNConfigurationService: ObservableObject {
 
 enum RpcError: Error {
     case serverNotInitializedError
-    case invalidResponseError
+    case nilResponseError
+    case downstreamError(String)
 }
 
 extension RpcError: LocalizedError {
     var errorDescription: String? {
         switch self {
-        case .invalidResponseError: return NSLocalizedString("Server returned invalid response", comment: "")
+        case .nilResponseError: return NSLocalizedString("Server returned nil response", comment: "")
         case .serverNotInitializedError: return NSLocalizedString("Server not initialized", comment: "")
+        case .downstreamError(let message): return NSLocalizedString("Downstream error: \(message)", comment: "")
         }
     }
     

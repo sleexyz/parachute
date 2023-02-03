@@ -64,6 +64,11 @@ export interface Response {
   setSettings?: SetSettingsResponse | undefined;
   getState?: GetStateResponse | undefined;
   heal?: HealResponse | undefined;
+  error?: UncaughtError | undefined;
+}
+
+export interface UncaughtError {
+  error: string;
 }
 
 export interface SetSettingsResponse {
@@ -322,7 +327,7 @@ export const Request = {
 };
 
 function createBaseResponse(): Response {
-  return { setSettings: undefined, getState: undefined, heal: undefined };
+  return { setSettings: undefined, getState: undefined, heal: undefined, error: undefined };
 }
 
 export const Response = {
@@ -335,6 +340,9 @@ export const Response = {
     }
     if (message.heal !== undefined) {
       HealResponse.encode(message.heal, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.error !== undefined) {
+      UncaughtError.encode(message.error, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -355,6 +363,9 @@ export const Response = {
         case 3:
           message.heal = HealResponse.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.error = UncaughtError.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -368,6 +379,7 @@ export const Response = {
       setSettings: isSet(object.setSettings) ? SetSettingsResponse.fromJSON(object.setSettings) : undefined,
       getState: isSet(object.getState) ? GetStateResponse.fromJSON(object.getState) : undefined,
       heal: isSet(object.heal) ? HealResponse.fromJSON(object.heal) : undefined,
+      error: isSet(object.error) ? UncaughtError.fromJSON(object.error) : undefined,
     };
   },
 
@@ -378,6 +390,7 @@ export const Response = {
     message.getState !== undefined &&
       (obj.getState = message.getState ? GetStateResponse.toJSON(message.getState) : undefined);
     message.heal !== undefined && (obj.heal = message.heal ? HealResponse.toJSON(message.heal) : undefined);
+    message.error !== undefined && (obj.error = message.error ? UncaughtError.toJSON(message.error) : undefined);
     return obj;
   },
 
@@ -392,6 +405,56 @@ export const Response = {
     message.heal = (object.heal !== undefined && object.heal !== null)
       ? HealResponse.fromPartial(object.heal)
       : undefined;
+    message.error = (object.error !== undefined && object.error !== null)
+      ? UncaughtError.fromPartial(object.error)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseUncaughtError(): UncaughtError {
+  return { error: "" };
+}
+
+export const UncaughtError = {
+  encode(message: UncaughtError, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.error !== "") {
+      writer.uint32(10).string(message.error);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UncaughtError {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUncaughtError();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.error = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UncaughtError {
+    return { error: isSet(object.error) ? String(object.error) : "" };
+  },
+
+  toJSON(message: UncaughtError): unknown {
+    const obj: any = {};
+    message.error !== undefined && (obj.error = message.error);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UncaughtError>, I>>(object: I): UncaughtError {
+    const message = createBaseUncaughtError();
+    message.error = object.error ?? "";
     return message;
   },
 };

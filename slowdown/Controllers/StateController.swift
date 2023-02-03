@@ -15,10 +15,11 @@ struct StateSubscriber: ViewModifier {
     @Environment(\.scenePhase) var scenePhase
 
     @EnvironmentObject var stateController: StateController
-    @State var timer = StateSubscriber.initializeTimer()
+    @State var cancel: Bool = false
     
-    static func initializeTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
-         return Timer.publish(every: 5, on: .main, in: .common).autoconnect()
+    @MainActor
+    func setCancel(value: Bool) {
+        cancel = value
     }
 
     func body(content: Content) -> some View {
@@ -27,20 +28,30 @@ struct StateSubscriber: ViewModifier {
                 if newPhase == .active {
                     startSubscription()
                 } else {
-                    timer.upstream.connect().cancel()
+                    setCancel(value: false)
                 }
             }
             .onAppear {
-                startSubscription()
+                    startSubscription()
             }
-            .onReceive(timer) {_ in
-                self.stateController.fetchState()
+            .onDisappear {
+                setCancel(value: true)
             }
     }
     
     func startSubscription() {
+        Task {
+            setCancel(value:false)
+            await loop()
+        }
+    }
+    func loop() async {
+        if cancel {
+            return
+        }
         self.stateController.fetchState()
-        timer = StateSubscriber.initializeTimer()
+        try! await Task.sleep(nanoseconds: 1_000_000_000)
+        return await loop()
     }
 }
 

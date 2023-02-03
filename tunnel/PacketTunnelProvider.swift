@@ -225,17 +225,34 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         completionHandler()
     }
     
-    override func handleAppMessage(_ messageData: Data, completionHandler: ((Data?) -> Void)?) {
+    override func handleAppMessage(_ messageData: Data) async -> Data? {
+        var response: Data? = nil
         do {
-            let response = try server?.rpc(input: messageData)
-            completionHandler?(response)
+            guard let server = server else {
+                return try self.makeErrorMessage(errorString: "Server not yet initialized")
+            }
+            response = try server.rpc(input: messageData)
         } catch let error {
             if Env.value == .prod {
                 Crashlytics.crashlytics().record(error: error)
             }
-            completionHandler?(nil)
             logger.error("Encountered RPC error: \(error)")
+            do {
+                response = try makeErrorMessage(errorString: error.localizedDescription)
+            } catch {
+            }
         }
+        return response
+    }
+    
+    func makeErrorMessage(errorString: String) throws -> Data {
+                let errorMsg = try Proxyservice_Response.with {
+                    $0.error = Proxyservice_UncaughtError.with {
+                        $0.error = errorString
+                    }
+                }.serializedData()
+                return errorMsg
+        
     }
     
 //    override func sleep(completionHandler: @escaping () -> Void) {
