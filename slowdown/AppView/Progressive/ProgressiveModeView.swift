@@ -234,7 +234,8 @@ struct ProgressiveModeView_Expanded: PreviewProvider {
                             $0.usagePoints = Double(i)
                         })
                     }
-                    .provideDeps(previewDeps)
+                    .modifier(StateSubscriber())
+                    .provideDeps(connectedPreviewDeps)
             }
         }
     }
@@ -250,7 +251,8 @@ struct ProgressiveModeView_Stacked: PreviewProvider {
                             $0.usagePoints = Double(i)
                         })
                     }
-                    .provideDeps(previewDeps)
+                    .modifier(StateSubscriber())
+                    .provideDeps(connectedPreviewDeps)
             }
         }
     }

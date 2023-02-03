@@ -13,6 +13,10 @@
 		A02A67A42985BDD000FF0B27 /* ServiceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A67A32985BDD000FF0B27 /* ServiceKey.swift */; };
 		A02A67A62985BE3700FF0B27 /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A67A52985BE3700FF0B27 /* Provider.swift */; };
 		A02A67A8298820B300FF0B27 /* SpeedBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A67A7298820B300FF0B27 /* SpeedBar.swift */; };
+		A02A67B1298BFD5100FF0B27 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02A67B0298BFD5100FF0B27 /* Common.swift */; };
+		A02A67B9298BFFFE00FF0B27 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A02A67AE298BFD5100FF0B27 /* libCommon.a */; };
+		A02A67BA298C005300FF0B27 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A02A67AE298BFD5100FF0B27 /* libCommon.a */; };
+		A02A67BB298C006B00FF0B27 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A02A67AE298BFD5100FF0B27 /* libCommon.a */; };
 		A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58DF27A6F14500D3330F /* slowdownApp.swift */; };
 		A02F58E227A6F14500D3330F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02F58E127A6F14500D3330F /* ContentView.swift */; };
 		A02F58E427A6F14500D3330F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02F58E327A6F14500D3330F /* Assets.xcassets */; };
@@ -128,6 +132,15 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A02A67AC298BFD5000FF0B27 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A06516F729574C1000227A95 /* Embed ExtensionKit Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -178,6 +191,8 @@
 		A02A67A32985BDD000FF0B27 /* ServiceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceKey.swift; sourceTree = "<group>"; };
 		A02A67A52985BE3700FF0B27 /* Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provider.swift; sourceTree = "<group>"; };
 		A02A67A7298820B300FF0B27 /* SpeedBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedBar.swift; sourceTree = "<group>"; };
+		A02A67AE298BFD5100FF0B27 /* libCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A02A67B0298BFD5100FF0B27 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		A02F58DC27A6F14500D3330F /* slowdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = slowdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02F58DF27A6F14500D3330F /* slowdownApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownApp.swift; sourceTree = "<group>"; };
 		A02F58E127A6F14500D3330F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -227,10 +242,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A02A67AB298BFD5000FF0B27 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A02F58D927A6F14500D3330F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A02A67BA298C005300FF0B27 /* libCommon.a in Frameworks */,
 				A080EDF6294F9864005401E4 /* Logging in Frameworks */,
 				A0717CCD294D260C00186AFE /* SwiftProtobufPluginLibrary in Frameworks */,
 				A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */,
@@ -260,6 +283,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A02A67B9298BFFFE00FF0B27 /* libCommon.a in Frameworks */,
 				A077852129779CB50038BB4B /* Ffi.xcframework in Frameworks */,
 				A0774F6E296A6F2A001F278B /* Logging in Frameworks */,
 				A0774F85296A85DF001F278B /* ProxyService in Frameworks */,
@@ -280,6 +304,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A02A67BB298C006B00FF0B27 /* libCommon.a in Frameworks */,
 				A0774F7F296A7046001F278B /* libServer.a in Frameworks */,
 				A08719E4281A617500113F3F /* NetworkExtension.framework in Frameworks */,
 				A081F23C2967B10F00863FE3 /* SwiftProtobufPluginLibrary in Frameworks */,
@@ -317,6 +342,14 @@
 			path = Progressive;
 			sourceTree = "<group>";
 		};
+		A02A67AF298BFD5100FF0B27 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				A02A67B0298BFD5100FF0B27 /* Common.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		A02F58D327A6F14500D3330F = {
 			isa = PBXGroup;
 			children = (
@@ -328,6 +361,7 @@
 				A08719E5281A617500113F3F /* tunnel */,
 				A0774F66296A6F0D001F278B /* Server */,
 				A0774F74296A6F3A001F278B /* ServerTests */,
+				A02A67AF298BFD5100FF0B27 /* Common */,
 				A02F58DD27A6F14500D3330F /* Products */,
 				A02F590A27B09A7A00D3330F /* Frameworks */,
 			);
@@ -342,6 +376,7 @@
 				A08719E3281A617500113F3F /* tunnel.appex */,
 				A0774F65296A6F0D001F278B /* libServer.a */,
 				A0774F73296A6F3A001F278B /* ServerTests.xctest */,
+				A02A67AE298BFD5100FF0B27 /* libCommon.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -477,6 +512,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A02A67AD298BFD5000FF0B27 /* Common */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A02A67B2298BFD5100FF0B27 /* Build configuration list for PBXNativeTarget "Common" */;
+			buildPhases = (
+				A02A67AA298BFD5000FF0B27 /* Sources */,
+				A02A67AB298BFD5000FF0B27 /* Frameworks */,
+				A02A67AC298BFD5000FF0B27 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Common;
+			productName = Common;
+			productReference = A02A67AE298BFD5100FF0B27 /* libCommon.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		A02F58DB27A6F14500D3330F /* slowdown */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A02F590027A6F14600D3330F /* Build configuration list for PBXNativeTarget "slowdown" */;
@@ -627,6 +679,9 @@
 				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1410;
 				TargetAttributes = {
+					A02A67AD298BFD5000FF0B27 = {
+						CreatedOnToolsVersion = 14.2;
+					};
 					A02F58DB27A6F14500D3330F = {
 						CreatedOnToolsVersion = 13.2.1;
 					};
@@ -676,6 +731,7 @@
 				A08719E2281A617500113F3F /* tunnel */,
 				A0774F64296A6F0D001F278B /* Server */,
 				A0774F72296A6F3A001F278B /* ServerTests */,
+				A02A67AD298BFD5000FF0B27 /* Common */,
 			);
 		};
 /* End PBXProject section */
@@ -767,6 +823,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A02A67AA298BFD5000FF0B27 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A02A67B1298BFD5100FF0B27 /* Common.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A02F58D827A6F14500D3330F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -880,6 +944,37 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		A02A67B3298BFD5100FF0B27 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A02A67B4298BFD5100FF0B27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		A02F58FE27A6F14600D3330F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1276,6 +1371,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A02A67B2298BFD5100FF0B27 /* Build configuration list for PBXNativeTarget "Common" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A02A67B3298BFD5100FF0B27 /* Debug */,
+				A02A67B4298BFD5100FF0B27 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A02F58D727A6F14500D3330F /* Build configuration list for PBXProject "slowdown" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -10,6 +10,7 @@ import ProxyService
 import Logging
 import LoggingOSLog
 import Firebase
+import Common
 
 @main
 struct slowdownApp: App {
@@ -29,7 +30,9 @@ struct slowdownApp: App {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        FirebaseApp.configure()
+        if Env.value == .prod {
+            FirebaseApp.configure()
+        }
         return true
     }
 }

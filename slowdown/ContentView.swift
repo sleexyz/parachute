@@ -26,10 +26,8 @@ struct ContentView: View {
             SetupView()
         } else {
             AppView()
-                .modifier(StateSubscriber())
                 .provideDeps([
                     AppViewModel.Provider(),
-                    StateController.Provider(),
                     CheatController.Provider(),
                     SettingsController.Provider()
                 ])

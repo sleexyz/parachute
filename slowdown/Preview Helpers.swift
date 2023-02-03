@@ -10,12 +10,20 @@ import SwiftUI
 
 let previewDeps : [any Dep] = [
     AppViewModel.Provider(),
-    StateController.Provider(),
     CheatController.Provider(),
     SettingsController.Provider(),
     MockVPNConfigurationService.Provider(),
     SettingsStore.Provider()
 ]
+
+let connectedPreviewDeps : [any Dep] = {
+    var value: [any Dep] = [
+        StateController.Provider(),
+    ]
+    value.append(contentsOf: previewDeps)
+    return value
+}()
+
 
 class MockVPNConfigurationService: VPNConfigurationService {
     struct Provider: MockDep {

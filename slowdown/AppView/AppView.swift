@@ -31,11 +31,17 @@ struct AppView: View {
                 }.padding()
             } else {
                 VStack {
-                    PrimaryButton(title: "Stop", action: model.toggleConnection, isLoading: service.isTransitioning)
-                }.padding()
-                Spacer()
-                ProgressiveModeView()
-                Spacer()
+                    VStack {
+                        PrimaryButton(title: "Stop", action: model.toggleConnection, isLoading: service.isTransitioning)
+                    }.padding()
+                    Spacer()
+                    ProgressiveModeView()
+                    Spacer()
+                }
+                    .modifier(StateSubscriber())
+                    .provideDeps([
+                        StateController.Provider()
+                    ])
             }
         }
         .disabled(service.isTransitioning)

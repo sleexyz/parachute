@@ -10,9 +10,45 @@ import Foundation
 import ProxyService
 import Logging
 import SwiftUI
+import Combine
+import Common
+import FirebaseCrashlytics
 
 enum UserError: Error {
     case message(message: String)
+}
+
+enum VPNStatus {
+    case unknown
+    case connected
+    case connecting
+    case disconnected
+    case disconnecting
+    
+    var isConnected: Bool {
+        switch self {
+        case .connected, .disconnecting: return true
+        default: return false
+        }
+    }
+    
+    var isTransitioning: Bool {
+        switch self {
+        case .connecting, .disconnecting: return true
+        default: return false
+        }
+    }
+}
+
+extension Future where Failure == Never {
+    convenience init(operation: @escaping () async -> Output) {
+        self.init { promise in
+            Task {
+                let output = await operation()
+                promise(.success(output))
+            }
+        }
+    }
 }
 
 open class VPNConfigurationService: ObservableObject {
@@ -27,6 +63,9 @@ open class VPNConfigurationService: ObservableObject {
     @Published var isConnected = false
     @Published var isTransitioning = false
     @Published private var manager: NETunnelProviderManager?
+    @Published var status: VPNStatus = .unknown
+    
+    private var bag = Set<AnyCancellable>()
     
     var hasManager: Bool {
         return manager != nil
@@ -45,6 +84,7 @@ open class VPNConfigurationService: ObservableObject {
         NotificationCenter.default.addObserver(forName: .NEVPNStatusDidChange, object: nil, queue: nil) { notification in
             DispatchQueue.main.async {
                 let conn = notification.object as! NEVPNConnection
+                self.updateStatus(connStatus: conn.status)
                 if conn.status == NEVPNStatus.connected {
                     self.isConnected = true
                     self.isTransitioning = false;
@@ -52,16 +92,49 @@ open class VPNConfigurationService: ObservableObject {
                 if conn.status == NEVPNStatus.connecting{
                     self.isTransitioning = true
                 }
+                if conn.status == NEVPNStatus.disconnecting{
+                    self.isTransitioning = true
+                }
                 if conn.status == NEVPNStatus.disconnected {
                     self.isConnected = false
                     self.isTransitioning = false;
                 }
-                if conn.status == NEVPNStatus.disconnecting{
-                    self.isTransitioning = true
-                }
             }
         }
+        
+        
+        bag.update(with: $status
+            .debounce(for: .seconds(10), scheduler: DispatchQueue.main)
+            .sink {  value in
+                if value == .connecting {
+                    let msg = "Error connecting, stopping connection attempt"
+                    self.logger.error("\(msg)")
+                    if Env.value == .prod {
+                        Crashlytics.crashlytics().log(msg)
+                    }
+                    Task {
+                        try await self.stopConnection()
+                    }
+                }
+            })
     }
+    
+    @MainActor
+    private func updateStatus(connStatus: NEVPNStatus) {
+        switch connStatus {
+        case .connected: status = .connected
+        case .connecting: status = .connecting
+        case .disconnecting: status = .disconnecting
+        case .disconnected: status = .disconnected
+        case .invalid:
+            fatalError("unexpected")
+        case .reasserting:
+            fatalError("unexpected")
+        @unknown default:
+            status = .unknown
+        }
+    }
+                
     
     
     @MainActor
@@ -153,30 +226,39 @@ open class VPNConfigurationService: ObservableObject {
         guard let session = self.manager?.connection as? NETunnelProviderSession else {
             throw RpcError.serverNotInitializedError
         }
-        return try await withCheckedThrowingContinuation { continuation in
+        return try await Future<Proxyservice_Response, Error>() { promise in
             do {
-//                self.logger.info("\(message.debugDescription)")
                 try session.sendProviderMessage(message.serializedData()) { data in
                     if data == nil {
-                        continuation.resume(throwing: RpcError.invalidResponseError)
+                        promise(.failure(RpcError.invalidResponseError))
                         return
                     }
                     do {
                         let resp = try Proxyservice_Response(serializedData: data!)
-                        continuation.resume(returning: resp)
+                        promise(.success(resp))
                     } catch let error {
-                        continuation.resume(with: .failure(error))
+                        promise(.failure(error))
                     }
                 }
             } catch let error {
-                continuation.resume(with: .failure(error))
+                promise(.failure(error))
             }
-        }
+        }.value
     }
 }
 
 enum RpcError: Error {
     case serverNotInitializedError
     case invalidResponseError
+}
+
+extension RpcError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .invalidResponseError: return NSLocalizedString("Server returned invalid response", comment: "")
+        case .serverNotInitializedError: return NSLocalizedString("Server not initialized", comment: "")
+        }
+    }
+    
 }
 

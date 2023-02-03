@@ -9,12 +9,7 @@ import Foundation
 import Ffi
 import Logging
 import ProxyService
-
-#if DEBUG
-            let env = "dev"
-#else
-            let env = "prod"
-#endif
+import Common
 
 public struct Server {
     let bridge: FfiProxyBridgeProtocol
@@ -30,9 +25,9 @@ public struct Server {
         Ffi.FfiSetGCPercent(50)
         
         if settings.debug {
-            return Server(bridge: Ffi.FfiInitDebug(env, "192.168.1.225:8080", "192.168.1.225:8083")!)
+            return Server(bridge: Ffi.FfiInitDebug(Env.value.description, "192.168.1.225:8080", "192.168.1.225:8083")!)
         }
-        return Server(bridge: Ffi.FfiInit(env, device)!)
+        return Server(bridge: Ffi.FfiInit(Env.value.description, device)!)
     }
     
     public func startProxy(port: Int, settingsData: Data) {

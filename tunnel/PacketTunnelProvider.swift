@@ -15,6 +15,7 @@ import Server
 import Firebase
 import Ffi
 import UserNotifications
+import Common
 
 class TunConn: NSObject, FfiCallbacksProtocol {
     var packetFlow: NEPacketTunnelFlow {
@@ -122,13 +123,14 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private var observer: AnyObject?
     private let queue = DispatchQueue(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
     private var server: Server?
-    private var asleep: Bool = false
     
     private var tunConn: TunConn?
     private var device: Device = Device()
     
     override init() {
-        FirebaseApp.configure()
+        if Env.value == .prod {
+            FirebaseApp.configure()
+        }
         super.init()
         self.tunConn = TunConn {
             return self.packetFlow
@@ -150,27 +152,31 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
         do {
-            let settingsData = try loadSettingsData()
-            let settings = try Proxyservice_Settings(serializedData: settingsData)
-            
             self.logger.info("starting tunnel")
             self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
                 completionHandler(NEVPNError(.connectionFailed))
             }
-            
-            self.server = Server.InitTunnelServer(settings: settings, device: device)
+            self.logger.info("loading settings")
+            let settingsData = try loadSettingsData()
+            let settings = try Proxyservice_Settings(serializedData: settingsData)
+            self.logger.info("loading settings -- done")
             
             self.logger.info("starting server")
+            self.server = Server.InitTunnelServer(settings: settings, device: device)
             self.server!.startDirectProxyConnection(tunConn: self.tunConn!, settingsData: settingsData)
-            self.logger.info("server started")
+            self.logger.info("starting server -- done")
             
             self.setTunnelNetworkSettings(PacketTunnelProvider.tunnelSettings) { error in
                 completionHandler(error)
                 self.readOutboundPackets()
             }
+            self.logger.info("starting tunnel -- done")
         } catch let error {
-            Crashlytics.crashlytics().record(error: error)
-            fatalError("Encountered error")
+            if Env.value == .prod {
+                Crashlytics.crashlytics().record(error: error)
+            }
+            completionHandler(NEVPNError(.connectionFailed))
+//            fatalError("Encountered error while starting up")
         }
     }
     
@@ -179,9 +185,6 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             guard let self = self else { return }
             for packet in packets {
                 self.server?.writeOutboundPacket(packet.data)
-            }
-            if self.asleep {
-                return
             }
             self.readOutboundPackets()
         }
@@ -227,25 +230,27 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             let response = try server?.rpc(input: messageData)
             completionHandler?(response)
         } catch let error {
-            Crashlytics.crashlytics().record(error: error)
+            if Env.value == .prod {
+                Crashlytics.crashlytics().record(error: error)
+            }
             completionHandler?(nil)
             logger.error("Encountered RPC error: \(error)")
         }
     }
     
-    override func sleep(completionHandler: @escaping () -> Void) {
-        logger.info("sleeping")
-        self.asleep = true
-        // Add code here to get ready to sleep.
-        completionHandler()
-    }
-    
-    override func wake() {
-        logger.info("waking")
-        self.asleep = false
-        self.readOutboundPackets()
-        // Add code here to wake up.
-    }
+//    override func sleep(completionHandler: @escaping () -> Void) {
+//        logger.info("sleeping")
+//        self.asleep = true
+//        // Add code here to get ready to sleep.
+//        completionHandler()
+//    }
+//
+//    override func wake() {
+//        logger.info("waking")
+//        self.asleep = false
+//        self.readOutboundPackets()
+//        // Add code here to wake up.
+//    }
     
     static func protocolNumber(for packet: Data) -> NSNumber {
         guard !packet.isEmpty else {
