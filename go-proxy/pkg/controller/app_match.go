@@ -14,11 +14,13 @@ type AppMatch struct {
 
 	correlationScore int
 	inferred         bool
+
+	ruleDescription string
 }
 
 func (am *AppMatch) Reason() string {
 	if am.inferred {
-		return fmt.Sprintf("inferred (%s), correlation: %d", am.Name(), am.correlationScore)
+		return fmt.Sprintf("inferred to be %s via %s, correlation: %d", am.Name(), am.ruleDescription, am.correlationScore)
 	}
 	if am.prefix != nil {
 		return am.prefix.String()

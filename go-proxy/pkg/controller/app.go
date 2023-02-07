@@ -63,18 +63,31 @@ func (a *App) Name() string {
 	return a.name
 }
 
-func (a *App) MatchByName(name string) float64 {
+type MatchResult struct {
+	score           float64
+	ruleDescription string
+}
+
+func (a *App) MatchByName(name string) MatchResult {
 	for _, r := range a.matchers.dnsMatchers {
 		if r.MatchString(name) {
-			return 1
+			return MatchResult{
+				score:           1.0,
+				ruleDescription: r.String(),
+			}
 		}
 	}
 	for _, r := range a.matchers.possibleDnsMatchers {
 		if r.MatchString(name) {
-			return 0.5
+			return MatchResult{
+				score:           0.5,
+				ruleDescription: r.String(),
+			}
 		}
 	}
-	return 0
+	return MatchResult{
+		score: 0.0,
+	}
 }
 
 func (a *App) MatchByIp(ip netip.Addr) *netip.Prefix {

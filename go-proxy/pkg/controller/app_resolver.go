@@ -66,13 +66,23 @@ func (ar *AppResolver) checkDnsMatch(ip string, name string) {
 		return
 	}
 	for _, app := range ar.apps {
-		p := app.MatchByName(name)
-		if p == 1 {
-			ar.appMap[ip] = &AppMatch{App: app, dnsName: name}
+		match := app.MatchByName(name)
+		if match.score == 1 {
+			ar.appMap[ip] = &AppMatch{
+				App:             app,
+				dnsName:         name,
+				ruleDescription: match.ruleDescription,
+			}
 			// log.Printf("registered matching ip: %s, %s, via %s", ip, app, name)
 			return
-		} else if p == 0.5 {
-			ar.inferredAppMap[ip] = &AppMatch{App: app, dnsName: name, inferred: true, correlationScore: 0}
+		} else if match.score == 0.5 {
+			ar.inferredAppMap[ip] = &AppMatch{
+				App:              app,
+				dnsName:          name,
+				inferred:         true,
+				correlationScore: 0,
+				ruleDescription:  match.ruleDescription,
+			}
 			return
 		}
 	}
