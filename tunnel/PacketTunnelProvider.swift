@@ -117,7 +117,10 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             for packet in packets {
                 self.server?.writeOutboundPacket(packet.data)
             }
-            self.readOutboundPackets()
+            // Putting the self-call in a Task seems to reduce crashes.
+            Task {
+                self.readOutboundPackets()
+            }
         }
     }
     
