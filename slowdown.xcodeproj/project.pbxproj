@@ -71,6 +71,9 @@
 		A08719E7281A617500113F3F /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719E6281A617500113F3F /* PacketTunnelProvider.swift */; };
 		A08719EC281A617500113F3F /* tunnel.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A08719E3281A617500113F3F /* tunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A08819AA29726A6D0052D5D6 /* NotificationsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08819A929726A6D0052D5D6 /* NotificationsController.swift */; };
+		A0915BDA2991EE6900874313 /* NotificationsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BD92991EE6900874313 /* NotificationsHelper.swift */; };
+		A0915BDC2991FB2700874313 /* TunConn.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BDB2991FB2700874313 /* TunConn.swift */; };
+		A0915BDE2991FED700874313 /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BDD2991FED700874313 /* SettingsHelper.swift */; };
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
 		A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9201293FCF1700C090E9 /* SettingsStore.swift */; };
 		A0BF9204294175AE00C090E9 /* CheatController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9203294175AE00C090E9 /* CheatController.swift */; };
@@ -237,6 +240,9 @@
 		A08719E8281A617500113F3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A08719E9281A617500113F3F /* tunnel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tunnel.entitlements; sourceTree = "<group>"; };
 		A08819A929726A6D0052D5D6 /* NotificationsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsController.swift; sourceTree = "<group>"; };
+		A0915BD92991EE6900874313 /* NotificationsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsHelper.swift; sourceTree = "<group>"; };
+		A0915BDB2991FB2700874313 /* TunConn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunConn.swift; sourceTree = "<group>"; };
+		A0915BDD2991FED700874313 /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
 		A0BF9201293FCF1700C090E9 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		A0BF9203294175AE00C090E9 /* CheatController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -346,6 +352,8 @@
 			isa = PBXGroup;
 			children = (
 				A02A67B0298BFD5100FF0B27 /* Common.swift */,
+				A0915BD92991EE6900874313 /* NotificationsHelper.swift */,
+				A0915BDD2991FED700874313 /* SettingsHelper.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -505,6 +513,7 @@
 				A08719E6281A617500113F3F /* PacketTunnelProvider.swift */,
 				A08719E8281A617500113F3F /* Info.plist */,
 				A08719E9281A617500113F3F /* tunnel.entitlements */,
+				A0915BDB2991FB2700874313 /* TunConn.swift */,
 			);
 			path = tunnel;
 			sourceTree = "<group>";
@@ -827,6 +836,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0915BDA2991EE6900874313 /* NotificationsHelper.swift in Sources */,
+				A0915BDE2991FED700874313 /* SettingsHelper.swift in Sources */,
 				A02A67B1298BFD5100FF0B27 /* Common.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -905,6 +916,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A08719E7281A617500113F3F /* PacketTunnelProvider.swift in Sources */,
+				A0915BDC2991FB2700874313 /* TunConn.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

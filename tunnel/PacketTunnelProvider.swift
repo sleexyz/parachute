@@ -17,34 +17,18 @@ import Ffi
 import UserNotifications
 import Common
 
-class TunConn: NSObject, FfiCallbacksProtocol {
-    var packetFlow: NEPacketTunnelFlow {
-        return packetFlowGetter()
-    }
-    
-    var packetFlowGetter: () -> NEPacketTunnelFlow
-    
-    init(packetFlowGetter: @escaping () -> NEPacketTunnelFlow) {
-        self.packetFlowGetter = packetFlowGetter
-    }
-    
-    func writeInboundPacket(_ data: Data?) {
-        guard let data = data else {
-            fatalError("data is nil")
-        }
-        self.packetFlow.writePackets([data], withProtocols: [PacketTunnelProvider.protocolNumber(for: data)])
-    }
-}
-
-class Device: NSObject, FfiDeviceCallbacksProtocol {
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.tunnel.Device")
+class DeviceCallbacks: NSObject, FfiDeviceCallbacksProtocol {
+    private let logger: Logger = Logger(label: "industries.strange.slowdown.tunnel.DeviceCallbacks")
     private var notificationsEnabled: Bool = false
+    let notificationsHelper: NotificationsHelper
     
     override init() {
+        self.notificationsHelper = NotificationsHelper()
+        
         super.init()
         Task {
             do {
-                self.notificationsEnabled = try await enableNotifications()
+                self.notificationsEnabled = try await notificationsHelper.enableNotifications()
                 logger.info("notification status: \(notificationsEnabled)")
             } catch {
                 logger.error("notifications not enabled")
@@ -63,54 +47,13 @@ class Device: NSObject, FfiDeviceCallbacksProtocol {
         if notificationsEnabled {
             Task(priority: .background) {
                 do {
-                    clearNotifications()
-                    try await sendMessage(title: title, body: message, fromNow: 1) // minimum time seems to be 1 second.
+                    notificationsHelper.clearNotifications()
+                    try await notificationsHelper.sendMessage(title: title, body: message, fromNow: 1) // minimum time seems to be 1 second.
                 } catch let error {
                     logger.error("error sending notification: \(error.localizedDescription)")
                 }
             }
         }
-    }
-    
-    private func clearNotifications() {
-        let notificationCenter = UNUserNotificationCenter.current()
-        notificationCenter.removeAllPendingNotificationRequests()
-        notificationCenter.removeAllDeliveredNotifications()
-    }
-    
-    private func sendMessage(title: String, body: String, fromNow: TimeInterval) async throws {
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: fromNow, repeats: false)
-        let uuidString = UUID().uuidString
-        let request = UNNotificationRequest(identifier: uuidString,
-                                            content: content, trigger: trigger)
-        let notificationCenter = UNUserNotificationCenter.current()
-        return try await notificationCenter.add(request)
-    }
-    
-    private func enableNotifications() async throws -> Bool {
-        let center = UNUserNotificationCenter.current()
-        let enabled = try await withCheckedThrowingContinuation { continuation in
-            center.getNotificationSettings { settings in
-                continuation.resume(with: .success(settings.alertSetting == .enabled))
-            }
-        }
-        if enabled {
-            return true
-        }
-        let granted: Bool = try await withCheckedThrowingContinuation { continuation in
-            center.requestAuthorization(options: [.alert]) { granted, error in
-                if let error = error {
-                    continuation.resume(with: .failure(error))
-                    return
-                } else {
-                    continuation.resume(with: .success(granted))
-                }
-            }
-        }
-        return granted
     }
 }
 
@@ -125,7 +68,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private var server: Server?
     
     private var tunConn: TunConn?
-    private var device: Device = Device()
+    private var deviceCallbacks = DeviceCallbacks()
     
     override init() {
         if Env.value == .prod {
@@ -138,18 +81,6 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         logger.info("init PacketTunnelProvider")
     }
     
-    private static func fileUrl() throws -> URL {
-        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.industries.strange.slowdown") else {
-            fatalError("could not get shared app group directory.")
-        }
-        return groupURL.appendingPathComponent("settings.data")
-    }
-    
-    func loadSettingsData() throws -> Data {
-        let file = try FileHandle(forReadingFrom: PacketTunnelProvider.fileUrl())
-        return file.availableData
-    }
-    
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
         do {
             self.logger.info("starting tunnel")
@@ -157,12 +88,12 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                 completionHandler(NEVPNError(.connectionFailed))
             }
             self.logger.info("loading settings")
-            let settingsData = try loadSettingsData()
+            let settingsData = try SettingsHelper.loadSettingsData()
             let settings = try Proxyservice_Settings(serializedData: settingsData)
             self.logger.info("loading settings -- done")
             
             self.logger.info("starting server")
-            self.server = Server.InitTunnelServer(settings: settings, device: device)
+            self.server = Server.InitTunnelServer(settings: settings, deviceCallbacks: deviceCallbacks)
             self.server!.startDirectProxyConnection(tunConn: self.tunConn!, settingsData: settingsData)
             self.logger.info("starting server -- done")
             
