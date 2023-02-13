@@ -38,8 +38,9 @@ struct AppView: View {
                     ProgressiveModeView()
                     Spacer()
                 }
-                    .modifier(StateSubscriber())
+                .modifier(StateUpdater.IsVisibleUpdater())
                     .provideDeps([
+                        StateUpdater.Provider(),
                         StateController.Provider()
                     ])
             }

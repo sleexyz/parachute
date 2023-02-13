@@ -75,6 +75,7 @@ open class VPNConfigurationService: ObservableObject {
     
     init(store: SettingsStore) {
         self.store = store
+        
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.manager = managers?.first
             self.isInitializing = false
@@ -103,9 +104,9 @@ open class VPNConfigurationService: ObservableObject {
         }
         
         
-        bag.update(with: $status
+        $status
             .debounce(for: .seconds(10), scheduler: DispatchQueue.main)
-            .sink {  value in
+            .sink {value in
                 if value == .connecting {
                     let msg = "Error connecting, stopping connection attempt"
                     self.logger.error("\(msg)")
@@ -116,7 +117,7 @@ open class VPNConfigurationService: ObservableObject {
                         try await self.stopConnection()
                     }
                 }
-            })
+            }.store(in: &bag)
     }
     
     @MainActor
@@ -205,49 +206,42 @@ open class VPNConfigurationService: ObservableObject {
     }
     
     func SetSettings(settings: Proxyservice_Settings) async throws {
-        var message = Proxyservice_Request()
-        message.setSettings = settings
-        _ = try await Rpc(message: message)
+        _ = try await Rpc(request: Proxyservice_Request.with {
+            $0.setSettings = settings
+        })
     }
     
     func GetState() async throws -> Proxyservice_GetStateResponse {
-        var message = Proxyservice_Request()
-        message.getState = Proxyservice_GetStateRequest()
-        return (try await Rpc(message: message)).getState
+        let data = try await Rpc(request: Proxyservice_Request.with {
+            $0.getState = Proxyservice_GetStateRequest()
+        })
+        return try Proxyservice_GetStateResponse(serializedData: data)
     }
     
     func Heal() async throws -> Proxyservice_HealResponse{
-        var message = Proxyservice_Request()
-        message.heal = Proxyservice_HealRequest()
-        return (try await Rpc(message: message)).heal
+        let data = try await Rpc(request: Proxyservice_Request.with {
+            $0.heal = Proxyservice_HealRequest()
+        })
+        return try Proxyservice_HealResponse(serializedData: data)
     }
     
-    private func Rpc(message: Proxyservice_Request) async throws -> Proxyservice_Response {
+    private func Rpc(request: Proxyservice_Request) async throws -> Data {
         guard let session = self.manager?.connection as? NETunnelProviderSession else {
             throw RpcError.serverNotInitializedError
         }
-        return try await Future<Proxyservice_Response, Error>() { promise in
+        return try await withCheckedThrowingContinuation { resume in
             do {
-                try session.sendProviderMessage(message.serializedData()) { data in
-                    if data == nil {
-                        promise(.failure(RpcError.nilResponseError))
+                try session.sendProviderMessage(request.serializedData()) { data in
+                    guard let data = data else {
+                        resume.resume(returning: Data())
                         return
                     }
-                    do {
-                        let resp = try Proxyservice_Response(serializedData: data!)
-                        if case .error(let errorMessage) = resp.message {
-                            promise(.failure(RpcError.downstreamError(errorMessage.error)))
-                            return
-                        }
-                        promise(.success(resp))
-                    } catch let error {
-                        promise(.failure(error))
-                    }
+                    resume.resume(returning: data)
                 }
             } catch let error {
-                promise(.failure(error))
+                resume.resume(throwing: error)
             }
-        }.value
+        }
     }
 }
 

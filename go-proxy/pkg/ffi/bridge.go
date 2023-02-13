@@ -1,7 +1,6 @@
 package ffi
 
 import (
-	"fmt"
 	"log"
 
 	"google.golang.org/protobuf/proto"
@@ -22,7 +21,7 @@ type ProxyBridge interface {
 	// Data plane
 	WriteOutboundPacket(b []byte)
 	// Control plane
-	Rpc(input []byte) ([]byte, error)
+	Rpc(input []byte) []byte
 }
 
 type OnDeviceProxyBridge struct {
@@ -53,48 +52,41 @@ func (p *OnDeviceProxyBridge) StartUDPServer(port int, settingsData []byte) {
 	p.Proxy.StartUDPServer(port, s)
 }
 
-func (p *OnDeviceProxyBridge) Rpc(input []byte) ([]byte, error) {
+func (p *OnDeviceProxyBridge) Rpc(input []byte) []byte {
 	r := &proxyservice.Request{}
 	err := proto.Unmarshal(input, r)
 	if err != nil {
-		return nil, err
+		return nil
 	}
-	// debugText, _ := debugMarshalOptions.Marshal(r)
-	// log.Printf("/Rpc %s", debugText)
+	// debugText, _ := prototext.Marshal(r)
+	// log.Printf("/Rpc request %s", debugText)
 
-	resp := &proxyservice.Response{}
 	switch r.Message.(type) {
 	case *proxyservice.Request_SetSettings:
 		m := r.GetSetSettings()
 		p.Proxy.SetSettings(m)
-		resp.Message = &proxyservice.Response_SetSettings{
-			SetSettings: &proxyservice.SetSettingsResponse{},
-		}
+		return p.encodeResponse(&proxyservice.SetSettingsResponse{})
 	case *proxyservice.Request_GetState:
-		resp.Message = &proxyservice.Response_GetState{
-			GetState: p.Proxy.GetState(),
-		}
+		return p.encodeResponse(p.Proxy.GetState())
 	case *proxyservice.Request_Heal:
 		p.Proxy.Heal()
-		resp.Message = &proxyservice.Response_Heal{
-			Heal: &proxyservice.HealResponse{
-				UsagePoints: p.Proxy.GetState().UsagePoints,
-			},
-		}
+		return p.encodeResponse(&proxyservice.HealResponse{
+			UsagePoints: p.Proxy.GetState().UsagePoints,
+		})
 	default:
-		return nil, fmt.Errorf("could not parse rpc command")
+		return nil
 	}
-	// debugText, _ = debugMarshalOptions.Marshal(resp)
-	// log.Printf("/RpcResponse %s", debugText)
-	return p.encodeResponse(resp), nil
-	// return nil, nil
 }
 
 func (p *OnDeviceProxyBridge) encodeResponse(resp protoreflect.ProtoMessage) []byte {
+	// debugText, _ := prototext.Marshal(resp)
+	// log.Printf("/Rpc response %s", debugText)
 	out, err := proto.Marshal(resp)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 		return nil
 	}
-	return out
+	copied := make([]byte, len(out))
+	copy(copied, out)
+	return copied
 }

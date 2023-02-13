@@ -62,12 +62,7 @@ func (p *DebugClientProxyBridge) forwardSettings(settingsData []byte) {
 		log.Printf("could not forward proxy settings: %s", err)
 		panic(1)
 	}
-	_, err = p.Rpc(input)
-	if err != nil {
-		log.Printf("could not forward proxy settings: %s", err)
-		panic(1)
-	}
-
+	_ = p.Rpc(input)
 }
 
 func (p *DebugClientProxyBridge) Close() {
@@ -76,20 +71,20 @@ func (p *DebugClientProxyBridge) Close() {
 	}
 }
 
-func (p *DebugClientProxyBridge) Rpc(input []byte) ([]byte, error) {
+func (p *DebugClientProxyBridge) Rpc(input []byte) []byte {
 	url := fmt.Sprintf("http://%s/Rpc", p.controlAddr)
 	log.Printf("POST %s", url)
 	resp, err := http.Post(url, "application/octet-stream", bytes.NewBuffer(input))
 	if err != nil {
-		return nil, err
+		return nil
 	}
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("request failed with status code: %d", resp.StatusCode)
-		return nil, err
+		return nil
 	}
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil
 	}
-	return data, nil
+	return data
 }

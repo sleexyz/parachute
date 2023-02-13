@@ -36,15 +36,6 @@ message Request {
     }
 }
 
-message Response {
-    oneof message {
-        SetSettingsResponse setSettings = 1;
-        GetStateResponse getState = 2;
-        HealResponse heal = 3;
-        UncaughtError error = 4;
-    }
-}
-
 message UncaughtError {
     string error = 1;
 }

@@ -11,49 +11,6 @@ import Logging
 import SwiftUI
 import Combine
 
-struct StateSubscriber: ViewModifier {
-    @Environment(\.scenePhase) var scenePhase
-
-    @EnvironmentObject var stateController: StateController
-    @State var cancel: Bool = false
-    
-    @MainActor
-    func setCancel(value: Bool) {
-        cancel = value
-    }
-
-    func body(content: Content) -> some View {
-        content
-            .onChange(of: scenePhase) { newPhase in
-                if newPhase == .active {
-                    startSubscription()
-                } else {
-                    setCancel(value: false)
-                }
-            }
-            .onAppear {
-                    startSubscription()
-            }
-            .onDisappear {
-                setCancel(value: true)
-            }
-    }
-    
-    func startSubscription() {
-        Task {
-            setCancel(value:false)
-            await loop()
-        }
-    }
-    func loop() async {
-        if cancel {
-            return
-        }
-        self.stateController.fetchState()
-        try! await Task.sleep(nanoseconds: 1_000_000_000)
-        return await loop()
-    }
-}
 
 class StateController: ObservableObject  {
     struct Provider: Dep {

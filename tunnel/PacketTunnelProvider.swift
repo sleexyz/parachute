@@ -13,9 +13,9 @@ import UIKit
 import ProxyService
 import Server
 import Firebase
-import Ffi
 import UserNotifications
 import Common
+import Ffi
 
 class DeviceCallbacks: NSObject, FfiDeviceCallbacksProtocol {
     private let logger: Logger = Logger(label: "industries.strange.slowdown.tunnel.DeviceCallbacks")
@@ -112,13 +112,14 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
     
     private func readOutboundPackets() {
-        self.packetFlow.readPacketObjects {[weak self] packets in
+        self.packetFlow.readPackets {[weak self] packets, _ in
             guard let self = self else { return }
             for packet in packets {
-                self.server?.writeOutboundPacket(packet.data)
+                self.server!.writeOutboundPacket(packet)
             }
             // Putting the self-call in a Task seems to reduce crashes.
-            Task {
+//            self.queue.asyncAfter(deadline: .now().advanced(by: .milliseconds(1)) ){
+            self.queue.async {
                 self.readOutboundPackets()
             }
         }
@@ -154,54 +155,16 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     
     override func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
         self.logger.info("tunnel stopped")
-        // Add code here to start the process of stopping the tunnel.
         self.server!.close()
         completionHandler()
     }
     
     override func handleAppMessage(_ messageData: Data) async -> Data? {
-        var response: Data? = nil
-        do {
-            guard let server = server else {
-                return try self.makeErrorMessage(errorString: "Server not yet initialized")
-            }
-            response = try server.rpc(input: messageData)
-        } catch let error {
-            if Env.value == .prod {
-                Crashlytics.crashlytics().record(error: error)
-            }
-            logger.error("Encountered RPC error: \(error)")
-            do {
-                response = try makeErrorMessage(errorString: error.localizedDescription)
-            } catch {
-            }
+        guard let server = server else {
+            fatalError("server not initialized yet")
         }
-        return response
+        return server.rpc(input: messageData)
     }
-    
-    func makeErrorMessage(errorString: String) throws -> Data {
-                let errorMsg = try Proxyservice_Response.with {
-                    $0.error = Proxyservice_UncaughtError.with {
-                        $0.error = errorString
-                    }
-                }.serializedData()
-                return errorMsg
-        
-    }
-    
-//    override func sleep(completionHandler: @escaping () -> Void) {
-//        logger.info("sleeping")
-//        self.asleep = true
-//        // Add code here to get ready to sleep.
-//        completionHandler()
-//    }
-//
-//    override func wake() {
-//        logger.info("waking")
-//        self.asleep = false
-//        self.readOutboundPackets()
-//        // Add code here to wake up.
-//    }
     
     static func protocolNumber(for packet: Data) -> NSNumber {
         guard !packet.isEmpty else {

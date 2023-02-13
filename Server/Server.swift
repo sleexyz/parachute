@@ -46,7 +46,7 @@ public struct Server {
         bridge.close()
     }
     
-    public func rpc(input: Data?) throws -> Data {
-        return try bridge.rpc(input)
+    public func rpc(input: Data?) -> Data? {
+        return bridge.rpc(input)
     }
 }
