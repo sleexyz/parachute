@@ -204,8 +204,7 @@ func (c *Controller) resetAppSampleStates() {
 func (c *Controller) Heal() {
 	oldValue := c.usagePoints.Points()
 	defer c.usagePoints.LogDelta(oldValue)
-	c.usagePoints.HealTo(c.usagePoints.cap * 0.5)
-	c.usagePoints.AddPoints(-1) // heal a minute
+	c.usagePoints.HealTo(c.usagePoints.cap)
 }
 
 func (c *Controller) GetState() *proxyservice.GetStateResponse {

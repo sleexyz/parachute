@@ -29,7 +29,7 @@ struct SpeedBar: View {
     }
     
     private static func formatText(speed: Double) -> String {
-        var numberFormatter = NumberFormatter()
+        let numberFormatter = NumberFormatter()
         numberFormatter.usesSignificantDigits = true
         numberFormatter.roundingMode = .down
         numberFormatter.maximumSignificantDigits = 1

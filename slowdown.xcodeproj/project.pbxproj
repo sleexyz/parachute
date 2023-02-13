@@ -34,6 +34,7 @@
 		A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A0458C0028614D6500CE4CCB /* LoggingOSLog */; };
 		A04FAD9C294D60960002C19B /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A04FAD9B294D60960002C19B /* SwiftProtobuf */; };
 		A052AE1E29977B3700AB43B7 /* StateUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = A052AE1D29977B3700AB43B7 /* StateUpdater.swift */; };
+		A052AE20299A900100AB43B7 /* HealButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A052AE1F299A900100AB43B7 /* HealButton.swift */; };
 		A05AD0B3285D0CD100878904 /* NIO in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B2285D0CD100878904 /* NIO */; };
 		A0717CCD294D260C00186AFE /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = A0717CCC294D260C00186AFE /* SwiftProtobufPluginLibrary */; };
 		A0774F68296A6F0D001F278B /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0774F67296A6F0D001F278B /* Server.swift */; };
@@ -214,6 +215,7 @@
 		A04332CB296BA2A400D69210 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A04FADA2294F7A9F0002C19B /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ProxyService; path = "go-proxy/ProxyService"; sourceTree = "<group>"; };
 		A052AE1D29977B3700AB43B7 /* StateUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateUpdater.swift; sourceTree = "<group>"; };
+		A052AE1F299A900100AB43B7 /* HealButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealButton.swift; sourceTree = "<group>"; };
 		A0774F65296A6F0D001F278B /* libServer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libServer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0774F67296A6F0D001F278B /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		A0774F73296A6F3A001F278B /* ServerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ServerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -346,6 +348,7 @@
 				A081F24F296A125300863FE3 /* DamageBar.swift */,
 				A02A67A7298820B300FF0B27 /* SpeedBar.swift */,
 				A081F23F2967B70000863FE3 /* ProgressiveModeView.swift */,
+				A052AE1F299A900100AB43B7 /* HealButton.swift */,
 			);
 			path = Progressive;
 			sourceTree = "<group>";
@@ -876,6 +879,7 @@
 				A081F2362966A6BA00863FE3 /* SettingsMigrations.swift in Sources */,
 				A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */,
 				A08819AA29726A6D0052D5D6 /* NotificationsController.swift in Sources */,
+				A052AE20299A900100AB43B7 /* HealButton.swift in Sources */,
 				A08719DC281A513200113F3F /* VPNConfigurationService.swift in Sources */,
 				A081F2402967B70000863FE3 /* ProgressiveModeView.swift in Sources */,
 				A02A67A42985BDD000FF0B27 /* ServiceKey.swift in Sources */,

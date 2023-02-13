@@ -153,30 +153,6 @@ struct HealSettings: View {
     }
 }
 
-struct HealButton: View {
-    var disabledOverride: Bool
-    
-    @EnvironmentObject var stateController: StateController
-
-    var body: some View {
-        let disabled = disabledOverride || !stateController.isSlowing
-        let opacity = disabled ? 0.5 : 1
-        Button("One more minute!") {
-                stateController.heal()
-            }
-        .font(.system(.body))
-        .padding()
-        .foregroundColor(Color.white)
-        .background(Color.accentColor.grayscale(1))
-        .clipShape(RoundedRectangle(cornerRadius: 100, style:.continuous))
-        .opacity(opacity)
-        .disabled(disabled)
-        .onTapGesture {
-        }
-        
-    }
-}
-
 struct Badge: View {
     var timeLeft: Int
     var body: some View {

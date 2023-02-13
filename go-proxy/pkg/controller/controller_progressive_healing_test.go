@@ -89,7 +89,7 @@ func TestAppUsagePointsRespondsToSettingsUpdate(t *testing.T) {
 	assert.Equal(t, 3.0, c.usagePoints.Points(), "should be capped")
 }
 
-func TestHealHealsToHpMin(t *testing.T) {
+func TestHealHealsToMaxHp(t *testing.T) {
 	dc := NewMockDeviceCallbacks(t)
 	dc.On("SendNotification", mock.Anything, mock.Anything).Maybe().Return()
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
@@ -102,12 +102,6 @@ func TestHealHealsToHpMin(t *testing.T) {
 	c.UpdateUsagePoints(6 * time.Minute)
 	a.ResetSampleState()
 	assert.Equal(t, 6.0, c.usagePoints.Points())
-
-	c.Heal()
-	assert.Equal(t, 2.0, c.usagePoints.Points())
-
-	c.Heal()
-	assert.Equal(t, 1.0, c.usagePoints.Points())
 
 	c.Heal()
 	assert.Equal(t, 0.0, c.usagePoints.Points())
