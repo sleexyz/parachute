@@ -64,6 +64,7 @@ open class VPNConfigurationService: ObservableObject {
     @Published var isTransitioning = false
     @Published private var manager: NETunnelProviderManager?
     @Published var status: VPNStatus = .unknown
+    @Published var connectedDate: Date?
     
     private var bag = Set<AnyCancellable>()
     
@@ -79,12 +80,14 @@ open class VPNConfigurationService: ObservableObject {
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.manager = managers?.first
             self.isInitializing = false
+            self.connectedDate = self.manager?.connection.connectedDate
         }
         
         // Register to receive notification in your class
         NotificationCenter.default.addObserver(forName: .NEVPNStatusDidChange, object: nil, queue: nil) { notification in
             DispatchQueue.main.async {
                 let conn = notification.object as! NEVPNConnection
+                self.connectedDate = self.manager?.connection.connectedDate
                 self.updateStatus(connStatus: conn.status)
                 if conn.status == NEVPNStatus.connected {
                     self.isConnected = true
@@ -123,7 +126,8 @@ open class VPNConfigurationService: ObservableObject {
     @MainActor
     private func updateStatus(connStatus: NEVPNStatus) {
         switch connStatus {
-        case .connected: status = .connected
+        case .connected:
+            status = .connected
         case .connecting: status = .connecting
         case .disconnecting: status = .disconnecting
         case .disconnected: status = .disconnected

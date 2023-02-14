@@ -10,6 +10,9 @@ import Combine
 import Logging
 import SwiftUI
 
+let INITIAL_FETCH_DELAY_SECS: Int = 5
+let LOOP_FETCH_DELAY_SECS: Int = 5
+
 class StateUpdater: ObservableObject {
     struct Provider: Dep {
         func create(r: Registry) -> StateUpdater {
@@ -32,18 +35,20 @@ class StateUpdater: ObservableObject {
     init(stateController: StateController, vpnConfigurationService: VPNConfigurationService) {
         self.stateController = stateController
         self.vpnConfigurationService = vpnConfigurationService
-        
         Publishers.CombineLatest(
-            $isVisible,
-            vpnConfigurationService.$status.debounce(for: .seconds(5), scheduler: DispatchQueue.main)
+            $isVisible.withPrevious(),
+            vpnConfigurationService.$status
         )
-            .sink { [weak self] (isVisible, status) in
-                if isVisible && status == .connected {
-                    self?.startSubscription()
-                } else {
-                    self?.cancelSubscription()
-                }
-            }.store(in: &bag)
+        .sink { [weak self] (isVisibleTuple, status) in
+            let isVisiblePrevious = isVisibleTuple.0 ?? false
+            let isVisible = isVisibleTuple.1
+            if isVisible  && !isVisiblePrevious && status == .connected {
+                self?.startSubscription()
+            }
+            else if !isVisible && isVisiblePrevious {
+                self?.cancelSubscription()
+            }
+        }.store(in: &bag)
     }
     
     @MainActor
@@ -52,15 +57,29 @@ class StateUpdater: ObservableObject {
     }
     
     private func startSubscription() {
-        cancelSubscription()
+        Task {
+            cancelSubscription()
+            guard let connectedDate = self.vpnConfigurationService.connectedDate else {
+                self.startSubscriptionLoop()
+                return
+            }
+            let timeSinceConnected = Date().timeIntervalSince(connectedDate)
+            let sleepTime = max(Double(INITIAL_FETCH_DELAY_SECS) - timeSinceConnected, 0)
+            try await Task.sleep(nanoseconds: UInt64(sleepTime * Double(NSEC_PER_SEC)))
+            self.startSubscriptionLoop()
+        }
+    }
+    
+    private func startSubscriptionLoop() {
         CancellableLoop {
             self.stateController.fetchState()
-            try! await Task.sleep(nanoseconds: 5_000_000_000)
+            try! await Task.sleep(nanoseconds: UInt64(LOOP_FETCH_DELAY_SECS) * NSEC_PER_SEC)
         }.store(in: &loopBag)
     }
     
     private func cancelSubscription() {
         for x in loopBag {
+//            logger.info("cancelling \(x)")
             x.cancel()
         }
         loopBag.removeAll()
