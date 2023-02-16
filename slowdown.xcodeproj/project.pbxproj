@@ -84,6 +84,7 @@
 		A0F764E1299DD491001F9B24 /* DisconnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764E0299DD491001F9B24 /* DisconnectedView.swift */; };
 		A0F764E3299DD6CA001F9B24 /* VPNLifecycleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764E2299DD6CA001F9B24 /* VPNLifecycleManager.swift */; };
 		A0F764E5299DDD56001F9B24 /* Settings Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764E4299DDD56001F9B24 /* Settings Extensions.swift */; };
+		A0F764E7299E15AD001F9B24 /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A0F764E6299E15AD001F9B24 /* ProxyService */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -266,6 +267,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0F764E7299E15AD001F9B24 /* ProxyService in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -555,6 +557,9 @@
 			dependencies = (
 			);
 			name = Common;
+			packageProductDependencies = (
+				A0F764E6299E15AD001F9B24 /* ProxyService */,
+			);
 			productName = Common;
 			productReference = A02A67AE298BFD5100FF0B27 /* libCommon.a */;
 			productType = "com.apple.product-type.library.static";
@@ -1604,6 +1609,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A0A81D5A296B98D800B9E1DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
+		};
+		A0F764E6299E15AD001F9B24 /* ProxyService */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProxyService;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
