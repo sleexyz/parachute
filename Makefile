@@ -63,5 +63,5 @@ clean-test-tools:
 	rm -f .gopath/bin/mockery
 
 
-go-proxy/analysis-sandbox/src/proxyservice.ts go-proxy/pb/proxyservice/proxyservice.pb.go go-proxy/ProxyService/Sources/ProxyService/proxyservice.pb.swift: go-proxy/protos/proxyservice.proto $(proto-compilers)
-	(cd go-proxy; ./build_protos.sh)
+go-proxy/analysis-sandbox/src/proxyservice.ts go-proxy/pb/proxyservice/proxyservice.pb.go ProxyService/Sources/ProxyService/proxyservice.pb.swift: protos/proxyservice.proto $(proto-compilers)
+	./build_protos.sh

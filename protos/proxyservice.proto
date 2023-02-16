@@ -38,10 +38,6 @@ message Request {
     }
 }
 
-message UncaughtError {
-    string error = 1;
-}
-
 message SetSettingsResponse {
 }
 

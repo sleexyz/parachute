@@ -219,7 +219,7 @@
 		A0312E2D297F16ED00EB0B8A /* linmapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = linmapTests.swift; sourceTree = "<group>"; };
 		A0312E332983AD5C00EB0B8A /* Dep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dep.swift; sourceTree = "<group>"; };
 		A04332CB296BA2A400D69210 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		A04FADA2294F7A9F0002C19B /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ProxyService; path = "go-proxy/ProxyService"; sourceTree = "<group>"; };
+		A04FADA2294F7A9F0002C19B /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ProxyService; sourceTree = "<group>"; };
 		A052AE1D29977B3700AB43B7 /* StateUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateUpdater.swift; sourceTree = "<group>"; };
 		A052AE1F299A900100AB43B7 /* HealButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealButton.swift; sourceTree = "<group>"; };
 		A0774F65296A6F0D001F278B /* libServer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libServer.a; sourceTree = BUILT_PRODUCTS_DIR; };

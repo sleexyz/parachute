@@ -174,18 +174,6 @@ public struct Proxyservice_Request {
   public init() {}
 }
 
-public struct Proxyservice_UncaughtError {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var error: String = String()
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
 public struct Proxyservice_SetSettingsResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -319,7 +307,6 @@ extension Proxyservice_Mode: @unchecked Sendable {}
 extension Proxyservice_Settings: @unchecked Sendable {}
 extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
-extension Proxyservice_UncaughtError: @unchecked Sendable {}
 extension Proxyservice_SetSettingsResponse: @unchecked Sendable {}
 extension Proxyservice_GetStateRequest: @unchecked Sendable {}
 extension Proxyservice_GetStateResponse: @unchecked Sendable {}
@@ -514,38 +501,6 @@ extension Proxyservice_Request: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
 
   public static func ==(lhs: Proxyservice_Request, rhs: Proxyservice_Request) -> Bool {
     if lhs.message != rhs.message {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Proxyservice_UncaughtError: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".UncaughtError"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "error"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.error) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.error.isEmpty {
-      try visitor.visitSingularStringField(value: self.error, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Proxyservice_UncaughtError, rhs: Proxyservice_UncaughtError) -> Bool {
-    if lhs.error != rhs.error {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
