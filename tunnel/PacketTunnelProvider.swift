@@ -17,44 +17,8 @@ import UserNotifications
 import Common
 import Ffi
 
-class DeviceCallbacks: NSObject, FfiDeviceCallbacksProtocol {
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.tunnel.DeviceCallbacks")
-    private var notificationsEnabled: Bool = false
-    let notificationsHelper: NotificationsHelper
-    
-    override init() {
-        self.notificationsHelper = NotificationsHelper()
-        
-        super.init()
-        Task {
-            do {
-                self.notificationsEnabled = try await notificationsHelper.enableNotifications()
-                logger.info("notification status: \(notificationsEnabled)")
-            } catch {
-                logger.error("notifications not enabled")
-            }
-        }
-    }
-    
-    func sendNotification(_ title: String?, message: String?) {
-        guard let title = title else {
-            fatalError("not title: \(title.debugDescription)")
-        }
-        guard let message = message else {
-            fatalError("not message: \(message.debugDescription)")
-        }
-        logger.info("Got message to send as notification: \(title):  \(message)")
-        if notificationsEnabled {
-            Task(priority: .background) {
-                do {
-                    notificationsHelper.clearNotifications()
-                    try await notificationsHelper.sendMessage(title: title, body: message, fromNow: 1) // minimum time seems to be 1 second.
-                } catch let error {
-                    logger.error("error sending notification: \(error.localizedDescription)")
-                }
-            }
-        }
-    }
+enum ProxyError: Error {
+    case pauseError
 }
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
@@ -81,16 +45,31 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         logger.info("init PacketTunnelProvider")
     }
     
+    func loadSettingsData(options: [String: NSObject]?) throws -> Data {
+        if let obj: NSObject = options?["settingsOverride"] {
+            logger.info("using settingsOverride")
+            return (obj as! NSData) as Data
+        }
+        return try SettingsHelper.loadSettingsData()
+    }
+    
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
         do {
             self.logger.info("starting tunnel")
             self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
                 completionHandler(NEVPNError(.connectionFailed))
             }
+            
             self.logger.info("loading settings")
-            let settingsData = try SettingsHelper.loadSettingsData()
+            let settingsData = try loadSettingsData(options: options)
             let settings = try Proxyservice_Settings(serializedData: settingsData)
             self.logger.info("loading settings -- done")
+            
+            if settings.isPaused() {
+                self.logger.info("stopping tunnel -- VPN is paused")
+                completionHandler(ProxyError.pauseError)
+                return
+            }
             
             self.logger.info("starting server")
             self.server = Server.InitTunnelServer(settings: settings, deviceCallbacks: deviceCallbacks)

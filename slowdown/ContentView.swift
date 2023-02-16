@@ -29,7 +29,6 @@ struct ContentView: View {
                 .provideDeps([
                     AppViewModel.Provider(),
                     CheatController.Provider(),
-                    SettingsController.Provider()
                 ])
         }
     }
@@ -48,6 +47,8 @@ struct ContentViewLoader: View {
                 }
             }
             .provideDeps([
+                VPNLifecycleManager.Provider(),
+                SettingsController.Provider(),
                 VPNConfigurationService.Provider(),
                 SettingsStore.Provider()
             ])

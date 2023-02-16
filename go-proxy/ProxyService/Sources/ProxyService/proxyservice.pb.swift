@@ -92,11 +92,21 @@ public struct Proxyservice_Settings {
 
   public var mode: Proxyservice_Mode = .progressive
 
+  public var pauseExpiry: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _pauseExpiry ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_pauseExpiry = newValue}
+  }
+  /// Returns true if `pauseExpiry` has been explicitly set.
+  public var hasPauseExpiry: Bool {return self._pauseExpiry != nil}
+  /// Clears the value of `pauseExpiry`. Subsequent reads from it will return its default value.
+  public mutating func clearPauseExpiry() {self._pauseExpiry = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
   fileprivate var _temporaryRxSpeedExpiry: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+  fileprivate var _pauseExpiry: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 }
 
 public struct Proxyservice_Request {
@@ -343,6 +353,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     9: .same(proto: "usageBaseRxSpeedTarget"),
     7: .same(proto: "debug"),
     8: .same(proto: "mode"),
+    10: .same(proto: "pauseExpiry"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -360,6 +371,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case 7: try { try decoder.decodeSingularBoolField(value: &self.debug) }()
       case 8: try { try decoder.decodeSingularEnumField(value: &self.mode) }()
       case 9: try { try decoder.decodeSingularDoubleField(value: &self.usageBaseRxSpeedTarget) }()
+      case 10: try { try decoder.decodeSingularMessageField(value: &self._pauseExpiry) }()
       default: break
       }
     }
@@ -397,6 +409,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if self.usageBaseRxSpeedTarget != 0 {
       try visitor.visitSingularDoubleField(value: self.usageBaseRxSpeedTarget, fieldNumber: 9)
     }
+    try { if let v = self._pauseExpiry {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -410,6 +425,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if lhs.usageBaseRxSpeedTarget != rhs.usageBaseRxSpeedTarget {return false}
     if lhs.debug != rhs.debug {return false}
     if lhs.mode != rhs.mode {return false}
+    if lhs._pauseExpiry != rhs._pauseExpiry {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

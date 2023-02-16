@@ -14,30 +14,16 @@ struct AppView: View {
     @EnvironmentObject var cheatController: CheatController
     @EnvironmentObject var controller: SettingsController
     
+    var showTransitioning: Bool {
+        return service.isTransitioning && !store.settings.isPaused()
+    }
     
     var body: some View {
-        let _  = Self._printChanges()
         VStack{
             if !service.isConnected {
-                VStack {
-                    Spacer()
-                    PrimaryButton(title: "Start", action: model.toggleConnection, isLoading: service.isTransitioning)
-                    Spacer()
-                    Toggle(isOn: $store.settings.debug, label: { Text("Debug")})
-                        .disabled(service.isTransitioning)
-                        .onChange(of: store.settings.debug) { _ in
-                            model.saveSettings()
-                        }
-                }.padding()
+                DisconnectedView()
             } else {
-                VStack {
-                    VStack {
-                        PrimaryButton(title: "Stop", action: model.toggleConnection, isLoading: service.isTransitioning)
-                    }.padding()
-                    Spacer()
-                    ProgressiveModeView()
-                    Spacer()
-                }
+                ConnectedView()
                 .modifier(StateUpdater.IsVisibleUpdater())
                     .provideDeps([
                         StateUpdater.Provider(),
@@ -45,7 +31,7 @@ struct AppView: View {
                     ])
             }
         }
-        .disabled(service.isTransitioning)
+        .disabled(showTransitioning)
         .alert(isPresented: $model.isShowingError) {
             Alert(
                 title: Text(self.model.errorTitle),
@@ -54,7 +40,7 @@ struct AppView: View {
             )
         }
         .navigationBarItems(trailing:
-                                Spinner(isAnimating: service.isTransitioning, color: .label, style: .medium)
+                                Spinner(isAnimating: showTransitioning, color: .label, style: .medium)
         )
     }
 }

@@ -52,6 +52,7 @@ export interface Settings {
   usageBaseRxSpeedTarget: number;
   debug: boolean;
   mode: Mode;
+  pauseExpiry: Date | undefined;
 }
 
 export interface Request {
@@ -121,6 +122,7 @@ function createBaseSettings(): Settings {
     usageBaseRxSpeedTarget: 0,
     debug: false,
     mode: 0,
+    pauseExpiry: undefined,
   };
 }
 
@@ -152,6 +154,9 @@ export const Settings = {
     }
     if (message.mode !== 0) {
       writer.uint32(64).int32(message.mode);
+    }
+    if (message.pauseExpiry !== undefined) {
+      Timestamp.encode(toTimestamp(message.pauseExpiry), writer.uint32(82).fork()).ldelim();
     }
     return writer;
   },
@@ -190,6 +195,9 @@ export const Settings = {
         case 8:
           message.mode = reader.int32() as any;
           break;
+        case 10:
+          message.pauseExpiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -211,6 +219,7 @@ export const Settings = {
       usageBaseRxSpeedTarget: isSet(object.usageBaseRxSpeedTarget) ? Number(object.usageBaseRxSpeedTarget) : 0,
       debug: isSet(object.debug) ? Boolean(object.debug) : false,
       mode: isSet(object.mode) ? modeFromJSON(object.mode) : 0,
+      pauseExpiry: isSet(object.pauseExpiry) ? fromJsonTimestamp(object.pauseExpiry) : undefined,
     };
   },
 
@@ -226,6 +235,7 @@ export const Settings = {
     message.usageBaseRxSpeedTarget !== undefined && (obj.usageBaseRxSpeedTarget = message.usageBaseRxSpeedTarget);
     message.debug !== undefined && (obj.debug = message.debug);
     message.mode !== undefined && (obj.mode = modeToJSON(message.mode));
+    message.pauseExpiry !== undefined && (obj.pauseExpiry = message.pauseExpiry.toISOString());
     return obj;
   },
 
@@ -240,6 +250,7 @@ export const Settings = {
     message.usageBaseRxSpeedTarget = object.usageBaseRxSpeedTarget ?? 0;
     message.debug = object.debug ?? false;
     message.mode = object.mode ?? 0;
+    message.pauseExpiry = object.pauseExpiry ?? undefined;
     return message;
   },
 };

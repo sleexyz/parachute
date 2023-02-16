@@ -35,6 +35,15 @@ class SettingsController: ObservableObject {
         }
     }
     
+    @MainActor
+    func setSettings(_ op: (_ settings: inout Proxyservice_Settings) -> ()) async throws {
+        op(&store.settings)
+        if service.isConnected {
+            try await service.SetSettings(settings: store.settings)
+        }
+        try self.store.save()
+    }
+    
     public func syncSettings() {
         Task.init(priority: .background) {
             try await service.SetSettings(settings: store.settings)

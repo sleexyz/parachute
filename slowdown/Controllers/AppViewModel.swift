@@ -10,6 +10,7 @@ import SwiftUI
 import Combine
 import Logging
  
+// TODO: deprecate. Have a Error handler.
 final class AppViewModel: ObservableObject {
     struct Provider: Dep {
         func create(r: Registry) -> AppViewModel {
@@ -30,24 +31,24 @@ final class AppViewModel: ObservableObject {
     
     var logSpeed : Binding<Double> {
         Binding {
-            return log(self.store.settings.baseRxSpeedTarget)
+            return log(self.settingsStore.settings.baseRxSpeedTarget)
         } set: {
-            self.store.settings.baseRxSpeedTarget = exp($0)
+            self.settingsStore.settings.baseRxSpeedTarget = exp($0)
         }
     }
     
     let service: VPNConfigurationService
     let cheatController: CheatController
     let settingsController: SettingsController
-    let store: SettingsStore
+    let settingsStore: SettingsStore
     
     
     init(service: VPNConfigurationService, cheatController: CheatController, settingsController: SettingsController, settingsStore: SettingsStore) {
         self.service = service
         self.cheatController = cheatController
         self.settingsController = settingsController
-        self.store = settingsStore
-        self.store.onLoad {
+        self.settingsStore = settingsStore
+        self.settingsStore.onLoad {
             self.currentCarouselIndex = self.canonicalCarouselIndex()
             self.logger.info("index: \(self.currentCarouselIndex)")
         }
@@ -56,7 +57,7 @@ final class AppViewModel: ObservableObject {
     
     // Finds the canonical carousel index for the given state
     func canonicalCarouselIndex() -> Int {
-        if store.settings.mode == .progressive {
+        if settingsStore.settings.mode == .progressive {
             return 0
         }
         if !cheatController.isCheating {
@@ -64,34 +65,6 @@ final class AppViewModel: ObservableObject {
         }
         return 2
     }
-    
-    func toggleConnection() {
-        if service.isConnected {
-            Task {
-                do {
-                    try await service.stopConnection()
-                } catch {
-                    self.showError(
-                        title: "Failed to stop VPN tunnel",
-                        message: error.localizedDescription
-                    )
-                }
-            }
-            return
-        }
-        
-        Task {
-            do {
-                try await self.service.startConnection()
-            } catch {
-                self.showError(
-                    title: "Failed to start VPN tunnel",
-                    message: error.localizedDescription
-                )
-            }
-        }
-    }
-    
     
     func startCheat() {
         Task {
@@ -122,7 +95,7 @@ final class AppViewModel: ObservableObject {
     func saveSettings() {
             Task {
                 do {
-                    try self.store.save()
+                    try self.settingsStore.save()
                 } catch {
                     self.showError(
                         title: "Failed to save settings",

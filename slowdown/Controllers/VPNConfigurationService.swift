@@ -117,7 +117,7 @@ open class VPNConfigurationService: ObservableObject {
                         Crashlytics.crashlytics().log(msg)
                     }
                     Task {
-                        try await self.stopConnection()
+                        try await self.stopConnectionAndDisableOnDemand()
                     }
                 }
             }.store(in: &bag)
@@ -143,10 +143,17 @@ open class VPNConfigurationService: ObservableObject {
     
     
     @MainActor
-    func startConnection() async throws {
-        try self.manager?.connection.startVPNTunnel()
+    func startConnectionAndEnableOnDemand() async throws {
+        try self.manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: try store.settings.serializedData())])
         self.isTransitioning = true
         self.manager?.isOnDemandEnabled = true
+        try await self.saveManagerPreferences()
+    }
+    
+    @MainActor
+    public func stopConnectionAndDisableOnDemand() async throws {
+        try await self.stopConnection()
+        self.manager?.isOnDemandEnabled = false
         try await self.saveManagerPreferences()
     }
     
@@ -154,8 +161,6 @@ open class VPNConfigurationService: ObservableObject {
     public func stopConnection() async throws {
         self.manager?.connection.stopVPNTunnel()
         self.isTransitioning = true
-        self.manager?.isOnDemandEnabled = false
-        try await self.saveManagerPreferences()
     }
     
     private func saveManagerPreferences() async throws -> () {

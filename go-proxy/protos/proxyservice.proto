@@ -24,6 +24,8 @@ message Settings {
 
     bool debug = 7;
     Mode mode = 8;
+
+    google.protobuf.Timestamp pauseExpiry = 10;
 }
 
 
