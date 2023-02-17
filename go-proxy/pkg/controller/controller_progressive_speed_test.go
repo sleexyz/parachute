@@ -16,9 +16,11 @@ func TestProgressive_defaultsNoBaseSlowing(t *testing.T) {
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
 	c.SetSettings(&proxyservice.Settings{
-		BaseRxSpeedTarget: 1e6, // unused
-		UsageHealRate:     0.5,
-		UsageMaxHP:        6,
+		ActivePreset: &proxyservice.Preset{
+			BaseRxSpeedTarget: 1e6, // unused
+			UsageHealRate:     0.5,
+			UsageMaxHP:        6,
+		},
 	})
 
 	c.RegisterDnsEntry("1.2.3.4", "hello.com.")
@@ -32,10 +34,12 @@ func TestProgressive__slowsWithBaseSpeed(t *testing.T) {
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
 	c.SetSettings(&proxyservice.Settings{
-		BaseRxSpeedTarget:      1e6, // unused
-		UsageHealRate:          0.5,
-		UsageMaxHP:             6,
-		UsageBaseRxSpeedTarget: 50e3,
+		ActivePreset: &proxyservice.Preset{
+			BaseRxSpeedTarget:      1e6, // unused
+			UsageHealRate:          0.5,
+			UsageMaxHP:             6,
+			UsageBaseRxSpeedTarget: 50e3,
+		},
 	})
 
 	c.RegisterDnsEntry("1.2.3.4", "hello.com.")
@@ -50,10 +54,12 @@ func TestProgressive__startsProgressiveSlowingAtHalfwayPoint(t *testing.T) {
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
 	c.SetSettings(&proxyservice.Settings{
-		BaseRxSpeedTarget:      1e6, // unused
-		UsageHealRate:          0.5,
-		UsageMaxHP:             4,
-		UsageBaseRxSpeedTarget: 100e3,
+		ActivePreset: &proxyservice.Preset{
+			BaseRxSpeedTarget:      1e6, // unused
+			UsageHealRate:          0.5,
+			UsageMaxHP:             4,
+			UsageBaseRxSpeedTarget: 100e3,
+		},
 	})
 	now := time.Now()
 	a := c.apps[0]
@@ -91,9 +97,11 @@ func TestProgressive__usesDefaultMaxSpeedOf10Mbps(t *testing.T) {
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
 	c.SetSettings(&proxyservice.Settings{
-		BaseRxSpeedTarget: 1e6, // unused
-		UsageHealRate:     0.5,
-		UsageMaxHP:        4,
+		ActivePreset: &proxyservice.Preset{
+			BaseRxSpeedTarget: 1e6, // unused
+			UsageHealRate:     0.5,
+			UsageMaxHP:        4,
+		},
 	})
 	now := time.Now()
 	a := c.apps[0]

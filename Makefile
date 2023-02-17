@@ -34,7 +34,7 @@ ci_scripts/Ffi.xcframework: $(go-files) $(compilers)
 	echo $?
 	(cd go-proxy ; ./build.sh)
 
-go-proxy/pkg/controller/mock_DeviceCallbacks.go:
+go-proxy/pkg/controller/mock_DeviceCallbacks.go: $(go-protos)
 	mockery --name=DeviceCallbacks  --recursive --inpackage --dir go-proxy/pkg/controller
 
 test-tools := .gopath/bin/mockery
@@ -42,7 +42,7 @@ test-tools := .gopath/bin/mockery
 .gopath/bin/mockery:
 	go install github.com/vektra/mockery/v2@v2.16.0
 
-test: $(test-tools) go-proxy/pkg/controller/mock_DeviceCallbacks.go
+test: $(test-tools) go-proxy/pkg/controller/mock_DeviceCallbacks.go $(go-protos)
 	go test ./go-proxy/...
 
 
@@ -62,6 +62,8 @@ clean-tools:
 clean-test-tools:
 	rm -f .gopath/bin/mockery
 
+go-protos := go-proxy/pb/proxyservice/proxyservice.pb.go
+protos := go-proxy/analysis-sandbox/src/proxyservice.ts $(go-protos) ProxyService/Sources/ProxyService/proxyservice.pb.swift
 
-go-proxy/analysis-sandbox/src/proxyservice.ts go-proxy/pb/proxyservice/proxyservice.pb.go ProxyService/Sources/ProxyService/proxyservice.pb.swift: protos/proxyservice.proto $(proto-compilers)
+$(protos): protos/proxyservice.proto $(proto-compilers)
 	./build_protos.sh

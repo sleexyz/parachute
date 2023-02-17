@@ -28,9 +28,11 @@ func TestSetSettingsFiresCheatTimersOnInit(t *testing.T) {
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
 	c.SetSettings(&proxyservice.Settings{
-		BaseRxSpeedTarget:      1e6,
-		TemporaryRxSpeedTarget: math.Inf(1),
-		TemporaryRxSpeedExpiry: timestamppb.New(time.Now().Add(time.Second)),
+		ActivePreset: &proxyservice.Preset{
+			BaseRxSpeedTarget:      1e6,
+			TemporaryRxSpeedTarget: math.Inf(1),
+			TemporaryRxSpeedExpiry: timestamppb.New(time.Now().Add(time.Second)),
+		},
 	})
 	assert.NotNil(t, c.temporaryTimer)
 	assert.Equal(t, c.RxSpeedTarget(), math.Inf(1))
@@ -40,22 +42,26 @@ func TestSetSettingsFiresCheatTimersOnChange(t *testing.T) {
 	dc := NewMockDeviceCallbacks(t)
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
-	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6})
+	c.SetSettings(&proxyservice.Settings{ActivePreset: &proxyservice.Preset{BaseRxSpeedTarget: 1e6}})
 	assert.Nil(t, c.temporaryTimer)
 	assert.Equal(t, c.RxSpeedTarget(), 1e6)
 
 	c.SetSettings(&proxyservice.Settings{
-		BaseRxSpeedTarget:      1e6,
-		TemporaryRxSpeedTarget: math.Inf(1),
-		TemporaryRxSpeedExpiry: timestamppb.New(time.Now().Add(time.Second)),
+		ActivePreset: &proxyservice.Preset{
+			BaseRxSpeedTarget:      1e6,
+			TemporaryRxSpeedTarget: math.Inf(1),
+			TemporaryRxSpeedExpiry: timestamppb.New(time.Now().Add(time.Second)),
+		},
 	})
 	assert.NotNil(t, c.temporaryTimer)
 	assert.Equal(t, c.RxSpeedTarget(), math.Inf(1))
 
 	c.SetSettings(&proxyservice.Settings{
-		BaseRxSpeedTarget:      1e6,
-		TemporaryRxSpeedTarget: math.Inf(1),
-		TemporaryRxSpeedExpiry: timestamppb.New(time.Now().Add(-1 * time.Second)),
+		ActivePreset: &proxyservice.Preset{
+			BaseRxSpeedTarget:      1e6,
+			TemporaryRxSpeedTarget: math.Inf(1),
+			TemporaryRxSpeedExpiry: timestamppb.New(time.Now().Add(-1 * time.Second)),
+		},
 	})
 	assert.Nil(t, c.temporaryTimer)
 	assert.Equal(t, c.RxSpeedTarget(), 1e6)

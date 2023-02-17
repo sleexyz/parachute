@@ -21,3 +21,4 @@ fi
 
 make clean
 make
+make test

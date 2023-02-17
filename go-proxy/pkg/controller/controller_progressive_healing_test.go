@@ -14,7 +14,7 @@ func TestAppUpdateUsagePointsAboveThreshold(t *testing.T) {
 	dc := NewMockDeviceCallbacks(t)
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
-	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
+	c.SetSettings(&proxyservice.Settings{ActivePreset: &proxyservice.Preset{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6}})
 	now := time.Now()
 	a := c.apps[0]
 
@@ -29,7 +29,7 @@ func TestAppUpdateUsagePointsHealsAtHealRate(t *testing.T) {
 	dc := NewMockDeviceCallbacks(t)
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
-	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
+	c.SetSettings(&proxyservice.Settings{ActivePreset: &proxyservice.Preset{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6}})
 	now := time.Now()
 	a := c.apps[0]
 
@@ -49,7 +49,7 @@ func TestAppUsagePointsNoopsUnderThreshold(t *testing.T) {
 	dc := NewMockDeviceCallbacks(t)
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
-	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
+	c.SetSettings(&proxyservice.Settings{ActivePreset: &proxyservice.Preset{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6}})
 	now := time.Now()
 	a := c.apps[0]
 
@@ -68,15 +68,12 @@ func TestAppUsagePointsRespondsToSettingsUpdate(t *testing.T) {
 	dc.On("SendNotification", mock.Anything, mock.Anything).Maybe().Return()
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
-	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
+	c.SetSettings(&proxyservice.Settings{ActivePreset: &proxyservice.Preset{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6}})
 	now := time.Now()
 	a := c.apps[0]
 
 	a.AddTxPoints(1.0, &now)
-	c.sm.SetSettings(&proxyservice.Settings{
-		UsageHealRate: 1,
-		UsageMaxHP:    3,
-	})
+	c.sm.SetSettings(&proxyservice.Settings{ActivePreset: &proxyservice.Preset{UsageHealRate: 1, UsageMaxHP: 3}})
 	c.UpdateUsagePoints(time.Minute)
 	a.ResetSampleState()
 
@@ -94,7 +91,7 @@ func TestHealHealsToMaxHp(t *testing.T) {
 	dc.On("SendNotification", mock.Anything, mock.Anything).Maybe().Return()
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
-	c.SetSettings(&proxyservice.Settings{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6})
+	c.SetSettings(&proxyservice.Settings{ActivePreset: &proxyservice.Preset{BaseRxSpeedTarget: 1e6, UsageHealRate: 0.5, UsageMaxHP: 6}})
 	now := time.Now()
 	a := c.apps[0]
 
