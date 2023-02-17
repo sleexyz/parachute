@@ -16,10 +16,17 @@ struct DisconnectedView: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     @EnvironmentObject var service: VPNConfigurationService
     
+    var buttonTitle: String {
+        if settingsStore.settings.isPaused() {
+            return "Resume VPN connection"
+        }
+        return "Start VPN connection"
+    }
+    
     var body: some View {
         VStack {
             Spacer()
-            PrimaryButton(title: "Resume VPN connection", action: vpnLifecycleManager.toggleConnection, isLoading: service.isTransitioning)
+            PrimaryButton(title: buttonTitle, action: vpnLifecycleManager.toggleConnection, isLoading: service.isTransitioning)
             Spacer()
             if Env.value == .dev {
                 Toggle(isOn: $settingsStore.settings.debug, label: { Text("Debug")})
