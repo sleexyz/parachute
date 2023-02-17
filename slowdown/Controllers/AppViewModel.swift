@@ -31,9 +31,9 @@ final class AppViewModel: ObservableObject {
     
     var logSpeed : Binding<Double> {
         Binding {
-            return log(self.settingsStore.settings.baseRxSpeedTarget)
+            return log(self.settingsStore.settings.activePreset.baseRxSpeedTarget)
         } set: {
-            self.settingsStore.settings.baseRxSpeedTarget = exp($0)
+            self.settingsStore.settings.activePreset.baseRxSpeedTarget = exp($0)
         }
     }
     
@@ -57,7 +57,7 @@ final class AppViewModel: ObservableObject {
     
     // Finds the canonical carousel index for the given state
     func canonicalCarouselIndex() -> Int {
-        if settingsStore.settings.mode == .progressive {
+        if settingsStore.settings.activePreset.mode == .progressive {
             return 0
         }
         if !cheatController.isCheating {

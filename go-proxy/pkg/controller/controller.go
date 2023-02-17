@@ -43,7 +43,7 @@ func Init(sp analytics.SamplePublisher, sm SettingsManager, appConfigs []*AppCon
 		dc:              dc,
 		AppResolver:     InitAppResolver(ao),
 		SamplePublisher: sp,
-		usagePoints:     InitPoints(sm.Settings().UsageMaxHP),
+		usagePoints:     InitPoints(sm.ActivePreset().UsageMaxHP),
 		fm:              make(map[string]*ControllableFlow),
 	}
 	sm.RegisterChangeListener(c)
@@ -53,9 +53,9 @@ func Init(sp analytics.SamplePublisher, sm SettingsManager, appConfigs []*AppCon
 
 func (c *Controller) RxSpeedTarget() float64 {
 	if c.temporaryTimer != nil {
-		return c.sm.Settings().TemporaryRxSpeedTarget
+		return c.sm.ActivePreset().TemporaryRxSpeedTarget
 	}
-	return c.sm.Settings().BaseRxSpeedTarget
+	return c.sm.ActivePreset().BaseRxSpeedTarget
 }
 
 func (c *Controller) SetSettings(settings *proxyservice.Settings) {
@@ -66,16 +66,16 @@ func (c *Controller) BeforeSettingsChange() {
 	// c.updateAppUsagePoints()
 }
 
-func (c *Controller) OnSettingsChange(oldSettings *proxyservice.Settings, settings *proxyservice.Settings) {
-	if oldSettings == nil || oldSettings.TemporaryRxSpeedExpiry != settings.TemporaryRxSpeedExpiry {
-		expiry := settings.TemporaryRxSpeedExpiry.AsTime()
+func (c *Controller) OnSettingsChange(oldPreset *proxyservice.Preset, newPreset *proxyservice.Preset) {
+	if oldPreset == nil || oldPreset.TemporaryRxSpeedExpiry != newPreset.TemporaryRxSpeedExpiry {
+		expiry := newPreset.TemporaryRxSpeedExpiry.AsTime()
 		if expiry.After(time.Now()) {
 			c.setTemporaryRxSpeedTimer(expiry)
 		} else {
 			c.evictExistingTimer()
 		}
 	}
-	c.usagePoints.SetCap(settings.UsageMaxHP)
+	c.usagePoints.SetCap(newPreset.UsageMaxHP)
 }
 
 func (c *Controller) evictExistingTimer() {
@@ -190,7 +190,7 @@ func (c *Controller) UpdateUsagePoints(dt time.Duration) {
 	multiplier := 1.0
 	if txPointsMax < 1 {
 		// Negative damage aka heal
-		multiplier = -1 * c.sm.Settings().UsageHealRate
+		multiplier = -1 * c.sm.ActivePreset().UsageHealRate
 	}
 	c.usagePoints.AddPoints(toAdd * multiplier)
 }
@@ -228,7 +228,7 @@ func (c *Controller) DebugGetEntries(ip string) []string {
 func (c *Controller) ProgressiveRxSpeedTarget() float64 {
 	ratio := c.usagePoints.HP() / c.usagePoints.cap
 	maxSpeed := math.Inf(1)
-	if st := c.sm.Settings().UsageBaseRxSpeedTarget; st != 0 {
+	if st := c.sm.ActivePreset().UsageBaseRxSpeedTarget; st != 0 {
 		maxSpeed = st
 	}
 	minSpeed := math.Min(40e3, maxSpeed)

@@ -38,21 +38,53 @@ export function modeToJSON(object: Mode): string {
   }
 }
 
-export interface Settings {
-  /** latest version: 1 */
-  version: number;
+export interface Preset {
+  /** Name of the preset. */
+  name: string;
+  /**
+   * Behavior mode of the preset.
+   * TODO: switch to oneof
+   */
+  mode: Mode;
+  /** Base speed in "Focus mode" */
   baseRxSpeedTarget: number;
+  /** Break speed. Use Infinity to indicate no speed capping. */
   temporaryRxSpeedTarget: number;
+  /**
+   * When a break should end.
+   * TODO: move to a State message
+   */
   temporaryRxSpeedExpiry:
     | Date
     | undefined;
-  /** HP per second */
+  /** How fast healing should happen. */
   usageHealRate: number;
+  /** How long a user should be able to scroll. */
   usageMaxHP: number;
+  /** A maximum speed to govern scrolling traffic. */
   usageBaseRxSpeedTarget: number;
+}
+
+export interface Settings {
+  /**
+   * A version used for migrations of this message.
+   * Latest version: 2
+   */
+  version: number;
   debug: boolean;
-  mode: Mode;
-  pauseExpiry: Date | undefined;
+  /**
+   * TODO: move to a State message
+   * When pause should be lifted.
+   */
+  pauseExpiry:
+    | Date
+    | undefined;
+  /** Parameters of the currently active preset. */
+  activePreset:
+    | Preset
+    | undefined;
+  /** A list of saved presets. */
+  presets: Preset[];
 }
 
 export interface Request {
@@ -107,19 +139,132 @@ export interface Sample {
   dnsMatchers: string[];
 }
 
-function createBaseSettings(): Settings {
+function createBasePreset(): Preset {
   return {
-    version: 0,
+    name: "",
+    mode: 0,
     baseRxSpeedTarget: 0,
     temporaryRxSpeedTarget: 0,
     temporaryRxSpeedExpiry: undefined,
     usageHealRate: 0,
     usageMaxHP: 0,
     usageBaseRxSpeedTarget: 0,
-    debug: false,
-    mode: 0,
-    pauseExpiry: undefined,
   };
+}
+
+export const Preset = {
+  encode(message: Preset, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.name !== "") {
+      writer.uint32(10).string(message.name);
+    }
+    if (message.mode !== 0) {
+      writer.uint32(16).int32(message.mode);
+    }
+    if (message.baseRxSpeedTarget !== 0) {
+      writer.uint32(25).double(message.baseRxSpeedTarget);
+    }
+    if (message.temporaryRxSpeedTarget !== 0) {
+      writer.uint32(33).double(message.temporaryRxSpeedTarget);
+    }
+    if (message.temporaryRxSpeedExpiry !== undefined) {
+      Timestamp.encode(toTimestamp(message.temporaryRxSpeedExpiry), writer.uint32(42).fork()).ldelim();
+    }
+    if (message.usageHealRate !== 0) {
+      writer.uint32(49).double(message.usageHealRate);
+    }
+    if (message.usageMaxHP !== 0) {
+      writer.uint32(57).double(message.usageMaxHP);
+    }
+    if (message.usageBaseRxSpeedTarget !== 0) {
+      writer.uint32(65).double(message.usageBaseRxSpeedTarget);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Preset {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePreset();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.name = reader.string();
+          break;
+        case 2:
+          message.mode = reader.int32() as any;
+          break;
+        case 3:
+          message.baseRxSpeedTarget = reader.double();
+          break;
+        case 4:
+          message.temporaryRxSpeedTarget = reader.double();
+          break;
+        case 5:
+          message.temporaryRxSpeedExpiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          break;
+        case 6:
+          message.usageHealRate = reader.double();
+          break;
+        case 7:
+          message.usageMaxHP = reader.double();
+          break;
+        case 8:
+          message.usageBaseRxSpeedTarget = reader.double();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Preset {
+    return {
+      name: isSet(object.name) ? String(object.name) : "",
+      mode: isSet(object.mode) ? modeFromJSON(object.mode) : 0,
+      baseRxSpeedTarget: isSet(object.baseRxSpeedTarget) ? Number(object.baseRxSpeedTarget) : 0,
+      temporaryRxSpeedTarget: isSet(object.temporaryRxSpeedTarget) ? Number(object.temporaryRxSpeedTarget) : 0,
+      temporaryRxSpeedExpiry: isSet(object.temporaryRxSpeedExpiry)
+        ? fromJsonTimestamp(object.temporaryRxSpeedExpiry)
+        : undefined,
+      usageHealRate: isSet(object.usageHealRate) ? Number(object.usageHealRate) : 0,
+      usageMaxHP: isSet(object.usageMaxHP) ? Number(object.usageMaxHP) : 0,
+      usageBaseRxSpeedTarget: isSet(object.usageBaseRxSpeedTarget) ? Number(object.usageBaseRxSpeedTarget) : 0,
+    };
+  },
+
+  toJSON(message: Preset): unknown {
+    const obj: any = {};
+    message.name !== undefined && (obj.name = message.name);
+    message.mode !== undefined && (obj.mode = modeToJSON(message.mode));
+    message.baseRxSpeedTarget !== undefined && (obj.baseRxSpeedTarget = message.baseRxSpeedTarget);
+    message.temporaryRxSpeedTarget !== undefined && (obj.temporaryRxSpeedTarget = message.temporaryRxSpeedTarget);
+    message.temporaryRxSpeedExpiry !== undefined &&
+      (obj.temporaryRxSpeedExpiry = message.temporaryRxSpeedExpiry.toISOString());
+    message.usageHealRate !== undefined && (obj.usageHealRate = message.usageHealRate);
+    message.usageMaxHP !== undefined && (obj.usageMaxHP = message.usageMaxHP);
+    message.usageBaseRxSpeedTarget !== undefined && (obj.usageBaseRxSpeedTarget = message.usageBaseRxSpeedTarget);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<Preset>, I>>(object: I): Preset {
+    const message = createBasePreset();
+    message.name = object.name ?? "";
+    message.mode = object.mode ?? 0;
+    message.baseRxSpeedTarget = object.baseRxSpeedTarget ?? 0;
+    message.temporaryRxSpeedTarget = object.temporaryRxSpeedTarget ?? 0;
+    message.temporaryRxSpeedExpiry = object.temporaryRxSpeedExpiry ?? undefined;
+    message.usageHealRate = object.usageHealRate ?? 0;
+    message.usageMaxHP = object.usageMaxHP ?? 0;
+    message.usageBaseRxSpeedTarget = object.usageBaseRxSpeedTarget ?? 0;
+    return message;
+  },
+};
+
+function createBaseSettings(): Settings {
+  return { version: 0, debug: false, pauseExpiry: undefined, activePreset: undefined, presets: [] };
 }
 
 export const Settings = {
@@ -127,32 +272,17 @@ export const Settings = {
     if (message.version !== 0) {
       writer.uint32(32).int32(message.version);
     }
-    if (message.baseRxSpeedTarget !== 0) {
-      writer.uint32(9).double(message.baseRxSpeedTarget);
-    }
-    if (message.temporaryRxSpeedTarget !== 0) {
-      writer.uint32(17).double(message.temporaryRxSpeedTarget);
-    }
-    if (message.temporaryRxSpeedExpiry !== undefined) {
-      Timestamp.encode(toTimestamp(message.temporaryRxSpeedExpiry), writer.uint32(26).fork()).ldelim();
-    }
-    if (message.usageHealRate !== 0) {
-      writer.uint32(41).double(message.usageHealRate);
-    }
-    if (message.usageMaxHP !== 0) {
-      writer.uint32(49).double(message.usageMaxHP);
-    }
-    if (message.usageBaseRxSpeedTarget !== 0) {
-      writer.uint32(73).double(message.usageBaseRxSpeedTarget);
-    }
     if (message.debug === true) {
       writer.uint32(56).bool(message.debug);
     }
-    if (message.mode !== 0) {
-      writer.uint32(64).int32(message.mode);
-    }
     if (message.pauseExpiry !== undefined) {
       Timestamp.encode(toTimestamp(message.pauseExpiry), writer.uint32(82).fork()).ldelim();
+    }
+    if (message.activePreset !== undefined) {
+      Preset.encode(message.activePreset, writer.uint32(90).fork()).ldelim();
+    }
+    for (const v of message.presets) {
+      Preset.encode(v!, writer.uint32(98).fork()).ldelim();
     }
     return writer;
   },
@@ -167,32 +297,17 @@ export const Settings = {
         case 4:
           message.version = reader.int32();
           break;
-        case 1:
-          message.baseRxSpeedTarget = reader.double();
-          break;
-        case 2:
-          message.temporaryRxSpeedTarget = reader.double();
-          break;
-        case 3:
-          message.temporaryRxSpeedExpiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
-          break;
-        case 5:
-          message.usageHealRate = reader.double();
-          break;
-        case 6:
-          message.usageMaxHP = reader.double();
-          break;
-        case 9:
-          message.usageBaseRxSpeedTarget = reader.double();
-          break;
         case 7:
           message.debug = reader.bool();
           break;
-        case 8:
-          message.mode = reader.int32() as any;
-          break;
         case 10:
           message.pauseExpiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          break;
+        case 11:
+          message.activePreset = Preset.decode(reader, reader.uint32());
+          break;
+        case 12:
+          message.presets.push(Preset.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -205,48 +320,37 @@ export const Settings = {
   fromJSON(object: any): Settings {
     return {
       version: isSet(object.version) ? Number(object.version) : 0,
-      baseRxSpeedTarget: isSet(object.baseRxSpeedTarget) ? Number(object.baseRxSpeedTarget) : 0,
-      temporaryRxSpeedTarget: isSet(object.temporaryRxSpeedTarget) ? Number(object.temporaryRxSpeedTarget) : 0,
-      temporaryRxSpeedExpiry: isSet(object.temporaryRxSpeedExpiry)
-        ? fromJsonTimestamp(object.temporaryRxSpeedExpiry)
-        : undefined,
-      usageHealRate: isSet(object.usageHealRate) ? Number(object.usageHealRate) : 0,
-      usageMaxHP: isSet(object.usageMaxHP) ? Number(object.usageMaxHP) : 0,
-      usageBaseRxSpeedTarget: isSet(object.usageBaseRxSpeedTarget) ? Number(object.usageBaseRxSpeedTarget) : 0,
       debug: isSet(object.debug) ? Boolean(object.debug) : false,
-      mode: isSet(object.mode) ? modeFromJSON(object.mode) : 0,
       pauseExpiry: isSet(object.pauseExpiry) ? fromJsonTimestamp(object.pauseExpiry) : undefined,
+      activePreset: isSet(object.activePreset) ? Preset.fromJSON(object.activePreset) : undefined,
+      presets: Array.isArray(object?.presets) ? object.presets.map((e: any) => Preset.fromJSON(e)) : [],
     };
   },
 
   toJSON(message: Settings): unknown {
     const obj: any = {};
     message.version !== undefined && (obj.version = Math.round(message.version));
-    message.baseRxSpeedTarget !== undefined && (obj.baseRxSpeedTarget = message.baseRxSpeedTarget);
-    message.temporaryRxSpeedTarget !== undefined && (obj.temporaryRxSpeedTarget = message.temporaryRxSpeedTarget);
-    message.temporaryRxSpeedExpiry !== undefined &&
-      (obj.temporaryRxSpeedExpiry = message.temporaryRxSpeedExpiry.toISOString());
-    message.usageHealRate !== undefined && (obj.usageHealRate = message.usageHealRate);
-    message.usageMaxHP !== undefined && (obj.usageMaxHP = message.usageMaxHP);
-    message.usageBaseRxSpeedTarget !== undefined && (obj.usageBaseRxSpeedTarget = message.usageBaseRxSpeedTarget);
     message.debug !== undefined && (obj.debug = message.debug);
-    message.mode !== undefined && (obj.mode = modeToJSON(message.mode));
     message.pauseExpiry !== undefined && (obj.pauseExpiry = message.pauseExpiry.toISOString());
+    message.activePreset !== undefined &&
+      (obj.activePreset = message.activePreset ? Preset.toJSON(message.activePreset) : undefined);
+    if (message.presets) {
+      obj.presets = message.presets.map((e) => e ? Preset.toJSON(e) : undefined);
+    } else {
+      obj.presets = [];
+    }
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Settings>, I>>(object: I): Settings {
     const message = createBaseSettings();
     message.version = object.version ?? 0;
-    message.baseRxSpeedTarget = object.baseRxSpeedTarget ?? 0;
-    message.temporaryRxSpeedTarget = object.temporaryRxSpeedTarget ?? 0;
-    message.temporaryRxSpeedExpiry = object.temporaryRxSpeedExpiry ?? undefined;
-    message.usageHealRate = object.usageHealRate ?? 0;
-    message.usageMaxHP = object.usageMaxHP ?? 0;
-    message.usageBaseRxSpeedTarget = object.usageBaseRxSpeedTarget ?? 0;
     message.debug = object.debug ?? false;
-    message.mode = object.mode ?? 0;
     message.pauseExpiry = object.pauseExpiry ?? undefined;
+    message.activePreset = (object.activePreset !== undefined && object.activePreset !== null)
+      ? Preset.fromPartial(object.activePreset)
+      : undefined;
+    message.presets = object.presets?.map((e) => Preset.fromPartial(e)) || [];
     return message;
   },
 };

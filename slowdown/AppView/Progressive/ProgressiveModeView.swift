@@ -52,7 +52,7 @@ struct ProgressiveModeView: View {
     }
     
     var body: some View {
-        let ratio = 1 - stateController.state.usagePoints / store.settings.usageMaxHp
+        let ratio = 1 - stateController.state.usagePoints / store.settings.activePreset.usageMaxHp
         VStack {
             StagedDamageBar(
                 ratio: ratio,
@@ -100,12 +100,12 @@ struct HealSettings: View {
     
     private var baselineSpeedEnabled: Binding<Bool> {
         Binding {
-            return store.settings.usageBaseRxSpeedTarget != 0.0
+            return store.settings.activePreset.usageBaseRxSpeedTarget != 0.0
         } set: {
             if $0 {
-                store.settings.usageBaseRxSpeedTarget = 1e6
+                store.settings.activePreset.usageBaseRxSpeedTarget = 1e6
             } else {
-                store.settings.usageBaseRxSpeedTarget = 0
+                store.settings.activePreset.usageBaseRxSpeedTarget = 0
             }
         }
     }
@@ -143,7 +143,7 @@ struct HealSettings: View {
                     }
                     .tint(.purple)
                 if baselineSpeedEnabled.wrappedValue {
-                    SpeedBar(speed: $store.settings.usageBaseRxSpeedTarget, minSpeed: 40e3, maxSpeed: 10e6) {
+                    SpeedBar(speed: $store.settings.activePreset.usageBaseRxSpeedTarget, minSpeed: 40e3, maxSpeed: 10e6) {
                         controller.syncSettings()
                     }
                     .tint(.purple)

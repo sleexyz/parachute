@@ -8,28 +8,26 @@
 import Foundation
 import ProxyService
 
+let LATEST_VERSION = 2
+
 final class SettingsMigrations {
-    private static var migrations: [(inout Proxyservice_Settings) -> Void] = [
-        // 0
-        { settings in
-            settings.baseRxSpeedTarget = 100000
-            // We don't set version because it's already default zeroed
-        },
-        // 1
-        { settings in
-            settings.usageHealRate = 0.5
-            settings.usageMaxHp = 6
-            settings.version = 1
+    private static var migrations: [Int: (inout Proxyservice_Settings) -> Void] = [
+        2: { settings in
+            settings.activePreset = Proxyservice_Preset.with {
+                $0.usageHealRate = 0.5
+                $0.usageMaxHp = 6
+            }
+            settings.version = 2
         },
     ]
     public static func setDefaults(settings: inout Proxyservice_Settings, from: Int = 0) {
-        for i in from...(migrations.count - 1) {
-            migrations[i](&settings)
+        for i in from...LATEST_VERSION {
+            migrations[i]?(&settings)
         }
     }
     
     public static func upgradeToLatestVersion(settings: inout Proxyservice_Settings) {
-        if settings.version == migrations.count - 1 {
+        if settings.version == LATEST_VERSION {
             return
         }
         setDefaults(settings: &settings, from: Int(settings.version) + 1)

@@ -10,25 +10,59 @@ enum Mode {
     FOCUS = 1;
 }
 
-message Settings {
-    // latest version: 1
-    int32 version = 4;
 
-    double baseRxSpeedTarget = 1;
-    double temporaryRxSpeedTarget = 2;
-    google.protobuf.Timestamp temporaryRxSpeedExpiry = 3;
+message Preset {
+    // Name of the preset.
+    string name = 1;
 
-    double usageHealRate = 5; // HP per second
-    double usageMaxHP = 6;
-    double usageBaseRxSpeedTarget = 9;
+    // Behavior mode of the preset.
+    // TODO: switch to oneof
+    Mode mode = 2;
 
-    bool debug = 7;
-    Mode mode = 8;
+    //
+    // "Focus mode" (Default-slow) parameters:
+    //
 
-    google.protobuf.Timestamp pauseExpiry = 10;
+    // Base speed in "Focus mode"
+    double baseRxSpeedTarget = 3;
+    // Break speed. Use Infinity to indicate no speed capping.
+    double temporaryRxSpeedTarget = 4;
+    // When a break should end.
+    // TODO: move to a State message
+    google.protobuf.Timestamp temporaryRxSpeedExpiry = 5;
+
+
+    //
+    // "Progressive mode" (Default-fast) parameters
+    //
+
+    // How fast healing should happen.
+    double usageHealRate = 6; // HP per second
+    // How long a user should be able to scroll.
+    double usageMaxHP = 7;
+    // A maximum speed to govern scrolling traffic.
+    double usageBaseRxSpeedTarget = 8;
 }
 
+message Settings {
+    reserved 1, 2, 3, 5, 6, 8, 9;
 
+    // A version used for migrations of this message.
+    // Latest version: 2
+    int32 version = 4;
+
+    bool debug = 7;
+
+    // TODO: move to a State message
+    // When pause should be lifted.
+    google.protobuf.Timestamp pauseExpiry = 10;
+
+    // Parameters of the currently active preset.
+    Preset activePreset = 11;
+
+    // A list of saved presets.
+    repeated Preset presets = 12;
+}
 
 message Request {
     oneof message {

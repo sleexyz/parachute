@@ -37,23 +37,23 @@ class SettingsStore: ObservableObject {
     
     @MainActor
     func setCheatSettings(expiry: Date, speed: Double) {
-        settings.temporaryRxSpeedExpiry = Google_Protobuf_Timestamp(date: expiry)
-        settings.temporaryRxSpeedTarget = speed
+        settings.activePreset.temporaryRxSpeedExpiry = Google_Protobuf_Timestamp(date: expiry)
+        settings.activePreset.temporaryRxSpeedTarget = speed
     }
     
     var scrollTimeLimit: Binding<Double> {
         Binding {
-            return self.settings.usageMaxHp / 2
+            return self.settings.activePreset.usageMaxHp / 2
         } set: {
-            self.settings.usageMaxHp = $0 * 2
+            self.settings.activePreset.usageMaxHp = $0 * 2
         }
     }
     
     var restTime: Binding<Double> {
         Binding {
-            return self.settings.usageMaxHp / 2 / self.settings.usageHealRate
+            return self.settings.activePreset.usageMaxHp / 2 / self.settings.activePreset.usageHealRate
         } set: {
-            self.settings.usageHealRate = self.settings.usageMaxHp / 2 / $0
+            self.settings.activePreset.usageHealRate = self.settings.activePreset.usageMaxHp / 2 / $0
         }
     }
     

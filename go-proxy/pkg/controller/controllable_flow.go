@@ -36,7 +36,7 @@ type Decision struct {
 }
 
 func (f *ControllableFlow) makeDecision() *Decision {
-	if f.c.sm.Settings().Mode == proxyservice.Mode_FOCUS {
+	if f.c.sm.ActivePreset().Mode == proxyservice.Mode_FOCUS {
 		return f.makeFocusDecision()
 	}
 	return f.makeProgressiveDecision()

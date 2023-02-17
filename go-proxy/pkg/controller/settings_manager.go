@@ -8,11 +8,12 @@ import (
 
 type SettingsChangeListener interface {
 	BeforeSettingsChange()
-	OnSettingsChange(oldSettings *proxyservice.Settings, newSettings *proxyservice.Settings)
+	OnSettingsChange(oldPreset *proxyservice.Preset, newPreset *proxyservice.Preset)
 }
 
 type SettingsProvider interface {
 	Settings() *proxyservice.Settings
+	ActivePreset() *proxyservice.Preset
 	RegisterChangeListener(listener SettingsChangeListener)
 }
 
@@ -28,7 +29,9 @@ type SettingsManagerImpl struct {
 
 func InitSettingsManager() *SettingsManagerImpl {
 	return &SettingsManagerImpl{
-		settings:        &proxyservice.Settings{},
+		settings: &proxyservice.Settings{
+			ActivePreset: &proxyservice.Preset{},
+		},
 		changeListeners: []SettingsChangeListener{},
 	}
 }
@@ -41,16 +44,20 @@ func (sm *SettingsManagerImpl) Settings() *proxyservice.Settings {
 	return sm.settings
 }
 
+func (sm *SettingsManagerImpl) ActivePreset() *proxyservice.Preset {
+	return sm.settings.ActivePreset
+}
+
 func (sm *SettingsManagerImpl) SetSettings(settings *proxyservice.Settings) {
 	for _, listener := range sm.changeListeners {
 		listener.BeforeSettingsChange()
 	}
 
 	log.Printf("settings: %v", settings)
-	oldSettings := sm.settings
+	oldPreset := sm.ActivePreset()
 	sm.settings = settings
 
 	for _, listener := range sm.changeListeners {
-		listener.OnSettingsChange(oldSettings, sm.settings)
+		listener.OnSettingsChange(oldPreset, sm.ActivePreset())
 	}
 }

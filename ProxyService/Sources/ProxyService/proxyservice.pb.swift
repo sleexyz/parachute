@@ -60,18 +60,26 @@ extension Proxyservice_Mode: CaseIterable {
 
 #endif  // swift(>=4.2)
 
-public struct Proxyservice_Settings {
+public struct Proxyservice_Preset {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  /// latest version: 1
-  public var version: Int32 = 0
+  /// Name of the preset.
+  public var name: String = String()
 
+  /// Behavior mode of the preset.
+  /// TODO: switch to oneof
+  public var mode: Proxyservice_Mode = .progressive
+
+  /// Base speed in "Focus mode"
   public var baseRxSpeedTarget: Double = 0
 
+  /// Break speed. Use Infinity to indicate no speed capping.
   public var temporaryRxSpeedTarget: Double = 0
 
+  /// When a break should end.
+  /// TODO: move to a State message
   public var temporaryRxSpeedExpiry: SwiftProtobuf.Google_Protobuf_Timestamp {
     get {return _temporaryRxSpeedExpiry ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
     set {_temporaryRxSpeedExpiry = newValue}
@@ -81,17 +89,35 @@ public struct Proxyservice_Settings {
   /// Clears the value of `temporaryRxSpeedExpiry`. Subsequent reads from it will return its default value.
   public mutating func clearTemporaryRxSpeedExpiry() {self._temporaryRxSpeedExpiry = nil}
 
-  /// HP per second
+  /// How fast healing should happen.
   public var usageHealRate: Double = 0
 
+  /// How long a user should be able to scroll.
   public var usageMaxHp: Double = 0
 
+  /// A maximum speed to govern scrolling traffic.
   public var usageBaseRxSpeedTarget: Double = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _temporaryRxSpeedExpiry: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+}
+
+public struct Proxyservice_Settings {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// A version used for migrations of this message.
+  /// Latest version: 2
+  public var version: Int32 = 0
 
   public var debug: Bool = false
 
-  public var mode: Proxyservice_Mode = .progressive
-
+  /// TODO: move to a State message
+  /// When pause should be lifted.
   public var pauseExpiry: SwiftProtobuf.Google_Protobuf_Timestamp {
     get {return _pauseExpiry ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
     set {_pauseExpiry = newValue}
@@ -101,12 +127,25 @@ public struct Proxyservice_Settings {
   /// Clears the value of `pauseExpiry`. Subsequent reads from it will return its default value.
   public mutating func clearPauseExpiry() {self._pauseExpiry = nil}
 
+  /// Parameters of the currently active preset.
+  public var activePreset: Proxyservice_Preset {
+    get {return _activePreset ?? Proxyservice_Preset()}
+    set {_activePreset = newValue}
+  }
+  /// Returns true if `activePreset` has been explicitly set.
+  public var hasActivePreset: Bool {return self._activePreset != nil}
+  /// Clears the value of `activePreset`. Subsequent reads from it will return its default value.
+  public mutating func clearActivePreset() {self._activePreset = nil}
+
+  /// A list of saved presets.
+  public var presets: [Proxyservice_Preset] = []
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
-  fileprivate var _temporaryRxSpeedExpiry: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
   fileprivate var _pauseExpiry: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+  fileprivate var _activePreset: Proxyservice_Preset? = nil
 }
 
 public struct Proxyservice_Request {
@@ -304,6 +343,7 @@ public struct Proxyservice_Sample {
 
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Proxyservice_Mode: @unchecked Sendable {}
+extension Proxyservice_Preset: @unchecked Sendable {}
 extension Proxyservice_Settings: @unchecked Sendable {}
 extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
@@ -328,19 +368,17 @@ extension Proxyservice_Mode: SwiftProtobuf._ProtoNameProviding {
   ]
 }
 
-extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Settings"
+extension Proxyservice_Preset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Preset"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    4: .same(proto: "version"),
-    1: .same(proto: "baseRxSpeedTarget"),
-    2: .same(proto: "temporaryRxSpeedTarget"),
-    3: .same(proto: "temporaryRxSpeedExpiry"),
-    5: .same(proto: "usageHealRate"),
-    6: .same(proto: "usageMaxHP"),
-    9: .same(proto: "usageBaseRxSpeedTarget"),
-    7: .same(proto: "debug"),
-    8: .same(proto: "mode"),
-    10: .same(proto: "pauseExpiry"),
+    1: .same(proto: "name"),
+    2: .same(proto: "mode"),
+    3: .same(proto: "baseRxSpeedTarget"),
+    4: .same(proto: "temporaryRxSpeedTarget"),
+    5: .same(proto: "temporaryRxSpeedExpiry"),
+    6: .same(proto: "usageHealRate"),
+    7: .same(proto: "usageMaxHP"),
+    8: .same(proto: "usageBaseRxSpeedTarget"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -349,16 +387,14 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularDoubleField(value: &self.baseRxSpeedTarget) }()
-      case 2: try { try decoder.decodeSingularDoubleField(value: &self.temporaryRxSpeedTarget) }()
-      case 3: try { try decoder.decodeSingularMessageField(value: &self._temporaryRxSpeedExpiry) }()
-      case 4: try { try decoder.decodeSingularInt32Field(value: &self.version) }()
-      case 5: try { try decoder.decodeSingularDoubleField(value: &self.usageHealRate) }()
-      case 6: try { try decoder.decodeSingularDoubleField(value: &self.usageMaxHp) }()
-      case 7: try { try decoder.decodeSingularBoolField(value: &self.debug) }()
-      case 8: try { try decoder.decodeSingularEnumField(value: &self.mode) }()
-      case 9: try { try decoder.decodeSingularDoubleField(value: &self.usageBaseRxSpeedTarget) }()
-      case 10: try { try decoder.decodeSingularMessageField(value: &self._pauseExpiry) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 2: try { try decoder.decodeSingularEnumField(value: &self.mode) }()
+      case 3: try { try decoder.decodeSingularDoubleField(value: &self.baseRxSpeedTarget) }()
+      case 4: try { try decoder.decodeSingularDoubleField(value: &self.temporaryRxSpeedTarget) }()
+      case 5: try { try decoder.decodeSingularMessageField(value: &self._temporaryRxSpeedExpiry) }()
+      case 6: try { try decoder.decodeSingularDoubleField(value: &self.usageHealRate) }()
+      case 7: try { try decoder.decodeSingularDoubleField(value: &self.usageMaxHp) }()
+      case 8: try { try decoder.decodeSingularDoubleField(value: &self.usageBaseRxSpeedTarget) }()
       default: break
       }
     }
@@ -369,50 +405,102 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    if self.baseRxSpeedTarget != 0 {
-      try visitor.visitSingularDoubleField(value: self.baseRxSpeedTarget, fieldNumber: 1)
-    }
-    if self.temporaryRxSpeedTarget != 0 {
-      try visitor.visitSingularDoubleField(value: self.temporaryRxSpeedTarget, fieldNumber: 2)
-    }
-    try { if let v = self._temporaryRxSpeedExpiry {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    } }()
-    if self.version != 0 {
-      try visitor.visitSingularInt32Field(value: self.version, fieldNumber: 4)
-    }
-    if self.usageHealRate != 0 {
-      try visitor.visitSingularDoubleField(value: self.usageHealRate, fieldNumber: 5)
-    }
-    if self.usageMaxHp != 0 {
-      try visitor.visitSingularDoubleField(value: self.usageMaxHp, fieldNumber: 6)
-    }
-    if self.debug != false {
-      try visitor.visitSingularBoolField(value: self.debug, fieldNumber: 7)
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 1)
     }
     if self.mode != .progressive {
-      try visitor.visitSingularEnumField(value: self.mode, fieldNumber: 8)
+      try visitor.visitSingularEnumField(value: self.mode, fieldNumber: 2)
+    }
+    if self.baseRxSpeedTarget != 0 {
+      try visitor.visitSingularDoubleField(value: self.baseRxSpeedTarget, fieldNumber: 3)
+    }
+    if self.temporaryRxSpeedTarget != 0 {
+      try visitor.visitSingularDoubleField(value: self.temporaryRxSpeedTarget, fieldNumber: 4)
+    }
+    try { if let v = self._temporaryRxSpeedExpiry {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    } }()
+    if self.usageHealRate != 0 {
+      try visitor.visitSingularDoubleField(value: self.usageHealRate, fieldNumber: 6)
+    }
+    if self.usageMaxHp != 0 {
+      try visitor.visitSingularDoubleField(value: self.usageMaxHp, fieldNumber: 7)
     }
     if self.usageBaseRxSpeedTarget != 0 {
-      try visitor.visitSingularDoubleField(value: self.usageBaseRxSpeedTarget, fieldNumber: 9)
+      try visitor.visitSingularDoubleField(value: self.usageBaseRxSpeedTarget, fieldNumber: 8)
     }
-    try { if let v = self._pauseExpiry {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
-    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proxyservice_Settings, rhs: Proxyservice_Settings) -> Bool {
-    if lhs.version != rhs.version {return false}
+  public static func ==(lhs: Proxyservice_Preset, rhs: Proxyservice_Preset) -> Bool {
+    if lhs.name != rhs.name {return false}
+    if lhs.mode != rhs.mode {return false}
     if lhs.baseRxSpeedTarget != rhs.baseRxSpeedTarget {return false}
     if lhs.temporaryRxSpeedTarget != rhs.temporaryRxSpeedTarget {return false}
     if lhs._temporaryRxSpeedExpiry != rhs._temporaryRxSpeedExpiry {return false}
     if lhs.usageHealRate != rhs.usageHealRate {return false}
     if lhs.usageMaxHp != rhs.usageMaxHp {return false}
     if lhs.usageBaseRxSpeedTarget != rhs.usageBaseRxSpeedTarget {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Settings"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    4: .same(proto: "version"),
+    7: .same(proto: "debug"),
+    10: .same(proto: "pauseExpiry"),
+    11: .same(proto: "activePreset"),
+    12: .same(proto: "presets"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 4: try { try decoder.decodeSingularInt32Field(value: &self.version) }()
+      case 7: try { try decoder.decodeSingularBoolField(value: &self.debug) }()
+      case 10: try { try decoder.decodeSingularMessageField(value: &self._pauseExpiry) }()
+      case 11: try { try decoder.decodeSingularMessageField(value: &self._activePreset) }()
+      case 12: try { try decoder.decodeRepeatedMessageField(value: &self.presets) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if self.version != 0 {
+      try visitor.visitSingularInt32Field(value: self.version, fieldNumber: 4)
+    }
+    if self.debug != false {
+      try visitor.visitSingularBoolField(value: self.debug, fieldNumber: 7)
+    }
+    try { if let v = self._pauseExpiry {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
+    } }()
+    try { if let v = self._activePreset {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
+    } }()
+    if !self.presets.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.presets, fieldNumber: 12)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_Settings, rhs: Proxyservice_Settings) -> Bool {
+    if lhs.version != rhs.version {return false}
     if lhs.debug != rhs.debug {return false}
-    if lhs.mode != rhs.mode {return false}
     if lhs._pauseExpiry != rhs._pauseExpiry {return false}
+    if lhs._activePreset != rhs._activePreset {return false}
+    if lhs.presets != rhs.presets {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

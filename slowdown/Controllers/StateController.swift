@@ -35,13 +35,13 @@ class StateController: ObservableObject  {
     
     var isSlowing: Bool {
         let usagePoints = state.usagePoints
-        let usageMaxHp = settings.settings.usageMaxHp
+        let usageMaxHp = settings.settings.activePreset.usageMaxHp
         let damageRatio = usagePoints / usageMaxHp
         return damageRatio > 0.5
     }
     
     var damageRatio: Double {
-        return state.usagePoints / settings.settings.usageMaxHp
+        return state.usagePoints / settings.settings.activePreset.usageMaxHp
     }
     
     @MainActor

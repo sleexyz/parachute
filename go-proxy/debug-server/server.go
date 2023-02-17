@@ -29,7 +29,9 @@ func InitDebugServerProxy(proxyBridge ffi.ProxyBridge, proxy *proxy.Proxy) *Debu
 
 func (p *DebugServerProxy) Start(port int) {
 	startRequest := &proxyservice.Settings{
-		BaseRxSpeedTarget: controller.DefaultRxSpeedTarget,
+		ActivePreset: &proxyservice.Preset{
+			BaseRxSpeedTarget: controller.DefaultRxSpeedTarget,
+		},
 	}
 	go p.proxy.StartUDPServer(port, startRequest)
 	p.serveDebugHandlers()
@@ -49,12 +51,9 @@ func (p *DebugServerProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	var buf bytes.Buffer
 	buf.ReadFrom(r.Body)
-	out, err := p.proxyBridge.Rpc(buf.Bytes())
-	if err != nil {
-		http.Error(w, fmt.Sprintf("command returned error: %v", err), http.StatusInternalServerError)
-	}
+	out := p.proxyBridge.Rpc(buf.Bytes())
 	w.Header().Set("Content-Type", "application/octet-stream")
-	_, err = w.Write(out)
+	_, err := w.Write(out)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
 	}

@@ -29,8 +29,8 @@ class SettingsController: ObservableObject {
     }
     
     public func switchMode(mode: Proxyservice_Mode) {
-        if mode != store.settings.mode {
-            store.settings.mode = mode
+        if mode != store.settings.activePreset.mode {
+            store.settings.activePreset.mode = mode
             syncSettings()
         }
     }
