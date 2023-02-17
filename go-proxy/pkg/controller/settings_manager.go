@@ -53,6 +53,11 @@ func (sm *SettingsManagerImpl) SetSettings(settings *proxyservice.Settings) {
 		listener.BeforeSettingsChange()
 	}
 
+	// normalize settings
+	if settings.ActivePreset == nil {
+		settings.ActivePreset = &proxyservice.Preset{}
+	}
+
 	log.Printf("settings: %v", settings)
 	oldPreset := sm.ActivePreset()
 	sm.settings = settings
