@@ -13,3 +13,8 @@ extension Proxyservice_Settings {
         return self.hasPauseExpiry && self.pauseExpiry.date.timeIntervalSinceNow > 0
     }
 }
+
+
+extension Proxyservice_Preset: Identifiable {
+    public typealias ID = String
+}

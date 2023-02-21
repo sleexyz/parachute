@@ -9,6 +9,9 @@ import Foundation
 import SwiftUI
 
 extension View {
+    func provideDep(_ dep: any Dep) -> some View {
+        self.modifier(SimpleProvider(dep: dep))
+    }
     func provideDeps(_ deps: [any Dep]) -> some View {
         self.modifier(Provider(deps: deps))
     }
@@ -21,14 +24,14 @@ protocol Dep {
     associatedtype T: ObservableObject
     func create(r: Registry) -> T
     func getServiceKeys() -> [ServiceKey]
-    func environmentObject<Content: View>(registry: Registry, content: Content) -> any View
+    func _environmentObject<Content: View>(registry: Registry, content: Content) -> any View
 }
 
 extension Dep {
     func getServiceKeys() -> [ServiceKey] {
         return [ServiceKey(serviceType: T.self)]
     }
-    func environmentObject<Content: View>(registry: Registry, content: Content) -> any View {
+    func _environmentObject<Content: View>(registry: Registry, content: Content) -> any View {
         return content.environmentObject(registry.resolve(T.self))
     }
 }
@@ -46,7 +49,7 @@ extension MockDep {
             ServiceKey(serviceType: T.self)
         ]
     }
-    func environmentObject<Content: View>(registry: Registry, content: Content) -> any View {
+    func _environmentObject<Content: View>(registry: Registry, content: Content) -> any View {
         return content
             .environmentObject(registry.resolve(MockT.self))
             .environmentObject(registry.resolve(T.self))

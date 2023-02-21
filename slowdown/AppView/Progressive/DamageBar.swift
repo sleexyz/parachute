@@ -34,9 +34,6 @@ struct DamageBar: View {
     var height: Double = 20
     
     var color: Color {
-        if 1 - slowAmount < 0.25 {
-            return .red
-        }
         if 1 - slowAmount < 0.5 {
             return .yellow
         }
@@ -87,6 +84,17 @@ struct StagedDamageBar: View {
         return DamageBar(ratio: ratioShown, slowAmount: slowAmount, height: height)
     }
     
+}
+
+struct WiredStagedDamageBar: View {
+    @EnvironmentObject var stateController: StateController
+    @EnvironmentObject var settingsStore: SettingsStore
+    var height: Double
+    var body: some View {
+        let ratio = 1 - stateController.state.usagePoints / settingsStore.settings.activePreset.usageMaxHp
+        
+        return StagedDamageBar(ratio: ratio, height: height)
+    }
 }
 
 struct DamageBar_Previews: PreviewProvider {

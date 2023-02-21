@@ -63,6 +63,8 @@ export interface Preset {
   usageMaxHP: number;
   /** A maximum speed to govern scrolling traffic. */
   usageBaseRxSpeedTarget: number;
+  /** ID of the preset */
+  id: string;
 }
 
 export interface Settings {
@@ -80,11 +82,7 @@ export interface Settings {
     | Date
     | undefined;
   /** Parameters of the currently active preset. */
-  activePreset:
-    | Preset
-    | undefined;
-  /** A list of saved presets. */
-  presets: Preset[];
+  activePreset: Preset | undefined;
 }
 
 export interface Request {
@@ -149,6 +147,7 @@ function createBasePreset(): Preset {
     usageHealRate: 0,
     usageMaxHP: 0,
     usageBaseRxSpeedTarget: 0,
+    id: "",
   };
 }
 
@@ -177,6 +176,9 @@ export const Preset = {
     }
     if (message.usageBaseRxSpeedTarget !== 0) {
       writer.uint32(65).double(message.usageBaseRxSpeedTarget);
+    }
+    if (message.id !== "") {
+      writer.uint32(82).string(message.id);
     }
     return writer;
   },
@@ -212,6 +214,9 @@ export const Preset = {
         case 8:
           message.usageBaseRxSpeedTarget = reader.double();
           break;
+        case 10:
+          message.id = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -232,6 +237,7 @@ export const Preset = {
       usageHealRate: isSet(object.usageHealRate) ? Number(object.usageHealRate) : 0,
       usageMaxHP: isSet(object.usageMaxHP) ? Number(object.usageMaxHP) : 0,
       usageBaseRxSpeedTarget: isSet(object.usageBaseRxSpeedTarget) ? Number(object.usageBaseRxSpeedTarget) : 0,
+      id: isSet(object.id) ? String(object.id) : "",
     };
   },
 
@@ -246,6 +252,7 @@ export const Preset = {
     message.usageHealRate !== undefined && (obj.usageHealRate = message.usageHealRate);
     message.usageMaxHP !== undefined && (obj.usageMaxHP = message.usageMaxHP);
     message.usageBaseRxSpeedTarget !== undefined && (obj.usageBaseRxSpeedTarget = message.usageBaseRxSpeedTarget);
+    message.id !== undefined && (obj.id = message.id);
     return obj;
   },
 
@@ -259,12 +266,13 @@ export const Preset = {
     message.usageHealRate = object.usageHealRate ?? 0;
     message.usageMaxHP = object.usageMaxHP ?? 0;
     message.usageBaseRxSpeedTarget = object.usageBaseRxSpeedTarget ?? 0;
+    message.id = object.id ?? "";
     return message;
   },
 };
 
 function createBaseSettings(): Settings {
-  return { version: 0, debug: false, pauseExpiry: undefined, activePreset: undefined, presets: [] };
+  return { version: 0, debug: false, pauseExpiry: undefined, activePreset: undefined };
 }
 
 export const Settings = {
@@ -280,9 +288,6 @@ export const Settings = {
     }
     if (message.activePreset !== undefined) {
       Preset.encode(message.activePreset, writer.uint32(90).fork()).ldelim();
-    }
-    for (const v of message.presets) {
-      Preset.encode(v!, writer.uint32(98).fork()).ldelim();
     }
     return writer;
   },
@@ -306,9 +311,6 @@ export const Settings = {
         case 11:
           message.activePreset = Preset.decode(reader, reader.uint32());
           break;
-        case 12:
-          message.presets.push(Preset.decode(reader, reader.uint32()));
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -323,7 +325,6 @@ export const Settings = {
       debug: isSet(object.debug) ? Boolean(object.debug) : false,
       pauseExpiry: isSet(object.pauseExpiry) ? fromJsonTimestamp(object.pauseExpiry) : undefined,
       activePreset: isSet(object.activePreset) ? Preset.fromJSON(object.activePreset) : undefined,
-      presets: Array.isArray(object?.presets) ? object.presets.map((e: any) => Preset.fromJSON(e)) : [],
     };
   },
 
@@ -334,11 +335,6 @@ export const Settings = {
     message.pauseExpiry !== undefined && (obj.pauseExpiry = message.pauseExpiry.toISOString());
     message.activePreset !== undefined &&
       (obj.activePreset = message.activePreset ? Preset.toJSON(message.activePreset) : undefined);
-    if (message.presets) {
-      obj.presets = message.presets.map((e) => e ? Preset.toJSON(e) : undefined);
-    } else {
-      obj.presets = [];
-    }
     return obj;
   },
 
@@ -350,7 +346,6 @@ export const Settings = {
     message.activePreset = (object.activePreset !== undefined && object.activePreset !== null)
       ? Preset.fromPartial(object.activePreset)
       : undefined;
-    message.presets = object.presets?.map((e) => Preset.fromPartial(e)) || [];
     return message;
   },
 };

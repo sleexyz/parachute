@@ -8,6 +8,33 @@
 import Foundation
 import SwiftUI
 
+
+// A Simpler implementation of a Provider
+struct SimpleProvider: ViewModifier {
+    let dep: any Dep
+    @Environment(\.registry) private var parent: Registry
+    func body(content: Content) -> some View {
+        content.modifier(SimpleProviderInner(dep: dep, parent: parent))
+    }
+    
+    private struct SimpleProviderInner: ViewModifier {
+        let dep: any Dep
+        @StateObject private var registry: RegistryImpl
+        
+        init(dep: any Dep, parent: Registry) {
+            self._registry = StateObject(wrappedValue: RegistryImpl(deps: [dep], parent: parent))
+            self.dep = dep
+        }
+        
+        func body(content: Content) -> some View {
+            AnyView(dep._environmentObject(registry: registry, content: content))
+                .environment(\.registry, registry)
+        }
+        
+    }
+}
+
+
 // A Provider provides
 // 1) services to views -- via EnvironmentObject
 // 2) services to other provider-created services -- via a view-hierarchy bound Registry
@@ -45,7 +72,7 @@ internal struct ProviderViewer: ViewModifier {
         if deps.isEmpty {
             return AnyView(content)
         }
-        return AnyView(AnyView(deps[0].environmentObject(registry: registry, content: content))
+        return AnyView(AnyView(deps[0]._environmentObject(registry: registry, content: content))
             .modifier(ProviderViewer(deps: Array(deps.dropFirst(1)), registry: registry)))
     }
 }

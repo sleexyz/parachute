@@ -11,7 +11,6 @@ import Logging
 import SwiftUI
 import Combine
 
-
 class StateController: ObservableObject  {
     struct Provider: Dep {
         func create(r: Registry) -> StateController  {
@@ -28,9 +27,14 @@ class StateController: ObservableObject  {
     let settings: SettingsStore
     let service: VPNConfigurationService
     
+    var bag = Set<AnyCancellable>()
+    
     init(settings: SettingsStore, service: VPNConfigurationService) {
         self.settings = settings
         self.service = service
+        self.settings.$settings.sink { _ in
+            self.objectWillChange.send()
+        }.store(in: &bag)
     }
     
     var isSlowing: Bool {
@@ -42,6 +46,25 @@ class StateController: ObservableObject  {
     
     var damageRatio: Double {
         return state.usagePoints / settings.settings.activePreset.usageMaxHp
+    }
+    
+    var healTimeLeft: Double {
+        return state.usagePoints / settings.settings.activePreset.usageHealRate
+    }
+    
+    var hpRatio: Double {
+        return 1 - damageRatio
+    }
+    
+    var scrollTimeLeft: Double {
+        return max(settings.settings.activePreset.usageMaxHp / 2 - state.usagePoints, 0)
+    }
+    
+    var hpColor: Color {
+        if hpRatio < 0.5 {
+            return .yellow
+        }
+        return .green
     }
     
     @MainActor

@@ -10,6 +10,7 @@ import ProxyService
 import SwiftProtobuf
 import SwiftUI
 import Logging
+import Combine
 
 
 class SettingsStore: ObservableObject {
@@ -21,7 +22,7 @@ class SettingsStore: ObservableObject {
     
     private var onLoadFns: Array<() -> Void> = []
     
-    @Published var settings: Proxyservice_Settings = {
+    @Published public var settings: Proxyservice_Settings = {
         var settings = Proxyservice_Settings()
         SettingsMigrations.setDefaults(settings: &settings)
         return settings
@@ -31,8 +32,13 @@ class SettingsStore: ObservableObject {
     
     private let logger = Logger(label: "industries.strange.slowdown.SettingsStore")
     
+    private var bag = Set<AnyCancellable>()
+    
     init() {
         logger.info("init settings store")
+        $settings.sink {
+            self.logger.info("Changed: \($0.debugDescription)")
+        }.store(in: &bag)
     }
     
     @MainActor
@@ -41,19 +47,13 @@ class SettingsStore: ObservableObject {
         settings.activePreset.temporaryRxSpeedTarget = speed
     }
     
-    var scrollTimeLimit: Binding<Double> {
+    var activePreset: Binding<Proxyservice_Preset> {
         Binding {
-            return self.settings.activePreset.usageMaxHp / 2
-        } set: {
-            self.settings.activePreset.usageMaxHp = $0 * 2
-        }
-    }
-    
-    var restTime: Binding<Double> {
-        Binding {
-            return self.settings.activePreset.usageMaxHp / 2 / self.settings.activePreset.usageHealRate
-        } set: {
-            self.settings.activePreset.usageHealRate = self.settings.activePreset.usageMaxHp / 2 / $0
+            return self.settings.activePreset
+        } set: { value in
+            Task {
+                await self.setActivePreset(value:value)
+            }
         }
     }
     
@@ -100,14 +100,22 @@ class SettingsStore: ObservableObject {
     }
     
     @MainActor
+    private func setActivePreset(value: Proxyservice_Preset) {
+        self.settings.activePreset = value
+    }
+    
+    @MainActor
     private func setLoaded(value: Bool) {
         self.loaded = value
     }
+    
+    
+    
+    
     
     public func save() throws {
         let data = try self.settings.serializedData()
         let outfile = try SettingsStore.fileUrl()
         try data.write(to:outfile)
     }
-            
 }

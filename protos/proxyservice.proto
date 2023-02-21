@@ -42,6 +42,9 @@ message Preset {
     double usageMaxHP = 7;
     // A maximum speed to govern scrolling traffic.
     double usageBaseRxSpeedTarget = 8;
+
+    // ID of the preset
+    string id = 10;
 }
 
 message Settings {
@@ -59,9 +62,6 @@ message Settings {
 
     // Parameters of the currently active preset.
     Preset activePreset = 11;
-
-    // A list of saved presets.
-    repeated Preset presets = 12;
 }
 
 message Request {

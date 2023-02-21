@@ -98,6 +98,9 @@ public struct Proxyservice_Preset {
   /// A maximum speed to govern scrolling traffic.
   public var usageBaseRxSpeedTarget: Double = 0
 
+  /// ID of the preset
+  public var id: String = String()
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -136,9 +139,6 @@ public struct Proxyservice_Settings {
   public var hasActivePreset: Bool {return self._activePreset != nil}
   /// Clears the value of `activePreset`. Subsequent reads from it will return its default value.
   public mutating func clearActivePreset() {self._activePreset = nil}
-
-  /// A list of saved presets.
-  public var presets: [Proxyservice_Preset] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -379,6 +379,7 @@ extension Proxyservice_Preset: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     6: .same(proto: "usageHealRate"),
     7: .same(proto: "usageMaxHP"),
     8: .same(proto: "usageBaseRxSpeedTarget"),
+    10: .same(proto: "id"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -395,6 +396,7 @@ extension Proxyservice_Preset: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       case 6: try { try decoder.decodeSingularDoubleField(value: &self.usageHealRate) }()
       case 7: try { try decoder.decodeSingularDoubleField(value: &self.usageMaxHp) }()
       case 8: try { try decoder.decodeSingularDoubleField(value: &self.usageBaseRxSpeedTarget) }()
+      case 10: try { try decoder.decodeSingularStringField(value: &self.id) }()
       default: break
       }
     }
@@ -429,6 +431,9 @@ extension Proxyservice_Preset: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if self.usageBaseRxSpeedTarget != 0 {
       try visitor.visitSingularDoubleField(value: self.usageBaseRxSpeedTarget, fieldNumber: 8)
     }
+    if !self.id.isEmpty {
+      try visitor.visitSingularStringField(value: self.id, fieldNumber: 10)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -441,6 +446,7 @@ extension Proxyservice_Preset: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if lhs.usageHealRate != rhs.usageHealRate {return false}
     if lhs.usageMaxHp != rhs.usageMaxHp {return false}
     if lhs.usageBaseRxSpeedTarget != rhs.usageBaseRxSpeedTarget {return false}
+    if lhs.id != rhs.id {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -453,7 +459,6 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     7: .same(proto: "debug"),
     10: .same(proto: "pauseExpiry"),
     11: .same(proto: "activePreset"),
-    12: .same(proto: "presets"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -466,7 +471,6 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case 7: try { try decoder.decodeSingularBoolField(value: &self.debug) }()
       case 10: try { try decoder.decodeSingularMessageField(value: &self._pauseExpiry) }()
       case 11: try { try decoder.decodeSingularMessageField(value: &self._activePreset) }()
-      case 12: try { try decoder.decodeRepeatedMessageField(value: &self.presets) }()
       default: break
       }
     }
@@ -489,9 +493,6 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     try { if let v = self._activePreset {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
     } }()
-    if !self.presets.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.presets, fieldNumber: 12)
-    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -500,7 +501,6 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if lhs.debug != rhs.debug {return false}
     if lhs._pauseExpiry != rhs._pauseExpiry {return false}
     if lhs._activePreset != rhs._activePreset {return false}
-    if lhs.presets != rhs.presets {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

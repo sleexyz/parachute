@@ -53,7 +53,8 @@ struct AppModeCarousel: View {
             
             switch mode.id {
             case "progressive":
-                ProgressiveModeView()
+//                ProgressiveCard(active: true)
+                FocusModeView()
             case "focus":
                 FocusModeView()
             case "break":

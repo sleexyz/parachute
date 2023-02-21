@@ -13,10 +13,7 @@ let LATEST_VERSION = 2
 final class SettingsMigrations {
     private static var migrations: [Int: (inout Proxyservice_Settings) -> Void] = [
         2: { settings in
-            settings.activePreset = Proxyservice_Preset.with {
-                $0.usageHealRate = 0.5
-                $0.usageMaxHp = 6
-            }
+            settings.activePreset = PresetManager.defaultPresets[0]
             settings.version = 2
         },
     ]
