@@ -19,13 +19,17 @@ struct Card<Content: View>: View {
     var body: some View {
         VStack {
             VStack {
-                HStack {
+                HStack{
                     Text(title)
-                        .font(.headline.bold())
+                        .font(.title.bold())
                     Spacer()
-                    if caption != nil {
+                }
+                .padding(.bottom, 120)
+                if caption != nil {
+                    HStack{
                         Text(caption!)
                             .font(.caption)
+                        Spacer()
                     }
                 }
                 content()

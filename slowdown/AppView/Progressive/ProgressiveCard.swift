@@ -19,7 +19,7 @@ struct ProgressiveCard<Content: View>: View {
     
     
     var scrollTimeText: String {
-        return "Limit scrolling to \(Int(model.scrollTimeLimit.wrappedValue)) minute\(Int(model.scrollTimeLimit.wrappedValue) != 1 ? "s" : "")"
+        return "Limits scrolling to \(Int(model.scrollTimeLimit.wrappedValue)) minute\(Int(model.scrollTimeLimit.wrappedValue) != 1 ? "s" : "")"
     }
     
     var body: some View {

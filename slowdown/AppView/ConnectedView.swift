@@ -18,7 +18,6 @@ struct ConnectedView: View {
             SlowingStatus()
             Spacer()
             CardSelector()
-                .padding(.bottom, 60)
         }
     }
 }
@@ -76,11 +75,98 @@ struct PauseCard: View {
     var body: some View {
         Card(
             title: "Pause",
-            caption: "Disconnect from VPN for 1 hour",
+            caption: "Disconnects from VPN for 1 hour",
             backgroundColor: Color.gray
         ) {
             
         }
+    }
+}
+
+struct WiredPauseCard: View {
+    @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
+    @EnvironmentObject var presetManager: PresetManager
+    var body: some View {
+        PauseCard()
+            .onTapGesture {
+                if !presetManager.open {
+                    presetManager.open = true
+                    return
+                }
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                vpnLifecycleManager.pauseConnection()
+            }
+    }
+}
+
+struct WiredPresetCard: View {
+    @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
+    @EnvironmentObject var presetManager: PresetManager
+    @EnvironmentObject var settingsStore: SettingsStore
+    
+    var preset: Proxyservice_Preset
+    
+    var body: some View {
+        ProgressiveCard(
+            model: PresetViewModel(
+                preset: Binding(
+                    get: {
+                        return preset
+                    },
+                    set: { _ in }
+                )
+            )) {
+                
+            }
+            .onTapGesture {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                if !presetManager.open {
+                    presetManager.open = true
+                    return
+                }
+                if preset.id != settingsStore.settings.activePreset.id {
+                    presetManager.loadPreset(preset: preset)
+                }
+                presetManager.open = false
+            }
+        
+    }
+}
+
+protocol Cardable {
+    associatedtype V: View
+    @ViewBuilder
+    func makeCard() -> V
+}
+
+extension Proxyservice_Preset: Cardable {
+    func makeCard() -> some View {
+        WiredPresetCard(preset: self)
+    }
+}
+
+struct PresetCardStackModifier: ViewModifier {
+    @EnvironmentObject var presetManager: PresetManager
+    let index: Int
+    let total: Int
+    
+    var openHeight: Double {
+        return (UIScreen.main.bounds.height - 60) / Double(total)
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .offset(
+                x: 0,
+                y: [
+                    Double(total - index - 1) * (presetManager.open ? -openHeight: -10),
+                ].reduce(0, { acc, next in acc + next})
+            )
+            .animation(
+                .spring(),
+                value: "\(presetManager.open) \(index)"
+            )
+            .zIndex(index == total - 1 ? 1 : 0)
     }
 }
 
@@ -89,49 +175,42 @@ struct CardSelector: View {
     @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var stateController: StateController
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
-    @State var open: Bool = false
-    var body: some View {
-        VStack {
-            if open {
-                PauseCard()
-                        .onTapGesture {
-                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                            vpnLifecycleManager.pauseConnection()
-                        }
-                ForEach(PresetManager.defaultPresets) {preset in
-                    if preset.id != settingsStore.activePreset.id {
-                        ProgressiveCard(
-                            model: PresetViewModel(
-                                preset: Binding(
-                                    get: {
-                                        return preset
-                                    },
-                                    set: { _ in }
-                                )
-                            )) {
-                                
-                            }
-                        .onTapGesture {
-                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                            presetManager.loadPreset(preset: preset)
-                            self.open = false
-                        }
-                    }
-                }
+    
+    var presets: Array<Proxyservice_Preset> {
+        return PresetManager.defaultPresets
+    }
+    
+    var cardCount: Int {
+        return presets.count + 1
+    }
+    
+    func getCardIndexMap() -> Dictionary<String, Int> {
+        var afterActive = false
+        var map =  Dictionary<String, Int>()
+        for i in presets.indices {
+            let preset = presets[i]
+            if preset.id == settingsStore.activePreset.id {
+                map[preset.id] = cardCount - 1
+                afterActive = true
+            } else {
+                map[preset.id] = i + 1 + (afterActive ? -1 : 0)
             }
-            ProgressiveCard(model: PresetViewModel(preset: settingsStore.activePreset)) {
-                if stateController.isSlowing {
-                    LockedHealButton()
-                        .padding(.top, 20)
-                }
-            }
-                .onTapGesture {
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    self.open = !self.open
-                }
         }
-        .onTapBackground(enabled: self.open) {
-            self.open = false
+        return map
+    }
+    
+    var body: some View {
+        let map = getCardIndexMap()
+        ZStack(alignment: .bottom) {
+            WiredPauseCard()
+                .modifier(PresetCardStackModifier(index: 0, total: cardCount))
+            ForEach(presets, id:\.id) { preset in
+                preset.makeCard()
+                    .modifier(PresetCardStackModifier(index: map[preset.id]!, total: cardCount))
+            }
+        }
+        .onTapBackground(enabled: presetManager.open) {
+            presetManager.open = false
         }
     }
 }

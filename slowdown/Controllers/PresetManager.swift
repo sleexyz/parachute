@@ -21,17 +21,19 @@ class PresetManager: ObservableObject {
         self.settingsController = settingsController
     }
     
+    @Published var open: Bool = false
+    
     static let defaultPresets: [Proxyservice_Preset] = [
         Proxyservice_Preset.with {
             $0.id = "relax"
-            $0.name = "Relax mode"
+            $0.name = "Relax"
             $0.usageMaxHp = 20
             $0.usageHealRate = 0.5
             $0.mode = .progressive
         },
         Proxyservice_Preset.with {
             $0.id = "focus"
-            $0.name = "Focus mode"
+            $0.name = "Focus"
             $0.usageMaxHp = 2
             $0.usageHealRate = 0.5
             $0.mode = .progressive
