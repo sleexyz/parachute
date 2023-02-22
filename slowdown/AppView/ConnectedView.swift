@@ -14,9 +14,9 @@ struct ConnectedView: View {
     @EnvironmentObject var service: VPNConfigurationService
     @EnvironmentObject var stateController: StateController
     var body: some View {
-        VStack {
+        ZStack(alignment: .center) {
             SlowingStatus()
-            Spacer()
+//                .offset(x: 0, y: 280)
             CardSelector()
         }
     }
@@ -36,32 +36,12 @@ struct SlowingStatus: View {
         }
     }
     
-    var healTimeLeft: Int {
-        return Int(stateController.healTimeLeft)
-    }
-    
-    var scrollTimeLeft: Int {
-        return Int(stateController.scrollTimeLeft)
-    }
-    
-    @ViewBuilder
-    var timeLeftCaption: some View {
-        if scrollTimeLeft == 0 {
-            Text("\(healTimeLeft) minute\(healTimeLeft != 1 ? "s" : "") until healed")
-                .font(.caption)
-        } else {
-            Text("\(scrollTimeLeft) minute\(scrollTimeLeft != 1 ? "s" : "") of scrolling left")
-                .font(.caption)
-        }
-    }
-    
     var body: some View {
         VStack {
             HStack(alignment: .bottom) {
                 text
                     .font(.headline.bold())
                 Spacer()
-                timeLeftCaption
             }
             .padding(.bottom, 20)
             WiredStagedDamageBar(height: 20)
@@ -148,19 +128,36 @@ extension Proxyservice_Preset: Cardable {
 struct PresetCardStackModifier: ViewModifier {
     @EnvironmentObject var presetManager: PresetManager
     let index: Int
+    let originalIndex: Int
     let total: Int
     
     var openHeight: Double {
         return (UIScreen.main.bounds.height - 60) / Double(total)
     }
     
+    var posY: Double {
+        if !presetManager.open && index == total - 1 {
+            return 125
+        }
+        if presetManager.open {
+            return UIScreen.main.bounds.height - 150.0
+        }
+        return UIScreen.main.bounds.height + 75.0
+    }
+    
+    var y: Double {
+        if presetManager.open {
+            return Double(total - originalIndex - 1) * -openHeight
+        }
+        return Double(total - index - 2) *  -25
+    }
+    
     func body(content: Content) -> some View {
         content
+            .position(x: UIScreen.main.bounds.width / 2, y: posY)
             .offset(
                 x: 0,
-                y: [
-                    Double(total - index - 1) * (presetManager.open ? -openHeight: -10),
-                ].reduce(0, { acc, next in acc + next})
+                y: y
             )
             .animation(
                 .spring(),
@@ -184,16 +181,16 @@ struct CardSelector: View {
         return presets.count + 1
     }
     
-    func getCardIndexMap() -> Dictionary<String, Int> {
+    func getCardIndexMap() -> Dictionary<String, (Int, Int)> {
         var afterActive = false
-        var map =  Dictionary<String, Int>()
+        var map =  Dictionary<String, (Int, Int)>()
         for i in presets.indices {
             let preset = presets[i]
             if preset.id == settingsStore.activePreset.id {
-                map[preset.id] = cardCount - 1
+                map[preset.id] = (cardCount - 1, i + 1)
                 afterActive = true
             } else {
-                map[preset.id] = i + 1 + (afterActive ? -1 : 0)
+                map[preset.id] = (i + 1 + (afterActive ? -1 : 0), i + 1)
             }
         }
         return map
@@ -203,12 +200,19 @@ struct CardSelector: View {
         let map = getCardIndexMap()
         ZStack(alignment: .bottom) {
             WiredPauseCard()
-                .modifier(PresetCardStackModifier(index: 0, total: cardCount))
+                .modifier(PresetCardStackModifier(index: 0, originalIndex: 0, total: cardCount))
             ForEach(presets, id:\.id) { preset in
                 preset.makeCard()
-                    .modifier(PresetCardStackModifier(index: map[preset.id]!, total: cardCount))
+                    .modifier(PresetCardStackModifier(
+                        index: map[preset.id]!.0,
+                        originalIndex: map[preset.id]!.1,
+                        total: cardCount
+                    ))
             }
         }
+        .background(.ultraThinMaterial.opacity(presetManager.open ? 1 : 0))
+        .animation(.easeInOut(duration: presetManager.open ? 0.5 : 2), value: presetManager.open)
+        .frame(minWidth: UIScreen.main.bounds.width, minHeight: UIScreen.main.bounds.height)
         .onTapBackground(enabled: presetManager.open) {
             presetManager.open = false
         }
