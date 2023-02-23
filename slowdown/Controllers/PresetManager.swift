@@ -9,6 +9,14 @@ import Foundation
 import ProxyService
 import SwiftUI
 import Logging
+import Combine
+
+enum StackState {
+    case open
+    case opening
+    case closed
+    case closing
+}
 
 class PresetManager: ObservableObject {
     struct Provider : Dep {
@@ -17,11 +25,29 @@ class PresetManager: ObservableObject {
         }
     }
     var settingsController: SettingsController
+    var bag = Set<AnyCancellable>()
     init(settingsController: SettingsController) {
         self.settingsController = settingsController
+        $open.sink { val in
+            if val {
+                self.state = .opening
+            } else {
+                self.state = .closing
+            }
+        }.store(in: &bag)
+        
+        $open.debounce(for: .seconds(0.5), scheduler:DispatchQueue.main).sink {val in
+            if val {
+                self.state = .open
+            } else {
+                self.state = .closed
+            }
+        }.store(in: &bag)
     }
     
     @Published var open: Bool = false
+    @Published var state: StackState = .closed
+    
     
     static let defaultPresets: [Proxyservice_Preset] = [
         Proxyservice_Preset.with {
@@ -34,17 +60,14 @@ class PresetManager: ObservableObject {
         Proxyservice_Preset.with {
             $0.id = "focus"
             $0.name = "Focus"
-            $0.usageMaxHp = 2
-            $0.usageHealRate = 0.5
-            $0.mode = .progressive
+            $0.baseRxSpeedTarget = 40e3
+            $0.mode = .focus
         },
     ]
     
-    func loadPreset(preset: Proxyservice_Preset) {
-        Task {
-            try await settingsController.setSettings { settings in
-                settings.activePreset = preset
-            }
+    func loadPreset(preset: Proxyservice_Preset) async throws {
+        try await settingsController.setSettings { settings in
+            settings.activePreset = preset
         }
     }
 }

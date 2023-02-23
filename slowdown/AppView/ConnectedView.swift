@@ -14,9 +14,8 @@ struct ConnectedView: View {
     @EnvironmentObject var service: VPNConfigurationService
     @EnvironmentObject var stateController: StateController
     var body: some View {
-        ZStack(alignment: .center) {
-            SlowingStatus()
-//                .offset(x: 0, y: 280)
+        VStack {
+            Spacer()
             CardSelector()
         }
     }
@@ -38,90 +37,14 @@ struct SlowingStatus: View {
     
     var body: some View {
         VStack {
+            WiredStagedDamageBar(height: 20)
             HStack(alignment: .bottom) {
                 text
                     .font(.headline.bold())
                 Spacer()
             }
             .padding(.bottom, 20)
-            WiredStagedDamageBar(height: 20)
-            .padding(.bottom, 20)
         }
-        .padding()
-    }
-}
-
-struct PauseCard: View {
-    var body: some View {
-        Card(
-            title: "Pause",
-            caption: "Disconnects from VPN for 1 hour",
-            backgroundColor: Color.gray
-        ) {
-            
-        }
-    }
-}
-
-struct WiredPauseCard: View {
-    @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
-    @EnvironmentObject var presetManager: PresetManager
-    var body: some View {
-        PauseCard()
-            .onTapGesture {
-                if !presetManager.open {
-                    presetManager.open = true
-                    return
-                }
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                vpnLifecycleManager.pauseConnection()
-            }
-    }
-}
-
-struct WiredPresetCard: View {
-    @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
-    @EnvironmentObject var presetManager: PresetManager
-    @EnvironmentObject var settingsStore: SettingsStore
-    
-    var preset: Proxyservice_Preset
-    
-    var body: some View {
-        ProgressiveCard(
-            model: PresetViewModel(
-                preset: Binding(
-                    get: {
-                        return preset
-                    },
-                    set: { _ in }
-                )
-            )) {
-                
-            }
-            .onTapGesture {
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                if !presetManager.open {
-                    presetManager.open = true
-                    return
-                }
-                if preset.id != settingsStore.settings.activePreset.id {
-                    presetManager.loadPreset(preset: preset)
-                }
-                presetManager.open = false
-            }
-        
-    }
-}
-
-protocol Cardable {
-    associatedtype V: View
-    @ViewBuilder
-    func makeCard() -> V
-}
-
-extension Proxyservice_Preset: Cardable {
-    func makeCard() -> some View {
-        WiredPresetCard(preset: self)
     }
 }
 
@@ -130,40 +53,44 @@ struct PresetCardStackModifier: ViewModifier {
     let index: Int
     let originalIndex: Int
     let total: Int
+    let active: Bool
     
     var openHeight: Double {
         return (UIScreen.main.bounds.height - 60) / Double(total)
     }
     
-    var posY: Double {
-        if !presetManager.open && index == total - 1 {
-            return 125
-        }
-        if presetManager.open {
-            return UIScreen.main.bounds.height - 150.0
-        }
-        return UIScreen.main.bounds.height + 75.0
-    }
-    
     var y: Double {
-        if presetManager.open {
+        if presetManager.state == .open {
             return Double(total - originalIndex - 1) * -openHeight
         }
-        return Double(total - index - 2) *  -25
+        return Double(total - index - 2) *  18
+    }
+    
+    var height: Double {
+        if presetManager.state == .closed {
+            if active {
+                return UIScreen.main.bounds.height - 100.0
+            }
+        }
+        return 250
     }
     
     func body(content: Content) -> some View {
         content
-            .position(x: UIScreen.main.bounds.width / 2, y: posY)
+            .frame(height: height)
             .offset(
                 x: 0,
                 y: y
             )
             .animation(
-                .spring(),
-                value: "\(presetManager.open) \(index)"
+                .spring(response: 0.50, dampingFraction: 0.825, blendDuration: 0),
+                value: y
             )
-            .zIndex(index == total - 1 ? 1 : 0)
+            .animation(
+                .spring(response:  0.50, dampingFraction: 0.825, blendDuration: 0),
+                value: height
+            )
+            .zIndex(active ? 1 : 0)
     }
 }
 
@@ -200,19 +127,21 @@ struct CardSelector: View {
         let map = getCardIndexMap()
         ZStack(alignment: .bottom) {
             WiredPauseCard()
-                .modifier(PresetCardStackModifier(index: 0, originalIndex: 0, total: cardCount))
+                .modifier(PresetCardStackModifier(index: 0, originalIndex: 0, total: cardCount, active: false))
             ForEach(presets, id:\.id) { preset in
                 preset.makeCard()
                     .modifier(PresetCardStackModifier(
                         index: map[preset.id]!.0,
                         originalIndex: map[preset.id]!.1,
-                        total: cardCount
+                        total: cardCount,
+                        active: settingsStore.settings.activePreset.id == preset.id
                     ))
+                    .id(preset.id)
             }
         }
-        .background(.ultraThinMaterial.opacity(presetManager.open ? 1 : 0))
-        .animation(.easeInOut(duration: presetManager.open ? 0.5 : 2), value: presetManager.open)
-        .frame(minWidth: UIScreen.main.bounds.width, minHeight: UIScreen.main.bounds.height)
+//        .frame(maxHeight: UIScreen.main.bounds.height)
+//        .background(.ultraThinMaterial.opacity(presetManager.open ? 1 : 0))
+//        .animation(.easeInOut(duration: presetManager.open ? 0.5 : 2), value: presetManager.open)
         .onTapBackground(enabled: presetManager.open) {
             presetManager.open = false
         }

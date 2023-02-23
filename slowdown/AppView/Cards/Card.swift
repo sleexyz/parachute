@@ -24,15 +24,18 @@ struct Card<Content: View>: View {
                         .font(.title.bold())
                     Spacer()
                 }
-                .padding(.bottom, 120)
+                .padding(.bottom, 20)
+                Spacer()
+                content()
+                Spacer()
                 if caption != nil {
                     HStack{
                         Text(caption!)
                             .font(.caption)
                         Spacer()
                     }
+                        .padding(.top, 100)
                 }
-                content()
             }
             .padding(20)
         }
