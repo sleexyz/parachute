@@ -27,7 +27,7 @@ struct WiredPresetCard: View {
     }
     
     var expanded: Bool {
-        isActive && presetManager.state == .closed
+        isActive && presetManager.state == .cardOpen
     }
     
     var model: PresetViewModel {
@@ -47,7 +47,11 @@ struct WiredPresetCard: View {
         if preset.mode == .progressive {
             ProgressiveCard(model: model) {
                 if expanded {
-                    SlowingStatus()
+                    VStack {
+                        Spacer()
+                        SlowingStatus()
+                        Spacer()
+                    }
                 }
             }
         } else {

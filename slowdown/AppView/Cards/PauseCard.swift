@@ -15,7 +15,6 @@ struct PauseCard: View {
             caption: "Disconnects from VPN for 1 hour",
             backgroundColor: Color.gray
         ) {
-            
         }
     }
 }

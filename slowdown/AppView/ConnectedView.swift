@@ -17,6 +17,7 @@ struct ConnectedView: View {
         VStack {
             Spacer()
             CardSelector()
+            Spacer()
         }
     }
 }
@@ -48,48 +49,57 @@ struct SlowingStatus: View {
     }
 }
 
-struct PresetCardStackModifier: ViewModifier {
+struct CardPositionerModifier: ViewModifier {
     @EnvironmentObject var presetManager: PresetManager
     let index: Int
-    let originalIndex: Int
+    let selectorOpenIndex: Int
     let total: Int
     let active: Bool
+    let containerHeight: Double
     
-    var openHeight: Double {
-        return (UIScreen.main.bounds.height - 60) / Double(total)
+    var closedHeight: Double {
+        return containerHeight / Double(total)
+    }
+    
+    var stackHeight: Double {
+        20
     }
     
     var y: Double {
-        if presetManager.state == .open {
-            return Double(total - originalIndex - 1) * -openHeight
+        var ret: Double = 0
+        // any card open
+        if presetManager.state != .cardClosed {
+            ret += Double(total - index - 1) * -stackHeight
+            ret += extraStackGap
+        // card closed
+        } else {
+            ret += Double(selectorOpenIndex) * closedHeight
         }
-        return Double(total - index - 2) *  18
+        
+        return ret
     }
     
     var height: Double {
-        if presetManager.state == .closed {
-            if active {
-                return UIScreen.main.bounds.height - 100.0
-            }
+        var ret: Double = 0
+        // actual card open
+        if presetManager.state == .cardOpen && active {
+            ret += containerHeight - extraStackGap
+        // card closed
+        } else {
+            ret += closedHeight
         }
-        return 250
+        return ret
+    }
+    
+    var extraStackGap: Double {
+        let numAdditionalCards = Double(total - 1)
+        return stackHeight * numAdditionalCards
     }
     
     func body(content: Content) -> some View {
         content
-            .frame(height: height)
-            .offset(
-                x: 0,
-                y: y
-            )
-            .animation(
-                .spring(response: 0.50, dampingFraction: 0.825, blendDuration: 0),
-                value: y
-            )
-            .animation(
-                .spring(response:  0.50, dampingFraction: 0.825, blendDuration: 0),
-                value: height
-            )
+            .environment(\.cardHeight, height)
+            .environment(\.cardYOffset, y)
             .zIndex(active ? 1 : 0)
     }
 }
@@ -125,23 +135,34 @@ struct CardSelector: View {
     
     var body: some View {
         let map = getCardIndexMap()
-        ZStack(alignment: .bottom) {
+//        let containerHeight = UIScreen.main.bounds.height - 44*2
+        let containerHeight = UIScreen.main.bounds.height / 2
+        ZStack(alignment: .top) {
+            // To fill the full height
+            Rectangle()
+                .foregroundColor(.blue)
+                .opacity(0)
+                .frame(height: containerHeight)
             WiredPauseCard()
-                .modifier(PresetCardStackModifier(index: 0, originalIndex: 0, total: cardCount, active: false))
+                .modifier(CardPositionerModifier(
+                    index: 0,
+                    selectorOpenIndex: 0,
+                    total: cardCount,
+                    active: false,
+                    containerHeight: containerHeight
+                ))
             ForEach(presets, id:\.id) { preset in
                 preset.makeCard()
-                    .modifier(PresetCardStackModifier(
+                    .modifier(CardPositionerModifier(
                         index: map[preset.id]!.0,
-                        originalIndex: map[preset.id]!.1,
+                        selectorOpenIndex: map[preset.id]!.1,
                         total: cardCount,
-                        active: settingsStore.settings.activePreset.id == preset.id
+                        active: settingsStore.settings.activePreset.id == preset.id,
+                        containerHeight: containerHeight
                     ))
-                    .id(preset.id)
             }
         }
-//        .frame(maxHeight: UIScreen.main.bounds.height)
-//        .background(.ultraThinMaterial.opacity(presetManager.open ? 1 : 0))
-//        .animation(.easeInOut(duration: presetManager.open ? 0.5 : 2), value: presetManager.open)
+        .background(.pink)
         .onTapBackground(enabled: presetManager.open) {
             presetManager.open = false
         }

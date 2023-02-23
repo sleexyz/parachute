@@ -12,10 +12,10 @@ import Logging
 import Combine
 
 enum StackState {
-    case open
-    case opening
-    case closed
-    case closing
+    case cardClosed
+    case cardClosing
+    case cardOpen
+    case cardOpening
 }
 
 class PresetManager: ObservableObject {
@@ -30,23 +30,23 @@ class PresetManager: ObservableObject {
         self.settingsController = settingsController
         $open.sink { val in
             if val {
-                self.state = .opening
+                self.state = .cardClosing
             } else {
-                self.state = .closing
+                self.state = .cardOpening
             }
         }.store(in: &bag)
         
         $open.debounce(for: .seconds(0.5), scheduler:DispatchQueue.main).sink {val in
             if val {
-                self.state = .open
+                self.state = .cardClosed
             } else {
-                self.state = .closed
+                self.state = .cardOpen
             }
         }.store(in: &bag)
     }
     
     @Published var open: Bool = false
-    @Published var state: StackState = .closed
+    @Published var state: StackState = .cardOpen
     
     
     static let defaultPresets: [Proxyservice_Preset] = [
