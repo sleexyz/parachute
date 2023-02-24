@@ -26,6 +26,8 @@ struct SlowingStatus: View {
     @Environment(\.colorScheme) var colorScheme
 
     
+    @State var appeared: Bool = false
+    
     @ViewBuilder
     var text: some View {
         if stateController.isSlowing {
@@ -45,6 +47,13 @@ struct SlowingStatus: View {
             .padding(.bottom, 20)
             WiredStagedDamageBar(height: 20)
         }
+        .opacity(appeared ? 1 : 0)
+        .onAppear {
+            withAnimation(.default) {
+                appeared = true
+            }
+        }
+        
     }
 }
 
@@ -79,7 +88,7 @@ struct CardPositionerModifier: ViewModifier {
     
     var height: Double {
         // actual card opened / opening
-        if (presetManager.state == .cardOpened || presetManager.state == .cardOpening) && active {
+        if presetManager.state == .cardOpened && active {
             return containerHeight - extraStackGap
         // card closed
         } else {
@@ -97,7 +106,6 @@ struct CardPositionerModifier: ViewModifier {
             .padding()
             .frame(height: height)
             .offset(x: 0, y: y)
-            .environment(\.cardOpened, presetManager.state == .cardOpened)
             .animation(
                 presetManager.state.animation,
                 value: y

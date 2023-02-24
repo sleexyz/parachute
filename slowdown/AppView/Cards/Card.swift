@@ -8,18 +8,6 @@
 import Foundation
 import SwiftUI
 
-internal struct CardOpenedKey: EnvironmentKey {
-    static let defaultValue = false
-}
-
-
-extension EnvironmentValues {
-    var cardOpened: Bool {
-        get { self[CardOpenedKey.self] }
-        set { self[CardOpenedKey.self] = newValue }
-    }
-}
-
 struct Card<Content: View>: View {
     var title: String
     var caption: String?
@@ -27,8 +15,6 @@ struct Card<Content: View>: View {
     
     @ViewBuilder
     var content: () -> Content
-    
-    @Environment(\.cardOpened) var cardOpened: Bool
     
     var body: some View {
         VStack(spacing: 0) {
@@ -41,7 +27,6 @@ struct Card<Content: View>: View {
             Spacer()
                 .frame(minHeight: 0)
             content()
-                .opacity(cardOpened ? 1 : 0)
                 .padding(20)
             Spacer()
                 .frame(minHeight: 0)

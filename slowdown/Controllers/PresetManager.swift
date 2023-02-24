@@ -12,7 +12,6 @@ import Logging
 import Combine
 
 enum StackState {
-    case cardOpening
     case cardOpened
     case cardClosing
     case cardClosed
@@ -20,18 +19,16 @@ enum StackState {
     var transitionDuration: Double {
         let base = 0.6
         switch self {
-        case .cardOpening: return base * 0.5
         case .cardOpened: return base
-        case .cardClosing: return base
+        case .cardClosing: return base * 0.5
         case .cardClosed: return base
-        default: return base
         }
     }
     
     var animation: Animation {
         switch self {
         // Spring on outer transition states
-        case .cardOpening: return .spring(response: 0.50, dampingFraction: 0.825)
+        case .cardOpened: return .spring(response: 0.50, dampingFraction: 0.825)
         case .cardClosed: return .spring(response: 0.50, dampingFraction: 0.825)
         default: return .timingCurve(0.30,0.20,0,1, duration: transitionDuration - 0.1)
         }
@@ -52,19 +49,13 @@ class PresetManager: ObservableObject {
             if val {
                 self.state = .cardClosing
             } else {
-                self.state = .cardOpening
+                self.state = .cardOpened
             }
         }.store(in: &bag)
         
         $open.debounce(for: .seconds(StackState.cardClosing.transitionDuration), scheduler:DispatchQueue.main).sink {val in
             if val {
                 self.state = .cardClosed
-            }
-        }.store(in: &bag)
-        
-        $open.debounce(for: .seconds(StackState.cardOpening.transitionDuration), scheduler:DispatchQueue.main).sink {val in
-            if !val {
-                self.state = .cardOpened
             }
         }.store(in: &bag)
     }
