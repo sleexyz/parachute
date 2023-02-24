@@ -12,10 +12,30 @@ import Logging
 import Combine
 
 enum StackState {
-    case cardClosed
-    case cardClosing
-    case cardOpen
     case cardOpening
+    case cardOpened
+    case cardClosing
+    case cardClosed
+    
+    var transitionDuration: Double {
+        let base = 0.6
+        switch self {
+        case .cardOpening: return base * 0.5
+        case .cardOpened: return base
+        case .cardClosing: return base
+        case .cardClosed: return base
+        default: return base
+        }
+    }
+    
+    var animation: Animation {
+        switch self {
+        // Spring on outer transition states
+        case .cardOpening: return .spring(response: 0.50, dampingFraction: 0.825)
+        case .cardClosed: return .spring(response: 0.50, dampingFraction: 0.825)
+        default: return .timingCurve(0.30,0.20,0,1, duration: transitionDuration - 0.1)
+        }
+    }
 }
 
 class PresetManager: ObservableObject {
@@ -36,17 +56,21 @@ class PresetManager: ObservableObject {
             }
         }.store(in: &bag)
         
-        $open.debounce(for: .seconds(0.5), scheduler:DispatchQueue.main).sink {val in
+        $open.debounce(for: .seconds(StackState.cardClosing.transitionDuration), scheduler:DispatchQueue.main).sink {val in
             if val {
                 self.state = .cardClosed
-            } else {
-                self.state = .cardOpen
+            }
+        }.store(in: &bag)
+        
+        $open.debounce(for: .seconds(StackState.cardOpening.transitionDuration), scheduler:DispatchQueue.main).sink {val in
+            if !val {
+                self.state = .cardOpened
             }
         }.store(in: &bag)
     }
     
     @Published var open: Bool = false
-    @Published var state: StackState = .cardOpen
+    @Published var state: StackState = .cardOpened
     
     
     static let defaultPresets: [Proxyservice_Preset] = [

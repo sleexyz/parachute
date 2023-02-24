@@ -17,7 +17,6 @@ struct ConnectedView: View {
         VStack {
             Spacer()
             CardSelector()
-            Spacer()
         }
     }
 }
@@ -38,13 +37,13 @@ struct SlowingStatus: View {
     
     var body: some View {
         VStack {
-            WiredStagedDamageBar(height: 20)
             HStack(alignment: .bottom) {
                 text
                     .font(.headline.bold())
                 Spacer()
             }
             .padding(.bottom, 20)
+            WiredStagedDamageBar(height: 20)
         }
     }
 }
@@ -66,29 +65,26 @@ struct CardPositionerModifier: ViewModifier {
     }
     
     var y: Double {
-        var ret: Double = 0
-        // any card open
+        // any card opened
         if presetManager.state != .cardClosed {
-            ret += Double(total - index - 1) * -stackHeight
-            ret += extraStackGap
+            var ret: Double = 0
+            ret += Double(total - index - 1) * stackHeight
+            ret -= extraStackGap
+            return ret
         // card closed
         } else {
-            ret += Double(selectorOpenIndex) * closedHeight
+            return -Double(total - selectorOpenIndex - 1) * closedHeight
         }
-        
-        return ret
     }
     
     var height: Double {
-        var ret: Double = 0
-        // actual card open
-        if presetManager.state == .cardOpen && active {
-            ret += containerHeight - extraStackGap
+        // actual card opened / opening
+        if (presetManager.state == .cardOpened || presetManager.state == .cardOpening) && active {
+            return containerHeight - extraStackGap
         // card closed
         } else {
-            ret += closedHeight
+            return closedHeight
         }
-        return ret
     }
     
     var extraStackGap: Double {
@@ -98,8 +94,22 @@ struct CardPositionerModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .environment(\.cardHeight, height)
-            .environment(\.cardYOffset, y)
+            .padding()
+            .frame(height: height)
+            .offset(x: 0, y: y)
+            .environment(\.cardOpened, presetManager.state == .cardOpened)
+            .animation(
+                presetManager.state.animation,
+                value: y
+            )
+            .animation(
+                presetManager.state.animation,
+                value: height
+            )
+            .animation(
+                presetManager.state.animation,
+                value: presetManager.state == .cardOpened
+            )
             .zIndex(active ? 1 : 0)
     }
 }
@@ -135,12 +145,11 @@ struct CardSelector: View {
     
     var body: some View {
         let map = getCardIndexMap()
-//        let containerHeight = UIScreen.main.bounds.height - 44*2
-        let containerHeight = UIScreen.main.bounds.height / 2
-        ZStack(alignment: .top) {
-            // To fill the full height
+        let realContainerHeight = UIScreen.main.bounds.height / 1
+        let containerHeight = realContainerHeight * 0.9
+        ZStack(alignment: .bottom) {
+            // Need rectangle to fill the full height
             Rectangle()
-                .foregroundColor(.blue)
                 .opacity(0)
                 .frame(height: containerHeight)
             WiredPauseCard()
@@ -162,7 +171,9 @@ struct CardSelector: View {
                     ))
             }
         }
-        .background(.pink)
+        .frame(height: realContainerHeight)
+//        .background(.ultraThinMaterial.opacity(presetManager.state == .cardOpened ? 0 : 1))
+//        .animation(.easeInOut(duration: 1), value: presetManager.state == .cardOpened)
         .onTapBackground(enabled: presetManager.open) {
             presetManager.open = false
         }
