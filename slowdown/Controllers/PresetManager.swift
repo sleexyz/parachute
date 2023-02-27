@@ -91,6 +91,7 @@ class PresetManager: ObservableObject {
                 $0.usageHealRate = 0.5
                 $0.mode = .progressive
             }
+//            mainColor: Color(red: 0.87, green: 0.3, blue: 0.3)
         ),
         "focus": Preset(
             name: "Disconnect",

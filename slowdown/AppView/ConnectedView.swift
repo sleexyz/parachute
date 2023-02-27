@@ -124,7 +124,6 @@ struct ConnectedView: View {
         ZStack {
             PresetContent()
             VStack {
-                Spacer()
                 CardSelector()
                     .environment(\.closedStackPosition, .below)
                     .environment(\.activeCardPosition, .below)
@@ -151,13 +150,14 @@ struct SlowingStatus: View {
     
     var body: some View {
         VStack {
+            WiredStagedDamageBar(height: 20)
+                .padding(.bottom, 20)
             HStack(alignment: .bottom) {
                 text
-                    .font(.headline.bold())
+                    .font(.headline)
+                    .opacity(0.4)
                 Spacer()
             }
-            .padding(.bottom, 20)
-            WiredStagedDamageBar(height: 20)
         }
         
     }
@@ -267,7 +267,6 @@ struct CardSelector: View {
         var afterActive = false
         var map =  Dictionary<String, (Int, Int)>()
         for (i, entry) in presets.enumerated() {
-            let preset = entry.value
             let id = entry.key
             if id == settingsStore.activePreset.id {
                 map[id] = (cardCount - 1, i + 1)
