@@ -12,8 +12,7 @@ enum Mode {
 
 
 message Preset {
-    // Name of the preset.
-    string name = 1;
+    reserved 1;
 
     // Behavior mode of the preset.
     // TODO: switch to oneof

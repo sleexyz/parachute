@@ -9,7 +9,7 @@ import Foundation
 import ProxyService
 import SwiftUI
 
-extension Proxyservice_Preset: Cardable {
+extension Preset: Cardable {
     func makeCard() -> some View {
         WiredPresetCard(preset: self)
     }
@@ -20,10 +20,10 @@ struct WiredPresetCard: View {
     @EnvironmentObject var presetManager: PresetManager
     @EnvironmentObject var settingsStore: SettingsStore
     
-    var preset: Proxyservice_Preset
+    var preset: Preset
     
     var isActive: Bool {
-        preset.id == settingsStore.settings.activePreset.id
+        preset.presetData.id == settingsStore.settings.activePreset.id
     }
     
     var expanded: Bool {
@@ -32,23 +32,21 @@ struct WiredPresetCard: View {
     
     var model: PresetViewModel {
                 PresetViewModel(
-                preset: Binding(
+                presetData: Binding(
                     get: {
-                        return preset
+                        return preset.presetData
                     },
                     set: { _ in }
-                )
+                ),
+                preset: PresetManager.getPreset(id: preset.presetData.id)
             )
         
     }
     
     @ViewBuilder
     var card: some View {
-        if preset.mode == .progressive {
+        if preset.presetData.mode == .progressive {
             ProgressiveCard(model: model) {
-                if expanded {
-                    SlowingStatus()
-                }
             }
         } else {
             FocusCard(model: model) {

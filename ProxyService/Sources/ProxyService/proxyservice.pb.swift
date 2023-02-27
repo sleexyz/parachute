@@ -65,9 +65,6 @@ public struct Proxyservice_Preset {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  /// Name of the preset.
-  public var name: String = String()
-
   /// Behavior mode of the preset.
   /// TODO: switch to oneof
   public var mode: Proxyservice_Mode = .progressive
@@ -371,7 +368,6 @@ extension Proxyservice_Mode: SwiftProtobuf._ProtoNameProviding {
 extension Proxyservice_Preset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Preset"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "name"),
     2: .same(proto: "mode"),
     3: .same(proto: "baseRxSpeedTarget"),
     4: .same(proto: "temporaryRxSpeedTarget"),
@@ -388,7 +384,6 @@ extension Proxyservice_Preset: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.name) }()
       case 2: try { try decoder.decodeSingularEnumField(value: &self.mode) }()
       case 3: try { try decoder.decodeSingularDoubleField(value: &self.baseRxSpeedTarget) }()
       case 4: try { try decoder.decodeSingularDoubleField(value: &self.temporaryRxSpeedTarget) }()
@@ -407,9 +402,6 @@ extension Proxyservice_Preset: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.name.isEmpty {
-      try visitor.visitSingularStringField(value: self.name, fieldNumber: 1)
-    }
     if self.mode != .progressive {
       try visitor.visitSingularEnumField(value: self.mode, fieldNumber: 2)
     }
@@ -438,7 +430,6 @@ extension Proxyservice_Preset: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
   }
 
   public static func ==(lhs: Proxyservice_Preset, rhs: Proxyservice_Preset) -> Bool {
-    if lhs.name != rhs.name {return false}
     if lhs.mode != rhs.mode {return false}
     if lhs.baseRxSpeedTarget != rhs.baseRxSpeedTarget {return false}
     if lhs.temporaryRxSpeedTarget != rhs.temporaryRxSpeedTarget {return false}

@@ -12,21 +12,23 @@ import Combine
 import Logging
 
 struct PresetViewModel {
-    @Binding var preset: Proxyservice_Preset
+    @Binding var presetData: Proxyservice_Preset
+    
+    var preset: Preset
     
     var scrollTimeLimit: Binding<Double> {
         Binding {
-            return self.preset.usageMaxHp / 2
+            return self.presetData.usageMaxHp / 2
         } set: {
-            self.preset.usageMaxHp = $0 * 2
+            self.presetData.usageMaxHp = $0 * 2
         }
     }
     
     var restTime: Binding<Double> {
         Binding {
-            return self.preset.usageMaxHp / 2 / self.preset.usageHealRate
+            return self.presetData.usageMaxHp / 2 / self.presetData.usageHealRate
         } set: {
-            self.preset.usageHealRate = self.preset.usageMaxHp / 2 / $0
+            self.presetData.usageHealRate = self.presetData.usageMaxHp / 2 / $0
         }
     }
     

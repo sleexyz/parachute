@@ -39,8 +39,6 @@ export function modeToJSON(object: Mode): string {
 }
 
 export interface Preset {
-  /** Name of the preset. */
-  name: string;
   /**
    * Behavior mode of the preset.
    * TODO: switch to oneof
@@ -139,7 +137,6 @@ export interface Sample {
 
 function createBasePreset(): Preset {
   return {
-    name: "",
     mode: 0,
     baseRxSpeedTarget: 0,
     temporaryRxSpeedTarget: 0,
@@ -153,9 +150,6 @@ function createBasePreset(): Preset {
 
 export const Preset = {
   encode(message: Preset, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.name !== "") {
-      writer.uint32(10).string(message.name);
-    }
     if (message.mode !== 0) {
       writer.uint32(16).int32(message.mode);
     }
@@ -190,9 +184,6 @@ export const Preset = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.name = reader.string();
-          break;
         case 2:
           message.mode = reader.int32() as any;
           break;
@@ -227,7 +218,6 @@ export const Preset = {
 
   fromJSON(object: any): Preset {
     return {
-      name: isSet(object.name) ? String(object.name) : "",
       mode: isSet(object.mode) ? modeFromJSON(object.mode) : 0,
       baseRxSpeedTarget: isSet(object.baseRxSpeedTarget) ? Number(object.baseRxSpeedTarget) : 0,
       temporaryRxSpeedTarget: isSet(object.temporaryRxSpeedTarget) ? Number(object.temporaryRxSpeedTarget) : 0,
@@ -243,7 +233,6 @@ export const Preset = {
 
   toJSON(message: Preset): unknown {
     const obj: any = {};
-    message.name !== undefined && (obj.name = message.name);
     message.mode !== undefined && (obj.mode = modeToJSON(message.mode));
     message.baseRxSpeedTarget !== undefined && (obj.baseRxSpeedTarget = message.baseRxSpeedTarget);
     message.temporaryRxSpeedTarget !== undefined && (obj.temporaryRxSpeedTarget = message.temporaryRxSpeedTarget);
@@ -258,7 +247,6 @@ export const Preset = {
 
   fromPartial<I extends Exact<DeepPartial<Preset>, I>>(object: I): Preset {
     const message = createBasePreset();
-    message.name = object.name ?? "";
     message.mode = object.mode ?? 0;
     message.baseRxSpeedTarget = object.baseRxSpeedTarget ?? 0;
     message.temporaryRxSpeedTarget = object.temporaryRxSpeedTarget ?? 0;

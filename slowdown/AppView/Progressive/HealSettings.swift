@@ -18,12 +18,12 @@ struct HealSettings: View {
     
     private var baselineSpeedEnabled: Binding<Bool> {
         Binding {
-            return model.preset.usageBaseRxSpeedTarget != 0.0
+            return model.presetData.usageBaseRxSpeedTarget != 0.0
         } set: {
             if $0 {
-                model.preset.usageBaseRxSpeedTarget = 1e6
+                model.presetData.usageBaseRxSpeedTarget = 1e6
             } else {
-                model.preset.usageBaseRxSpeedTarget = 0
+                model.presetData.usageBaseRxSpeedTarget = 0
             }
         }
     }
@@ -61,7 +61,7 @@ struct HealSettings: View {
                     }
                     .tint(.purple)
                 if baselineSpeedEnabled.wrappedValue {
-                    SpeedBar(speed: model.$preset.usageBaseRxSpeedTarget, minSpeed: 40e3, maxSpeed: 10e6) {
+                    SpeedBar(speed: model.$presetData.usageBaseRxSpeedTarget, minSpeed: 40e3, maxSpeed: 10e6) {
                         controller.syncSettings()
                     }
                     .tint(.purple)

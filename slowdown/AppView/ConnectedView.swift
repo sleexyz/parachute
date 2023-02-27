@@ -8,26 +8,138 @@
 import Foundation
 import SwiftUI
 import ProxyService
+import OrderedCollections
+
+enum CardPosition {
+    case top
+    case bottom
+    case below
+}
+
+private struct ActiveCardPositionKey: EnvironmentKey {
+    static let defaultValue = CardPosition.top
+}
+
+private struct ClosedStackPositionKey: EnvironmentKey {
+    static let defaultValue = CardPosition.below
+}
+
+extension EnvironmentValues {
+    var activeCardPosition: CardPosition {
+        get { self[ActiveCardPositionKey.self] }
+        set { self[ActiveCardPositionKey.self] = newValue }
+    }
+    
+    var closedStackPosition: CardPosition {
+        get { self[ClosedStackPositionKey.self] }
+        set { self[ClosedStackPositionKey.self] = newValue }
+    }
+}
+
+var closedStackPosition: CardPosition = .below
+
+var noExpand = true
+
+struct Background: View {
+    var model: PresetViewModel
+    @EnvironmentObject var settingsStore: SettingsStore
+    @EnvironmentObject var presetManager: PresetManager
+    
+    var body: some View {
+            Spacer()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(
+                            colors: [
+//                                Color.white,
+                                Color.white.opacity(0),
+                            ]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .colorMultiply(model.mainColor)
+                .animation(presetManager.state.animation, value: model.mainColor)
+    }
+}
+
+struct PresetContent: View {
+    @EnvironmentObject var settingsStore: SettingsStore
+    @EnvironmentObject var presetManager: PresetManager
+    
+    var model: PresetViewModel {
+        PresetViewModel(presetData: settingsStore.activePreset, preset: PresetManager.getPreset(id: settingsStore.settings.activePreset.id))
+    }
+    
+    var body: some View {
+        ZStack {
+            Background(model: model)
+            ZStack {
+                if settingsStore.settings.activePreset.mode == .progressive {
+                    VStack {
+                        PresetHeader()
+                        SlowingStatus()
+                            .padding()
+                        Spacer()
+                    }
+                    .padding(.top, 60)
+                } else {
+                    VStack {
+                        PresetHeader()
+                        Spacer()
+                    }
+                    .padding(.top, 60)
+                    
+                }
+            }
+//            .opacity(presetManager.state == .cardOpened ? 1 : 0)
+//            .animation(.easeInOut, value: presetManager.state == .cardOpened)
+        }
+    }
+}
+
+struct PresetHeader: View {
+    @EnvironmentObject var settingsStore: SettingsStore
+    @EnvironmentObject var presetManager: PresetManager
+    var body: some View {
+        HStack {
+            Text(presetManager.activePreset.name)
+                .font(.title)
+                .bold()
+                .padding()
+            Spacer()
+        }
+    }
+}
 
 struct ConnectedView: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     @EnvironmentObject var service: VPNConfigurationService
     @EnvironmentObject var stateController: StateController
+    @EnvironmentObject var settingsStore: SettingsStore
+    @EnvironmentObject var presetManager: PresetManager
+    
     var body: some View {
-        VStack {
-            Spacer()
-            CardSelector()
+        ZStack {
+            PresetContent()
+            VStack {
+                Spacer()
+                CardSelector()
+                    .environment(\.closedStackPosition, .below)
+                    .environment(\.activeCardPosition, .below)
+                Spacer()
+            }
         }
     }
 }
+
+
 
 struct SlowingStatus: View {
     @EnvironmentObject var stateController: StateController
     @Environment(\.colorScheme) var colorScheme
 
-    
-    @State var appeared: Bool = false
-    
     @ViewBuilder
     var text: some View {
         if stateController.isSlowing {
@@ -47,12 +159,6 @@ struct SlowingStatus: View {
             .padding(.bottom, 20)
             WiredStagedDamageBar(height: 20)
         }
-        .opacity(appeared ? 1 : 0)
-        .onAppear {
-            withAnimation(.default) {
-                appeared = true
-            }
-        }
         
     }
 }
@@ -65,6 +171,9 @@ struct CardPositionerModifier: ViewModifier {
     let active: Bool
     let containerHeight: Double
     
+    @Environment(\.activeCardPosition) var activeCardPosition: CardPosition
+    @Environment(\.closedStackPosition) var closedStackPosition: CardPosition
+    
     var closedHeight: Double {
         return containerHeight / Double(total)
     }
@@ -76,10 +185,24 @@ struct CardPositionerModifier: ViewModifier {
     var y: Double {
         // any card opened
         if presetManager.state != .cardClosed {
-            var ret: Double = 0
-            ret += Double(total - index - 1) * stackHeight
-            ret -= extraStackGap
-            return ret
+            if active {
+                if activeCardPosition == .top {
+                    return -containerHeight + closedHeight
+                }
+                if activeCardPosition == .bottom {
+                    return Double(total - index - 1) * stackHeight - extraStackGap / 2
+                }
+                if activeCardPosition == .below {
+                    return closedHeight - Double(total - index - 1) * stackHeight
+                }
+            }
+            if closedStackPosition == .below {
+                return closedHeight - Double(total - index - 1) * stackHeight
+            }
+            if closedStackPosition == .bottom {
+                return Double(total - index - 1) * stackHeight - extraStackGap / 2
+            }
+            return 0
         // card closed
         } else {
             return -Double(total - selectorOpenIndex - 1) * closedHeight
@@ -87,6 +210,9 @@ struct CardPositionerModifier: ViewModifier {
     }
     
     var height: Double {
+        if noExpand {
+            return closedHeight
+        }
         // actual card opened / opening
         if presetManager.state == .cardOpened && active {
             return containerHeight - extraStackGap
@@ -128,9 +254,10 @@ struct CardSelector: View {
     @EnvironmentObject var stateController: StateController
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     
-    var presets: Array<Proxyservice_Preset> {
+    var presets: OrderedDictionary<String, Preset> {
         return PresetManager.defaultPresets
     }
+    
     
     var cardCount: Int {
         return presets.count + 1
@@ -139,13 +266,14 @@ struct CardSelector: View {
     func getCardIndexMap() -> Dictionary<String, (Int, Int)> {
         var afterActive = false
         var map =  Dictionary<String, (Int, Int)>()
-        for i in presets.indices {
-            let preset = presets[i]
-            if preset.id == settingsStore.activePreset.id {
-                map[preset.id] = (cardCount - 1, i + 1)
+        for (i, entry) in presets.enumerated() {
+            let preset = entry.value
+            let id = entry.key
+            if id == settingsStore.activePreset.id {
+                map[id] = (cardCount - 1, i + 1)
                 afterActive = true
             } else {
-                map[preset.id] = (i + 1 + (afterActive ? -1 : 0), i + 1)
+                map[id] = (i + 1 + (afterActive ? -1 : 0), i + 1)
             }
         }
         return map
@@ -168,29 +296,42 @@ struct CardSelector: View {
                     active: false,
                     containerHeight: containerHeight
                 ))
-            ForEach(presets, id:\.id) { preset in
+            ForEach(presets.elements, id: \.key) { entry in
+                let preset = entry.value
                 preset.makeCard()
                     .modifier(CardPositionerModifier(
-                        index: map[preset.id]!.0,
-                        selectorOpenIndex: map[preset.id]!.1,
+                        index: map[preset.presetData.id]!.0,
+                        selectorOpenIndex: map[preset.presetData.id]!.1,
                         total: cardCount,
-                        active: settingsStore.settings.activePreset.id == preset.id,
+                        active: settingsStore.settings.activePreset.id == preset.presetData.id,
                         containerHeight: containerHeight
                     ))
             }
         }
         .frame(height: realContainerHeight)
-//        .background(.ultraThinMaterial.opacity(presetManager.state == .cardOpened ? 0 : 1))
-//        .animation(.easeInOut(duration: 1), value: presetManager.state == .cardOpened)
+//        .background(.pink)
+        .background(.ultraThinMaterial.opacity(presetManager.state == .cardOpened ? 0 : 1))
+        .animation(presetManager.state.animation, value: presetManager.state == .cardOpened)
         .onTapBackground(enabled: presetManager.open) {
             presetManager.open = false
         }
     }
 }
 
-struct ConnectedView_Previews: PreviewProvider {
+struct ConnectedViewBelow_Previews: PreviewProvider {
     static var previews: some View {
         ConnectedView()
+            .environment(\.closedStackPosition, .below)
+            .environment(\.activeCardPosition, .below)
+            .provideDeps(connectedPreviewDeps)
+    }
+}
+
+struct ConnectedViewWallet_Previews: PreviewProvider {
+    static var previews: some View {
+        ConnectedView()
+            .environment(\.closedStackPosition, .below)
+            .environment(\.activeCardPosition, .top)
             .provideDeps(connectedPreviewDeps)
     }
 }

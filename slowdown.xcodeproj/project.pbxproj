@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A00AF05129AD006200673B31 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = A00AF05029AD006200673B31 /* OrderedCollections */; };
 		A01B059E29850A6300298976 /* Preview Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01B059D29850A6300298976 /* Preview Helpers.swift */; };
 		A024F15729A463E1007B572A /* EnvironmentObjectProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024F15629A463E1007B572A /* EnvironmentObjectProxy.swift */; };
 		A024F15929A467D2007B572A /* HealSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024F15829A467D2007B572A /* HealSettings.swift */; };
@@ -96,6 +97,7 @@
 		A0F764EB29A2B5A2001F9B24 /* CardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EA29A2B5A2001F9B24 /* CardSelector.swift */; };
 		A0F764ED29A2E0A8001F9B24 /* PresetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EC29A2E0A8001F9B24 /* PresetViewModel.swift */; };
 		A0F764EF29A3F737001F9B24 /* TimerLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EE29A3F737001F9B24 /* TimerLock.swift */; };
+		A0FBF66A29ACF90E0030FCD7 /* Preset.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FBF66929ACF90E0030FCD7 /* Preset.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -282,6 +284,7 @@
 		A0F764EA29A2B5A2001F9B24 /* CardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSelector.swift; sourceTree = "<group>"; };
 		A0F764EC29A2E0A8001F9B24 /* PresetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetViewModel.swift; sourceTree = "<group>"; };
 		A0F764EE29A3F737001F9B24 /* TimerLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerLock.swift; sourceTree = "<group>"; };
+		A0FBF66929ACF90E0030FCD7 /* Preset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preset.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -297,6 +300,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A00AF05129AD006200673B31 /* OrderedCollections in Frameworks */,
 				A02A67BA298C005300FF0B27 /* libCommon.a in Frameworks */,
 				A080EDF6294F9864005401E4 /* Logging in Frameworks */,
 				A0717CCD294D260C00186AFE /* SwiftProtobufPluginLibrary in Frameworks */,
@@ -450,6 +454,7 @@
 				A081F231295BB3D700863FE3 /* SetupView.swift */,
 				A081F24C2967DA3C00863FE3 /* Controllers */,
 				A0312E2B297D07D300EB0B8A /* Extensions.swift */,
+				A0FBF66929ACF90E0030FCD7 /* Preset.swift */,
 				A02A679E2985BD3C00FF0B27 /* DI */,
 			);
 			path = slowdown;
@@ -631,6 +636,7 @@
 				A080EDF5294F9864005401E4 /* Logging */,
 				A080EDF7294F9868005401E4 /* LoggingOSLog */,
 				A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */,
+				A00AF05029AD006200673B31 /* OrderedCollections */,
 			);
 			productName = slowdown;
 			productReference = A02F58DC27A6F14500D3330F /* slowdown.app */;
@@ -796,6 +802,7 @@
 				A0458BFF28614D6500CE4CCB /* XCRemoteSwiftPackageReference "swift-log-oslog" */,
 				A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				A0A81D5A296B98D800B9E1DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				A00AF04F29AD006200673B31 /* XCRemoteSwiftPackageReference "swift-collections" */,
 			);
 			productRefGroup = A02F58DD27A6F14500D3330F /* Products */;
 			projectDirPath = "";
@@ -958,6 +965,7 @@
 				A052AE20299A900100AB43B7 /* HealButton.swift in Sources */,
 				A08719DC281A513200113F3F /* VPNConfigurationService.swift in Sources */,
 				A081F2402967B70000863FE3 /* ProgressiveCard.swift in Sources */,
+				A0FBF66A29ACF90E0030FCD7 /* Preset.swift in Sources */,
 				A02A67A42985BDD000FF0B27 /* ServiceKey.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1543,6 +1551,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		A00AF04F29AD006200673B31 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-log.git";
@@ -1586,6 +1602,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A00AF05029AD006200673B31 /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A00AF04F29AD006200673B31 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
+		};
 		A04332C9296BA21A00D69210 /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A0A81D5A296B98D800B9E1DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
