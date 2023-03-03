@@ -59,8 +59,9 @@ message Settings {
     // When pause should be lifted.
     google.protobuf.Timestamp pauseExpiry = 10;
 
-    // Parameters of the currently active preset.
-    Preset activePreset = 11;
+    // TODO: rename defaultPreset
+    // Parameters of the active preset.
+    Preset defaultPreset = 11;
 }
 
 message Request {

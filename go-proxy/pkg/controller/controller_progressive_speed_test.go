@@ -16,7 +16,7 @@ func TestProgressive_defaultsNoBaseSlowing(t *testing.T) {
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
 	c.SetSettings(&proxyservice.Settings{
-		ActivePreset: &proxyservice.Preset{
+		DefaultPreset: &proxyservice.Preset{
 			BaseRxSpeedTarget: 1e6, // unused
 			UsageHealRate:     0.5,
 			UsageMaxHP:        6,
@@ -34,7 +34,7 @@ func TestProgressive__slowsWithBaseSpeed(t *testing.T) {
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
 	c.SetSettings(&proxyservice.Settings{
-		ActivePreset: &proxyservice.Preset{
+		DefaultPreset: &proxyservice.Preset{
 			BaseRxSpeedTarget:      1e6, // unused
 			UsageHealRate:          0.5,
 			UsageMaxHP:             6,
@@ -54,7 +54,7 @@ func TestProgressive__startsProgressiveSlowingAtHalfwayPoint(t *testing.T) {
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
 	c.SetSettings(&proxyservice.Settings{
-		ActivePreset: &proxyservice.Preset{
+		DefaultPreset: &proxyservice.Preset{
 			BaseRxSpeedTarget:      1e6, // unused
 			UsageHealRate:          0.5,
 			UsageMaxHP:             4,
@@ -97,7 +97,7 @@ func TestProgressive__usesDefaultMaxSpeedOf10Mbps(t *testing.T) {
 	c := Init(&analytics.NoOpAnalytics{}, InitSettingsManager(), testAppConfigs, dc)
 
 	c.SetSettings(&proxyservice.Settings{
-		ActivePreset: &proxyservice.Preset{
+		DefaultPreset: &proxyservice.Preset{
 			BaseRxSpeedTarget: 1e6, // unused
 			UsageHealRate:     0.5,
 			UsageMaxHP:        4,

@@ -23,7 +23,7 @@ struct FocusModeView : View {
                     }
                 }
             ).padding()
-            Text("\(Int(store.settings.activePreset.baseRxSpeedTarget))")
+            Text("\(Int(store.activePreset.baseRxSpeedTarget))")
             Text("😎")
                 .font(.system(size: 144))
                 .padding()

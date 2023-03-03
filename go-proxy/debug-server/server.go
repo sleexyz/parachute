@@ -29,7 +29,7 @@ func InitDebugServerProxy(proxyBridge ffi.ProxyBridge, proxy *proxy.Proxy) *Debu
 
 func (p *DebugServerProxy) Start(port int) {
 	startRequest := &proxyservice.Settings{
-		ActivePreset: &proxyservice.Preset{
+		DefaultPreset: &proxyservice.Preset{
 			BaseRxSpeedTarget: controller.DefaultRxSpeedTarget,
 		},
 	}

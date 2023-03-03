@@ -80,7 +80,7 @@ class PresetManager: ObservableObject {
     
     // Convert to derived publisher
     var activePreset: Preset {
-        PresetManager.defaultPresets[settingsStore.settings.activePreset.id]!
+        PresetManager.defaultPresets[settingsStore.activePreset.id]!
     }
     
     static let defaultPresets: OrderedDictionary<String, Preset> = [
@@ -122,7 +122,7 @@ class PresetManager: ObservableObject {
     
     func loadPreset(preset: Preset) async throws {
         try await settingsController.setSettings { settings in
-            settings.activePreset = preset.presetData
+            settings.defaultPreset = preset.presetData
         }
     }
 }

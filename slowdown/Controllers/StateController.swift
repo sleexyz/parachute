@@ -39,17 +39,17 @@ class StateController: ObservableObject  {
     
     var isSlowing: Bool {
         let usagePoints = state.usagePoints
-        let usageMaxHp = settings.settings.activePreset.usageMaxHp
+        let usageMaxHp = settings.activePreset.usageMaxHp
         let damageRatio = usagePoints / usageMaxHp
         return damageRatio > 0.5
     }
     
     var damageRatio: Double {
-        return state.usagePoints / settings.settings.activePreset.usageMaxHp
+        return state.usagePoints / settings.activePreset.usageMaxHp
     }
     
     var healTimeLeft: Double {
-        return state.usagePoints / settings.settings.activePreset.usageHealRate
+        return state.usagePoints / settings.activePreset.usageHealRate
     }
     
     var hpRatio: Double {
@@ -57,7 +57,7 @@ class StateController: ObservableObject  {
     }
     
     var scrollTimeLeft: Double {
-        return max(settings.settings.activePreset.usageMaxHp / 2 - state.usagePoints, 0)
+        return max(settings.activePreset.usageMaxHp / 2 - state.usagePoints, 0)
     }
     
     var hpColor: Color {

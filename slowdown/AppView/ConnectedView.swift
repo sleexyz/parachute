@@ -68,14 +68,14 @@ struct PresetContent: View {
     @EnvironmentObject var presetManager: PresetManager
     
     var model: PresetViewModel {
-        PresetViewModel(presetData: settingsStore.activePreset, preset: PresetManager.getPreset(id: settingsStore.settings.activePreset.id))
+        PresetViewModel(presetData: settingsStore.activePresetBinding, preset: PresetManager.getPreset(id: settingsStore.activePreset.id))
     }
     
     var body: some View {
         ZStack {
             Background(model: model)
             ZStack {
-                if settingsStore.settings.activePreset.mode == .progressive {
+                if settingsStore.activePreset.mode == .progressive {
                     VStack {
                         PresetHeader()
                         SlowingStatus()
@@ -285,7 +285,7 @@ struct CardSelector: View {
         var map =  Dictionary<String, (Int, Int)>()
         for (i, entry) in presets.enumerated() {
             let id = entry.key
-            if id == settingsStore.activePreset.id {
+            if id == settingsStore.activePresetBinding.id {
                 map[id] = (cardCount - 1, i + 1)
                 afterActive = true
             } else {
@@ -300,7 +300,7 @@ struct CardSelector: View {
         var map =  Dictionary<String, (Int, Int)>()
         for (i, entry) in presets.enumerated() {
             let id = entry.key
-            if id == settingsStore.activePreset.id {
+            if id == settingsStore.activePresetBinding.id {
                 map[id] = (0, i + 1)
                 afterActive = true
             } else {
@@ -335,7 +335,7 @@ struct CardSelector: View {
                         index: map[preset.presetData.id]!.0,
                         selectorOpenIndex: map[preset.presetData.id]!.1,
                         total: cardCount,
-                        active: settingsStore.settings.activePreset.id == preset.presetData.id,
+                        active: settingsStore.activePreset.id == preset.presetData.id,
                         containerHeight: containerHeight
                     ))
             }

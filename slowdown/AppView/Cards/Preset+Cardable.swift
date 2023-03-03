@@ -23,7 +23,7 @@ struct WiredPresetCard: View {
     var preset: Preset
     
     var isActive: Bool {
-        preset.presetData.id == settingsStore.settings.activePreset.id
+        preset.presetData.id == settingsStore.activePreset.id
     }
     
     var expanded: Bool {

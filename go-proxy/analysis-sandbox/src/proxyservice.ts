@@ -79,8 +79,11 @@ export interface Settings {
   pauseExpiry:
     | Date
     | undefined;
-  /** Parameters of the currently active preset. */
-  activePreset: Preset | undefined;
+  /**
+   * TODO: rename defaultPreset
+   * Parameters of the active preset.
+   */
+  defaultPreset: Preset | undefined;
 }
 
 export interface Request {
@@ -260,7 +263,7 @@ export const Preset = {
 };
 
 function createBaseSettings(): Settings {
-  return { version: 0, debug: false, pauseExpiry: undefined, activePreset: undefined };
+  return { version: 0, debug: false, pauseExpiry: undefined, defaultPreset: undefined };
 }
 
 export const Settings = {
@@ -274,8 +277,8 @@ export const Settings = {
     if (message.pauseExpiry !== undefined) {
       Timestamp.encode(toTimestamp(message.pauseExpiry), writer.uint32(82).fork()).ldelim();
     }
-    if (message.activePreset !== undefined) {
-      Preset.encode(message.activePreset, writer.uint32(90).fork()).ldelim();
+    if (message.defaultPreset !== undefined) {
+      Preset.encode(message.defaultPreset, writer.uint32(90).fork()).ldelim();
     }
     return writer;
   },
@@ -297,7 +300,7 @@ export const Settings = {
           message.pauseExpiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         case 11:
-          message.activePreset = Preset.decode(reader, reader.uint32());
+          message.defaultPreset = Preset.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -312,7 +315,7 @@ export const Settings = {
       version: isSet(object.version) ? Number(object.version) : 0,
       debug: isSet(object.debug) ? Boolean(object.debug) : false,
       pauseExpiry: isSet(object.pauseExpiry) ? fromJsonTimestamp(object.pauseExpiry) : undefined,
-      activePreset: isSet(object.activePreset) ? Preset.fromJSON(object.activePreset) : undefined,
+      defaultPreset: isSet(object.defaultPreset) ? Preset.fromJSON(object.defaultPreset) : undefined,
     };
   },
 
@@ -321,8 +324,8 @@ export const Settings = {
     message.version !== undefined && (obj.version = Math.round(message.version));
     message.debug !== undefined && (obj.debug = message.debug);
     message.pauseExpiry !== undefined && (obj.pauseExpiry = message.pauseExpiry.toISOString());
-    message.activePreset !== undefined &&
-      (obj.activePreset = message.activePreset ? Preset.toJSON(message.activePreset) : undefined);
+    message.defaultPreset !== undefined &&
+      (obj.defaultPreset = message.defaultPreset ? Preset.toJSON(message.defaultPreset) : undefined);
     return obj;
   },
 
@@ -331,8 +334,8 @@ export const Settings = {
     message.version = object.version ?? 0;
     message.debug = object.debug ?? false;
     message.pauseExpiry = object.pauseExpiry ?? undefined;
-    message.activePreset = (object.activePreset !== undefined && object.activePreset !== null)
-      ? Preset.fromPartial(object.activePreset)
+    message.defaultPreset = (object.defaultPreset !== undefined && object.defaultPreset !== null)
+      ? Preset.fromPartial(object.defaultPreset)
       : undefined;
     return message;
   },

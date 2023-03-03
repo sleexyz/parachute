@@ -39,10 +39,10 @@ final class CheatController: ObservableObject {
     private var timer: Timer?
     
     var cheatExpiry: Date? {
-        if store.settings.activePreset.temporaryRxSpeedExpiry.seconds == 0 {
+        if store.activePreset.temporaryRxSpeedExpiry.seconds == 0 {
             return nil
         }
-        return store.settings.activePreset.temporaryRxSpeedExpiry.date
+        return store.activePreset.temporaryRxSpeedExpiry.date
     }
     
     var cheatTimeLeft: TimeInterval {

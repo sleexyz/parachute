@@ -43,13 +43,17 @@ class SettingsStore: ObservableObject {
     
     @MainActor
     func setCheatSettings(expiry: Date, speed: Double) {
-        settings.activePreset.temporaryRxSpeedExpiry = Google_Protobuf_Timestamp(date: expiry)
-        settings.activePreset.temporaryRxSpeedTarget = speed
+        activePresetBinding.wrappedValue.temporaryRxSpeedExpiry = Google_Protobuf_Timestamp(date: expiry)
+        activePresetBinding.wrappedValue.temporaryRxSpeedTarget = speed
     }
     
-    var activePreset: Binding<Proxyservice_Preset> {
+    var activePreset: Proxyservice_Preset {
+        return activePresetBinding.wrappedValue
+    }
+    
+    var activePresetBinding: Binding<Proxyservice_Preset> {
         Binding {
-            return self.settings.activePreset
+            return self.settings.defaultPreset
         } set: { value in
             Task {
                 await self.setActivePreset(value:value)
@@ -94,6 +98,10 @@ class SettingsStore: ObservableObject {
         }
     }
     
+//    var activePreset: Proxyservice_Preset {
+//        return settings.store.settings.defaultPreset
+//    }
+    
     @MainActor
     private func setSettings(value: Proxyservice_Settings) {
         self.settings = value
@@ -101,7 +109,7 @@ class SettingsStore: ObservableObject {
     
     @MainActor
     private func setActivePreset(value: Proxyservice_Preset) {
-        self.settings.activePreset = value
+        self.settings.defaultPreset = value
     }
     
     @MainActor

@@ -38,7 +38,7 @@ struct ProgressiveModeView_Expanded: PreviewProvider {
         VStack(spacing: 20) {
             ForEach([1, 5], id: \.self) { i in
                 EnvironmentObjectProxy(type: SettingsStore.self) { store in
-                    ProgressiveCard(model: PresetViewModel(presetData: store.activePreset, preset: PresetManager.getPreset(id: store.settings.activePreset.id))) {
+                    ProgressiveCard(model: PresetViewModel(presetData: store.activePresetBinding, preset: PresetManager.getPreset(id: store.activePreset.id))) {
                         EmptyView()
                     }
                 }

@@ -30,7 +30,7 @@ type SettingsManagerImpl struct {
 func InitSettingsManager() *SettingsManagerImpl {
 	return &SettingsManagerImpl{
 		settings: &proxyservice.Settings{
-			ActivePreset: &proxyservice.Preset{},
+			DefaultPreset: &proxyservice.Preset{},
 		},
 		changeListeners: []SettingsChangeListener{},
 	}
@@ -45,7 +45,7 @@ func (sm *SettingsManagerImpl) Settings() *proxyservice.Settings {
 }
 
 func (sm *SettingsManagerImpl) ActivePreset() *proxyservice.Preset {
-	return sm.settings.ActivePreset
+	return sm.settings.DefaultPreset
 }
 
 func (sm *SettingsManagerImpl) SetSettings(settings *proxyservice.Settings) {
@@ -54,8 +54,8 @@ func (sm *SettingsManagerImpl) SetSettings(settings *proxyservice.Settings) {
 	}
 
 	// normalize settings
-	if settings.ActivePreset == nil {
-		settings.ActivePreset = &proxyservice.Preset{}
+	if settings.DefaultPreset == nil {
+		settings.DefaultPreset = &proxyservice.Preset{}
 	}
 
 	log.Printf("settings: %v", settings)

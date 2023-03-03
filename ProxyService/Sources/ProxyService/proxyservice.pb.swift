@@ -127,22 +127,23 @@ public struct Proxyservice_Settings {
   /// Clears the value of `pauseExpiry`. Subsequent reads from it will return its default value.
   public mutating func clearPauseExpiry() {self._pauseExpiry = nil}
 
-  /// Parameters of the currently active preset.
-  public var activePreset: Proxyservice_Preset {
-    get {return _activePreset ?? Proxyservice_Preset()}
-    set {_activePreset = newValue}
+  /// TODO: rename defaultPreset
+  /// Parameters of the active preset.
+  public var defaultPreset: Proxyservice_Preset {
+    get {return _defaultPreset ?? Proxyservice_Preset()}
+    set {_defaultPreset = newValue}
   }
-  /// Returns true if `activePreset` has been explicitly set.
-  public var hasActivePreset: Bool {return self._activePreset != nil}
-  /// Clears the value of `activePreset`. Subsequent reads from it will return its default value.
-  public mutating func clearActivePreset() {self._activePreset = nil}
+  /// Returns true if `defaultPreset` has been explicitly set.
+  public var hasDefaultPreset: Bool {return self._defaultPreset != nil}
+  /// Clears the value of `defaultPreset`. Subsequent reads from it will return its default value.
+  public mutating func clearDefaultPreset() {self._defaultPreset = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
   fileprivate var _pauseExpiry: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
-  fileprivate var _activePreset: Proxyservice_Preset? = nil
+  fileprivate var _defaultPreset: Proxyservice_Preset? = nil
 }
 
 public struct Proxyservice_Request {
@@ -449,7 +450,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     4: .same(proto: "version"),
     7: .same(proto: "debug"),
     10: .same(proto: "pauseExpiry"),
-    11: .same(proto: "activePreset"),
+    11: .same(proto: "defaultPreset"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -461,7 +462,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case 4: try { try decoder.decodeSingularInt32Field(value: &self.version) }()
       case 7: try { try decoder.decodeSingularBoolField(value: &self.debug) }()
       case 10: try { try decoder.decodeSingularMessageField(value: &self._pauseExpiry) }()
-      case 11: try { try decoder.decodeSingularMessageField(value: &self._activePreset) }()
+      case 11: try { try decoder.decodeSingularMessageField(value: &self._defaultPreset) }()
       default: break
       }
     }
@@ -481,7 +482,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     try { if let v = self._pauseExpiry {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
     } }()
-    try { if let v = self._activePreset {
+    try { if let v = self._defaultPreset {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
     } }()
     try unknownFields.traverse(visitor: &visitor)
@@ -491,7 +492,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if lhs.version != rhs.version {return false}
     if lhs.debug != rhs.debug {return false}
     if lhs._pauseExpiry != rhs._pauseExpiry {return false}
-    if lhs._activePreset != rhs._activePreset {return false}
+    if lhs._defaultPreset != rhs._defaultPreset {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -91,7 +91,7 @@ struct WiredStagedDamageBar: View {
     @EnvironmentObject var settingsStore: SettingsStore
     var height: Double
     var body: some View {
-        let ratio = 1 - stateController.state.usagePoints / settingsStore.settings.activePreset.usageMaxHp
+        let ratio = 1 - stateController.state.usagePoints / settingsStore.activePreset.usageMaxHp
         
         return StagedDamageBar(ratio: ratio, height: height)
     }
