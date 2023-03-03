@@ -11,7 +11,7 @@ import SwiftUI
 struct Card<Content: View>: View {
     var title: String
     var caption: String?
-    var backgroundColor: Color? = Color.white.opacity(0)
+    var backgroundColor: Color? = .clear
     
     @ViewBuilder
     var content: () -> Content
@@ -39,9 +39,10 @@ struct Card<Content: View>: View {
                 }
             }
         }
-        .foregroundColor(Color.white)
         .background(backgroundColor)
+        .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+//        .shadow(color: .black.lighter(), radius: 2, x: 0, y: 1)
         .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous)
             .stroke(.ultraThinMaterial)
             .foregroundColor(backgroundColor)

@@ -26,15 +26,16 @@ enum StackState {
     }
     
     var animation: Animation {
-        if noExpand {
-            return .timingCurve(0.30,0.20,0,1, duration: transitionDuration - 0.1)
-        }
-        switch self {
-        // Spring on outer transition states
-//        case .cardOpened: return .spring(response: 0.50, dampingFraction: 0.825)
-        case .cardClosed: return .spring(response: 0.50, dampingFraction: 0.825)
-        default: return .timingCurve(0.30,0.20,0,1, duration: transitionDuration - 0.1)
-        }
+//        if noExpand {
+//            return .timingCurve(0.30,0.20,0,1, duration: transitionDuration - 0.1)
+//        }
+        return .spring(response: 0.55, dampingFraction: 0.825)
+//        switch self {
+//        // Spring on outer transition states
+////        case .cardOpened: return .spring(response: 0.50, dampingFraction: 0.825)
+//        case .cardClosed: return .spring(response: 0.50, dampingFraction: 0.825)
+//        default: return .timingCurve(0.30,0.20,0,1, duration: transitionDuration - 0.1)
+//        }
     }
 }
 
@@ -83,6 +84,16 @@ class PresetManager: ObservableObject {
     }
     
     static let defaultPresets: OrderedDictionary<String, Preset> = [
+//        "sleep": Preset(
+//            name: "Sleep",
+//            presetData: Proxyservice_Preset.with {
+//                $0.id = "sleep"
+//                $0.baseRxSpeedTarget = 40e3
+//                $0.mode = .focus
+//            },
+//            mainColor: .black.opacity(0.8)
+//
+//        ),
         "relax": Preset(
             name: "Connect",
             presetData: Proxyservice_Preset.with {
@@ -90,8 +101,9 @@ class PresetManager: ObservableObject {
                 $0.usageMaxHp = 20
                 $0.usageHealRate = 0.5
                 $0.mode = .progressive
-            }
-//            mainColor: Color(red: 0.87, green: 0.3, blue: 0.3)
+            },
+            mainColor: Color(red: 0.19, green: 0.14, blue: 0.38).lighter(by: 0.4)
+//            mainColor: Color(red: 0.61, green: 0.21, blue: 0.36)
         ),
         "focus": Preset(
             name: "Disconnect",
@@ -99,8 +111,9 @@ class PresetManager: ObservableObject {
                 $0.id = "focus"
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
-            }
-        )
+            },
+            mainColor: Color(red: 0.12, green: 0.10, blue: 0.28)
+        ),
     ]
     
     static func getPreset(id: String) -> Preset {

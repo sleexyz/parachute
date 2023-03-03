@@ -9,13 +9,14 @@ import Foundation
 import SwiftUI
 
 struct PauseCard: View {
+    @Environment(\.colorScheme) var scheme: ColorScheme
     var body: some View {
         Card(
             title: "Pause",
             caption: "Disconnects from VPN for 1 hour",
-            backgroundColor: Color.gray
+            backgroundColor: Color.clear
         ) {
-        }
+        }.foregroundColor(scheme == .light ? .black : .white)
     }
 }
 

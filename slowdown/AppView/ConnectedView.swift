@@ -14,6 +14,7 @@ enum CardPosition {
     case top
     case bottom
     case below
+    case belowbelow
 }
 
 private struct ActiveCardPositionKey: EnvironmentKey {
@@ -21,7 +22,7 @@ private struct ActiveCardPositionKey: EnvironmentKey {
 }
 
 private struct ClosedStackPositionKey: EnvironmentKey {
-    static let defaultValue = CardPosition.below
+    static let defaultValue = CardPosition.bottom
 }
 
 extension EnvironmentValues {
@@ -35,8 +36,6 @@ extension EnvironmentValues {
         set { self[ClosedStackPositionKey.self] = newValue }
     }
 }
-
-var closedStackPosition: CardPosition = .below
 
 var noExpand = true
 
@@ -105,7 +104,7 @@ struct PresetHeader: View {
     var body: some View {
         HStack {
             Text(presetManager.activePreset.name)
-                .font(.title)
+                .font(.headline)
                 .bold()
                 .padding()
             Spacer()
@@ -125,8 +124,8 @@ struct ConnectedView: View {
             PresetContent()
             VStack {
                 CardSelector()
-                    .environment(\.closedStackPosition, .below)
-                    .environment(\.activeCardPosition, .below)
+                    .environment(\.closedStackPosition, .belowbelow)
+                    .environment(\.activeCardPosition, .bottom)
                 Spacer()
             }
         }
@@ -178,8 +177,15 @@ struct CardPositionerModifier: ViewModifier {
         return containerHeight / Double(total)
     }
     
+    var totalClosed: Int {
+        if activeCardPosition != closedStackPosition {
+            return total - 1
+        }
+        return total
+    }
+    
     var stackHeight: Double {
-        20
+        10
     }
     
     var y: Double {
@@ -193,19 +199,29 @@ struct CardPositionerModifier: ViewModifier {
                     return Double(total - index - 1) * stackHeight - extraStackGap / 2
                 }
                 if activeCardPosition == .below {
+                    return closedHeight - Double(total - index - 1) * stackHeight - 50
+                }
+                if activeCardPosition == .belowbelow {
                     return closedHeight - Double(total - index - 1) * stackHeight
                 }
-            }
-            if closedStackPosition == .below {
-                return closedHeight - Double(total - index - 1) * stackHeight
             }
             if closedStackPosition == .bottom {
                 return Double(total - index - 1) * stackHeight - extraStackGap / 2
             }
+            if closedStackPosition == .below {
+                return closedHeight - Double(total - index - 1) * stackHeight - 50
+            }
+            if closedStackPosition == .belowbelow {
+                return closedHeight - Double(totalClosed - index - 1) * stackHeight
+            }
             return 0
         // card closed
         } else {
-            return -Double(total - selectorOpenIndex - 1) * closedHeight
+//            if active && activeCardPosition == .below {
+//                return closedHeight - Double(total - index - 1) * stackHeight - 50
+//            }
+//            return -Double(total - index - 1) * closedHeight
+            return -Double(total - index - 1) * closedHeight
         }
     }
     
@@ -223,14 +239,14 @@ struct CardPositionerModifier: ViewModifier {
     }
     
     var extraStackGap: Double {
-        let numAdditionalCards = Double(total - 1)
+        var numAdditionalCards = Double(totalClosed - 1)
         return stackHeight * numAdditionalCards
     }
     
     func body(content: Content) -> some View {
         content
             .padding()
-            .frame(height: height)
+            .frame(height: height, alignment: .topLeading)
             .offset(x: 0, y: y)
             .animation(
                 presetManager.state.animation,
@@ -244,7 +260,8 @@ struct CardPositionerModifier: ViewModifier {
                 presetManager.state.animation,
                 value: presetManager.state == .cardOpened
             )
-            .zIndex(active ? 1 : 0)
+//            .zIndex(active ? 1 : 0)
+            .zIndex(Double(index))
     }
 }
 
@@ -263,7 +280,7 @@ struct CardSelector: View {
         return presets.count + 1
     }
     
-    func getCardIndexMap() -> Dictionary<String, (Int, Int)> {
+    func getCardIndexMapActiveLast() -> Dictionary<String, (Int, Int)> {
         var afterActive = false
         var map =  Dictionary<String, (Int, Int)>()
         for (i, entry) in presets.enumerated() {
@@ -278,8 +295,24 @@ struct CardSelector: View {
         return map
     }
     
+    func getCardIndexMapActiveFirst() -> Dictionary<String, (Int, Int)> {
+        var afterActive = false
+        var map =  Dictionary<String, (Int, Int)>()
+        for (i, entry) in presets.enumerated() {
+            let id = entry.key
+            if id == settingsStore.activePreset.id {
+                map[id] = (0, i + 1)
+                afterActive = true
+            } else {
+//                map[id] = (i + 2 , i + 1)
+                map[id] = (i + 2 + (afterActive ? -1 : 0), i + 1)
+            }
+        }
+        return map
+    }
+    
     var body: some View {
-        let map = getCardIndexMap()
+        let map = getCardIndexMapActiveLast()
         let realContainerHeight = UIScreen.main.bounds.height / 1
         let containerHeight = realContainerHeight * 0.9
         ZStack(alignment: .bottom) {
@@ -308,12 +341,12 @@ struct CardSelector: View {
             }
         }
         .frame(height: realContainerHeight)
-//        .background(.pink)
-        .background(.ultraThinMaterial.opacity(presetManager.state == .cardOpened ? 0 : 1))
-        .animation(presetManager.state.animation, value: presetManager.state == .cardOpened)
         .onTapBackground(enabled: presetManager.open) {
             presetManager.open = false
         }
+//        .background(.pink)
+        .background(.ultraThinMaterial.opacity(presetManager.state == .cardOpened ? 0 : 1))
+        .animation(presetManager.state.animation, value: presetManager.state == .cardOpened)
     }
 }
 
@@ -322,6 +355,16 @@ struct ConnectedViewBelow_Previews: PreviewProvider {
         ConnectedView()
             .environment(\.closedStackPosition, .below)
             .environment(\.activeCardPosition, .below)
+            .provideDeps(connectedPreviewDeps)
+    }
+}
+
+struct ConnectedViewDefaultExpanded_Previews: PreviewProvider {
+    static var previews: some View {
+        ConnectedView()
+            .consumeDep(PresetManager.self) { value in
+                value.open = true
+            }
             .provideDeps(connectedPreviewDeps)
     }
 }

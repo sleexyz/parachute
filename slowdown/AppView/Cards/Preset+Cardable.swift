@@ -57,6 +57,7 @@ struct WiredPresetCard: View {
     
     var body: some View {
         card
+            .foregroundColor(Color.white)
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 if !presetManager.open {
