@@ -68,12 +68,12 @@ struct PresetContent: View {
     @EnvironmentObject var presetManager: PresetManager
     
     var model: PresetViewModel {
-        PresetViewModel(presetData: settingsStore.activePresetBinding, preset: PresetManager.getPreset(id: settingsStore.activePreset.id))
+        PresetViewModel(presetData: settingsStore.activePresetBinding, preset: presetManager.activePreset)
     }
     
     var body: some View {
         ZStack {
-            Background(model: model)
+//            Background(model: model)
             ZStack {
                 if settingsStore.activePreset.mode == .progressive {
                     VStack {
@@ -167,7 +167,9 @@ struct CardPositionerModifier: ViewModifier {
     let index: Int
     let selectorOpenIndex: Int
     let total: Int
-    let active: Bool
+    let isDefault: Bool
+    let isOverlay: Bool
+    let activeIsOverlay: Bool
     let containerHeight: Double
     
     @Environment(\.activeCardPosition) var activeCardPosition: CardPosition
@@ -178,51 +180,60 @@ struct CardPositionerModifier: ViewModifier {
     }
     
     var totalClosed: Int {
+        var value = total
         if activeCardPosition != closedStackPosition {
-            return total - 1
+            value -= 1
+            if activeIsOverlay {
+                value -= 1
+            }
         }
-        return total
+        return value
     }
     
     var stackHeight: Double {
-        10
+        20
     }
     
     var y: Double {
+        var value: Double = 0
         // any card opened
         if presetManager.state != .cardClosed {
-            if active {
+            if isOverlay {
+                value -= stackHeight * 2
+            }
+            if isDefault || isOverlay {
                 if activeCardPosition == .top {
-                    return -containerHeight + closedHeight
+                    value += -containerHeight + closedHeight
                 }
-                if activeCardPosition == .bottom {
-                    return Double(total - index - 1) * stackHeight - extraStackGap / 2
+                else if activeCardPosition == .bottom {
+                    value += Double(total - index - 1) * stackHeight - extraStackGap / 2
                 }
-                if activeCardPosition == .below {
-                    return closedHeight - Double(total - index - 1) * stackHeight - 50
+                else if activeCardPosition == .below {
+                    value += closedHeight - Double(total - index - 1) * stackHeight - 50
                 }
-                if activeCardPosition == .belowbelow {
-                    return closedHeight - Double(total - index - 1) * stackHeight
+                else if activeCardPosition == .belowbelow {
+                    value += closedHeight - Double(total - index - 1) * stackHeight
+                }
+            } else {
+                if closedStackPosition == .bottom {
+                    value += Double(total - index - 1) * stackHeight - extraStackGap / 2
+                }
+                else if closedStackPosition == .below {
+                    value += closedHeight - Double(total - index - 1) * stackHeight - 50
+                }
+                else if closedStackPosition == .belowbelow {
+                    value += closedHeight - Double(totalClosed - index - 1) * stackHeight
                 }
             }
-            if closedStackPosition == .bottom {
-                return Double(total - index - 1) * stackHeight - extraStackGap / 2
-            }
-            if closedStackPosition == .below {
-                return closedHeight - Double(total - index - 1) * stackHeight - 50
-            }
-            if closedStackPosition == .belowbelow {
-                return closedHeight - Double(totalClosed - index - 1) * stackHeight
-            }
-            return 0
         // card closed
         } else {
 //            if active && activeCardPosition == .below {
 //                return closedHeight - Double(total - index - 1) * stackHeight - 50
 //            }
 //            return -Double(total - index - 1) * closedHeight
-            return -Double(total - index - 1) * closedHeight
+            value += -Double(total - index - 1) * closedHeight
         }
+        return value
     }
     
     var height: Double {
@@ -230,7 +241,7 @@ struct CardPositionerModifier: ViewModifier {
             return closedHeight
         }
         // actual card opened / opening
-        if presetManager.state == .cardOpened && active {
+        if presetManager.state == .cardOpened && isDefault {
             return containerHeight - extraStackGap
         // card closed
         } else {
@@ -239,12 +250,24 @@ struct CardPositionerModifier: ViewModifier {
     }
     
     var extraStackGap: Double {
-        var numAdditionalCards = Double(totalClosed - 1)
+        let numAdditionalCards = Double(totalClosed - 1)
         return stackHeight * numAdditionalCards
+    }
+    
+    var zIndex: Double {
+        var value = Double(index) / Double(total)
+        if isOverlay {
+            value += 2
+        }
+        if isDefault {
+            value += 1
+        }
+        return value
     }
     
     func body(content: Content) -> some View {
         content
+//            .rotationEffect(.degrees(presetManager.state != .cardClosed && isOverlay ? 20 : 0), anchor: .bottomTrailing)
             .padding()
             .frame(height: height, alignment: .topLeading)
             .offset(x: 0, y: y)
@@ -261,7 +284,7 @@ struct CardPositionerModifier: ViewModifier {
                 value: presetManager.state == .cardOpened
             )
 //            .zIndex(active ? 1 : 0)
-            .zIndex(Double(index))
+            .zIndex(zIndex)
     }
 }
 
@@ -285,7 +308,7 @@ struct CardSelector: View {
         var map =  Dictionary<String, (Int, Int)>()
         for (i, entry) in presets.enumerated() {
             let id = entry.key
-            if id == settingsStore.activePresetBinding.id {
+            if id == settingsStore.defaultPreset.id {
                 map[id] = (cardCount - 1, i + 1)
                 afterActive = true
             } else {
@@ -300,7 +323,7 @@ struct CardSelector: View {
         var map =  Dictionary<String, (Int, Int)>()
         for (i, entry) in presets.enumerated() {
             let id = entry.key
-            if id == settingsStore.activePresetBinding.id {
+            if id == settingsStore.defaultPreset.id {
                 map[id] = (0, i + 1)
                 afterActive = true
             } else {
@@ -315,6 +338,7 @@ struct CardSelector: View {
         let map = getCardIndexMapActiveLast()
         let realContainerHeight = UIScreen.main.bounds.height / 1
         let containerHeight = realContainerHeight * 0.9
+        let activeIsOverlay = settingsStore.activeOverlayPreset != nil
         ZStack(alignment: .bottom) {
             // Need rectangle to fill the full height
             Rectangle()
@@ -325,7 +349,9 @@ struct CardSelector: View {
                     index: 0,
                     selectorOpenIndex: 0,
                     total: cardCount,
-                    active: false,
+                    isDefault: false,
+                    isOverlay: false,
+                    activeIsOverlay: activeIsOverlay,
                     containerHeight: containerHeight
                 ))
             ForEach(presets.elements, id: \.key) { entry in
@@ -335,7 +361,9 @@ struct CardSelector: View {
                         index: map[preset.presetData.id]!.0,
                         selectorOpenIndex: map[preset.presetData.id]!.1,
                         total: cardCount,
-                        active: settingsStore.activePreset.id == preset.presetData.id,
+                        isDefault: settingsStore.defaultPreset.id == preset.presetData.id,
+                        isOverlay: settingsStore.activeOverlayPreset?.id == preset.presetData.id,
+                        activeIsOverlay: activeIsOverlay,
                         containerHeight: containerHeight
                     ))
             }

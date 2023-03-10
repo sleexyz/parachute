@@ -67,7 +67,7 @@ struct WiredPresetCard: View {
                 Task {
                     presetManager.open = false
                     if !isActive {
-                        try await presetManager.loadPreset(preset: preset)
+                        try await presetManager.loadOverlay(preset: preset, secs: preset.overlayTimeSecs)
                     }
                 }
             }

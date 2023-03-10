@@ -51,12 +51,43 @@ class SettingsStore: ObservableObject {
         return activePresetBinding.wrappedValue
     }
     
+    var defaultPreset: Proxyservice_Preset {
+        return defaultPresetBinding.wrappedValue
+    }
+    
+    var isOverlayActive: Bool {
+        if Date.now < settings.overlay.expiry.date {
+            return true
+        }
+        return false
+    }
+    
+    var activeOverlayPreset: Proxyservice_Preset? {
+        if self.isOverlayActive {
+            return self.settings.overlay.preset
+        }
+        return nil
+    }
+    
     var activePresetBinding: Binding<Proxyservice_Preset> {
         Binding {
+            if let preset = self.activeOverlayPreset {
+                return preset
+            }
             return self.settings.defaultPreset
         } set: { value in
             Task {
                 await self.setActivePreset(value:value)
+            }
+        }
+    }
+    
+    var defaultPresetBinding: Binding<Proxyservice_Preset> {
+        Binding {
+            return self.settings.defaultPreset
+        } set: { value in
+            Task {
+                await self.setDefaultPreset(value:value)
             }
         }
     }
@@ -109,6 +140,14 @@ class SettingsStore: ObservableObject {
     
     @MainActor
     private func setActivePreset(value: Proxyservice_Preset) {
+        if isOverlayActive {
+            self.settings.overlay.preset = value
+        }
+        self.settings.defaultPreset = value
+    }
+    
+    @MainActor
+    private func setDefaultPreset(value: Proxyservice_Preset) {
         self.settings.defaultPreset = value
     }
     
@@ -116,10 +155,6 @@ class SettingsStore: ObservableObject {
     private func setLoaded(value: Bool) {
         self.loaded = value
     }
-    
-    
-    
-    
     
     public func save() throws {
         let data = try self.settings.serializedData()

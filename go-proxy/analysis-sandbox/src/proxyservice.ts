@@ -65,6 +65,11 @@ export interface Preset {
   id: string;
 }
 
+export interface Overlay {
+  preset: Preset | undefined;
+  expiry: Date | undefined;
+}
+
 export interface Settings {
   /**
    * A version used for migrations of this message.
@@ -84,6 +89,7 @@ export interface Settings {
    * Parameters of the active preset.
    */
   defaultPreset: Preset | undefined;
+  overlay: Overlay | undefined;
 }
 
 export interface Request {
@@ -262,8 +268,68 @@ export const Preset = {
   },
 };
 
+function createBaseOverlay(): Overlay {
+  return { preset: undefined, expiry: undefined };
+}
+
+export const Overlay = {
+  encode(message: Overlay, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.preset !== undefined) {
+      Preset.encode(message.preset, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.expiry !== undefined) {
+      Timestamp.encode(toTimestamp(message.expiry), writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Overlay {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseOverlay();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.preset = Preset.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.expiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Overlay {
+    return {
+      preset: isSet(object.preset) ? Preset.fromJSON(object.preset) : undefined,
+      expiry: isSet(object.expiry) ? fromJsonTimestamp(object.expiry) : undefined,
+    };
+  },
+
+  toJSON(message: Overlay): unknown {
+    const obj: any = {};
+    message.preset !== undefined && (obj.preset = message.preset ? Preset.toJSON(message.preset) : undefined);
+    message.expiry !== undefined && (obj.expiry = message.expiry.toISOString());
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<Overlay>, I>>(object: I): Overlay {
+    const message = createBaseOverlay();
+    message.preset = (object.preset !== undefined && object.preset !== null)
+      ? Preset.fromPartial(object.preset)
+      : undefined;
+    message.expiry = object.expiry ?? undefined;
+    return message;
+  },
+};
+
 function createBaseSettings(): Settings {
-  return { version: 0, debug: false, pauseExpiry: undefined, defaultPreset: undefined };
+  return { version: 0, debug: false, pauseExpiry: undefined, defaultPreset: undefined, overlay: undefined };
 }
 
 export const Settings = {
@@ -279,6 +345,9 @@ export const Settings = {
     }
     if (message.defaultPreset !== undefined) {
       Preset.encode(message.defaultPreset, writer.uint32(90).fork()).ldelim();
+    }
+    if (message.overlay !== undefined) {
+      Overlay.encode(message.overlay, writer.uint32(98).fork()).ldelim();
     }
     return writer;
   },
@@ -302,6 +371,9 @@ export const Settings = {
         case 11:
           message.defaultPreset = Preset.decode(reader, reader.uint32());
           break;
+        case 12:
+          message.overlay = Overlay.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -316,6 +388,7 @@ export const Settings = {
       debug: isSet(object.debug) ? Boolean(object.debug) : false,
       pauseExpiry: isSet(object.pauseExpiry) ? fromJsonTimestamp(object.pauseExpiry) : undefined,
       defaultPreset: isSet(object.defaultPreset) ? Preset.fromJSON(object.defaultPreset) : undefined,
+      overlay: isSet(object.overlay) ? Overlay.fromJSON(object.overlay) : undefined,
     };
   },
 
@@ -326,6 +399,7 @@ export const Settings = {
     message.pauseExpiry !== undefined && (obj.pauseExpiry = message.pauseExpiry.toISOString());
     message.defaultPreset !== undefined &&
       (obj.defaultPreset = message.defaultPreset ? Preset.toJSON(message.defaultPreset) : undefined);
+    message.overlay !== undefined && (obj.overlay = message.overlay ? Overlay.toJSON(message.overlay) : undefined);
     return obj;
   },
 
@@ -336,6 +410,9 @@ export const Settings = {
     message.pauseExpiry = object.pauseExpiry ?? undefined;
     message.defaultPreset = (object.defaultPreset !== undefined && object.defaultPreset !== null)
       ? Preset.fromPartial(object.defaultPreset)
+      : undefined;
+    message.overlay = (object.overlay !== undefined && object.overlay !== null)
+      ? Overlay.fromPartial(object.overlay)
       : undefined;
     return message;
   },

@@ -11,6 +11,7 @@ import SwiftUI
 import Logging
 import Combine
 import OrderedCollections
+import SwiftProtobuf
 
 enum StackState {
     case cardOpened
@@ -98,7 +99,7 @@ class PresetManager: ObservableObject {
             name: "Connect",
             presetData: Proxyservice_Preset.with {
                 $0.id = "relax"
-                $0.usageMaxHp = 20
+                $0.usageMaxHp = 8
                 $0.usageHealRate = 0.5
                 $0.mode = .progressive
             },
@@ -123,6 +124,22 @@ class PresetManager: ObservableObject {
     func loadPreset(preset: Preset) async throws {
         try await settingsController.setSettings { settings in
             settings.defaultPreset = preset.presetData
+        }
+    }
+    
+    func loadOverlay(preset: Preset, secs: Double) async throws {
+        if preset.presetData.id == settingsStore.defaultPreset.id {
+            try await settingsController.setSettings { settings in
+                settings.clearOverlay()
+            }
+            return
+        }
+        
+        try await settingsController.setSettings { settings in
+            settings.overlay = Proxyservice_Overlay.with {
+                $0.preset = preset.presetData
+                $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: secs))
+            }
         }
     }
 }

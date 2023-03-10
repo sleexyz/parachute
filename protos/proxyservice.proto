@@ -46,6 +46,11 @@ message Preset {
     string id = 10;
 }
 
+message Overlay {
+    Preset preset = 1;
+    google.protobuf.Timestamp expiry = 2;
+}
+
 message Settings {
     reserved 1, 2, 3, 5, 6, 8, 9;
 
@@ -62,6 +67,8 @@ message Settings {
     // TODO: rename defaultPreset
     // Parameters of the active preset.
     Preset defaultPreset = 11;
+
+    Overlay overlay = 12;
 }
 
 message Request {

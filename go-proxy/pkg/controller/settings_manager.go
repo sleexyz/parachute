@@ -2,6 +2,7 @@ package controller
 
 import (
 	"log"
+	"time"
 
 	"strange.industries/go-proxy/pb/proxyservice"
 )
@@ -44,7 +45,13 @@ func (sm *SettingsManagerImpl) Settings() *proxyservice.Settings {
 	return sm.settings
 }
 
+// TODO: cache value
 func (sm *SettingsManagerImpl) ActivePreset() *proxyservice.Preset {
+	if overlay := sm.settings.Overlay; overlay != nil {
+		if overlay.Expiry.AsTime().After(time.Now()) {
+			return overlay.Preset
+		}
+	}
 	return sm.settings.DefaultPreset
 }
 

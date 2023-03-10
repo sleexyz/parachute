@@ -105,6 +105,37 @@ public struct Proxyservice_Preset {
   fileprivate var _temporaryRxSpeedExpiry: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 }
 
+public struct Proxyservice_Overlay {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var preset: Proxyservice_Preset {
+    get {return _preset ?? Proxyservice_Preset()}
+    set {_preset = newValue}
+  }
+  /// Returns true if `preset` has been explicitly set.
+  public var hasPreset: Bool {return self._preset != nil}
+  /// Clears the value of `preset`. Subsequent reads from it will return its default value.
+  public mutating func clearPreset() {self._preset = nil}
+
+  public var expiry: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _expiry ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_expiry = newValue}
+  }
+  /// Returns true if `expiry` has been explicitly set.
+  public var hasExpiry: Bool {return self._expiry != nil}
+  /// Clears the value of `expiry`. Subsequent reads from it will return its default value.
+  public mutating func clearExpiry() {self._expiry = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _preset: Proxyservice_Preset? = nil
+  fileprivate var _expiry: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+}
+
 public struct Proxyservice_Settings {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -112,38 +143,52 @@ public struct Proxyservice_Settings {
 
   /// A version used for migrations of this message.
   /// Latest version: 2
-  public var version: Int32 = 0
+  public var version: Int32 {
+    get {return _storage._version}
+    set {_uniqueStorage()._version = newValue}
+  }
 
-  public var debug: Bool = false
+  public var debug: Bool {
+    get {return _storage._debug}
+    set {_uniqueStorage()._debug = newValue}
+  }
 
   /// TODO: move to a State message
   /// When pause should be lifted.
   public var pauseExpiry: SwiftProtobuf.Google_Protobuf_Timestamp {
-    get {return _pauseExpiry ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
-    set {_pauseExpiry = newValue}
+    get {return _storage._pauseExpiry ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_uniqueStorage()._pauseExpiry = newValue}
   }
   /// Returns true if `pauseExpiry` has been explicitly set.
-  public var hasPauseExpiry: Bool {return self._pauseExpiry != nil}
+  public var hasPauseExpiry: Bool {return _storage._pauseExpiry != nil}
   /// Clears the value of `pauseExpiry`. Subsequent reads from it will return its default value.
-  public mutating func clearPauseExpiry() {self._pauseExpiry = nil}
+  public mutating func clearPauseExpiry() {_uniqueStorage()._pauseExpiry = nil}
 
   /// TODO: rename defaultPreset
   /// Parameters of the active preset.
   public var defaultPreset: Proxyservice_Preset {
-    get {return _defaultPreset ?? Proxyservice_Preset()}
-    set {_defaultPreset = newValue}
+    get {return _storage._defaultPreset ?? Proxyservice_Preset()}
+    set {_uniqueStorage()._defaultPreset = newValue}
   }
   /// Returns true if `defaultPreset` has been explicitly set.
-  public var hasDefaultPreset: Bool {return self._defaultPreset != nil}
+  public var hasDefaultPreset: Bool {return _storage._defaultPreset != nil}
   /// Clears the value of `defaultPreset`. Subsequent reads from it will return its default value.
-  public mutating func clearDefaultPreset() {self._defaultPreset = nil}
+  public mutating func clearDefaultPreset() {_uniqueStorage()._defaultPreset = nil}
+
+  public var overlay: Proxyservice_Overlay {
+    get {return _storage._overlay ?? Proxyservice_Overlay()}
+    set {_uniqueStorage()._overlay = newValue}
+  }
+  /// Returns true if `overlay` has been explicitly set.
+  public var hasOverlay: Bool {return _storage._overlay != nil}
+  /// Clears the value of `overlay`. Subsequent reads from it will return its default value.
+  public mutating func clearOverlay() {_uniqueStorage()._overlay = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
-  fileprivate var _pauseExpiry: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
-  fileprivate var _defaultPreset: Proxyservice_Preset? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 public struct Proxyservice_Request {
@@ -342,6 +387,7 @@ public struct Proxyservice_Sample {
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Proxyservice_Mode: @unchecked Sendable {}
 extension Proxyservice_Preset: @unchecked Sendable {}
+extension Proxyservice_Overlay: @unchecked Sendable {}
 extension Proxyservice_Settings: @unchecked Sendable {}
 extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
@@ -444,13 +490,11 @@ extension Proxyservice_Preset: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
   }
 }
 
-extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Settings"
+extension Proxyservice_Overlay: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Overlay"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    4: .same(proto: "version"),
-    7: .same(proto: "debug"),
-    10: .same(proto: "pauseExpiry"),
-    11: .same(proto: "defaultPreset"),
+    1: .same(proto: "preset"),
+    2: .same(proto: "expiry"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -459,10 +503,8 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 4: try { try decoder.decodeSingularInt32Field(value: &self.version) }()
-      case 7: try { try decoder.decodeSingularBoolField(value: &self.debug) }()
-      case 10: try { try decoder.decodeSingularMessageField(value: &self._pauseExpiry) }()
-      case 11: try { try decoder.decodeSingularMessageField(value: &self._defaultPreset) }()
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._preset) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._expiry) }()
       default: break
       }
     }
@@ -473,26 +515,118 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    if self.version != 0 {
-      try visitor.visitSingularInt32Field(value: self.version, fieldNumber: 4)
-    }
-    if self.debug != false {
-      try visitor.visitSingularBoolField(value: self.debug, fieldNumber: 7)
-    }
-    try { if let v = self._pauseExpiry {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
+    try { if let v = self._preset {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     } }()
-    try { if let v = self._defaultPreset {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
+    try { if let v = self._expiry {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
+  public static func ==(lhs: Proxyservice_Overlay, rhs: Proxyservice_Overlay) -> Bool {
+    if lhs._preset != rhs._preset {return false}
+    if lhs._expiry != rhs._expiry {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Settings"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    4: .same(proto: "version"),
+    7: .same(proto: "debug"),
+    10: .same(proto: "pauseExpiry"),
+    11: .same(proto: "defaultPreset"),
+    12: .same(proto: "overlay"),
+  ]
+
+  fileprivate class _StorageClass {
+    var _version: Int32 = 0
+    var _debug: Bool = false
+    var _pauseExpiry: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+    var _defaultPreset: Proxyservice_Preset? = nil
+    var _overlay: Proxyservice_Overlay? = nil
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _version = source._version
+      _debug = source._debug
+      _pauseExpiry = source._pauseExpiry
+      _defaultPreset = source._defaultPreset
+      _overlay = source._overlay
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 4: try { try decoder.decodeSingularInt32Field(value: &_storage._version) }()
+        case 7: try { try decoder.decodeSingularBoolField(value: &_storage._debug) }()
+        case 10: try { try decoder.decodeSingularMessageField(value: &_storage._pauseExpiry) }()
+        case 11: try { try decoder.decodeSingularMessageField(value: &_storage._defaultPreset) }()
+        case 12: try { try decoder.decodeSingularMessageField(value: &_storage._overlay) }()
+        default: break
+        }
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      if _storage._version != 0 {
+        try visitor.visitSingularInt32Field(value: _storage._version, fieldNumber: 4)
+      }
+      if _storage._debug != false {
+        try visitor.visitSingularBoolField(value: _storage._debug, fieldNumber: 7)
+      }
+      try { if let v = _storage._pauseExpiry {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
+      } }()
+      try { if let v = _storage._defaultPreset {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
+      } }()
+      try { if let v = _storage._overlay {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
+      } }()
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
   public static func ==(lhs: Proxyservice_Settings, rhs: Proxyservice_Settings) -> Bool {
-    if lhs.version != rhs.version {return false}
-    if lhs.debug != rhs.debug {return false}
-    if lhs._pauseExpiry != rhs._pauseExpiry {return false}
-    if lhs._defaultPreset != rhs._defaultPreset {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._version != rhs_storage._version {return false}
+        if _storage._debug != rhs_storage._debug {return false}
+        if _storage._pauseExpiry != rhs_storage._pauseExpiry {return false}
+        if _storage._defaultPreset != rhs_storage._defaultPreset {return false}
+        if _storage._overlay != rhs_storage._overlay {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
