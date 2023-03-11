@@ -64,11 +64,18 @@ message Settings {
     // When pause should be lifted.
     google.protobuf.Timestamp pauseExpiry = 10;
 
-    // TODO: rename defaultPreset
     // Parameters of the active preset.
     Preset defaultPreset = 11;
 
+    // Overlay preset
     Overlay overlay = 12;
+
+    //
+    // NOT used by the backend:
+    //
+
+    // id of the currently loaded profile
+    string profile_id = 13;
 }
 
 message Request {

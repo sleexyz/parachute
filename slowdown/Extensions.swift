@@ -9,6 +9,12 @@ import Foundation
 import SwiftUI
 import Combine
 
+extension ShapeStyle {
+    func eraseToAnyShapeStyle() -> AnyShapeStyle {
+        AnyShapeStyle(self)
+    }
+}
+
 extension Publisher {
 
     /// Includes the current element as well as the previous element from the upstream publisher in a tuple where the previous element is optional.

@@ -40,10 +40,10 @@ enum StackState {
     }
 }
 
-class PresetManager: ObservableObject {
+class ProfileManager: ObservableObject {
     struct Provider : Dep {
-        func create(r: Registry) -> PresetManager {
-            return PresetManager(
+        func create(r: Registry) -> ProfileManager {
+            return ProfileManager(
                 settingsStore: r.resolve(SettingsStore.self),
                 settingsController: r.resolve(SettingsController.self)
             )
@@ -75,41 +75,23 @@ class PresetManager: ObservableObject {
     @Published var open: Bool = false
     @Published var state: StackState = .cardOpened
     
+    var activeProfile: Profile {
+        Profile.profiles[settingsStore.settings.profileID]!
+    }
+    
     // Convert to derived publisher
     var activePreset: Preset {
-        PresetManager.defaultProfile[settingsStore.activePreset.id]!
+        Preset.presets[settingsStore.activePreset.id]!
     }
-    
-    static let defaultProfile: OrderedDictionary<String, Preset> = [
-        // Default preset
-        "focus": Preset(
-            name: "Disconnect",
-            presetData: Proxyservice_Preset.with {
-                $0.id = "focus"
-                $0.baseRxSpeedTarget = 40e3
-                $0.mode = .focus
-            },
-            mainColor: Color(red: 0.12, green: 0.10, blue: 0.28)
-        ),
-        "relax": Preset(
-            name: "Connect",
-            presetData: Proxyservice_Preset.with {
-                $0.id = "relax"
-                $0.usageMaxHp = 8
-                $0.usageHealRate = 0.5
-                $0.mode = .progressive
-            },
-            mainColor: Color(red: 0.19, green: 0.14, blue: 0.38).lighter(by: 0.4)
-        ),
-    ]
-    
+        
     static func getPreset(id: String) -> Preset {
-        return defaultProfile[id]!
+        return Preset.presets[id]!
     }
     
-    func loadPreset(preset: Preset) async throws {
+    func loadProfile(profileID: String, profile: Profile) async throws {
         try await settingsController.setSettings { settings in
-            settings.defaultPreset = preset.presetData
+            settings.profileID = profileID
+            settings.defaultPreset = profile.defaultPreset.presetData
         }
     }
     

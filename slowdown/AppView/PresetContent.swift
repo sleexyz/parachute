@@ -10,65 +10,83 @@ import SwiftUI
 
 struct PresetContent: View {
     @EnvironmentObject var settingsStore: SettingsStore
-    @EnvironmentObject var presetManager: PresetManager
+    @EnvironmentObject var presetManager: ProfileManager
     
     var model: PresetViewModel {
         PresetViewModel(presetData: settingsStore.activePresetBinding, preset: presetManager.activePreset)
     }
     
     var body: some View {
-        ZStack {
-//            Background(model: model)
-            ZStack {
-                if settingsStore.activePreset.mode == .progressive {
-                    VStack {
-                        PresetHeader()
-                        SlowingStatus()
-                            .padding()
-                        Spacer()
-                    }
-                    .padding(.top, 60)
-                } else {
-                    VStack {
-                        PresetHeader()
-                        Spacer()
-                    }
-                    .padding(.top, 60)
-                    
+        ZStack(alignment: .top) {
+            if settingsStore.activePreset.mode == .progressive {
+                VStack {
+                    ProfileHeader()
+                    PresetHeader()
+                    SlowingStatus()
+                        .padding()
+                    Spacer()
                 }
+            } else {
+                VStack {
+                    ProfileHeader()
+                    PresetHeader()
+                    Spacer()
+                }
+                
             }
         }
+                .padding(.top, TOP_PADDING)
+                .padding(CARD_PADDING)
     }
 }
 
-struct Background: View {
-    var model: PresetViewModel
-    @EnvironmentObject var settingsStore: SettingsStore
-    @EnvironmentObject var presetManager: PresetManager
+struct ProfileHeader: View {
+    @EnvironmentObject var profileManager: ProfileManager
     
     var body: some View {
-            Spacer()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(
-                            colors: [
-                                Color.white,
-                                Color.clear,
-                            ]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .colorMultiply(model.mainColor)
-                .animation(presetManager.state.animation, value: model.mainColor)
+        VStack {
+            HStack(alignment: .center) {
+                Text(profileManager.activeProfile.icon)
+                    .font(.largeTitle)
+                Text(profileManager.activeProfile.name)
+                    .font(.title)
+            }
+                .frame(maxWidth: .infinity, alignment: .bottomLeading)
+        }
+            .padding(.top, 20)
+            .padding(.bottom, 20)
     }
+    
 }
+
+//struct Background: View {
+//    var model: PresetViewModel
+//    @EnvironmentObject var settingsStore: SettingsStore
+//    @EnvironmentObject var presetManager: ProfileManager
+//
+//    var body: some View {
+//            Spacer()
+//                .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                .background(
+//                    LinearGradient(
+//                        gradient: Gradient(
+//                            colors: [
+//                                Color.white,
+//                                Color.clear,
+//                            ]),
+//                        startPoint: .top,
+//                        endPoint: .bottom
+//                    )
+//                )
+//                .colorMultiply(model.mainColor)
+//                .animation(presetManager.state.animation, value: model.mainColor)
+//    }
+//}
 
 
 struct PresetHeader: View {
     @EnvironmentObject var settingsStore: SettingsStore
-    @EnvironmentObject var presetManager: PresetManager
+    @EnvironmentObject var presetManager: ProfileManager
     var body: some View {
         HStack {
             Text(presetManager.activePreset.name)

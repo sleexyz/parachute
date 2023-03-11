@@ -8,13 +8,17 @@
 import Foundation
 import ProxyService
 
-let LATEST_VERSION = 2
+let LATEST_VERSION = 3
 
 final class SettingsMigrations {
     private static var migrations: [Int: (inout Proxyservice_Settings) -> Void] = [
         2: { settings in
-            settings.defaultPreset = PresetManager.defaultProfile["focus"]!.presetData
+            settings.defaultPreset = Preset.presets["focus"]!.presetData
             settings.version = 2
+        },
+        3: { settings in
+            settings.profileID = "detox"
+            settings.version = 3
         },
     ]
     public static func setDefaults(settings: inout Proxyservice_Settings, from: Int = 0) {

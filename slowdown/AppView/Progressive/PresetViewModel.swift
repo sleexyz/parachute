@@ -38,12 +38,13 @@ struct PresetViewModel {
     }
     
     var mainColor: Color {
-        if let color = preset.mainColor {
-            return color
-        }
-        let h: Double = 259/360
-        let s = level.applyMapping(Mapping(a: 0, b: 3, c: 0.2, d: 1, outWarp: .linear))
-        let b = level.applyMapping(Mapping(a: 0, b: 3, c: 0.67, d: 0.4, outWarp: .linear))
-        return Color(hue: h, saturation: s, brightness: b)
+        preset.mainColor
+//        if let color = preset.mainColor {
+//            return color
+//        }
+//        let h: Double = 259/360
+//        let s = level.applyMapping(Mapping(a: 0, b: 3, c: 0.2, d: 1, outWarp: .linear))
+//        let b = level.applyMapping(Mapping(a: 0, b: 3, c: 0.67, d: 0.4, outWarp: .linear))
+//        return Color(hue: h, saturation: s, brightness: b)
     }
 }

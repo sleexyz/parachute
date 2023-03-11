@@ -17,8 +17,9 @@ extension Preset: Cardable {
 
 struct WiredPresetCard: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
-    @EnvironmentObject var presetManager: PresetManager
+    @EnvironmentObject var presetManager: ProfileManager
     @EnvironmentObject var settingsStore: SettingsStore
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     var preset: Preset
     
@@ -30,34 +31,38 @@ struct WiredPresetCard: View {
         isActive && presetManager.state == .cardOpened
     }
     
-    var model: PresetViewModel {
-                PresetViewModel(
-                presetData: Binding(
-                    get: {
-                        return preset.presetData
-                    },
-                    set: { _ in }
-                ),
-                preset: PresetManager.getPreset(id: preset.presetData.id)
-            )
-        
-    }
-    
     @ViewBuilder
     var card: some View {
         if preset.presetData.mode == .progressive {
-            ProgressiveCard(model: model) {
+            ProgressiveCard(preset: preset) {
             }
         } else {
-            FocusCard(model: model) {
+            FocusCard(preset: preset) {
             }
         }
         
     }
     
+    var foregroundColor: Color {
+        if getLuminance(color: preset.mainColor) < 0.5 {
+            return Color.white
+        } else {
+            return Color.black
+        }
+    }
+    
+    func getLuminance(color: Color) -> Double {
+        var r, g, b, a: CGFloat
+        (r, g, b, a) = (0, 0, 0, 0)
+        UIColor(color).getRed(&r, green: &g, blue: &b, alpha: &a)
+        let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        let opacityFactor = colorScheme == .dark ? 0.33 * (1 - a) : 3 * (1 - a)
+        return luminance * opacityFactor
+    }
+    
     var body: some View {
         card
-            .foregroundColor(Color.white)
+            .foregroundColor(foregroundColor)
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 if !presetManager.open {
@@ -71,6 +76,5 @@ struct WiredPresetCard: View {
                     }
                 }
             }
-        
     }
 }

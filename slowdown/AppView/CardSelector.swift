@@ -9,6 +9,9 @@ import Foundation
 import SwiftUI
 import OrderedCollections
 
+
+let TOP_PADDING: Double = 20
+
 enum StackPosition {
     case top // Entire card visible, top
     case bottom // Entire card visible, bottom
@@ -47,7 +50,7 @@ extension EnvironmentValues {
 }
 
 struct CardPositionerModifier: ViewModifier {
-    @EnvironmentObject var presetManager: PresetManager
+    @EnvironmentObject var presetManager: ProfileManager
     let selectorOpenIndex: Int
     let index: Int
     let stack: StackType
@@ -63,7 +66,7 @@ struct CardPositionerModifier: ViewModifier {
     }
     
     var stackSpacing: Double {
-        20
+        CARD_PADDING
     }
     
     func getStackY(stackPos: StackPosition) -> Double {
@@ -134,7 +137,7 @@ struct CardPositionerModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .padding()
+            .padding(CARD_PADDING)
             .frame(height: height, alignment: .topLeading)
             .offset(x: 0, y: y)
             .animation(
@@ -154,25 +157,32 @@ struct CardPositionerModifier: ViewModifier {
 }
 
 struct CardSelector: View {
-    @EnvironmentObject var presetManager: PresetManager
+    @EnvironmentObject var presetManager: ProfileManager
     @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var stateController: StateController
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     
     var presets: OrderedDictionary<String, Preset> {
-        return PresetManager.defaultProfile
+        return Preset.presets.filter({ _ in true })
     }
     
     var cardCount: Int {
         return presets.count + 1
     }
     
-    var realContainerHeight: Double {
-        UIScreen.main.bounds.height
+    var fullContainerHeight: Double {
+        return UIScreen.main.bounds.height
+    }
+    
+    var profileContainerHeight: Double {
+        if presetManager.state == .cardOpened {
+            return fullContainerHeight
+        }
+        return fullContainerHeight * 0.75
     }
     
     var containerHeight: Double {
-        realContainerHeight * 0.8
+        return fullContainerHeight * 0.6
     }
     
     func getStackData() -> StackData {
@@ -180,10 +190,12 @@ struct CardSelector: View {
         var activeSet =  OrderedSet<String>()
         var closedSet =  OrderedSet<String>()
         
-        activeSet.append(settingsStore.defaultPreset.id)
         if let overlayId = settingsStore.activeOverlayPreset?.id {
             activeSet.append(overlayId)
+        } else {
+            activeSet.append(settingsStore.defaultPreset.id)
         }
+        
         for entry in presets {
             let id = entry.value.id
             selectorOpenSet.append(id)
@@ -227,13 +239,18 @@ struct CardSelector: View {
         }
         return map
     }
+    var background: some ShapeStyle {
+        presetManager.activeProfile.color.opacity(presetManager.state == .cardOpened ? 0 : 1)
+    }
+    
+    var material: some ShapeStyle {
+        Material.ultraThinMaterial.opacity(presetManager.state == .cardOpened ? 0 : 1)
+    }
     
     var body: some View {
         let modifiers = getCardPositionerModifiers()
-        VStack {
-            if presetManager.state != .cardOpened {
-                Spacer().frame(height: 30)
-            }
+        VStack{
+            Spacer()
             ZStack(alignment: .bottom) {
                 // Need rectangle to fill the full height
                 Rectangle()
@@ -247,16 +264,68 @@ struct CardSelector: View {
                 WiredPauseCard().modifier(modifiers[Pause().id]!)
             }
             if presetManager.state != .cardOpened {
-                Spacer()
+                ProfileButton()
+//                    .padding(.bottom, 40)
+//                    .padding(CARD_PADDING)
             }
         }
-        .frame(height: realContainerHeight, alignment: presetManager.state == .cardOpened ? .bottom : .top)
+        .frame(height: profileContainerHeight, alignment: presetManager.state == .cardOpened ? .top: .bottom)
         .onTapBackground(enabled: presetManager.open) {
             presetManager.open = false
         }
-//        .background(.pink)
-        .background(.ultraThinMaterial.opacity(presetManager.state == .cardOpened ? 0 : 1))
+        .padding(.top, presetManager.state == .cardOpened ? 0 : 80)
+        .padding(.bottom)
+//        .background(background)
+//        .background(material)
+//        .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING))
+//        .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
+//            .stroke(.ultraThinMaterial)
+//        )
+//        .padding(.top, presetManager.state == .cardOpened ? 0 : TOP_PADDING)
+        .frame(height: fullContainerHeight, alignment: .center)
+//        .background(background)
+        .background(material)
+//        .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING))
+//        .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
+//            .stroke(.ultraThinMaterial)
+//        )
         .animation(presetManager.state.animation, value: presetManager.state == .cardOpened)
     }
 }
 
+struct ProfileButton: View {
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @EnvironmentObject var profileManager: ProfileManager
+    
+    var body: some View {
+        VStack {
+            HStack(alignment: .center) {
+                Text(profileManager.activeProfile.icon)
+                    .font(.largeTitle)
+                Text(profileManager.activeProfile.name)
+                    .font(.headline)
+            }
+                .padding()
+                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING))
+                .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
+                    .stroke(.ultraThinMaterial)
+                )
+//                .frame(maxWidth: .infinity, alignment: .bottomLeading)
+//                .padding(.top, 120)
+        }
+            .padding(.top, 40)
+            .padding(.bottom, 10)
+//                .background(profileManager.activeProfile.color.opacity(0.7))
+//                .background(.ultraThinMaterial)
+//                .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING))
+//                .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
+//                    .stroke(.ultraThinMaterial)
+//                )
+//                .padding(.leading, -20)
+//                .padding(.trailing, -20)
+//                .padding(.top, -120)
+//                .padding(.bottom, 40)
+    }    
+}

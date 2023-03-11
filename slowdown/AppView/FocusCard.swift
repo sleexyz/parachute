@@ -9,16 +9,17 @@ import Foundation
 import SwiftUI
 
 struct FocusCard<Content: View>: View {
-    var model: PresetViewModel
+    var preset: Preset
     
     @ViewBuilder
     var content: () -> Content
     
     var body: some View {
         Card(
-            title: model.preset.name,
+            title: preset.name,
             caption: "Disallows scrolling",
-            backgroundColor: model.mainColor
+            backgroundColor: preset.mainColor,
+            material: .thinMaterial.opacity(preset.opacity)
         ) {
             content()
         }

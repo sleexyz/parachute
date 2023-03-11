@@ -164,7 +164,6 @@ public struct Proxyservice_Settings {
   /// Clears the value of `pauseExpiry`. Subsequent reads from it will return its default value.
   public mutating func clearPauseExpiry() {_uniqueStorage()._pauseExpiry = nil}
 
-  /// TODO: rename defaultPreset
   /// Parameters of the active preset.
   public var defaultPreset: Proxyservice_Preset {
     get {return _storage._defaultPreset ?? Proxyservice_Preset()}
@@ -175,6 +174,7 @@ public struct Proxyservice_Settings {
   /// Clears the value of `defaultPreset`. Subsequent reads from it will return its default value.
   public mutating func clearDefaultPreset() {_uniqueStorage()._defaultPreset = nil}
 
+  /// Overlay preset
   public var overlay: Proxyservice_Overlay {
     get {return _storage._overlay ?? Proxyservice_Overlay()}
     set {_uniqueStorage()._overlay = newValue}
@@ -183,6 +183,12 @@ public struct Proxyservice_Settings {
   public var hasOverlay: Bool {return _storage._overlay != nil}
   /// Clears the value of `overlay`. Subsequent reads from it will return its default value.
   public mutating func clearOverlay() {_uniqueStorage()._overlay = nil}
+
+  /// id of the currently loaded profile
+  public var profileID: String {
+    get {return _storage._profileID}
+    set {_uniqueStorage()._profileID = newValue}
+  }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -540,6 +546,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     10: .same(proto: "pauseExpiry"),
     11: .same(proto: "defaultPreset"),
     12: .same(proto: "overlay"),
+    13: .standard(proto: "profile_id"),
   ]
 
   fileprivate class _StorageClass {
@@ -548,6 +555,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _pauseExpiry: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
     var _defaultPreset: Proxyservice_Preset? = nil
     var _overlay: Proxyservice_Overlay? = nil
+    var _profileID: String = String()
 
     static let defaultInstance = _StorageClass()
 
@@ -559,6 +567,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _pauseExpiry = source._pauseExpiry
       _defaultPreset = source._defaultPreset
       _overlay = source._overlay
+      _profileID = source._profileID
     }
   }
 
@@ -582,6 +591,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 10: try { try decoder.decodeSingularMessageField(value: &_storage._pauseExpiry) }()
         case 11: try { try decoder.decodeSingularMessageField(value: &_storage._defaultPreset) }()
         case 12: try { try decoder.decodeSingularMessageField(value: &_storage._overlay) }()
+        case 13: try { try decoder.decodeSingularStringField(value: &_storage._profileID) }()
         default: break
         }
       }
@@ -609,6 +619,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       try { if let v = _storage._overlay {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
       } }()
+      if !_storage._profileID.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._profileID, fieldNumber: 13)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -623,6 +636,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._pauseExpiry != rhs_storage._pauseExpiry {return false}
         if _storage._defaultPreset != rhs_storage._defaultPreset {return false}
         if _storage._overlay != rhs_storage._overlay {return false}
+        if _storage._profileID != rhs_storage._profileID {return false}
         return true
       }
       if !storagesAreEqual {return false}

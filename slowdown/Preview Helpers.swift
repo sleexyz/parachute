@@ -19,7 +19,7 @@ let previewDeps : [any Dep] = [
 
 let connectedPreviewDeps : [any Dep] = {
     var value: [any Dep] = [
-        PresetManager.Provider(),
+        ProfileManager.Provider(),
         StateController.Provider(),
     ]
     value.append(contentsOf: previewDeps)

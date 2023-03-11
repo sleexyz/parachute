@@ -84,12 +84,16 @@ export interface Settings {
   pauseExpiry:
     | Date
     | undefined;
-  /**
-   * TODO: rename defaultPreset
-   * Parameters of the active preset.
-   */
-  defaultPreset: Preset | undefined;
-  overlay: Overlay | undefined;
+  /** Parameters of the active preset. */
+  defaultPreset:
+    | Preset
+    | undefined;
+  /** Overlay preset */
+  overlay:
+    | Overlay
+    | undefined;
+  /** id of the currently loaded profile */
+  profileId: string;
 }
 
 export interface Request {
@@ -329,7 +333,14 @@ export const Overlay = {
 };
 
 function createBaseSettings(): Settings {
-  return { version: 0, debug: false, pauseExpiry: undefined, defaultPreset: undefined, overlay: undefined };
+  return {
+    version: 0,
+    debug: false,
+    pauseExpiry: undefined,
+    defaultPreset: undefined,
+    overlay: undefined,
+    profileId: "",
+  };
 }
 
 export const Settings = {
@@ -348,6 +359,9 @@ export const Settings = {
     }
     if (message.overlay !== undefined) {
       Overlay.encode(message.overlay, writer.uint32(98).fork()).ldelim();
+    }
+    if (message.profileId !== "") {
+      writer.uint32(106).string(message.profileId);
     }
     return writer;
   },
@@ -374,6 +388,9 @@ export const Settings = {
         case 12:
           message.overlay = Overlay.decode(reader, reader.uint32());
           break;
+        case 13:
+          message.profileId = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -389,6 +406,7 @@ export const Settings = {
       pauseExpiry: isSet(object.pauseExpiry) ? fromJsonTimestamp(object.pauseExpiry) : undefined,
       defaultPreset: isSet(object.defaultPreset) ? Preset.fromJSON(object.defaultPreset) : undefined,
       overlay: isSet(object.overlay) ? Overlay.fromJSON(object.overlay) : undefined,
+      profileId: isSet(object.profileId) ? String(object.profileId) : "",
     };
   },
 
@@ -400,6 +418,7 @@ export const Settings = {
     message.defaultPreset !== undefined &&
       (obj.defaultPreset = message.defaultPreset ? Preset.toJSON(message.defaultPreset) : undefined);
     message.overlay !== undefined && (obj.overlay = message.overlay ? Overlay.toJSON(message.overlay) : undefined);
+    message.profileId !== undefined && (obj.profileId = message.profileId);
     return obj;
   },
 
@@ -414,6 +433,7 @@ export const Settings = {
     message.overlay = (object.overlay !== undefined && object.overlay !== null)
       ? Overlay.fromPartial(object.overlay)
       : undefined;
+    message.profileId = object.profileId ?? "";
     return message;
   },
 };

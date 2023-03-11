@@ -26,7 +26,7 @@ struct AppView: View {
                 ConnectedView()
                 .modifier(StateUpdater.IsVisibleUpdater())
                     .provideDeps([
-                        PresetManager.Provider(),
+                        ProfileManager.Provider(),
                         StateUpdater.Provider(),
                         StateController.Provider()
                     ])

@@ -24,7 +24,8 @@ struct PauseCard: View {
         Card(
             title: "Pause",
             caption: "Disconnects from VPN for 1 hour",
-            backgroundColor: Color.clear
+            backgroundColor: .clear.opacity(0.5),
+            material: .ultraThinMaterial
         ) {
         }.foregroundColor(scheme == .light ? .black : .white)
     }
@@ -32,7 +33,7 @@ struct PauseCard: View {
 
 struct WiredPauseCard: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
-    @EnvironmentObject var presetManager: PresetManager
+    @EnvironmentObject var presetManager: ProfileManager
     var body: some View {
         PauseCard()
             .onTapGesture {
