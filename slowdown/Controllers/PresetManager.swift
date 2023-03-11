@@ -57,23 +57,19 @@ class PresetManager: ObservableObject {
         self.settingsController = settingsController
         $open.sink { val in
             if val {
-                if noExpand {
-                    self.state = .cardClosed
-                } else {
-                    self.state = .cardClosing
-                }
+                self.state = .cardClosed
             } else {
                 self.state = .cardOpened
             }
         }.store(in: &bag)
         
-        if !noExpand {
-            $open.debounce(for: .seconds(StackState.cardClosing.transitionDuration), scheduler:DispatchQueue.main).sink {val in
-                if val {
-                    self.state = .cardClosed
-                }
-            }.store(in: &bag)
-        }
+//        if !noExpand {
+//            $open.debounce(for: .seconds(StackState.cardClosing.transitionDuration), scheduler:DispatchQueue.main).sink {val in
+//                if val {
+//                    self.state = .cardClosed
+//                }
+//            }.store(in: &bag)
+//        }
     }
     
     @Published var open: Bool = false
@@ -81,31 +77,11 @@ class PresetManager: ObservableObject {
     
     // Convert to derived publisher
     var activePreset: Preset {
-        PresetManager.defaultPresets[settingsStore.activePreset.id]!
+        PresetManager.defaultProfile[settingsStore.activePreset.id]!
     }
     
-    static let defaultPresets: OrderedDictionary<String, Preset> = [
-//        "sleep": Preset(
-//            name: "Sleep",
-//            presetData: Proxyservice_Preset.with {
-//                $0.id = "sleep"
-//                $0.baseRxSpeedTarget = 40e3
-//                $0.mode = .focus
-//            },
-//            mainColor: .black.opacity(0.8)
-//
-//        ),
-        "relax": Preset(
-            name: "Connect",
-            presetData: Proxyservice_Preset.with {
-                $0.id = "relax"
-                $0.usageMaxHp = 8
-                $0.usageHealRate = 0.5
-                $0.mode = .progressive
-            },
-            mainColor: Color(red: 0.19, green: 0.14, blue: 0.38).lighter(by: 0.4)
-//            mainColor: Color(red: 0.61, green: 0.21, blue: 0.36)
-        ),
+    static let defaultProfile: OrderedDictionary<String, Preset> = [
+        // Default preset
         "focus": Preset(
             name: "Disconnect",
             presetData: Proxyservice_Preset.with {
@@ -115,10 +91,20 @@ class PresetManager: ObservableObject {
             },
             mainColor: Color(red: 0.12, green: 0.10, blue: 0.28)
         ),
+        "relax": Preset(
+            name: "Connect",
+            presetData: Proxyservice_Preset.with {
+                $0.id = "relax"
+                $0.usageMaxHp = 8
+                $0.usageHealRate = 0.5
+                $0.mode = .progressive
+            },
+            mainColor: Color(red: 0.19, green: 0.14, blue: 0.38).lighter(by: 0.4)
+        ),
     ]
     
     static func getPreset(id: String) -> Preset {
-        return defaultPresets[id]!
+        return defaultProfile[id]!
     }
     
     func loadPreset(preset: Preset) async throws {

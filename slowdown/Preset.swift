@@ -20,4 +20,7 @@ struct Preset {
         }
         return 10 * 60
     }
+    var id: String {
+        presetData.id
+    }
 }

@@ -8,6 +8,16 @@
 import Foundation
 import SwiftUI
 
+struct Pause {
+    var id = "__pause"
+}
+
+extension Pause: Cardable {
+    func makeCard() -> some View {
+        WiredPauseCard()
+    }
+}
+
 struct PauseCard: View {
     @Environment(\.colorScheme) var scheme: ColorScheme
     var body: some View {

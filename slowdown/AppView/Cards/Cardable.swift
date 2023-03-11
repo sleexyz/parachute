@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-protocol Cardable {
+protocol Cardable: Identifiable {
     associatedtype V: View
     @ViewBuilder
     func makeCard() -> V

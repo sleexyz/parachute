@@ -84,6 +84,7 @@
 		A0915BDA2991EE6900874313 /* NotificationsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BD92991EE6900874313 /* NotificationsHelper.swift */; };
 		A0915BDC2991FB2700874313 /* TunConn.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BDB2991FB2700874313 /* TunConn.swift */; };
 		A0915BDE2991FED700874313 /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BDD2991FED700874313 /* SettingsHelper.swift */; };
+		A09C5A0029BC26B70077A59B /* PresetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C59FF29BC26B70077A59B /* PresetContent.swift */; };
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
 		A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9201293FCF1700C090E9 /* SettingsStore.swift */; };
 		A0BF9204294175AE00C090E9 /* CheatController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9203294175AE00C090E9 /* CheatController.swift */; };
@@ -273,6 +274,7 @@
 		A0915BD92991EE6900874313 /* NotificationsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsHelper.swift; sourceTree = "<group>"; };
 		A0915BDB2991FB2700874313 /* TunConn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunConn.swift; sourceTree = "<group>"; };
 		A0915BDD2991FED700874313 /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
+		A09C59FF29BC26B70077A59B /* PresetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetContent.swift; sourceTree = "<group>"; };
 		A0BF9201293FCF1700C090E9 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		A0BF9203294175AE00C090E9 /* CheatController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatController.swift; sourceTree = "<group>"; };
 		A0E71AB9299DC9D60009B6E4 /* DeviceCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCallbacks.swift; sourceTree = "<group>"; };
@@ -553,6 +555,7 @@
 				A0F764EA29A2B5A2001F9B24 /* CardSelector.swift */,
 				A0F764DE299DD37C001F9B24 /* ConnectedView.swift */,
 				A0F764E0299DD491001F9B24 /* DisconnectedView.swift */,
+				A09C59FF29BC26B70077A59B /* PresetContent.swift */,
 			);
 			path = AppView;
 			sourceTree = "<group>";
@@ -922,6 +925,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A0312E2C297D07D300EB0B8A /* Extensions.swift in Sources */,
+				A09C5A0029BC26B70077A59B /* PresetContent.swift in Sources */,
 				A02A67A8298820B300FF0B27 /* SpeedBar.swift in Sources */,
 				A0F764DF299DD37C001F9B24 /* ConnectedView.swift in Sources */,
 				A068DCF229A6FA4F0036E9A2 /* Cardable.swift in Sources */,
