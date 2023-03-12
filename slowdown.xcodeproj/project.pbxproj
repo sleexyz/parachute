@@ -86,6 +86,8 @@
 		A0915BDE2991FED700874313 /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BDD2991FED700874313 /* SettingsHelper.swift */; };
 		A09C5A0029BC26B70077A59B /* PresetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C59FF29BC26B70077A59B /* PresetContent.swift */; };
 		A09C5A0429BC30560077A59B /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C5A0329BC30560077A59B /* Profile.swift */; };
+		A09C5A0629BD16650077A59B /* ProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C5A0529BD16650077A59B /* ProfileButton.swift */; };
+		A09C5A0829BD1CCD0077A59B /* ProfileSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C5A0729BD1CCD0077A59B /* ProfileSelector.swift */; };
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
 		A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9201293FCF1700C090E9 /* SettingsStore.swift */; };
 		A0BF9204294175AE00C090E9 /* CheatController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9203294175AE00C090E9 /* CheatController.swift */; };
@@ -96,7 +98,7 @@
 		A0F764E5299DDD56001F9B24 /* Settings Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764E4299DDD56001F9B24 /* Settings Extensions.swift */; };
 		A0F764E7299E15AD001F9B24 /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A0F764E6299E15AD001F9B24 /* ProxyService */; };
 		A0F764E929A193D5001F9B24 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764E829A193D5001F9B24 /* ProfileManager.swift */; };
-		A0F764EB29A2B5A2001F9B24 /* CardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EA29A2B5A2001F9B24 /* CardSelector.swift */; };
+		A0F764EB29A2B5A2001F9B24 /* PresetSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EA29A2B5A2001F9B24 /* PresetSelector.swift */; };
 		A0F764ED29A2E0A8001F9B24 /* PresetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EC29A2E0A8001F9B24 /* PresetViewModel.swift */; };
 		A0F764EF29A3F737001F9B24 /* TimerLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EE29A3F737001F9B24 /* TimerLock.swift */; };
 		A0FBF66A29ACF90E0030FCD7 /* Preset.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FBF66929ACF90E0030FCD7 /* Preset.swift */; };
@@ -277,6 +279,8 @@
 		A0915BDD2991FED700874313 /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
 		A09C59FF29BC26B70077A59B /* PresetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetContent.swift; sourceTree = "<group>"; };
 		A09C5A0329BC30560077A59B /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		A09C5A0529BD16650077A59B /* ProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileButton.swift; sourceTree = "<group>"; };
+		A09C5A0729BD1CCD0077A59B /* ProfileSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSelector.swift; sourceTree = "<group>"; };
 		A0BF9201293FCF1700C090E9 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		A0BF9203294175AE00C090E9 /* CheatController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatController.swift; sourceTree = "<group>"; };
 		A0E71AB9299DC9D60009B6E4 /* DeviceCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCallbacks.swift; sourceTree = "<group>"; };
@@ -285,7 +289,7 @@
 		A0F764E2299DD6CA001F9B24 /* VPNLifecycleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNLifecycleManager.swift; sourceTree = "<group>"; };
 		A0F764E4299DDD56001F9B24 /* Settings Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Settings Extensions.swift"; sourceTree = "<group>"; };
 		A0F764E829A193D5001F9B24 /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
-		A0F764EA29A2B5A2001F9B24 /* CardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSelector.swift; sourceTree = "<group>"; };
+		A0F764EA29A2B5A2001F9B24 /* PresetSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetSelector.swift; sourceTree = "<group>"; };
 		A0F764EC29A2E0A8001F9B24 /* PresetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetViewModel.swift; sourceTree = "<group>"; };
 		A0F764EE29A3F737001F9B24 /* TimerLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerLock.swift; sourceTree = "<group>"; };
 		A0FBF66929ACF90E0030FCD7 /* Preset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preset.swift; sourceTree = "<group>"; };
@@ -555,10 +559,12 @@
 				A068DCF829A7C57D0036E9A2 /* FocusCard.swift */,
 				A081F2432967BC9800863FE3 /* BreakModeView.swift */,
 				A081F2472967C83800863FE3 /* AppModeCarousel.swift */,
-				A0F764EA29A2B5A2001F9B24 /* CardSelector.swift */,
+				A0F764EA29A2B5A2001F9B24 /* PresetSelector.swift */,
 				A0F764DE299DD37C001F9B24 /* ConnectedView.swift */,
 				A0F764E0299DD491001F9B24 /* DisconnectedView.swift */,
 				A09C59FF29BC26B70077A59B /* PresetContent.swift */,
+				A09C5A0529BD16650077A59B /* ProfileButton.swift */,
+				A09C5A0729BD1CCD0077A59B /* ProfileSelector.swift */,
 			);
 			path = AppView;
 			sourceTree = "<group>";
@@ -937,11 +943,13 @@
 				A08719D8281A4CE500113F3F /* SplashView.swift in Sources */,
 				A0F764EF29A3F737001F9B24 /* TimerLock.swift in Sources */,
 				A068DCF929A7C57D0036E9A2 /* FocusCard.swift in Sources */,
+				A09C5A0829BD1CCD0077A59B /* ProfileSelector.swift in Sources */,
+				A09C5A0629BD16650077A59B /* ProfileButton.swift in Sources */,
 				A02F58E227A6F14500D3330F /* ContentView.swift in Sources */,
 				A081F24E296922F300863FE3 /* StateController.swift in Sources */,
 				A068DCF729A6FB260036E9A2 /* PauseCard.swift in Sources */,
 				A068DCF529A6FABC0036E9A2 /* Preset+Cardable.swift in Sources */,
-				A0F764EB29A2B5A2001F9B24 /* CardSelector.swift in Sources */,
+				A0F764EB29A2B5A2001F9B24 /* PresetSelector.swift in Sources */,
 				A081F2442967BC9800863FE3 /* BreakModeView.swift in Sources */,
 				A081F2422967BC5500863FE3 /* FocusModeView.swift in Sources */,
 				A081F250296A125300863FE3 /* DamageBar.swift in Sources */,

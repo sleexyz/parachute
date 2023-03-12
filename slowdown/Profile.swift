@@ -11,6 +11,7 @@ import ProxyService
 import SwiftUI
 
 struct Profile {
+    var id: String
     var name: String
     var icon: String
     var presets: OrderedSet<String>
@@ -22,6 +23,7 @@ struct Profile {
     
     static let profiles: OrderedDictionary<String, Profile> = [
         "detox": Profile(
+            id: "detox",
             name: "Detox",
             icon: "🫧",
             presets: [
@@ -29,16 +31,19 @@ struct Profile {
                 "relax"
             ],
             color: .indigo.darker().darker()
-//            color: AnyShapeStyle(.linearGradient(Gradient(colors: [.white, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
         ),
         "sleep": Profile(
+            id: "sleep",
             name: "Sleep",
             icon: "💤",
             presets: [
-                "focus",
-                "relax",
+                "sleep_focus",
+                "sleep_relax",
             ],
-            color: .clear
+            color: .blue.darker().darker()
         )
     ]
+}
+
+extension Profile: Identifiable {
 }

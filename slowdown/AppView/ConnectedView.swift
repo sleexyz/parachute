@@ -16,23 +16,38 @@ struct ConnectedView: View {
     @EnvironmentObject var service: VPNConfigurationService
     @EnvironmentObject var stateController: StateController
     @EnvironmentObject var settingsStore: SettingsStore
-    @EnvironmentObject var presetManager: ProfileManager
+    @EnvironmentObject var profileManager: ProfileManager
+    
+    @Namespace var namespace
     
     var body: some View {
         ZStack(alignment: .top) {
             PresetContent()
-                CardSelector()
-                    .environment(\.activeStackPosition, .bottom)
-                    .environment(\.closedStackPosition, .belowbelow)
+            PresetSelector()
+                .environment(\.activeStackPosition, .bottom)
+                .environment(\.closedStackPosition, .belowbelow)
+            ProfileSelector()
         }
+        .namespace(namespace)
     }
 }
 
-struct ConnectedViewDefaultExpanded_Previews: PreviewProvider {
+struct ConnectedViewDefaultPresetSelectorExpanded_Previews: PreviewProvider {
     static var previews: some View {
         ConnectedView()
             .consumeDep(ProfileManager.self) { value in
-                value.open = true
+                value.presetSelectorOpen = true
+            }
+            .provideDeps(connectedPreviewDeps)
+    }
+}
+
+struct ConnectedViewDefaultProfileSelectorExpanded_Previews: PreviewProvider {
+    static var previews: some View {
+        ConnectedView()
+            .consumeDep(ProfileManager.self) { value in
+                value.presetSelectorOpen = true
+                value.profileSelectorOpen = true
             }
             .provideDeps(connectedPreviewDeps)
     }

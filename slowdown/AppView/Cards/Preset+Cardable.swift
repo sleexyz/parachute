@@ -13,13 +13,17 @@ extension Preset: Cardable {
     func makeCard() -> some View {
         WiredPresetCard(preset: self)
     }
+    func getID() -> String {
+        self.id
+    }
 }
 
 struct WiredPresetCard: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
-    @EnvironmentObject var presetManager: ProfileManager
+    @EnvironmentObject var profileManager: ProfileManager
     @EnvironmentObject var settingsStore: SettingsStore
     @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @Environment(\.namespace) var namespace: Namespace.ID
     
     var preset: Preset
     
@@ -28,7 +32,7 @@ struct WiredPresetCard: View {
     }
     
     var expanded: Bool {
-        isActive && presetManager.state == .cardOpened
+        isActive && profileManager.state == .cardOpened
     }
     
     @ViewBuilder
@@ -65,14 +69,14 @@ struct WiredPresetCard: View {
             .foregroundColor(foregroundColor)
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                if !presetManager.open {
-                    presetManager.open = true
+                if !profileManager.presetSelectorOpen {
+                    profileManager.presetSelectorOpen = true
                     return
                 }
                 Task {
-                    presetManager.open = false
+                    profileManager.presetSelectorOpen = false
                     if !isActive {
-                        try await presetManager.loadOverlay(preset: preset, secs: preset.overlayTimeSecs)
+                        try await profileManager.loadOverlay(preset: preset, secs: preset.overlayTimeSecs)
                     }
                 }
             }

@@ -13,11 +13,11 @@ let LATEST_VERSION = 3
 final class SettingsMigrations {
     private static var migrations: [Int: (inout Proxyservice_Settings) -> Void] = [
         2: { settings in
-            settings.defaultPreset = Preset.presets["focus"]!.presetData
+            settings.defaultPreset = Preset.presets.elements[0].value.presetData
             settings.version = 2
         },
         3: { settings in
-            settings.profileID = "detox"
+            settings.profileID = Profile.profiles.elements[0].key
             settings.version = 3
         },
     ]

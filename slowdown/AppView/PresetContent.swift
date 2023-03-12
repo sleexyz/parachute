@@ -10,10 +10,10 @@ import SwiftUI
 
 struct PresetContent: View {
     @EnvironmentObject var settingsStore: SettingsStore
-    @EnvironmentObject var presetManager: ProfileManager
+    @EnvironmentObject var profileManager: ProfileManager
     
     var model: PresetViewModel {
-        PresetViewModel(presetData: settingsStore.activePresetBinding, preset: presetManager.activePreset)
+        PresetViewModel(presetData: settingsStore.activePresetBinding, preset: profileManager.activePreset)
     }
     
     var body: some View {
@@ -45,7 +45,7 @@ struct ProfileHeader: View {
     
     var body: some View {
         VStack {
-            HStack(alignment: .center) {
+            HStack(alignment: .center, spacing: 10) {
                 Text(profileManager.activeProfile.icon)
                     .font(.largeTitle)
                 Text(profileManager.activeProfile.name)
@@ -62,7 +62,7 @@ struct ProfileHeader: View {
 //struct Background: View {
 //    var model: PresetViewModel
 //    @EnvironmentObject var settingsStore: SettingsStore
-//    @EnvironmentObject var presetManager: ProfileManager
+//    @EnvironmentObject var profileManager: ProfileManager
 //
 //    var body: some View {
 //            Spacer()
@@ -79,17 +79,17 @@ struct ProfileHeader: View {
 //                    )
 //                )
 //                .colorMultiply(model.mainColor)
-//                .animation(presetManager.state.animation, value: model.mainColor)
+//                .animation(profileManager.state.animation, value: model.mainColor)
 //    }
 //}
 
 
 struct PresetHeader: View {
     @EnvironmentObject var settingsStore: SettingsStore
-    @EnvironmentObject var presetManager: ProfileManager
+    @EnvironmentObject var profileManager: ProfileManager
     var body: some View {
         HStack {
-            Text(presetManager.activePreset.name)
+            Text(profileManager.activePreset.name)
                 .font(.headline)
                 .bold()
                 .padding()

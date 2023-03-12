@@ -38,7 +38,7 @@ struct ProgressiveCard<Content: View>: View {
 //        VStack(spacing: 20) {
 //            ForEach([1, 5], id: \.self) { i in
 //                EnvironmentObjectProxy(type: SettingsStore.self) { store in
-//                    ProgressiveCard(model: PresetViewModel(presetData: store.activePresetBinding, preset: PresetManager.getPreset(id: store.activePreset.id))) {
+//                    ProgressiveCard(model: PresetViewModel(presetData: store.activePresetBinding, preset: profileManager.getPreset(id: store.activePreset.id))) {
 //                        EmptyView()
 //                    }
 //                }

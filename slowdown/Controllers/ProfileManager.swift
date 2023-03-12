@@ -30,7 +30,7 @@ enum StackState {
 //        if noExpand {
 //            return .timingCurve(0.30,0.20,0,1, duration: transitionDuration - 0.1)
 //        }
-        return .spring(response: 0.55, dampingFraction: 0.825)
+        return .spring(response: 0.45, dampingFraction: 0.825)
 //        switch self {
 //        // Spring on outer transition states
 ////        case .cardOpened: return .spring(response: 0.50, dampingFraction: 0.825)
@@ -55,13 +55,17 @@ class ProfileManager: ObservableObject {
     init(settingsStore: SettingsStore, settingsController: SettingsController) {
         self.settingsStore = settingsStore
         self.settingsController = settingsController
-        $open.sink { val in
+        $presetSelectorOpen.sink { val in
             if val {
                 self.state = .cardClosed
             } else {
                 self.state = .cardOpened
             }
         }.store(in: &bag)
+        
+        settingsStore.objectWillChange.receive(subscriber: Subscribers.Sink(receiveCompletion: {_ in }) {
+            self.objectWillChange.send()
+        })
         
 //        if !noExpand {
 //            $open.debounce(for: .seconds(StackState.cardClosing.transitionDuration), scheduler:DispatchQueue.main).sink {val in
@@ -72,28 +76,55 @@ class ProfileManager: ObservableObject {
 //        }
     }
     
-    @Published var open: Bool = false
+    @Published var presetSelectorOpen: Bool = false
+    @Published var profileSelectorOpen: Bool = false
     @Published var state: StackState = .cardOpened
     
+    
     var activeProfile: Profile {
-        Profile.profiles[settingsStore.settings.profileID]!
+        Profile.profiles[activeProfileID]!
+    }
+    
+    var activeProfileID: String {
+        settingsStore.settings.profileID
     }
     
     // Convert to derived publisher
     var activePreset: Preset {
         Preset.presets[settingsStore.activePreset.id]!
     }
+    
+    var activeOverlayPreset: Preset? {
+        if let presetId = settingsStore.activeOverlayPreset?.id {
+            return Preset.presets[presetId]
+        }
+        return nil
+    }
+    
+    var defaultPreset: Preset {
+        return Preset.presets[settingsStore.defaultPreset.id]!
+    }
+    
+    var presets: OrderedDictionary<String, Preset> {
+        var map = OrderedDictionary<String, Preset>()
+        for presetID in activeProfile.presets {
+            map[presetID] = Preset.presets[presetID]
+        }
+        return map
+    }
         
     static func getPreset(id: String) -> Preset {
         return Preset.presets[id]!
     }
     
-    func loadProfile(profileID: String, profile: Profile) async throws {
+    func loadProfile(profileID: String) async throws {
         try await settingsController.setSettings { settings in
             settings.profileID = profileID
-            settings.defaultPreset = profile.defaultPreset.presetData
+            settings.defaultPreset = Profile.profiles[profileID]!.defaultPreset.presetData
+            settings.clearOverlay()
         }
     }
+    
     
     func loadOverlay(preset: Preset, secs: Double) async throws {
         if preset.presetData.id == settingsStore.defaultPreset.id {

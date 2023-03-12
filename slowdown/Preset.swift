@@ -10,8 +10,18 @@ import ProxyService
 import SwiftUI
 import OrderedCollections
 
+enum PresetType {
+    case focus
+    case relax
+}
+
+extension PresetType: Hashable {
+    
+}
+
 struct Preset {
     var name: String
+    var type: PresetType
     var presetData: Proxyservice_Preset
     var mainColor: Color
     var opacity: Double
@@ -30,30 +40,51 @@ struct Preset {
     }
     
     static let presets: OrderedDictionary<String, Preset> = [
-        // Default preset
         "focus": Preset(
             name: "Disconnect",
+            type: .focus,
             presetData: Proxyservice_Preset.with {
                 $0.id = "focus"
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
             },
-//            mainColor: .purple.darker().darker().opacity(0.5)
             mainColor: Profile.profiles["detox"]!.color.opacity(0.7),
             opacity: 1
         ),
         "relax": Preset(
             name: "Connect",
+            type: .relax,
             presetData: Proxyservice_Preset.with {
                 $0.id = "relax"
                 $0.usageMaxHp = 8
                 $0.usageHealRate = 0.5
                 $0.mode = .progressive
             },
-//            mainColor: .red.opacity(0.5)
             mainColor: Profile.profiles["detox"]!.color.opacity(0.2),
             opacity: 1
-//            mainColor: Color(red: 0.19, green: 0.14, blue: 0.38).lighter(by: 0.4)
+        ),
+        "sleep_focus": Preset(
+            name: "Disconnect",
+            type: .focus,
+            presetData: Proxyservice_Preset.with {
+                $0.id = "sleep_focus"
+                $0.baseRxSpeedTarget = 40e3
+                $0.mode = .focus
+            },
+            mainColor: Profile.profiles["sleep"]!.color.opacity(0.7),
+            opacity: 1
+        ),
+        "sleep_relax": Preset(
+            name: "Connect",
+            type: .relax,
+            presetData: Proxyservice_Preset.with {
+                $0.id = "sleep_relax"
+                $0.usageMaxHp = 8
+                $0.usageHealRate = 0.5
+                $0.mode = .progressive
+            },
+            mainColor: Profile.profiles["sleep"]!.color.opacity(0.2),
+            opacity: 1
         ),
     ]
 

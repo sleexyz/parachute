@@ -13,6 +13,9 @@ struct Pause {
 }
 
 extension Pause: Cardable {
+    func getID() -> String {
+        return Pause().id
+    }
     func makeCard() -> some View {
         WiredPauseCard()
     }
@@ -33,12 +36,13 @@ struct PauseCard: View {
 
 struct WiredPauseCard: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
-    @EnvironmentObject var presetManager: ProfileManager
+    @EnvironmentObject var profileManager: ProfileManager
+    @Environment(\.namespace) var namespace: Namespace.ID
     var body: some View {
         PauseCard()
             .onTapGesture {
-                if !presetManager.open {
-                    presetManager.open = true
+                if !profileManager.presetSelectorOpen {
+                    profileManager.presetSelectorOpen = true
                     return
                 }
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
