@@ -28,19 +28,24 @@ struct ProfileCard: View {
     var stroke: Bool = false
     
     var body: some View {
-            HStack(alignment: .center, spacing: 10) {
+            HStack(alignment: .center, spacing: 20) {
                 Text(profile.icon)
                     .font(.largeTitle)
                 Text(profile.name)
                     .font(.title)
+                    .padding(.trailing, 30)
             }
             .foregroundColor(color.getForegroundColor(colorScheme))
+//            .foregroundColor(isActive ? color : color.getForegroundColor(colorScheme))
             .padding()
-            .frame(maxWidth: .infinity, minHeight: height, alignment: .bottomLeading)
+            .padding()
+//            .frame(maxWidth: .infinity, minHeight: height, alignment: .bottomLeading)
+            .frame(minHeight: height, alignment: .bottomLeading)
             .background(color)
-//            .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING))
-            .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
+            .background(.ultraThinMaterial
+                .opacity(stroke ? 1 : 0))
+            .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING * 2))
+            .overlay(RoundedRectangle(cornerRadius: CARD_PADDING * 2, style: .continuous)
                 .stroke(.ultraThinMaterial)
                 .opacity(stroke ? 1 : 0)
             )

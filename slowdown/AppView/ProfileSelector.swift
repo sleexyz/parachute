@@ -33,7 +33,7 @@ struct ProfileSelector: View {
                         ProfileCard(
                             profile: profile,
                             height: 40,
-                            color: profile.color.opacity(0.5),
+                            color: profile.color.opacity(0.02),
                             stroke: true
                         )
                         .padding()
@@ -41,7 +41,7 @@ struct ProfileSelector: View {
                         ProfileCard(
                             profile: profile,
                             height: 40,
-                            color: profile.color.opacity(0.5),
+                            color: profile.color.opacity(0.02),
                             stroke: true
                         )
                             .transition(.asymmetric(

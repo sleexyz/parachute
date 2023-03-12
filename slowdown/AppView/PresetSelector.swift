@@ -64,7 +64,7 @@ struct CardPositionerModifier: ViewModifier {
     }
     
     var stackSpacing: Double {
-        CARD_PADDING
+        20
     }
     
     func getStackY(stackPos: StackPosition) -> Double {
@@ -135,7 +135,7 @@ struct CardPositionerModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .padding(CARD_PADDING)
+            .padding()
             .frame(height: height, alignment: .topLeading)
             .offset(x: 0, y: y)
             .animation(
@@ -186,7 +186,7 @@ struct PresetSelector: View {
     }
     
     var containerHeight: Double {
-        return fullContainerHeight * 0.80
+        return fullContainerHeight * 0.65
     }
     
     func getStackData() -> StackData {

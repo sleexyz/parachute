@@ -23,7 +23,7 @@ struct Card<Content: View, S: ShapeStyle>: View {
         VStack(spacing: 0) {
             HStack {
                 Text(title)
-                    .font(.headline.bold())
+                    .font(.headline)
                     .padding(.top, CARD_PADDING)
                     .padding(.leading, CARD_PADDING)
                 Spacer()

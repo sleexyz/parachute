@@ -47,8 +47,11 @@ extension Color {
         (r, g, b, a) = (0, 0, 0, 0)
         UIColor(self).getRed(&r, green: &g, blue: &b, alpha: &a)
         let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
-        let opacityFactor = colorScheme == .dark ? 0.33 * (1 - a) : 3 * (1 - a)
-        return luminance * opacityFactor
+        if colorScheme == .dark {
+            return luminance * a + 0 * (1 - a)
+        } else {
+            return luminance * a + 1 * (1 - a)
+        }
     }
 }
 

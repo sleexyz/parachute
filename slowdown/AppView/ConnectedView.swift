@@ -35,14 +35,14 @@ struct ConnectedView: View {
                     profile: profileManager.activeProfile,
 //                    height: UIScreen.main.bounds.height - PROFILE_CARD_HEIGHT * 2
 //                    height: UIScreen.main.bounds.height,
-                    height: PROFILE_CARD_HEIGHT,
+                    height: 40,
                     color: profileManager.activeProfile.color.opacity(0.02)
 //                    height: PROFILE_CARD_HEIGHT
                 )
-//                    .offset(y: PROFILE_CARD_HEIGHT)
-                    .offset(y: -20)
-                    .zIndex(0)
-                    .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .offset(y: 60)
+                .zIndex(0)
+                .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
             }
             PresetSelector(shouldRender: !profileManager.profileSelectorOpen)
                 .environment(\.activeStackPosition, .bottom)
