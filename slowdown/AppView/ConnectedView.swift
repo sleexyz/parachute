@@ -11,6 +11,14 @@ import ProxyService
 import OrderedCollections
 
 
+struct ProfileCardModifier: ViewModifier {
+    @EnvironmentObject var profileManager: ProfileManager
+    
+    func body(content: Content) -> some View {
+        content
+    }
+}
+
 struct ConnectedView: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     @EnvironmentObject var service: VPNConfigurationService
@@ -22,12 +30,41 @@ struct ConnectedView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            PresetContent()
-            PresetSelector()
+            if !profileManager.profileSelectorOpen {
+                ProfileCard(
+                    profile: profileManager.activeProfile,
+//                    height: UIScreen.main.bounds.height - PROFILE_CARD_HEIGHT * 2
+//                    height: UIScreen.main.bounds.height,
+                    height: PROFILE_CARD_HEIGHT,
+                    color: profileManager.activeProfile.color.opacity(0.02)
+//                    height: PROFILE_CARD_HEIGHT
+                )
+//                    .offset(y: PROFILE_CARD_HEIGHT)
+                    .offset(y: -20)
+                    .zIndex(0)
+                    .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
+            }
+            PresetSelector(shouldRender: !profileManager.profileSelectorOpen)
                 .environment(\.activeStackPosition, .bottom)
                 .environment(\.closedStackPosition, .belowbelow)
+                .zIndex(2)
+            
+            if !profileManager.profileSelectorOpen && !profileManager.presetSelectorOpen {
+                PresetContent()
+                    .padding(.top, PROFILE_CARD_HEIGHT)
+                    .frame(height: UIScreen.main.bounds.height, alignment: .top)
+                    .animation(nil, value: profileManager.profileSelectorOpen)
+                    .zIndex(0)
+                    .transition(AnyTransition.asymmetric(
+                        insertion: .opacity.animation(profileManager.state.animation.delay(ANIMATION_SECS )),
+                        removal: .opacity.animation(profileManager.state.animation)
+                    ))
+            }
+            
             ProfileSelector()
+                .zIndex(3)
         }
+        .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
         .namespace(namespace)
     }
 }

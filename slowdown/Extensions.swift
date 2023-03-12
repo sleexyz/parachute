@@ -32,6 +32,26 @@ extension ShapeStyle {
     }
 }
 
+extension Color {
+    // Returns the corresponding foreground color for a background color.
+    func getForegroundColor(_ colorScheme: ColorScheme) -> Color {
+        if self.getLuminance(colorScheme) < 0.5 {
+            return Color.white
+        } else {
+            return Color.black
+        }
+    }
+    
+    func getLuminance(_ colorScheme: ColorScheme) -> Double {
+        var r, g, b, a: CGFloat
+        (r, g, b, a) = (0, 0, 0, 0)
+        UIColor(self).getRed(&r, green: &g, blue: &b, alpha: &a)
+        let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        let opacityFactor = colorScheme == .dark ? 0.33 * (1 - a) : 3 * (1 - a)
+        return luminance * opacityFactor
+    }
+}
+
 extension Publisher {
 
     /// Includes the current element as well as the previous element from the upstream publisher in a tuple where the previous element is optional.

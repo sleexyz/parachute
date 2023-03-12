@@ -86,7 +86,7 @@
 		A0915BDE2991FED700874313 /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BDD2991FED700874313 /* SettingsHelper.swift */; };
 		A09C5A0029BC26B70077A59B /* PresetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C59FF29BC26B70077A59B /* PresetContent.swift */; };
 		A09C5A0429BC30560077A59B /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C5A0329BC30560077A59B /* Profile.swift */; };
-		A09C5A0629BD16650077A59B /* ProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C5A0529BD16650077A59B /* ProfileButton.swift */; };
+		A09C5A0629BD16650077A59B /* ProfileCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C5A0529BD16650077A59B /* ProfileCard.swift */; };
 		A09C5A0829BD1CCD0077A59B /* ProfileSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C5A0729BD1CCD0077A59B /* ProfileSelector.swift */; };
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
 		A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9201293FCF1700C090E9 /* SettingsStore.swift */; };
@@ -279,7 +279,7 @@
 		A0915BDD2991FED700874313 /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
 		A09C59FF29BC26B70077A59B /* PresetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetContent.swift; sourceTree = "<group>"; };
 		A09C5A0329BC30560077A59B /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
-		A09C5A0529BD16650077A59B /* ProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileButton.swift; sourceTree = "<group>"; };
+		A09C5A0529BD16650077A59B /* ProfileCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCard.swift; sourceTree = "<group>"; };
 		A09C5A0729BD1CCD0077A59B /* ProfileSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSelector.swift; sourceTree = "<group>"; };
 		A0BF9201293FCF1700C090E9 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		A0BF9203294175AE00C090E9 /* CheatController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatController.swift; sourceTree = "<group>"; };
@@ -563,7 +563,7 @@
 				A0F764DE299DD37C001F9B24 /* ConnectedView.swift */,
 				A0F764E0299DD491001F9B24 /* DisconnectedView.swift */,
 				A09C59FF29BC26B70077A59B /* PresetContent.swift */,
-				A09C5A0529BD16650077A59B /* ProfileButton.swift */,
+				A09C5A0529BD16650077A59B /* ProfileCard.swift */,
 				A09C5A0729BD1CCD0077A59B /* ProfileSelector.swift */,
 			);
 			path = AppView;
@@ -944,7 +944,7 @@
 				A0F764EF29A3F737001F9B24 /* TimerLock.swift in Sources */,
 				A068DCF929A7C57D0036E9A2 /* FocusCard.swift in Sources */,
 				A09C5A0829BD1CCD0077A59B /* ProfileSelector.swift in Sources */,
-				A09C5A0629BD16650077A59B /* ProfileButton.swift in Sources */,
+				A09C5A0629BD16650077A59B /* ProfileCard.swift in Sources */,
 				A02F58E227A6F14500D3330F /* ContentView.swift in Sources */,
 				A081F24E296922F300863FE3 /* StateController.swift in Sources */,
 				A068DCF729A6FB260036E9A2 /* PauseCard.swift in Sources */,

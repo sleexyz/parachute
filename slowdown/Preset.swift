@@ -48,8 +48,8 @@ struct Preset {
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
             },
-            mainColor: Profile.profiles["detox"]!.color.opacity(0.7),
-            opacity: 1
+            mainColor: Profile.profiles["detox"]!.color.opacity(0.5),
+            opacity: 0
         ),
         "relax": Preset(
             name: "Connect",
@@ -61,7 +61,7 @@ struct Preset {
                 $0.mode = .progressive
             },
             mainColor: Profile.profiles["detox"]!.color.opacity(0.2),
-            opacity: 1
+            opacity: 0.5
         ),
         "sleep_focus": Preset(
             name: "Disconnect",
@@ -71,8 +71,8 @@ struct Preset {
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
             },
-            mainColor: Profile.profiles["sleep"]!.color.opacity(0.7),
-            opacity: 1
+            mainColor: Profile.profiles["sleep"]!.color.opacity(0.5),
+            opacity: 0
         ),
         "sleep_relax": Preset(
             name: "Connect",
@@ -84,7 +84,7 @@ struct Preset {
                 $0.mode = .progressive
             },
             mainColor: Profile.profiles["sleep"]!.color.opacity(0.2),
-            opacity: 1
+            opacity: 0.5
         ),
     ]
 

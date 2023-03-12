@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 
+let TOP_PADDING: Double = 40
+
 struct PresetContent: View {
     @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var profileManager: ProfileManager
@@ -17,46 +19,17 @@ struct PresetContent: View {
     }
     
     var body: some View {
-        ZStack(alignment: .top) {
-            if settingsStore.activePreset.mode == .progressive {
-                VStack {
-                    ProfileHeader()
-                    PresetHeader()
-                    SlowingStatus()
-                        .padding()
-                    Spacer()
-                }
-            } else {
-                VStack {
-                    ProfileHeader()
-                    PresetHeader()
-                    Spacer()
-                }
-                
-            }
-        }
-                .padding(.top, TOP_PADDING)
-                .padding(CARD_PADDING)
-    }
-}
-
-struct ProfileHeader: View {
-    @EnvironmentObject var profileManager: ProfileManager
-    
-    var body: some View {
         VStack {
-            HStack(alignment: .center, spacing: 10) {
-                Text(profileManager.activeProfile.icon)
-                    .font(.largeTitle)
-                Text(profileManager.activeProfile.name)
-                    .font(.title)
+//            PresetHeader()
+            if settingsStore.activePreset.mode == .progressive {
+                SlowingStatus()
+                    .padding()
             }
-                .frame(maxWidth: .infinity, alignment: .bottomLeading)
+            Spacer()
+            
         }
-            .padding(.top, 20)
-            .padding(.bottom, 20)
+        .padding(CARD_PADDING)
     }
-    
 }
 
 //struct Background: View {
@@ -113,14 +86,14 @@ struct SlowingStatus: View {
     
     var body: some View {
         VStack {
-            WiredStagedDamageBar(height: 20)
-                .padding(.bottom, 20)
             HStack(alignment: .bottom) {
                 text
                     .font(.headline)
                     .opacity(0.4)
                 Spacer()
             }
+                .padding(.bottom, 20)
+            WiredStagedDamageBar(height: 20)
         }
         
     }

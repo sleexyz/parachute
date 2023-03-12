@@ -40,7 +40,7 @@ struct Profile {
                 "sleep_focus",
                 "sleep_relax",
             ],
-            color: .blue.darker().darker()
+            color: .blue.darker(by: 0.5)
         )
     ]
 }

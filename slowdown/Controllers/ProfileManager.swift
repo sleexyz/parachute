@@ -21,16 +21,16 @@ enum StackState {
     var transitionDuration: Double {
         switch self {
         case .cardOpened: return 0.7
-        case .cardClosing: return 0.5
+        case .cardClosing: return 0.7
         case .cardClosed: return 0.7
         }
     }
     
     var animation: Animation {
 //        if noExpand {
-//            return .timingCurve(0.30,0.20,0,1, duration: transitionDuration - 0.1)
+            return .timingCurve(0.30,0.20,0,1, duration: transitionDuration - 0.1)
 //        }
-        return .spring(response: 0.45, dampingFraction: 0.825)
+//        return .spring(response: 0.55, dampingFraction: 0.825)
 //        switch self {
 //        // Spring on outer transition states
 ////        case .cardOpened: return .spring(response: 0.50, dampingFraction: 0.825)
@@ -117,15 +117,15 @@ class ProfileManager: ObservableObject {
         return Preset.presets[id]!
     }
     
-    func loadProfile(profileID: String) async throws {
-        try await settingsController.setSettings { settings in
-            settings.profileID = profileID
-            settings.defaultPreset = Profile.profiles[profileID]!.defaultPreset.presetData
-            settings.clearOverlay()
-        }
+    func loadProfile(profileID: String) {
+        settingsStore.settings.profileID = profileID
+        settingsStore.settings.defaultPreset = Profile.profiles[profileID]!.defaultPreset.presetData
+        settingsStore.settings.clearOverlay()
+        settingsController.syncSettings()
     }
     
     
+    // TODO: make synchronous for usage via withAnimation
     func loadOverlay(preset: Preset, secs: Double) async throws {
         if preset.presetData.id == settingsStore.defaultPreset.id {
             try await settingsController.setSettings { settings in

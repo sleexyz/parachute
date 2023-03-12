@@ -47,26 +47,10 @@ struct WiredPresetCard: View {
         
     }
     
-    var foregroundColor: Color {
-        if getLuminance(color: preset.mainColor) < 0.5 {
-            return Color.white
-        } else {
-            return Color.black
-        }
-    }
-    
-    func getLuminance(color: Color) -> Double {
-        var r, g, b, a: CGFloat
-        (r, g, b, a) = (0, 0, 0, 0)
-        UIColor(color).getRed(&r, green: &g, blue: &b, alpha: &a)
-        let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
-        let opacityFactor = colorScheme == .dark ? 0.33 * (1 - a) : 3 * (1 - a)
-        return luminance * opacityFactor
-    }
-    
+
     var body: some View {
         card
-            .foregroundColor(foregroundColor)
+            .foregroundColor(preset.mainColor.getForegroundColor(colorScheme))
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 if !profileManager.presetSelectorOpen {

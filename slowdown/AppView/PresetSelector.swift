@@ -10,8 +10,6 @@ import SwiftUI
 import OrderedCollections
 
 
-let TOP_PADDING: Double = 20
-
 enum StackPosition {
     case top // Entire card visible, top
     case bottom // Entire card visible, bottom
@@ -162,6 +160,8 @@ struct PresetSelector: View {
     @EnvironmentObject var stateController: StateController
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     
+    var shouldRender: Bool
+    
     var presets: OrderedDictionary<String, Preset> {
         var map = OrderedDictionary<String, Preset>()
         for presetID in profileManager.activeProfile.presets {
@@ -186,7 +186,7 @@ struct PresetSelector: View {
     }
     
     var containerHeight: Double {
-        return fullContainerHeight * 0.6
+        return fullContainerHeight * 0.80
     }
     
     func getStackData() -> StackData {
@@ -254,11 +254,20 @@ struct PresetSelector: View {
     @Environment(\.namespace) var namespace: Namespace.ID
     @Namespace var namespaceOverride: Namespace.ID
     
+    func delay(preset: Preset) -> Double {
+        if profileManager.activePreset.id == preset.id {
+            return 2
+        }
+        return 2
+    }
+    
     var body: some View {
         let modifiers = getCardPositionerModifiers()
-        ZStack {
+        ZStack(alignment: .top) {
             VStack {
-                Spacer()
+                if profileManager.state == .cardOpened {
+                    Spacer()
+                }
                 ZStack(alignment: .bottom) {
                     // Need rectangle to fill the full height
                     Rectangle()
@@ -266,38 +275,50 @@ struct PresetSelector: View {
                         .frame(height: containerHeight)
                     ForEach(presets.elements, id: \.key) { entry in
                         let preset = entry.value
-                        preset.makeCard()
-                            .modifier(modifiers[preset.id]!)
+                        if shouldRender {
+                            preset.makeCard()
+                                .transition(AnyTransition.asymmetric(
+                                    insertion: .opacity.animation(profileManager.state.animation.delay(ANIMATION_SECS * delay(preset: preset))),
+                                    removal: .opacity.animation(profileManager.state.animation)
+                                ))
+                                .modifier(modifiers[preset.id]!)
+                        }
                     }
-                    WiredPauseCard().modifier(modifiers[Pause().id]!)
+                    if shouldRender {
+                        WiredPauseCard()
+                                .transition(AnyTransition.asymmetric(
+                                    insertion: .opacity.animation(profileManager.state.animation.delay(ANIMATION_SECS * 2)),
+                                    removal: .opacity.animation(profileManager.state.animation)
+                                ))
+                            .modifier(modifiers[Pause().id]!)
+                    }
                 }
             }
-            .frame(height: profileContainerHeight, alignment: profileManager.state == .cardOpened ? .top: .bottom)
             .onTapBackground(enabled: profileManager.presetSelectorOpen) {
-                profileManager.presetSelectorOpen = false
+                withAnimation {
+                    profileManager.presetSelectorOpen = false
+                }
             }
-            .padding(.top, profileManager.state == .cardOpened ? 0 : 80)
-            .padding(.bottom, profileManager.state == .cardOpened ? 0 : 260)
-            .padding(.bottom)
+//            .padding(.top, profileManager.state != .cardOpened ? 180 : 0)
             .frame(height: fullContainerHeight, alignment: .center)
             .background(material)
-            if profileManager.state != .cardOpened {
-                VStack {
-                    if !profileManager.profileSelectorOpen {
-                        ProfileButton(profile: profileManager.activeProfile, profileID: settingsStore.settings.profileID)
-                            .padding(80)
-                            .transition(AnyTransition.asymmetric(
-                                insertion: .opacity.animation(profileManager.state.animation),
-                                removal: .opacity.animation(.easeInOut(duration: 0.1))
-                            ))
-                    }
-                }
-                .frame(maxHeight: .infinity, alignment: .bottom)
-                .transition(AnyTransition.asymmetric(
-                    insertion: .opacity.animation(profileManager.state.animation.delay(0.3)),
-                    removal: .opacity.animation(.easeInOut(duration: 0.1))
-                ))
-            }
+//            if profileManager.state != .cardOpened {
+//                VStack {
+//                    if !profileManager.profileSelectorOpen {
+//                        ProfileButton(profile: profileManager.activeProfile, profileID: settingsStore.settings.profileID)
+//                            .padding(80)
+//                            .transition(AnyTransition.asymmetric(
+//                                insertion: .opacity.animation(profileManager.state.animation),
+//                                removal: .opacity.animation(.easeInOut(duration: 0.1))
+//                            ))
+//                    }
+//                }
+//                .frame(maxHeight: .infinity, alignment: .bottom)
+//                .transition(AnyTransition.asymmetric(
+//                    insertion: .opacity.animation(profileManager.state.animation.delay(0.3)),
+//                    removal: .opacity.animation(.easeInOut(duration: 0.1))
+//                ))
+//            }
         }
         .animation(profileManager.state.animation, value: profileManager.state == .cardOpened)
         .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
