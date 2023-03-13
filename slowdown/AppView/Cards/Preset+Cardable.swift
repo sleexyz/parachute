@@ -50,7 +50,6 @@ struct WiredPresetCard: View {
 
     var body: some View {
         card
-            .foregroundColor(preset.mainColor.getForegroundColor(colorScheme))
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 if !profileManager.presetSelectorOpen {

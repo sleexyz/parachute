@@ -15,9 +15,17 @@ struct Card<Content: View, S: ShapeStyle>: View {
     var caption: String?
     var backgroundColor: Color?
     var material: S
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     @ViewBuilder
     var content: () -> Content
+    
+    var computedBackgroundColor: Color {
+        guard let backgroundColor = backgroundColor else {
+            return .clear
+        }
+        return backgroundColor.bakeAlpha(colorScheme)
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -44,7 +52,8 @@ struct Card<Content: View, S: ShapeStyle>: View {
                 }
             }
         }
-        .background(backgroundColor ?? .clear)
+        .foregroundColor(computedBackgroundColor.getForegroundColor())
+        .background(computedBackgroundColor)
         .background(material)
         .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous))
 //        .shadow(color: .black.lighter(), radius: 1, x: 0, y: 1)

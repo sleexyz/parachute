@@ -34,24 +34,38 @@ extension ShapeStyle {
 
 extension Color {
     // Returns the corresponding foreground color for a background color.
-    func getForegroundColor(_ colorScheme: ColorScheme) -> Color {
-        if self.getLuminance(colorScheme) < 0.5 {
+    func getForegroundColor() -> Color {
+        if self.getLuminance() < 0.6 {
             return Color.white
         } else {
             return Color.black
         }
     }
     
-    func getLuminance(_ colorScheme: ColorScheme) -> Double {
+    func bakeAlpha(_ colorScheme: ColorScheme) -> Color {
+        var r, g, b, a: CGFloat
+        (r, g, b, a) = (0, 0, 0, 0)
+        UIColor(self).getRed(&r, green: &g, blue: &b, alpha: &a)
+        var mixedColor: UIColor
+        if colorScheme == .dark {
+            mixedColor = UIColor(Color(white: 0.3))
+        } else {
+            mixedColor = UIColor(Color(white: 0.9))
+        }
+        return Color(UIColor(Color(red: r, green: g, blue: b)).mix(with: mixedColor, amount: 1 - a))
+    }
+    
+    func getLuminance() -> Double {
         var r, g, b, a: CGFloat
         (r, g, b, a) = (0, 0, 0, 0)
         UIColor(self).getRed(&r, green: &g, blue: &b, alpha: &a)
         let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
-        if colorScheme == .dark {
-            return luminance * a + 0 * (1 - a)
-        } else {
-            return luminance * a + 1 * (1 - a)
-        }
+        return luminance
+//        if colorScheme == .dark {
+//            return luminance * a + 0 * (1 - a)
+//        } else {
+//            return luminance * a + 1 * (1 - a)
+//        }
     }
 }
 

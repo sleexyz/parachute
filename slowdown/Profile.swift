@@ -30,7 +30,7 @@ struct Profile {
                 "focus",
                 "relax"
             ],
-            color: .indigo.darker().darker()
+            color: .indigo.darker(by: 0.4)
         ),
         "sleep": Profile(
             id: "sleep",

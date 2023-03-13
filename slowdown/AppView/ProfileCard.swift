@@ -35,7 +35,7 @@ struct ProfileCard: View {
                     .font(.title)
                     .padding(.trailing, 30)
             }
-            .foregroundColor(color.getForegroundColor(colorScheme))
+            .foregroundColor(color.bakeAlpha(colorScheme).getForegroundColor())
 //            .foregroundColor(isActive ? color : color.getForegroundColor(colorScheme))
             .padding()
             .padding()
