@@ -48,11 +48,23 @@ extension Color {
         UIColor(self).getRed(&r, green: &g, blue: &b, alpha: &a)
         var mixedColor: UIColor
         if colorScheme == .dark {
-            mixedColor = UIColor(Color(white: 0.3))
+            mixedColor = UIColor(Color(white: 0.2))
         } else {
-            mixedColor = UIColor(Color(white: 0.9))
+            mixedColor = UIColor(Color(white: 0.8))
         }
         return Color(UIColor(Color(red: r, green: g, blue: b)).mix(with: mixedColor, amount: 1 - a))
+    }
+    
+    func deepen(_ amount: Double) -> Color {
+        var h, s, b, a: CGFloat
+        (h, s, b, a) = (0, 0, 0, 0)
+        UIColor(self).getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        return Color(
+            hue: h,
+            saturation: s + amount,
+            brightness: b - amount * 0.5,
+            opacity: a
+        )
     }
     
     func getLuminance() -> Double {

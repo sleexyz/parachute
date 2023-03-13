@@ -24,7 +24,9 @@ struct Card<Content: View, S: ShapeStyle>: View {
         guard let backgroundColor = backgroundColor else {
             return .clear
         }
-        return backgroundColor.bakeAlpha(colorScheme)
+        return backgroundColor
+            .deepen(colorScheme == .dark ? 0 : 0.8)
+            .bakeAlpha(colorScheme)
     }
     
     var body: some View {
