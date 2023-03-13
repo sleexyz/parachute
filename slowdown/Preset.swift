@@ -48,7 +48,7 @@ struct Preset {
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
             },
-            mainColor: Profile.profiles["detox"]!.color.opacity(0.5),
+            mainColor: Profile.profiles["detox"]!.color.opacity(0.6),
             opacity: 0
         ),
         "relax": Preset(
@@ -60,7 +60,7 @@ struct Preset {
                 $0.usageHealRate = 0.5
                 $0.mode = .progressive
             },
-            mainColor: Profile.profiles["detox"]!.color.opacity(0.2),
+            mainColor: Profile.profiles["detox"]!.color.opacity(0.3),
             opacity: 0.5
         ),
         "sleep_focus": Preset(
@@ -71,7 +71,7 @@ struct Preset {
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
             },
-            mainColor: Profile.profiles["sleep"]!.color.opacity(0.5),
+            mainColor: Profile.profiles["sleep"]!.color.opacity(0.6),
             opacity: 0
         ),
         "sleep_relax": Preset(
@@ -83,7 +83,7 @@ struct Preset {
                 $0.usageHealRate = 0.5
                 $0.mode = .progressive
             },
-            mainColor: Profile.profiles["sleep"]!.color.opacity(0.2),
+            mainColor: Profile.profiles["sleep"]!.color.opacity(0.3),
             opacity: 0.5
         ),
     ]
