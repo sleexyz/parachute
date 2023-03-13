@@ -26,7 +26,7 @@ struct PauseCard: View {
     var body: some View {
         Card(
             title: "Pause",
-            caption: "Disconnects from VPN for 1 hour",
+            caption: "Disconnect from VPN for 1 hour",
             backgroundColor: .clear.opacity(0.5),
             material: .ultraThinMaterial
         ) {

@@ -37,14 +37,13 @@ struct WiredPresetCard: View {
     
     @ViewBuilder
     var card: some View {
-        if preset.presetData.mode == .progressive {
-            ProgressiveCard(preset: preset) {
-            }
-        } else {
-            FocusCard(preset: preset) {
-            }
+        Card(
+            title: preset.name,
+            caption: preset.description,
+            backgroundColor: preset.mainColor,
+            material: .thinMaterial.opacity(preset.opacity)
+        ) {
         }
-        
     }
     
 

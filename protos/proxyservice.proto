@@ -44,6 +44,14 @@ message Preset {
 
     // ID of the preset
     string id = 10;
+
+    TrafficRules traffic_rules = 11;
+}
+
+// Rules for slowing down
+message TrafficRules {
+    bool match_all_traffic = 1;
+    // repeated string app_ids = 1;
 }
 
 message Overlay {

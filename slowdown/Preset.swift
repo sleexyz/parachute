@@ -22,6 +22,7 @@ extension PresetType: Hashable {
 struct Preset {
     var name: String
     var type: PresetType
+    var description: String
     var presetData: Proxyservice_Preset
     var mainColor: Color
     var opacity: Double
@@ -43,6 +44,7 @@ struct Preset {
         "focus": Preset(
             name: "Disconnect",
             type: .focus,
+            description: "Slow down social media traffic",
             presetData: Proxyservice_Preset.with {
                 $0.id = "focus"
                 $0.baseRxSpeedTarget = 40e3
@@ -54,10 +56,11 @@ struct Preset {
         "relax": Preset(
             name: "Connect",
             type: .relax,
+            description: "Allow 4 minutes of social media use",
             presetData: Proxyservice_Preset.with {
                 $0.id = "relax"
                 $0.usageMaxHp = 8
-                $0.usageHealRate = 0.5
+                $0.usageHealRate = 0
                 $0.mode = .progressive
             },
             mainColor: Profile.profiles["detox"]!.color.opacity(0.3),
@@ -66,10 +69,15 @@ struct Preset {
         "sleep_focus": Preset(
             name: "Disconnect",
             type: .focus,
+            // TODO: make this 1 minute
+            description: "Slow down all internet traffic",
             presetData: Proxyservice_Preset.with {
                 $0.id = "sleep_focus"
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
+                $0.trafficRules = Proxyservice_TrafficRules.with {
+                    $0.matchAllTraffic = true
+                }
             },
             mainColor: Profile.profiles["sleep"]!.color.opacity(0.6),
             opacity: 0
@@ -77,11 +85,15 @@ struct Preset {
         "sleep_relax": Preset(
             name: "Connect",
             type: .relax,
+            // TODO: make this 1 minute
+            description: "Allow 4 minutes of internet use",
             presetData: Proxyservice_Preset.with {
                 $0.id = "sleep_relax"
-                $0.usageMaxHp = 8
-                $0.usageHealRate = 0.5
-                $0.mode = .progressive
+                $0.baseRxSpeedTarget = .infinity
+                $0.mode = .focus
+                $0.trafficRules = Proxyservice_TrafficRules.with {
+                    $0.matchAllTraffic = true
+                }
             },
             mainColor: Profile.profiles["sleep"]!.color.opacity(0.3),
             opacity: 0.5

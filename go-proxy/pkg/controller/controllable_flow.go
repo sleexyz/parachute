@@ -42,6 +42,8 @@ func (f *ControllableFlow) makeDecision() *Decision {
 	return f.makeProgressiveDecision()
 }
 
+// NOTE: match_all_traffic does not make conceptual with usage based presets (i.e. progressive)
+// since traffic would always be used.
 func (f *ControllableFlow) makeProgressiveDecision() *Decision {
 	di := f.getDecisionInfo()
 	if di.Use && di.App != nil {
@@ -59,6 +61,9 @@ func (f *ControllableFlow) makeFocusDecision() *Decision {
 }
 
 func (f *ControllableFlow) getDecisionInfo() *DecisionInfo {
+	if trafficRules := f.c.sm.ActivePreset().TrafficRules; trafficRules != nil && trafficRules.MatchAllTraffic {
+		return &DecisionInfo{Use: true, Reason: "matching all traffic"}
+	}
 	appMatch, probability := f.c.GetFuzzyAppMatch(f.ip)
 	if appMatch != nil {
 		if probability > 0.5 {

@@ -63,6 +63,13 @@ export interface Preset {
   usageBaseRxSpeedTarget: number;
   /** ID of the preset */
   id: string;
+  trafficRules: TrafficRules | undefined;
+}
+
+/** Rules for slowing down */
+export interface TrafficRules {
+  /** repeated string app_ids = 1; */
+  matchAllTraffic: boolean;
 }
 
 export interface Overlay {
@@ -158,6 +165,7 @@ function createBasePreset(): Preset {
     usageMaxHP: 0,
     usageBaseRxSpeedTarget: 0,
     id: "",
+    trafficRules: undefined,
   };
 }
 
@@ -186,6 +194,9 @@ export const Preset = {
     }
     if (message.id !== "") {
       writer.uint32(82).string(message.id);
+    }
+    if (message.trafficRules !== undefined) {
+      TrafficRules.encode(message.trafficRules, writer.uint32(90).fork()).ldelim();
     }
     return writer;
   },
@@ -221,6 +232,9 @@ export const Preset = {
         case 10:
           message.id = reader.string();
           break;
+        case 11:
+          message.trafficRules = TrafficRules.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -241,6 +255,7 @@ export const Preset = {
       usageMaxHP: isSet(object.usageMaxHP) ? Number(object.usageMaxHP) : 0,
       usageBaseRxSpeedTarget: isSet(object.usageBaseRxSpeedTarget) ? Number(object.usageBaseRxSpeedTarget) : 0,
       id: isSet(object.id) ? String(object.id) : "",
+      trafficRules: isSet(object.trafficRules) ? TrafficRules.fromJSON(object.trafficRules) : undefined,
     };
   },
 
@@ -255,6 +270,8 @@ export const Preset = {
     message.usageMaxHP !== undefined && (obj.usageMaxHP = message.usageMaxHP);
     message.usageBaseRxSpeedTarget !== undefined && (obj.usageBaseRxSpeedTarget = message.usageBaseRxSpeedTarget);
     message.id !== undefined && (obj.id = message.id);
+    message.trafficRules !== undefined &&
+      (obj.trafficRules = message.trafficRules ? TrafficRules.toJSON(message.trafficRules) : undefined);
     return obj;
   },
 
@@ -268,6 +285,56 @@ export const Preset = {
     message.usageMaxHP = object.usageMaxHP ?? 0;
     message.usageBaseRxSpeedTarget = object.usageBaseRxSpeedTarget ?? 0;
     message.id = object.id ?? "";
+    message.trafficRules = (object.trafficRules !== undefined && object.trafficRules !== null)
+      ? TrafficRules.fromPartial(object.trafficRules)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseTrafficRules(): TrafficRules {
+  return { matchAllTraffic: false };
+}
+
+export const TrafficRules = {
+  encode(message: TrafficRules, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.matchAllTraffic === true) {
+      writer.uint32(8).bool(message.matchAllTraffic);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): TrafficRules {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTrafficRules();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.matchAllTraffic = reader.bool();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): TrafficRules {
+    return { matchAllTraffic: isSet(object.matchAllTraffic) ? Boolean(object.matchAllTraffic) : false };
+  },
+
+  toJSON(message: TrafficRules): unknown {
+    const obj: any = {};
+    message.matchAllTraffic !== undefined && (obj.matchAllTraffic = message.matchAllTraffic);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<TrafficRules>, I>>(object: I): TrafficRules {
+    const message = createBaseTrafficRules();
+    message.matchAllTraffic = object.matchAllTraffic ?? false;
     return message;
   },
 };
