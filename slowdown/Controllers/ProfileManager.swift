@@ -126,19 +126,17 @@ class ProfileManager: ObservableObject {
     
     
     // TODO: make synchronous for usage via withAnimation
-    func loadOverlay(preset: Preset, secs: Double) async throws {
+    func loadOverlay(preset: Preset) async throws {
         if preset.presetData.id == settingsStore.defaultPreset.id {
-            try await settingsController.setSettings { settings in
-                settings.clearOverlay()
-            }
+            settingsStore.settings.clearOverlay()
+            settingsController.syncSettings()
             return
         }
         
-        try await settingsController.setSettings { settings in
-            settings.overlay = Proxyservice_Overlay.with {
-                $0.preset = preset.presetData
-                $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: secs))
-            }
+        settingsStore.settings.overlay = Proxyservice_Overlay.with {
+            $0.preset = preset.presetData
+            $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: preset.overlayTimeSecs))
         }
+        settingsController.syncSettings()
     }
 }

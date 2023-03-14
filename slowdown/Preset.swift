@@ -26,6 +26,7 @@ struct Preset {
     var presetData: Proxyservice_Preset
     var mainColor: Color
     var opacity: Double
+    var overlayDurationSecs: Double?
     
     var overlayTimeSecs: Double {
         if presetData.mode == .progressive {
@@ -64,12 +65,12 @@ struct Preset {
                 $0.mode = .progressive
             },
             mainColor: Profile.profiles["detox"]!.color.opacity(0.3),
-            opacity: 0.5
+            opacity: 0.5,
+            overlayDurationSecs: 4 * 60
         ),
         "sleep_focus": Preset(
             name: "Disconnect",
             type: .focus,
-            // TODO: make this 1 minute
             description: "Slow down all internet traffic",
             presetData: Proxyservice_Preset.with {
                 $0.id = "sleep_focus"
@@ -85,8 +86,7 @@ struct Preset {
         "sleep_relax": Preset(
             name: "Connect",
             type: .relax,
-            // TODO: make this 1 minute
-            description: "Allow 4 minutes of internet use",
+            description: "Allow 1 minute of internet use",
             presetData: Proxyservice_Preset.with {
                 $0.id = "sleep_relax"
                 $0.baseRxSpeedTarget = .infinity
@@ -96,7 +96,8 @@ struct Preset {
                 }
             },
             mainColor: Profile.profiles["sleep"]!.color.opacity(0.3),
-            opacity: 0.5
+            opacity: 0.5,
+            overlayDurationSecs: 1 * 60
         ),
     ]
 
