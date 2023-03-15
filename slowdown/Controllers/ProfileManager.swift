@@ -63,9 +63,12 @@ class ProfileManager: ObservableObject {
             }
         }.store(in: &bag)
         
-        settingsStore.objectWillChange.receive(subscriber: Subscribers.Sink(receiveCompletion: {_ in }) {
-            self.objectWillChange.send()
-        })
+        settingsStore.$settings
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &bag)
         
 //        if !noExpand {
 //            $open.debounce(for: .seconds(StackState.cardClosing.transitionDuration), scheduler:DispatchQueue.main).sink {val in
@@ -117,6 +120,7 @@ class ProfileManager: ObservableObject {
         return Preset.presets[id]!
     }
     
+    
     func loadProfile(profileID: String) {
         settingsStore.settings.profileID = profileID
         settingsStore.settings.defaultPreset = Profile.profiles[profileID]!.defaultPreset.presetData
@@ -125,8 +129,7 @@ class ProfileManager: ObservableObject {
     }
     
     
-    // TODO: make synchronous for usage via withAnimation
-    func loadOverlay(preset: Preset) async throws {
+    func loadOverlay(preset: Preset) {
         if preset.presetData.id == settingsStore.defaultPreset.id {
             settingsStore.settings.clearOverlay()
             settingsController.syncSettings()
