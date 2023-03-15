@@ -28,12 +28,6 @@ struct Preset {
     var opacity: Double
     var overlayDurationSecs: Double?
     
-    var overlayTimeSecs: Double {
-        if presetData.mode == .progressive {
-            return presetData.usageMaxHp * 60
-        }
-        return 10 * 60
-    }
     var id: String {
         presetData.id
     }
@@ -60,9 +54,8 @@ struct Preset {
             description: "Allow 4 minutes of social media use",
             presetData: Proxyservice_Preset.with {
                 $0.id = "relax"
-                $0.usageMaxHp = 8
-                $0.usageHealRate = 0
-                $0.mode = .progressive
+                $0.baseRxSpeedTarget = .infinity
+                $0.mode = .focus
             },
             mainColor: Profile.profiles["detox"]!.color.opacity(0.3),
             opacity: 0.5,

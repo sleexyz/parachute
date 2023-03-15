@@ -135,7 +135,7 @@ class ProfileManager: ObservableObject {
         
         settingsStore.settings.overlay = Proxyservice_Overlay.with {
             $0.preset = preset.presetData
-            $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: preset.overlayTimeSecs))
+            $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: preset.overlayDurationSecs!))
         }
         settingsController.syncSettings()
     }
