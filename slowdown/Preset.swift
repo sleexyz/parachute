@@ -92,6 +92,32 @@ struct Preset {
             opacity: 0.5,
             overlayDurationSecs: 1 * 60
         ),
+        "casual_relax": Preset(
+            name: "Connect",
+            type: .relax,
+            description: "Allow 10 minutes of social media use",
+            presetData: Proxyservice_Preset.with {
+                $0.id = "casual_relax"
+                $0.usageMaxHp = 10
+                $0.usageHealRate = 0
+                $0.mode = .progressive
+            },
+            mainColor: Profile.profiles["casual"]!.color.opacity(0.3),
+            opacity: 0.5
+        ),
+        "casual_focus": Preset(
+            name: "Disconnect",
+            type: .focus,
+            description: "Slow down social media use for 10 minutes",
+            presetData: Proxyservice_Preset.with {
+                $0.id = "casual_focus"
+                $0.baseRxSpeedTarget = 40e3
+                $0.mode = .focus
+            },
+            mainColor: Profile.profiles["casual"]!.color.opacity(0.6),
+            opacity: 0,
+            overlayDurationSecs: 10 * 60
+        ),
     ]
 
 }

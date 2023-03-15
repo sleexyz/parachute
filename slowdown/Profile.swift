@@ -41,6 +41,16 @@ struct Profile {
                 "sleep_relax",
             ],
             color: .blue
+        ),
+        "casual": Profile(
+            id: "casual",
+            name: "Casual",
+            icon: "🏄",
+            presets: [
+                "casual_relax",
+                "casual_focus",
+            ],
+            color: .pink
         )
     ]
 }
