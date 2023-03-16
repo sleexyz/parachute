@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-var ANIMATION_SECS: Double = 0.3
 
 struct ProfileSelector: View {
     @EnvironmentObject var profileManager: ProfileManager
@@ -30,19 +29,13 @@ struct ProfileSelector: View {
                 
                 if profileManager.profileSelectorOpen {
                     if profile.id == profileManager.activeProfileID {
-                        ProfileCard(
-                            profile: profile,
-                            height: 40,
-                            color: profile.color.opacity(0.02),
-                            stroke: true
+                        ProfileButton(
+                            profile: profile
                         )
                         .padding()
                     } else {
-                        ProfileCard(
-                            profile: profile,
-                            height: 40,
-                            color: profile.color.opacity(0.02),
-                            stroke: true
+                        ProfileButton(
+                            profile: profile
                         )
                             .transition(.asymmetric(
                                 insertion: .opacity.animation(profileManager.state.animation.delay(ANIMATION_SECS)),

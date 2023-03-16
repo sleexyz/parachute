@@ -25,7 +25,7 @@ struct PauseCard: View {
     @Environment(\.colorScheme) var scheme: ColorScheme
     var body: some View {
         Card(
-            title: "Pause",
+            title: "Disable",
             caption: "Disconnect from VPN for 1 hour",
             backgroundColor: .clear.opacity(0.5),
             material: .ultraThinMaterial

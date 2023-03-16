@@ -42,6 +42,7 @@ extension Color {
         }
     }
     
+    // NOTE: Mixing in blacks is bad; prefer deepenByAlphaAndBake
     func bakeAlpha(_ colorScheme: ColorScheme) -> Color {
         var r, g, b, a: CGFloat
         (r, g, b, a) = (0, 0, 0, 0)
@@ -65,6 +66,19 @@ extension Color {
             brightness: b - amount * 0.5,
             opacity: a
         )
+    }
+    
+    // Bakes in alpha
+    func deepenByAlphaAndBake() -> Color {
+        var h, s, b, a: CGFloat
+        (h, s, b, a) = (0, 0, 0, 0)
+        UIColor(self).getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        return Color(
+            hue: h,
+            saturation: max(min(s + (1 - a), 1), 0),
+            brightness: max(min(b - (1 - a) * 0.1, 1), 0),
+            opacity: a
+        ).bakeAlpha(ColorScheme.dark)
     }
     
     func getLuminance() -> Double {

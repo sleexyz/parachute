@@ -35,23 +35,26 @@ struct WiredPresetCard: View {
         isActive && profileManager.state == .cardOpened
     }
     
-    var badge: String? {
-        if profileManager.presetSelectorOpen {
-            if profileManager.defaultPreset.id == preset.id {
-                return  "Default"
-            }
-        }
-        return nil
+    var badgeText: String? {
+//        if preset.badgeText == "∞" && !profileManager.presetSelectorOpen {
+//            return nil
+//        }
+//        if !profileManager.presetSelectorOpen {
+//            return nil
+//        }
+        return preset.badgeText
     }
+    
     
     @ViewBuilder
     var card: some View {
         Card(
             title: preset.name,
-            badge: badge,
+            icon: preset.icon,
+            badgeText: badgeText,
             caption: preset.description,
             backgroundColor: preset.mainColor,
-            material: .thinMaterial.opacity(preset.opacity)
+            material: .regularMaterial
         ) {
         }
     }
@@ -68,7 +71,7 @@ struct WiredPresetCard: View {
                 withAnimation {
                     profileManager.presetSelectorOpen = false
                     if !isActive {
-                        profileManager.loadOverlay(preset: preset)
+                        profileManager.loadPreset(preset: preset)
                     }
                 }
             }

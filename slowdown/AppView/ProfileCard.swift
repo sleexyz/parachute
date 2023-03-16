@@ -22,10 +22,12 @@ struct ProfileCard: View {
         profile.id == profileManager.activeProfileID
     }
     
-    var height: Double
+    var height: Double = 40
     
-    var color: Color
-    var stroke: Bool = false
+    var color: Color {
+        profile.color.opacity(0.02)
+    }
+    var stroke: Bool = true
     
     var body: some View {
             HStack(alignment: .center, spacing: 20) {
@@ -58,17 +60,38 @@ struct ProfileCard: View {
                 withAnimation {
                     profileManager.presetSelectorOpen = false
                     profileManager.profileSelectorOpen = false
-                    if !isActive {
+//                    if !isActive {
                       profileManager.loadProfile(profileID: profile.id)
-                    }
+//                    }
                 }
             }
             .matchedGeometryEffect(id: profile.id, in: namespace)
-//            .frame(minHeight: 200)
-//            .background(.pink.opacity(1))
     }
     
 }
+
+struct ProfileHeader: View {
+    @EnvironmentObject var profileManager: ProfileManager
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @Environment(\.namespace) var namespace: Namespace.ID
+    
+    
+    var profile: Profile
+    
+    var body: some View {
+            HStack(alignment: .center, spacing: 20) {
+                Text(profile.icon)
+                    .font(.largeTitle)
+                Text(profile.name)
+                    .font(.largeTitle.weight(.thin))
+                    .padding(.trailing, 30)
+            }
+            .foregroundColor(.clear.getForegroundColor())
+            .padding()
+            .padding()
+    }
+}
+
 
 
 struct ProfileButton: View {
@@ -86,36 +109,33 @@ struct ProfileButton: View {
     }
     
     var body: some View {
-        VStack {
-            HStack(alignment: .center, spacing: 10) {
-                Text(profile.icon)
-                    .font(.largeTitle)
-                Text(profile.name)
-                    .font(.headline.weight(.regular))
-            }
-                .padding()
-                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING))
-                .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
-                    .stroke(.ultraThinMaterial)
-                )
-                .matchedGeometryEffect(id: profile.id, in: namespace)
+        HStack(alignment: .center, spacing: 10) {
+            Text(profile.icon)
+                .font(.largeTitle)
+            Text(profile.name)
+                .font(.headline.weight(.regular))
         }
-            .onTapGesture {
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                if !profileManager.profileSelectorOpen {
-                    profileManager.profileSelectorOpen = true
-                    return
-                }
-                Task {
-                    profileManager.presetSelectorOpen = false
-                    profileManager.profileSelectorOpen = false
-                    if !isActive {
-                        try await profileManager.loadProfile(profileID: profile.id)
-//                        try await profileManager.loadOverlay(preset: preset, secs: preset.overlayTimeSecs)
-                    }
-                }
+        .padding()
+        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING))
+        .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
+            .stroke(.ultraThinMaterial)
+        )
+        .onTapGesture {
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            if !profileManager.profileSelectorOpen {
+                profileManager.profileSelectorOpen = true
+                return
             }
+            withAnimation {
+                profileManager.presetSelectorOpen = false
+                profileManager.profileSelectorOpen = false
+//                if !isActive {
+                    profileManager.loadProfile(profileID: profile.id)
+//                }
+            }
+        }
+        .matchedGeometryEffect(id: profile.id, in: namespace)
     }
 }

@@ -13,18 +13,24 @@ import Combine
 import OrderedCollections
 import SwiftProtobuf
 
+var ANIMATION_SECS: Double = 0.35
+
+var ANIMATION: Animation = .timingCurve(0.30,0.20,0,1, duration: ANIMATION_SECS)
+
 enum StackState {
     case cardOpened
     case cardClosing
     case cardClosed
     
     var transitionDuration: Double {
-        switch self {
-        case .cardOpened: return 0.7
-        case .cardClosing: return 0.7
-        case .cardClosed: return 0.7
-        }
+        return ANIMATION_SECS * 2
+//        switch self
+//        case .cardOpened: return 0.7
+//        case .cardClosing: return 0.7
+//        case .cardClosed: return 0.7
+//        }
     }
+    
     
     var animation: Animation {
 //        if noExpand {
@@ -128,6 +134,15 @@ class ProfileManager: ObservableObject {
         settingsController.syncSettings()
     }
     
+    // Inclusive of loadOverlay
+    func loadPreset(preset: Preset) {
+        if preset.overlayDurationSecs != nil {
+            return loadOverlay(preset: preset)
+        }
+        settingsStore.settings.defaultPreset = preset.presetData
+        settingsStore.settings.clearOverlay()
+        settingsController.syncSettings()
+    }
     
     func loadOverlay(preset: Preset) {
         if preset.presetData.id == settingsStore.defaultPreset.id {

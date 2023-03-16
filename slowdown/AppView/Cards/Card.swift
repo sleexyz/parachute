@@ -12,7 +12,8 @@ let CARD_PADDING: Double = 20
 
 struct Card<Content: View, S: ShapeStyle>: View {
     var title: String
-    var badge: String?
+    var icon: String?
+    var badgeText: String?
     var caption: String?
     var backgroundColor: Color?
     var material: S
@@ -25,27 +26,37 @@ struct Card<Content: View, S: ShapeStyle>: View {
         guard let backgroundColor = backgroundColor else {
             return .clear
         }
-        return backgroundColor
-            .deepen(colorScheme == .dark ? 0 : 0.8)
-            .bakeAlpha(colorScheme)
+        if colorScheme == .dark {
+            return backgroundColor.deepenByAlphaAndBake()
+        }
+        return backgroundColor.bakeAlpha(colorScheme)
     }
     
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .top) {
-                Text(title)
-                    .font(.headline)
+                HStack {
+                    if icon != nil {
+                        Text(icon!)
+                            .font(.headline)
+                            .padding(.trailing, 4)
+                    }
+                    Text(title)
+                        .font(.headline)
+                }
                     .padding(CARD_PADDING)
                 Spacer()
-                if badge != nil {
-                    Text(badge!)
+                if badgeText != nil {
+                    Text(badgeText!)
                         .font(.subheadline.smallCaps())
                         .padding(10)
+                        .padding(.leading, 5)
+                        .padding(.trailing, 5)
                         .background(computedBackgroundColor.deepen(1).opacity(0.2))
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous))
                         .padding(CARD_PADDING - 10)
                         .transition(AnyTransition.asymmetric(
-                            insertion: .opacity.animation(.easeIn(duration: ANIMATION_SECS).delay(ANIMATION_SECS * 2)),
+                            insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2)),
                             removal: .identity
                         ))
                 }
@@ -68,7 +79,7 @@ struct Card<Content: View, S: ShapeStyle>: View {
         }
         .foregroundColor(computedBackgroundColor.getForegroundColor())
         .background(computedBackgroundColor)
-        .background(material)
+//        .background(material)
         .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous))
 //        .shadow(color: .black.lighter(), radius: 1, x: 0, y: 1)
         .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)

@@ -30,20 +30,15 @@ struct ConnectedView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            if !profileManager.profileSelectorOpen {
-                ProfileCard(
-                    profile: profileManager.activeProfile,
-//                    height: UIScreen.main.bounds.height - PROFILE_CARD_HEIGHT * 2
-//                    height: UIScreen.main.bounds.height,
-                    height: 40,
-                    color: profileManager.activeProfile.color.opacity(0.02)
-//                    height: PROFILE_CARD_HEIGHT
-                )
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .offset(y: 60)
-                .zIndex(3)
-                .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
-            }
+//            if !profileManager.profileSelectorOpen {
+//            ProfileHeader(
+//                profile: profileManager.activeProfile
+//            )
+//            .frame(maxWidth: .infinity, alignment: .leading)
+//            .offset(y: 60)
+//            .zIndex(0)
+//            .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
+//            }
             PresetSelector(shouldRender: !profileManager.profileSelectorOpen)
                 .environment(\.activeStackPosition, .bottom)
                 .environment(\.closedStackPosition, .belowbelow)

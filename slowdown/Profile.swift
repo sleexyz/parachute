@@ -25,14 +25,15 @@ struct Profile {
     static let profiles: OrderedDictionary<String, Profile> = [
         "casual": Profile(
             id: "casual",
-            name: "Casual",
-            icon: "🏄",
-            defaultPresetID: "casual_relax",
+            name: "Glide",
+            icon: "🪂",
+            defaultPresetID: "casual",
             presets: [
-                "casual_focus",
-                "casual_relax",
+                "casual",
+                "supercasual",
+                "ultracasual",
             ],
-            color: .pink
+            color: .red.darker()
         ),
         "detox": Profile(
             id: "detox",
@@ -43,16 +44,16 @@ struct Profile {
                 "focus",
                 "relax"
             ],
-            color: .indigo
+            color: .indigo.lighter().lighter()
         ),
-        "sleep": Profile(
-            id: "sleep",
-            name: "Sleep",
-            icon: "💤",
-            defaultPresetID: "sleep_focus",
+        "unplug": Profile(
+            id: "unplug",
+            name: "Unplug",
+            icon: "🌌",
+            defaultPresetID: "unplug",
             presets: [
-                "sleep_focus",
-                "sleep_relax",
+                "unplug",
+                "unplug_break",
             ],
             color: .blue
         ),

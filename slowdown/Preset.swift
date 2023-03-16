@@ -21,11 +21,12 @@ extension PresetType: Hashable {
 
 struct Preset {
     var name: String
+    var icon: String?
     var type: PresetType
     var description: String
+    var badgeText: String?
     var presetData: Proxyservice_Preset
     var mainColor: Color
-    var opacity: Double
     var overlayDurationSecs: Double?
     
     var id: String {
@@ -37,86 +38,104 @@ struct Preset {
     
     static let presets: OrderedDictionary<String, Preset> = [
         "focus": Preset(
-            name: "Tune out",
+            name: "Detox",
+            icon: "🫧",
             type: .focus,
             description: "Slow down social media",
+            badgeText: "∞",
             presetData: Proxyservice_Preset.with {
                 $0.id = "focus"
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
             },
-            mainColor: Profile.profiles["detox"]!.color.opacity(0.6),
-            opacity: 0
+            mainColor: Profile.profiles["detox"]!.color.opacity(0.6)
         ),
         "relax": Preset(
             name: "Tune in",
             type: .relax,
-            description: "Allow 4 minutes of social media",
+            description: "Allow social media",
+            badgeText: "3 min",
             presetData: Proxyservice_Preset.with {
                 $0.id = "relax"
                 $0.baseRxSpeedTarget = .infinity
                 $0.mode = .focus
             },
             mainColor: Profile.profiles["detox"]!.color.opacity(0.3),
-            opacity: 0.5,
-            overlayDurationSecs: 4 * 60
+            overlayDurationSecs: 3 * 60
         ),
-        "sleep_focus": Preset(
-            name: "Tune out",
+        "unplug": Preset(
+            name: "Unplug",
+            icon: "🌌",
             type: .focus,
             description: "Slow down all internet",
+            badgeText: "∞",
             presetData: Proxyservice_Preset.with {
-                $0.id = "sleep_focus"
+                $0.id = "unplug"
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
                 $0.trafficRules = Proxyservice_TrafficRules.with {
                     $0.matchAllTraffic = true
                 }
             },
-            mainColor: Profile.profiles["sleep"]!.color.opacity(0.6),
-            opacity: 0
+            mainColor: Profile.profiles["unplug"]!.color.opacity(0.6)
         ),
-        "sleep_relax": Preset(
+        "unplug_break": Preset(
             name: "Tune in",
             type: .relax,
-            description: "Allow 1 minute of internet use",
+            description: "Allow all internet use",
+            badgeText: "1 min",
             presetData: Proxyservice_Preset.with {
-                $0.id = "sleep_relax"
+                $0.id = "unplug_break"
                 $0.baseRxSpeedTarget = .infinity
                 $0.mode = .focus
                 $0.trafficRules = Proxyservice_TrafficRules.with {
                     $0.matchAllTraffic = true
                 }
             },
-            mainColor: Profile.profiles["sleep"]!.color.opacity(0.3),
-            opacity: 0.5,
+            mainColor: Profile.profiles["unplug"]!.color.opacity(0.3),
             overlayDurationSecs: 1 * 60
         ),
-        "casual_focus": Preset(
-            name: "Tune out",
-            type: .focus,
-            description: "Slow down social media for 10 minutes",
-            presetData: Proxyservice_Preset.with {
-                $0.id = "casual_focus"
-                $0.baseRxSpeedTarget = 40e3
-                $0.mode = .focus
-            },
-            mainColor: Profile.profiles["casual"]!.color.opacity(0.6),
-            opacity: 0,
-            overlayDurationSecs: 10 * 60
-        ),
-        "casual_relax": Preset(
-            name: "Tune in",
+        "casual": Preset(
+            name: "Glide",
+//            icon: "🪂",
             type: .relax,
-            description: "Allow 10 minutes of social media",
+            description: "Gradually slow down social media",
+            badgeText: "2 min",
             presetData: Proxyservice_Preset.with {
-                $0.id = "casual_relax"
+                $0.id = "casual"
+                $0.usageMaxHp = 2
+                $0.usageHealRate = 0
+                $0.mode = .progressive
+            },
+            mainColor: Profile.profiles["casual"]!.color.opacity(1)
+        ),
+        "supercasual": Preset(
+            name: "Glide",
+//            icon: "🪂",
+            type: .relax,
+            description: "Gradually slow down social media",
+            badgeText: "5 min",
+            presetData: Proxyservice_Preset.with {
+                $0.id = "supercasual"
+                $0.usageMaxHp = 5
+                $0.usageHealRate = 0
+                $0.mode = .progressive
+            },
+            mainColor: Profile.profiles["casual"]!.color.opacity(0.7)
+        ),
+        "ultracasual": Preset(
+            name: "Glide",
+//            icon: "🪂",
+            type: .relax,
+            description: "Gradually slow down social media",
+            badgeText: "10 min",
+            presetData: Proxyservice_Preset.with {
+                $0.id = "ultracasual"
                 $0.usageMaxHp = 10
                 $0.usageHealRate = 0
                 $0.mode = .progressive
             },
-            mainColor: Profile.profiles["casual"]!.color.opacity(0.3),
-            opacity: 0.5
+            mainColor: Profile.profiles["casual"]!.color.opacity(0.5)
         ),
     ]
 

@@ -55,13 +55,11 @@ struct CardPositionerModifier: ViewModifier {
     let stackLength: Int
     let total: Int
     let containerHeight: Double
+    let cardHeight: Double
     
     @Environment(\.activeStackPosition) var activeStackPosition: StackPosition
     @Environment(\.closedStackPosition) var closedStackPosition: StackPosition
     
-    var cardHeight: Double {
-        return containerHeight / Double(total)
-    }
     
     var stackSpacing: Double {
         20
@@ -72,7 +70,7 @@ struct CardPositionerModifier: ViewModifier {
         case .top:
             return -containerHeight + cardHeight
         case .bottom:
-            return -extraStackGap - stackSpacing * Double(total - stackLength)
+            return -extraStackGap - stackSpacing * Double(total - stackLength + 1)
         case .belowbelow:
             return cardHeight - (stackSpacing * Double(stackLength + 1))
         }
@@ -186,8 +184,14 @@ struct PresetSelector: View {
     }
     
     var containerHeight: Double {
-        return fullContainerHeight * 0.5
+        return fullContainerHeight * 0.7
     }
+    
+    var cardHeight: Double {
+        return containerHeight / Double(max(cardCount, 4))
+    }
+
+    
     
     func getStackData() -> StackData {
         var selectorOpenSet = OrderedSet<String>()
@@ -238,7 +242,8 @@ struct PresetSelector: View {
                         stack: stack,
                         stackLength: stackLength,
                         total: cardCount,
-                        containerHeight: containerHeight
+                        containerHeight: containerHeight,
+                        cardHeight: cardHeight
                     )
         }
         return map
@@ -299,26 +304,26 @@ struct PresetSelector: View {
                     profileManager.presetSelectorOpen = false
                 }
             }
-//            .padding(.top, profileManager.state != .cardOpened ? 180 : 0)
+            .padding(.bottom, profileManager.state != .cardOpened ? 120: 0)
             .frame(height: fullContainerHeight, alignment: .center)
             .background(material)
-//            if profileManager.state != .cardOpened {
-//                VStack {
-//                    if !profileManager.profileSelectorOpen {
-//                        ProfileButton(profile: profileManager.activeProfile, profileID: settingsStore.settings.profileID)
-//                            .padding(80)
-//                            .transition(AnyTransition.asymmetric(
-//                                insertion: .opacity.animation(profileManager.state.animation),
-//                                removal: .opacity.animation(.easeInOut(duration: 0.1))
-//                            ))
-//                    }
-//                }
-//                .frame(maxHeight: .infinity, alignment: .bottom)
-//                .transition(AnyTransition.asymmetric(
-//                    insertion: .opacity.animation(profileManager.state.animation.delay(0.3)),
-//                    removal: .opacity.animation(.easeInOut(duration: 0.1))
-//                ))
-//            }
+            if profileManager.state != .cardOpened {
+                VStack {
+                    if !profileManager.profileSelectorOpen {
+                        ProfileButton(profile: profileManager.activeProfile)
+                            .padding(80)
+                            .transition(AnyTransition.asymmetric(
+                                insertion: .opacity.animation(profileManager.state.animation),
+                                removal: .opacity.animation(.easeInOut(duration: 0.1))
+                            ))
+                    }
+                }
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .transition(AnyTransition.asymmetric(
+                    insertion: .opacity.animation(profileManager.state.animation.delay(ANIMATION_SECS*2.5)),
+                    removal: .opacity.animation(.easeInOut(duration: 0.1))
+                ))
+            }
         }
         .animation(profileManager.state.animation, value: profileManager.state == .cardOpened)
         .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
