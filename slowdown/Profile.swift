@@ -14,18 +14,31 @@ struct Profile {
     var id: String
     var name: String
     var icon: String
+    var defaultPresetID: String
     var presets: OrderedSet<String>
     var color: Color
     
     var defaultPreset: Preset {
-        Preset.presets[presets.elements[0]]!
+        Preset.presets[defaultPresetID]!
     }
     
     static let profiles: OrderedDictionary<String, Profile> = [
+        "casual": Profile(
+            id: "casual",
+            name: "Casual",
+            icon: "🏄",
+            defaultPresetID: "casual_relax",
+            presets: [
+                "casual_focus",
+                "casual_relax",
+            ],
+            color: .pink
+        ),
         "detox": Profile(
             id: "detox",
             name: "Detox",
             icon: "🫧",
+            defaultPresetID: "focus",
             presets: [
                 "focus",
                 "relax"
@@ -36,22 +49,13 @@ struct Profile {
             id: "sleep",
             name: "Sleep",
             icon: "💤",
+            defaultPresetID: "sleep_focus",
             presets: [
                 "sleep_focus",
                 "sleep_relax",
             ],
             color: .blue
         ),
-        "casual": Profile(
-            id: "casual",
-            name: "Casual",
-            icon: "🏄",
-            presets: [
-                "casual_relax",
-                "casual_focus",
-            ],
-            color: .pink
-        )
     ]
 }
 

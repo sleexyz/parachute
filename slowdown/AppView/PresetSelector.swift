@@ -186,7 +186,7 @@ struct PresetSelector: View {
     }
     
     var containerHeight: Double {
-        return fullContainerHeight * 0.65
+        return fullContainerHeight * 0.5
     }
     
     func getStackData() -> StackData {

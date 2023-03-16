@@ -35,10 +35,20 @@ struct WiredPresetCard: View {
         isActive && profileManager.state == .cardOpened
     }
     
+    var badge: String? {
+        if profileManager.presetSelectorOpen {
+            if profileManager.defaultPreset.id == preset.id {
+                return  "Default"
+            }
+        }
+        return nil
+    }
+    
     @ViewBuilder
     var card: some View {
         Card(
             title: preset.name,
+            badge: badge,
             caption: preset.description,
             backgroundColor: preset.mainColor,
             material: .thinMaterial.opacity(preset.opacity)
@@ -55,10 +65,10 @@ struct WiredPresetCard: View {
                     profileManager.presetSelectorOpen = true
                     return
                 }
-                Task {
+                withAnimation {
                     profileManager.presetSelectorOpen = false
                     if !isActive {
-                        try await profileManager.loadOverlay(preset: preset)
+                        profileManager.loadOverlay(preset: preset)
                     }
                 }
             }

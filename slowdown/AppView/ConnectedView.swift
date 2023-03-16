@@ -41,7 +41,7 @@ struct ConnectedView: View {
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .offset(y: 60)
-                .zIndex(0)
+                .zIndex(3)
                 .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
             }
             PresetSelector(shouldRender: !profileManager.profileSelectorOpen)
