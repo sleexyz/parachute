@@ -22,6 +22,7 @@ struct WiredPresetCard: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     @EnvironmentObject var profileManager: ProfileManager
     @EnvironmentObject var settingsStore: SettingsStore
+    @EnvironmentObject var stateController: StateController
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.namespace) var namespace: Namespace.ID
     
@@ -72,6 +73,9 @@ struct WiredPresetCard: View {
                     profileManager.presetSelectorOpen = false
                     if !isActive {
                         profileManager.loadPreset(preset: preset)
+                        if preset.presetData.mode == .progressive {
+                            stateController.heal()
+                        }
                     }
                 }
             }
