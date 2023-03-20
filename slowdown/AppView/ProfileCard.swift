@@ -65,7 +65,7 @@ struct ProfileCard: View {
 //                    }
                 }
             }
-            .matchedGeometryEffect(id: profile.id, in: namespace)
+            .matchedGeometryEffect(id: "profile_" + profile.id, in: namespace)
     }
     
 }
@@ -124,11 +124,11 @@ struct ProfileButton: View {
         )
         .onTapGesture {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            if !profileManager.profileSelectorOpen {
-                profileManager.profileSelectorOpen = true
-                return
-            }
             withAnimation {
+                if !profileManager.profileSelectorOpen {
+                    profileManager.profileSelectorOpen = true
+                    return
+                }
                 profileManager.presetSelectorOpen = false
                 profileManager.profileSelectorOpen = false
 //                if !isActive {
@@ -136,6 +136,6 @@ struct ProfileButton: View {
 //                }
             }
         }
-        .matchedGeometryEffect(id: profile.id, in: namespace)
+        .matchedGeometryEffect(id: "profile_" + profile.id, in: namespace)
     }
 }

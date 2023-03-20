@@ -20,7 +20,7 @@ struct ProfileSelector: View {
         if profile.id == profileManager.activeProfileID {
             return .identity
         }
-        return .opacity.animation(profileManager.state.animation.delay(ANIMATION_SECS))
+        return .opacity.animation(ANIMATION.delay(ANIMATION_SECS))
     }
     var body: some View {
         VStack(spacing: 60) {
@@ -38,8 +38,8 @@ struct ProfileSelector: View {
                             profile: profile
                         )
                             .transition(.asymmetric(
-                                insertion: .opacity.animation(profileManager.state.animation.delay(ANIMATION_SECS)),
-                                removal: .opacity.animation(profileManager.state.animation)
+                                insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS)),
+                                removal: .opacity.animation(ANIMATION)
                             ))
                             .padding()
                         
@@ -54,6 +54,6 @@ struct ProfileSelector: View {
             }
         }
         .background(.ultraThinMaterial.opacity(profileManager.profileSelectorOpen ? 1 : 0))
-        .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
+        .animation(ANIMATION, value: profileManager.profileSelectorOpen)
     }
 }

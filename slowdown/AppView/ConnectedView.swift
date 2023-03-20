@@ -37,29 +37,33 @@ struct ConnectedView: View {
 //            .frame(maxWidth: .infinity, alignment: .leading)
 //            .offset(y: 60)
 //            .zIndex(0)
-//            .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
+//            .animation(ANIMATION, value: profileManager.profileSelectorOpen)
 //            }
-            PresetSelector(shouldRender: !profileManager.profileSelectorOpen)
-                .environment(\.activeStackPosition, .bottom)
-                .environment(\.closedStackPosition, .belowbelow)
-                .zIndex(2)
             
+            PresetSelector(shouldRender: profileManager.presetSelectorOpen)
+                .zIndex(2)
             if !profileManager.profileSelectorOpen && !profileManager.presetSelectorOpen {
                 PresetContent()
-                    .padding(.top, PROFILE_CARD_HEIGHT)
-                    .frame(height: UIScreen.main.bounds.height, alignment: .top)
+                    .id(profileManager.activePreset.id)
+                //                        .padding(.top, PROFILE_CARD_HEIGHT)
+                //                        .frame(height: UIScreen.main.bounds.height, alignment: .top)
                     .animation(nil, value: profileManager.profileSelectorOpen)
-                    .zIndex(0)
+                    .frame(maxHeight: .infinity, alignment: .top)
+                    .zIndex(2)
                     .transition(AnyTransition.asymmetric(
-                        insertion: .opacity.animation(profileManager.state.animation.delay(ANIMATION_SECS )),
-                        removal: .opacity.animation(profileManager.state.animation)
+                        insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 3 )),
+                        removal: .opacity.animation(ANIMATION)
                     ))
             }
+            
+            SelectedPreset(shouldRender: !profileManager.profileSelectorOpen && !profileManager.presetSelectorOpen)
+                .animation(ANIMATION.delay(ANIMATION_SECS), value: profileManager.presetSelectorOpen)
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .zIndex(2)
             
             ProfileSelector()
                 .zIndex(3)
         }
-        .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
         .namespace(namespace)
     }
 }

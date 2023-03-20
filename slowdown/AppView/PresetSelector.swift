@@ -1,263 +1,27 @@
 //
-//  CardSelector.swift
+//  PresetSelector.swift
 //  slowdown
 //
-//  Created by Sean Lee on 2/19/23.
+//  Created by Sean Lee on 3/20/23.
 //
 
 import Foundation
-import SwiftUI
 import OrderedCollections
-
-
-enum StackPosition {
-    case top // Entire card visible, top
-    case bottom // Entire card visible, bottom
-    case belowbelow // Card padding visible
-}
-
-struct StackData {
-    var selectorOpenSet: OrderedSet<String>
-    var activeSet: OrderedSet<String>
-    var closedSet: OrderedSet<String>
-}
-
-enum StackType {
-    case active
-    case closed
-}
-
-private struct ActiveStackPositionKey: EnvironmentKey {
-    static let defaultValue = StackPosition.top
-}
-
-private struct ClosedStackPositionKey: EnvironmentKey {
-    static let defaultValue = StackPosition.bottom
-}
-
-extension EnvironmentValues {
-    var activeStackPosition: StackPosition {
-        get { self[ActiveStackPositionKey.self] }
-        set { self[ActiveStackPositionKey.self] = newValue }
-    }
-    
-    var closedStackPosition: StackPosition {
-        get { self[ClosedStackPositionKey.self] }
-        set { self[ClosedStackPositionKey.self] = newValue }
-    }
-}
-
-struct CardPositionerModifier: ViewModifier {
-    @EnvironmentObject var profileManager: ProfileManager
-    let selectorOpenIndex: Int
-    let index: Int
-    let stack: StackType
-    let stackLength: Int
-    let total: Int
-    let containerHeight: Double
-    let cardHeight: Double
-    
-    @Environment(\.activeStackPosition) var activeStackPosition: StackPosition
-    @Environment(\.closedStackPosition) var closedStackPosition: StackPosition
-    
-    
-    var stackSpacing: Double {
-        20
-    }
-    
-    func getStackY(stackPos: StackPosition) -> Double {
-        switch(stackPos) {
-        case .top:
-            return -containerHeight + cardHeight
-        case .bottom:
-            return -extraStackGap - stackSpacing * Double(total - stackLength + 1)
-        case .belowbelow:
-            return cardHeight - (stackSpacing * Double(stackLength + 1))
-        }
-    }
-    
-    func getOffsetY(stackPos: StackPosition) -> Double {
-        switch(stackPos) {
-        case .top:
-            return Double(stackLength - index - 1) * stackSpacing
-        case .bottom:
-            return Double(stackLength - index - 1) * stackSpacing
-        case .belowbelow:
-            return Double(index) * stackSpacing
-        }
-    }
-    
-    var stackY: Double {
-        if profileManager.state != .cardClosed {
-            if stack == .active {
-                return getStackY(stackPos: activeStackPosition)
-            } else {
-                return getStackY(stackPos: closedStackPosition)
-            }
-        }
-        return 0
-    }
-    
-    var y: Double {
-        stackY + offsetY
-    }
-    
-    var offsetY: Double {
-        // any card opened
-        if profileManager.state != .cardClosed {
-            if stack == .active {
-                return getOffsetY(stackPos: activeStackPosition)
-            } else {
-                return getOffsetY(stackPos: closedStackPosition)
-            }
-        }
-        // card closed
-        return -Double(selectorOpenIndex) * cardHeight
-    }
-    
-    var height: Double {
-        return cardHeight
-    }
-    
-    var extraStackGap: Double {
-        return Double(stackLength - 1) * stackSpacing
-    }
-    
-    var zIndex: Double {
-        var value = Double(index) / Double(total)
-        if stack == .active {
-            value += 1
-        }
-        return value
-    }
-    
-    func body(content: Content) -> some View {
-        content
-            .padding()
-            .frame(height: height, alignment: .topLeading)
-            .offset(x: 0, y: y)
-            .animation(
-                profileManager.state.animation,
-                value: y
-            )
-            .animation(
-                profileManager.state.animation,
-                value: height
-            )
-            .animation(
-                profileManager.state.animation,
-                value: profileManager.state == .cardOpened
-            )
-            .zIndex(zIndex)
-    }
-}
+import SwiftUI
 
 struct PresetSelector: View {
     @EnvironmentObject var profileManager: ProfileManager
-    @EnvironmentObject var settingsStore: SettingsStore
-    @EnvironmentObject var stateController: StateController
-    @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     
     var shouldRender: Bool
     
-    var presets: OrderedDictionary<String, Preset> {
-        var map = OrderedDictionary<String, Preset>()
+    var cards: OrderedDictionary<String, AnyCardable> {
+        var map = OrderedDictionary<String, AnyCardable>()
         for presetID in profileManager.activeProfile.presets {
-            map[presetID] = Preset.presets[presetID]
+            map[presetID] = Preset.presets[presetID]?.eraseToAnyCardable()
         }
+        map[Pause().id] = Pause().eraseToAnyCardable()
         return map
     }
-    
-    var cardCount: Int {
-        return presets.count + 1
-    }
-    
-    var fullContainerHeight: Double {
-        return UIScreen.main.bounds.height
-    }
-    
-    var profileContainerHeight: Double {
-        if profileManager.state == .cardOpened {
-            return fullContainerHeight
-        }
-        return fullContainerHeight * 0.75
-    }
-    
-    var containerHeight: Double {
-        return fullContainerHeight * 0.7
-    }
-    
-    var cardHeight: Double {
-        return containerHeight / Double(max(cardCount, 4))
-    }
-
-    
-    
-    func getStackData() -> StackData {
-        var selectorOpenSet = OrderedSet<String>()
-        var activeSet =  OrderedSet<String>()
-        var closedSet =  OrderedSet<String>()
-        
-        if let overlayId = settingsStore.activeOverlayPreset?.id {
-            activeSet.append(overlayId)
-        } else {
-            activeSet.append(settingsStore.defaultPreset.id)
-        }
-        
-        for entry in presets {
-            let id = entry.value.id
-            selectorOpenSet.append(id)
-            if !activeSet.contains(id) {
-                closedSet.append(id)
-            }
-        }
-        selectorOpenSet.append(Pause().id)
-        closedSet.append(Pause().id)
-        return StackData(selectorOpenSet: selectorOpenSet, activeSet: activeSet, closedSet: closedSet)
-    }
-    
-    func getCardPositionerModifiers() -> Dictionary<String, CardPositionerModifier> {
-        let stackData = getStackData()
-        var map = Dictionary<String, CardPositionerModifier>()
-        var ids = presets.keys
-        ids.append(Pause().id)
-        
-        for id in ids {
-            var index = 0
-            var stack: StackType = .active
-            var stackLength: Int = 0
-            if let activeIndex = stackData.activeSet.firstIndex(of: id) {
-                index = activeIndex
-                stack = .active
-                stackLength = stackData.activeSet.count
-            }
-            if let closedIndex = stackData.closedSet.firstIndex(of: id) {
-                index = closedIndex
-                stack = .closed
-                stackLength = stackData.closedSet.count
-            }
-            map[id] = CardPositionerModifier(
-                        selectorOpenIndex: stackData.selectorOpenSet.firstIndex(of: id)!,
-                        index: index,
-                        stack: stack,
-                        stackLength: stackLength,
-                        total: cardCount,
-                        containerHeight: containerHeight,
-                        cardHeight: cardHeight
-                    )
-        }
-        return map
-    }
-    var background: some ShapeStyle {
-        profileManager.activeProfile.color.opacity(profileManager.state == .cardOpened ? 0 : 1)
-    }
-    
-    var material: some ShapeStyle {
-        Material.ultraThinMaterial.opacity(profileManager.state == .cardOpened ? 0 : 1)
-    }
-    
-    @Environment(\.namespace) var namespace: Namespace.ID
-    @Namespace var namespaceOverride: Namespace.ID
     
     func delay(preset: Preset) -> Double {
         if profileManager.activePreset.id == preset.id {
@@ -266,66 +30,69 @@ struct PresetSelector: View {
         return 2
     }
     
+    func insertionTransition(cardable: AnyCardable) -> AnyTransition {
+        if cardable.id == profileManager.activePreset.id {
+            return .identity
+        }
+        return .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2))
+    }
+    
+    var material: some ShapeStyle {
+        Material.ultraThickMaterial.opacity(profileManager.presetSelectorOpen ? 1 : 0)
+    }
+    
+    var height: Double {
+        return UIScreen.main.bounds.height * 0.9
+    }
+    
     var body: some View {
-        let modifiers = getCardPositionerModifiers()
-        ZStack(alignment: .top) {
-            VStack {
-                if profileManager.state == .cardOpened {
-                    Spacer()
+        VStack {
+            Spacer()
+            ForEach(cards.elements.reversed(), id: \.key) { entry in
+                if shouldRender{
+                    entry.value.makeCard()
+                        .padding()
+                        .transition(AnyTransition.asymmetric(
+                            insertion: insertionTransition(cardable: entry.value),
+                            removal: .opacity.animation(ANIMATION)
+                        ))
                 }
-                ZStack(alignment: .bottom) {
-                    // Need rectangle to fill the full height
-                    Rectangle()
-                        .opacity(0)
-                        .frame(height: containerHeight)
-                    ForEach(presets.elements, id: \.key) { entry in
-                        let preset = entry.value
-                        if shouldRender {
-                            preset.makeCard()
-                                .transition(AnyTransition.asymmetric(
-                                    insertion: .opacity.animation(profileManager.state.animation.delay(ANIMATION_SECS * delay(preset: preset))),
-                                    removal: .opacity.animation(profileManager.state.animation)
-                                ))
-                                .modifier(modifiers[preset.id]!)
-                        }
-                    }
-                    if shouldRender {
-                        WiredPauseCard()
-                                .transition(AnyTransition.asymmetric(
-                                    insertion: .opacity.animation(profileManager.state.animation.delay(ANIMATION_SECS * 2)),
-                                    removal: .opacity.animation(profileManager.state.animation)
-                                ))
-                            .modifier(modifiers[Pause().id]!)
-                    }
-                }
+                
             }
-            .onTapBackground(enabled: profileManager.presetSelectorOpen) {
-                withAnimation {
-                    profileManager.presetSelectorOpen = false
-                }
-            }
-            .padding(.bottom, profileManager.state != .cardOpened ? 120: 0)
-            .frame(height: fullContainerHeight, alignment: .center)
-            .background(material)
-            if profileManager.state != .cardOpened {
+            if shouldRender {
                 VStack {
                     if !profileManager.profileSelectorOpen {
                         ProfileButton(profile: profileManager.activeProfile)
-                            .padding(80)
                             .transition(AnyTransition.asymmetric(
-                                insertion: .opacity.animation(profileManager.state.animation),
+                                insertion: .opacity.animation(ANIMATION),
                                 removal: .opacity.animation(.easeInOut(duration: 0.1))
                             ))
                     }
                 }
-                .frame(maxHeight: .infinity, alignment: .bottom)
+                .frame(height: UIScreen.main.bounds.height / 8, alignment: .center)
                 .transition(AnyTransition.asymmetric(
-                    insertion: .opacity.animation(profileManager.state.animation.delay(ANIMATION_SECS*2.5)),
-                    removal: .opacity.animation(.easeInOut(duration: 0.1))
+                    insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS*2.5)),
+                    removal: .opacity.animation(ANIMATION_SHORT)
                 ))
             }
         }
-        .animation(profileManager.state.animation, value: profileManager.state == .cardOpened)
-        .animation(profileManager.state.animation, value: profileManager.profileSelectorOpen)
+        .onTapBackground(enabled: profileManager.presetSelectorOpen) {
+            profileManager.presetSelectorOpen = false
+        }
+        .frame(maxWidth: .infinity, minHeight: height)
+        .background(material)
+        .animation(ANIMATION, value: profileManager.presetSelectorOpen)
+    }
+}
+
+struct SelectedPreset: View {
+    @EnvironmentObject var profileManager: ProfileManager
+    var shouldRender: Bool
+    
+    var body: some View {
+        if shouldRender {
+            profileManager.activePreset.makeCard()
+                .padding()
+        }
     }
 }

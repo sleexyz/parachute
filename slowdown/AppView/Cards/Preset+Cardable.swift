@@ -33,7 +33,7 @@ struct WiredPresetCard: View {
     }
     
     var expanded: Bool {
-        isActive && profileManager.state == .cardOpened
+        isActive && !profileManager.presetSelectorOpen
     }
     
     var badgeText: String? {
@@ -55,7 +55,8 @@ struct WiredPresetCard: View {
             badgeText: badgeText,
             caption: preset.description,
             backgroundColor: preset.mainColor,
-            material: .regularMaterial
+            material: .regularMaterial,
+            id: preset.id
         ) {
         }
     }
@@ -65,11 +66,11 @@ struct WiredPresetCard: View {
         card
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                if !profileManager.presetSelectorOpen {
-                    profileManager.presetSelectorOpen = true
-                    return
-                }
-                withAnimation {
+//                withAnimation {
+                    if !profileManager.presetSelectorOpen {
+                        profileManager.presetSelectorOpen = true
+                        return
+                    }
                     profileManager.presetSelectorOpen = false
                     if !isActive {
                         profileManager.loadPreset(preset: preset)
@@ -77,7 +78,7 @@ struct WiredPresetCard: View {
                             stateController.heal()
                         }
                     }
-                }
+//                }
             }
     }
 }

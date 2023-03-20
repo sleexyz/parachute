@@ -52,7 +52,7 @@ struct PresetContent: View {
 //                    )
 //                )
 //                .colorMultiply(model.mainColor)
-//                .animation(profileManager.state.animation, value: model.mainColor)
+//                .animation(ANIMATION, value: model.mainColor)
 //    }
 //}
 

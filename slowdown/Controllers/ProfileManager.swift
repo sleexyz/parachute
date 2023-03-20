@@ -13,38 +13,10 @@ import Combine
 import OrderedCollections
 import SwiftProtobuf
 
-var ANIMATION_SECS: Double = 0.35
+var ANIMATION_SECS: Double = 0.30
 
-var ANIMATION: Animation = .timingCurve(0.30,0.20,0,1, duration: ANIMATION_SECS)
-
-enum StackState {
-    case cardOpened
-    case cardClosing
-    case cardClosed
-    
-    var transitionDuration: Double {
-        return ANIMATION_SECS * 2
-//        switch self
-//        case .cardOpened: return 0.7
-//        case .cardClosing: return 0.7
-//        case .cardClosed: return 0.7
-//        }
-    }
-    
-    
-    var animation: Animation {
-//        if noExpand {
-            return .timingCurve(0.30,0.20,0,1, duration: transitionDuration - 0.1)
-//        }
-//        return .spring(response: 0.55, dampingFraction: 0.825)
-//        switch self {
-//        // Spring on outer transition states
-////        case .cardOpened: return .spring(response: 0.50, dampingFraction: 0.825)
-//        case .cardClosed: return .spring(response: 0.50, dampingFraction: 0.825)
-//        default: return .timingCurve(0.30,0.20,0,1, duration: transitionDuration - 0.1)
-//        }
-    }
-}
+var ANIMATION: Animation = .timingCurve(0.30,0.20,0,1, duration: ANIMATION_SECS * 2)
+var ANIMATION_SHORT: Animation = .timingCurve(0.30,0.20,0,1, duration: ANIMATION_SECS)
 
 class ProfileManager: ObservableObject {
     struct Provider : Dep {
@@ -61,13 +33,6 @@ class ProfileManager: ObservableObject {
     init(settingsStore: SettingsStore, settingsController: SettingsController) {
         self.settingsStore = settingsStore
         self.settingsController = settingsController
-        $presetSelectorOpen.sink { val in
-            if val {
-                self.state = .cardClosed
-            } else {
-                self.state = .cardOpened
-            }
-        }.store(in: &bag)
         
         settingsStore.$settings
             .receive(on: RunLoop.main)
@@ -75,19 +40,10 @@ class ProfileManager: ObservableObject {
                 self?.objectWillChange.send()
             }
             .store(in: &bag)
-        
-//        if !noExpand {
-//            $open.debounce(for: .seconds(StackState.cardClosing.transitionDuration), scheduler:DispatchQueue.main).sink {val in
-//                if val {
-//                    self.state = .cardClosed
-//                }
-//            }.store(in: &bag)
-//        }
     }
     
     @Published var presetSelectorOpen: Bool = false
     @Published var profileSelectorOpen: Bool = false
-    @Published var state: StackState = .cardOpened
     
     
     var activeProfile: Profile {

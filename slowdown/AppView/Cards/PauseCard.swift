@@ -17,29 +17,26 @@ extension Pause: Cardable {
         return Pause().id
     }
     func makeCard() -> some View {
-        WiredPauseCard()
-    }
-}
-
-struct PauseCard: View {
-    @Environment(\.colorScheme) var scheme: ColorScheme
-    var body: some View {
-        Card(
-            title: "Disable",
-            caption: "Disconnect from VPN for 1 hour",
-            backgroundColor: .clear.opacity(0.5),
-            material: .ultraThinMaterial
-        ) {
-        }.foregroundColor(scheme == .light ? .black : .white)
+        WiredPauseCard(id: getID())
     }
 }
 
 struct WiredPauseCard: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     @EnvironmentObject var profileManager: ProfileManager
+    @Environment(\.colorScheme) var scheme: ColorScheme
     @Environment(\.namespace) var namespace: Namespace.ID
+    var id: String
     var body: some View {
-        PauseCard()
+        Card(
+            title: "Disable",
+            caption: "Disconnect from VPN for 1 hour",
+            backgroundColor: .clear.opacity(0.5),
+            material: .ultraThinMaterial,
+            id: id
+        ) {
+        }
+            .foregroundColor(scheme == .light ? .black : .white)
             .onTapGesture {
                 if !profileManager.presetSelectorOpen {
                     profileManager.presetSelectorOpen = true

@@ -17,7 +17,9 @@ struct Card<Content: View, S: ShapeStyle>: View {
     var caption: String?
     var backgroundColor: Color?
     var material: S
+    var id: String
     @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @Environment(\.namespace) var namespace: Namespace.ID
     
     @ViewBuilder
     var content: () -> Content
@@ -55,28 +57,27 @@ struct Card<Content: View, S: ShapeStyle>: View {
                         .background(computedBackgroundColor.deepen(1).opacity(0.2))
                         .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous))
                         .padding(CARD_PADDING - 10)
-                        .transition(AnyTransition.asymmetric(
-                            insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2)),
-                            removal: .identity
-                        ))
+//                        .transition(AnyTransition.asymmetric(
+//                            insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2)),
+//                            removal: .identity
+//                        ))
                 }
             }
-            Spacer()
-                .frame(minHeight: 0)
-            content()
-                .padding(40)
-            Spacer()
-                .frame(minHeight: 0)
             if caption != nil {
-                HStack {
-                    Text(caption!)
-                        .font(.caption)
-                        .padding(.bottom, CARD_PADDING)
-                        .padding(.leading, CARD_PADDING)
-                    Spacer()
-                }
+                Text(caption!)
+                    .font(.caption)
+                    .frame(
+                        minWidth: 0,
+                        maxWidth: .infinity,
+                        maxHeight: .infinity,
+                        alignment: .bottomLeading
+                    )
+                    .padding(.bottom, CARD_PADDING)
+                    .padding(.leading, CARD_PADDING)
+                    .padding(.trailing, CARD_PADDING)
             }
         }
+        .frame(height: 120)
         .foregroundColor(computedBackgroundColor.getForegroundColor())
         .background(computedBackgroundColor)
 //        .background(material)
@@ -86,5 +87,6 @@ struct Card<Content: View, S: ShapeStyle>: View {
             .stroke(.ultraThinMaterial)
 //            .foregroundColor(backgroundColor)
         )
+        .matchedGeometryEffect(id: id, in: namespace)
     }
 }

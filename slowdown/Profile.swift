@@ -25,7 +25,7 @@ struct Profile {
     static let profiles: OrderedDictionary<String, Profile> = [
         "casual": Profile(
             id: "casual",
-            name: "Glide",
+            name: "Parachute",
             icon: "🪂",
             defaultPresetID: "casual",
             presets: [
@@ -48,7 +48,7 @@ struct Profile {
         ),
         "unplug": Profile(
             id: "unplug",
-            name: "Unplug",
+            name: "Sleep",
             icon: "🌌",
             defaultPresetID: "unplug",
             presets: [

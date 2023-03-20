@@ -41,7 +41,7 @@ struct Preset {
             name: "Detox",
             icon: "🫧",
             type: .focus,
-            description: "Slow down social media",
+            description: "Slows content down to dial-up speeds",
             badgeText: "∞",
             presetData: Proxyservice_Preset.with {
                 $0.id = "focus"
@@ -51,9 +51,9 @@ struct Preset {
             mainColor: Profile.profiles["detox"]!.color.opacity(0.6)
         ),
         "relax": Preset(
-            name: "Tune in",
+            name: "Break",
             type: .relax,
-            description: "Allow social media",
+            description: "Temporarily disable slowing",
             badgeText: "3 min",
             presetData: Proxyservice_Preset.with {
                 $0.id = "relax"
@@ -64,10 +64,10 @@ struct Preset {
             overlayDurationSecs: 3 * 60
         ),
         "unplug": Preset(
-            name: "Unplug",
+            name: "Sleep",
             icon: "🌌",
             type: .focus,
-            description: "Slow down all internet",
+            description: "Slows all internet down to dial-up speeds",
             badgeText: "∞",
             presetData: Proxyservice_Preset.with {
                 $0.id = "unplug"
@@ -80,9 +80,9 @@ struct Preset {
             mainColor: Profile.profiles["unplug"]!.color.opacity(0.6)
         ),
         "unplug_break": Preset(
-            name: "Tune in",
+            name: "Break",
             type: .relax,
-            description: "Allow all internet use",
+            description: "Temporarily disable slowing",
             badgeText: "1 min",
             presetData: Proxyservice_Preset.with {
                 $0.id = "unplug_break"
@@ -96,11 +96,11 @@ struct Preset {
             overlayDurationSecs: 1 * 60
         ),
         "casual": Preset(
-            name: "Glide",
-//            icon: "🪂",
+            name: "2 minutes",
+            icon: "🪂",
             type: .relax,
-            description: "Gradually slow down social media",
-            badgeText: "2 min",
+            description: "Gradually slow down content at the end of 2 minute of usage",
+            badgeText: "∞",
             presetData: Proxyservice_Preset.with {
                 $0.id = "casual"
                 $0.usageMaxHp = 2
@@ -110,11 +110,11 @@ struct Preset {
             mainColor: Profile.profiles["casual"]!.color.opacity(1)
         ),
         "supercasual": Preset(
-            name: "Glide",
-//            icon: "🪂",
+            name: "5 minutes",
+            icon: "🪂",
             type: .relax,
-            description: "Gradually slow down social media",
-            badgeText: "5 min",
+            description: "Gradually slow down content at the end of 5 minutes of usage",
+            badgeText: "∞",
             presetData: Proxyservice_Preset.with {
                 $0.id = "supercasual"
                 $0.usageMaxHp = 5
@@ -124,11 +124,11 @@ struct Preset {
             mainColor: Profile.profiles["casual"]!.color.opacity(0.7)
         ),
         "ultracasual": Preset(
-            name: "Glide",
-//            icon: "🪂",
+            name: "10 minutes",
+            icon: "🪂",
             type: .relax,
-            description: "Gradually slow down social media",
-            badgeText: "10 min",
+            description: "Gradually slow down content at the end of 10 minutes of usage",
+            badgeText: "∞",
             presetData: Proxyservice_Preset.with {
                 $0.id = "ultracasual"
                 $0.usageMaxHp = 10
