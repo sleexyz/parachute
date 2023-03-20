@@ -99,7 +99,7 @@ struct Preset {
             name: "2 minutes",
             icon: "🪂",
             type: .relax,
-            description: "Gradually slow down content at the end of 2 minute of usage",
+            description: "Gradually slow down content at the end of 2 minutes of usage",
             badgeText: "∞",
             presetData: Proxyservice_Preset.with {
                 $0.id = "casual"

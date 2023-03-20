@@ -34,7 +34,7 @@ struct PresetSelector: View {
         if cardable.id == profileManager.activePreset.id {
             return .identity
         }
-        return .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2))
+        return .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 1.5))
     }
     
     var material: some ShapeStyle {

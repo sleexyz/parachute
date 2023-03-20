@@ -8,7 +8,7 @@
 import Foundation
 import ProxyService
 
-let LATEST_VERSION = 3
+let LATEST_VERSION = 4
 
 final class SettingsMigrations {
     private static var migrations: [Int: (inout Proxyservice_Settings) -> Void] = [
@@ -19,6 +19,13 @@ final class SettingsMigrations {
         3: { settings in
             settings.profileID = Profile.profiles.elements[0].key
             settings.version = 3
+        },
+        4: { settings in
+            if settings.profileID == "" {
+                settings.profileID = Profile.profiles.elements[0].key
+                settings.defaultPreset = Preset.presets[Profile.profiles[settings.profileID]!.presets.elements[0]]!.presetData
+            }
+            settings.version = 4
         },
     ]
     public static func setDefaults(settings: inout Proxyservice_Settings, from: Int = 0) {
