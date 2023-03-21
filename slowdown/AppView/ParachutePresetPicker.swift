@@ -57,10 +57,10 @@ struct ParachutePresetItem: View {
                 if preset.presetData.mode == .progressive {
                     stateController.heal()
                 }
-//                Task {
-//                    try await Task.sleep(nanoseconds: 500_000_000)
-//                    profileManager.presetSelectorOpen = false
-//                }
+                Task {
+                    try await Task.sleep(nanoseconds: 400_000_000)
+                    profileManager.presetSelectorOpen = false
+                }
             }
     }
 }
