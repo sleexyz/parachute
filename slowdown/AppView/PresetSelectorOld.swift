@@ -163,7 +163,7 @@ struct PresetSelectorOld: View {
     var presets: OrderedDictionary<String, Preset> {
         var map = OrderedDictionary<String, Preset>()
         for presetID in profileManager.activeProfile.presets {
-            map[presetID] = Preset.presets[presetID]
+            map[presetID] = profileManager.allPresets[presetID]
         }
         return map
     }
@@ -281,7 +281,9 @@ struct PresetSelectorOld: View {
                     ForEach(presets.elements, id: \.key) { entry in
                         let preset = entry.value
                         if shouldRender {
-                            preset.makeCard()
+                            preset.makeCard() {
+                                AnyView(EmptyView())
+                            }
                                 .transition(AnyTransition.asymmetric(
                                     insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * delay(preset: preset))),
                                     removal: .opacity.animation(ANIMATION)
@@ -290,7 +292,9 @@ struct PresetSelectorOld: View {
                         }
                     }
                     if shouldRender {
-                        WiredPauseCard(id: Pause().id)
+                        WiredPauseCard(id: Pause().id) {
+                            AnyView(EmptyView())
+                        }
                                 .transition(AnyTransition.asymmetric(
                                     insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2)),
                                     removal: .opacity.animation(ANIMATION)

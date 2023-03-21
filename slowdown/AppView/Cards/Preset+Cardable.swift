@@ -10,15 +10,23 @@ import ProxyService
 import SwiftUI
 
 extension Preset: Cardable {
-    func makeCard() -> some View {
-        WiredPresetCard(preset: self)
+    func _makeCard(content: @escaping () -> AnyView) -> some View {
+        WiredPresetCard(preset: self) {
+            content()
+        }
     }
     func getID() -> String {
         self.id
     }
+    func getExpandedBody() -> AnyView {
+        if let body = self.expandedBody {
+            return AnyView(body)
+        }
+        return AnyView(EmptyView())
+    }
 }
 
-struct WiredPresetCard: View {
+struct WiredPresetCard<Content: View>: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     @EnvironmentObject var profileManager: ProfileManager
     @EnvironmentObject var settingsStore: SettingsStore
@@ -26,7 +34,10 @@ struct WiredPresetCard: View {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.namespace) var namespace: Namespace.ID
     
+    
     var preset: Preset
+    
+    var content: () -> Content
     
     var isActive: Bool {
         preset.presetData.id == settingsStore.activePreset.id
@@ -57,7 +68,9 @@ struct WiredPresetCard: View {
             backgroundColor: preset.mainColor,
             material: .regularMaterial,
             id: preset.id
+//            id: preset.name // HACK to animate when id is same but name changes
         ) {
+            content()
         }
     }
     

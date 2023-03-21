@@ -101,6 +101,7 @@ export interface Settings {
     | undefined;
   /** id of the currently loaded profile */
   profileId: string;
+  parachutePreset: Preset | undefined;
 }
 
 export interface Request {
@@ -407,6 +408,7 @@ function createBaseSettings(): Settings {
     defaultPreset: undefined,
     overlay: undefined,
     profileId: "",
+    parachutePreset: undefined,
   };
 }
 
@@ -429,6 +431,9 @@ export const Settings = {
     }
     if (message.profileId !== "") {
       writer.uint32(106).string(message.profileId);
+    }
+    if (message.parachutePreset !== undefined) {
+      Preset.encode(message.parachutePreset, writer.uint32(114).fork()).ldelim();
     }
     return writer;
   },
@@ -458,6 +463,9 @@ export const Settings = {
         case 13:
           message.profileId = reader.string();
           break;
+        case 14:
+          message.parachutePreset = Preset.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -474,6 +482,7 @@ export const Settings = {
       defaultPreset: isSet(object.defaultPreset) ? Preset.fromJSON(object.defaultPreset) : undefined,
       overlay: isSet(object.overlay) ? Overlay.fromJSON(object.overlay) : undefined,
       profileId: isSet(object.profileId) ? String(object.profileId) : "",
+      parachutePreset: isSet(object.parachutePreset) ? Preset.fromJSON(object.parachutePreset) : undefined,
     };
   },
 
@@ -486,6 +495,8 @@ export const Settings = {
       (obj.defaultPreset = message.defaultPreset ? Preset.toJSON(message.defaultPreset) : undefined);
     message.overlay !== undefined && (obj.overlay = message.overlay ? Overlay.toJSON(message.overlay) : undefined);
     message.profileId !== undefined && (obj.profileId = message.profileId);
+    message.parachutePreset !== undefined &&
+      (obj.parachutePreset = message.parachutePreset ? Preset.toJSON(message.parachutePreset) : undefined);
     return obj;
   },
 
@@ -501,6 +512,9 @@ export const Settings = {
       ? Overlay.fromPartial(object.overlay)
       : undefined;
     message.profileId = object.profileId ?? "";
+    message.parachutePreset = (object.parachutePreset !== undefined && object.parachutePreset !== null)
+      ? Preset.fromPartial(object.parachutePreset)
+      : undefined;
     return message;
   },
 };

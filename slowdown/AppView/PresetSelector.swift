@@ -12,12 +12,14 @@ import SwiftUI
 struct PresetSelector: View {
     @EnvironmentObject var profileManager: ProfileManager
     
-    var shouldRender: Bool
+    var shouldRenderSelector: Bool {
+        return profileManager.presetSelectorOpen
+    }
     
     var cards: OrderedDictionary<String, AnyCardable> {
         var map = OrderedDictionary<String, AnyCardable>()
         for presetID in profileManager.activeProfile.presets {
-            map[presetID] = Preset.presets[presetID]?.eraseToAnyCardable()
+            map[presetID] = profileManager.allPresets[presetID]?.eraseToAnyCardable()
         }
         map[Pause().id] = Pause().eraseToAnyCardable()
         return map
@@ -30,8 +32,14 @@ struct PresetSelector: View {
         return 2
     }
     
-    func insertionTransition(cardable: AnyCardable) -> AnyTransition {
+    func isActive(_ cardable: AnyCardable) -> Bool {
         if cardable.id == profileManager.activePreset.id {
+            return true
+        }
+        return false
+    }
+    func insertionTransition(cardable: AnyCardable) -> AnyTransition {
+        if isActive(cardable) {
             return .identity
         }
         return .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 1.5))
@@ -42,16 +50,22 @@ struct PresetSelector: View {
     }
     
     var height: Double {
-        return UIScreen.main.bounds.height * 0.9
+        return UIScreen.main.bounds.height
     }
     
     var body: some View {
         VStack {
-            Spacer()
             ForEach(cards.elements.reversed(), id: \.key) { entry in
-                if shouldRender{
-                    entry.value.makeCard()
+                if shouldRenderSelector || isActive(entry.value) {
+                    entry.value.makeCard { () ->  AnyView in
+                        return AnyView(
+                            entry.value.getExpandedBody()
+                            .opacity(shouldRenderSelector ? 1 : 0)
+                        )
+                    }
                         .padding()
+                        .environment(\.cardExpanded, shouldRenderSelector && isActive(entry.value))
+                        .environment(\.captionShown, true)
                         .transition(AnyTransition.asymmetric(
                             insertion: insertionTransition(cardable: entry.value),
                             removal: .opacity.animation(ANIMATION)
@@ -59,7 +73,7 @@ struct PresetSelector: View {
                 }
                 
             }
-            if shouldRender {
+            if shouldRenderSelector {
                 VStack {
                     if !profileManager.profileSelectorOpen {
                         ProfileButton(profile: profileManager.activeProfile)
@@ -76,23 +90,13 @@ struct PresetSelector: View {
                 ))
             }
         }
+        .padding(.top, 140)
+        .padding(.bottom, 40)
         .onTapBackground(enabled: profileManager.presetSelectorOpen) {
             profileManager.presetSelectorOpen = false
         }
-        .frame(maxWidth: .infinity, minHeight: height)
+        .frame(maxWidth: .infinity, minHeight: height, alignment: .bottom)
         .background(material)
-        .animation(ANIMATION, value: profileManager.presetSelectorOpen)
-    }
-}
-
-struct SelectedPreset: View {
-    @EnvironmentObject var profileManager: ProfileManager
-    var shouldRender: Bool
-    
-    var body: some View {
-        if shouldRender {
-            profileManager.activePreset.makeCard()
-                .padding()
-        }
+        .animation(ANIMATION, value: shouldRenderSelector)
     }
 }

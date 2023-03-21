@@ -13,20 +13,28 @@ struct Pause {
 }
 
 extension Pause: Cardable {
+    func getExpandedBody() -> AnyView {
+        return AnyView(EmptyView())
+    }
+    
     func getID() -> String {
         return Pause().id
     }
-    func makeCard() -> some View {
-        WiredPauseCard(id: getID())
+    
+    func _makeCard(content: @escaping () -> AnyView) -> some View {
+        WiredPauseCard(id: getID()) {
+            content()
+        }
     }
 }
 
-struct WiredPauseCard: View {
+struct WiredPauseCard<Content: View>: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     @EnvironmentObject var profileManager: ProfileManager
     @Environment(\.colorScheme) var scheme: ColorScheme
     @Environment(\.namespace) var namespace: Namespace.ID
     var id: String
+    var content: () -> Content
     var body: some View {
         Card(
             title: "Disable",
@@ -35,6 +43,7 @@ struct WiredPauseCard: View {
             material: .ultraThinMaterial,
             id: id
         ) {
+            content()
         }
             .foregroundColor(scheme == .light ? .black : .white)
             .onTapGesture {

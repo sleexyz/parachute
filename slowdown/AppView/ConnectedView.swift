@@ -40,26 +40,20 @@ struct ConnectedView: View {
 //            .animation(ANIMATION, value: profileManager.profileSelectorOpen)
 //            }
             
-            PresetSelector(shouldRender: profileManager.presetSelectorOpen)
+            PresetSelector()
                 .zIndex(2)
             if !profileManager.profileSelectorOpen && !profileManager.presetSelectorOpen {
                 PresetContent()
-                    .id(profileManager.activePreset.id)
-                //                        .padding(.top, PROFILE_CARD_HEIGHT)
-                //                        .frame(height: UIScreen.main.bounds.height, alignment: .top)
                     .animation(nil, value: profileManager.profileSelectorOpen)
+                    .padding(.top, 120)
                     .frame(maxHeight: .infinity, alignment: .top)
-                    .zIndex(2)
+                    .zIndex(1)
                     .transition(AnyTransition.asymmetric(
-                        insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 3 )),
+                        insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2 )),
                         removal: .opacity.animation(ANIMATION)
                     ))
+                    .id(profileManager.activePreset.id)
             }
-            
-            SelectedPreset(shouldRender: !profileManager.profileSelectorOpen && !profileManager.presetSelectorOpen)
-                .animation(ANIMATION.delay(ANIMATION_SECS), value: profileManager.presetSelectorOpen)
-                .frame(maxHeight: .infinity, alignment: .bottom)
-                .zIndex(2)
             
             ProfileSelector()
                 .zIndex(3)

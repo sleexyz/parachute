@@ -8,6 +8,32 @@
 import Foundation
 import SwiftUI
 
+private struct CardExpandedKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+private struct CaptionShownKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+
+extension EnvironmentValues {
+    var cardExpanded: Bool {
+        get { self[CardExpandedKey.self] }
+        set { self[CardExpandedKey.self] = newValue }
+    }
+    
+    var captionShown: Bool {
+        get { self[CaptionShownKey.self] }
+        set { self[CaptionShownKey.self] = newValue }
+    }
+    
+//    var closedStackPosition: StackPosition {
+//        get { self[ClosedStackPositionKey.self] }
+//        set { self[ClosedStackPositionKey.self] = newValue }
+//    }
+}
+
 let CARD_PADDING: Double = 20
 
 struct Card<Content: View, S: ShapeStyle>: View {
@@ -20,6 +46,33 @@ struct Card<Content: View, S: ShapeStyle>: View {
     var id: String
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.namespace) var namespace: Namespace.ID
+    @Environment(\.cardExpanded) var cardExpanded: Bool
+    @Environment(\.captionShown) var captionShown: Bool
+    
+    @EnvironmentObject var profileManager: ProfileManager
+    
+    @State var animationInitialized: Bool = false
+    
+    var maxHeight: Double {
+        if cardExpanded {
+            return .infinity
+        }
+        return minHeight
+    }
+    
+    var maxHeightContent: Double {
+        if cardExpanded {
+            return .infinity
+        }
+        return 0
+    }
+    
+    var minHeight: Double {
+        if !captionShown {
+            return 120
+        }
+        return 120
+    }
     
     @ViewBuilder
     var content: () -> Content
@@ -57,36 +110,61 @@ struct Card<Content: View, S: ShapeStyle>: View {
                         .background(computedBackgroundColor.deepen(1).opacity(0.2))
                         .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous))
                         .padding(CARD_PADDING - 10)
+                        .zIndex(2)
 //                        .transition(AnyTransition.asymmetric(
 //                            insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2)),
 //                            removal: .identity
 //                        ))
                 }
             }
-            if caption != nil {
-                Text(caption!)
-                    .font(.caption)
-                    .frame(
-                        minWidth: 0,
-                        maxWidth: .infinity,
-                        maxHeight: .infinity,
-                        alignment: .bottomLeading
-                    )
-                    .padding(.bottom, CARD_PADDING)
-                    .padding(.leading, CARD_PADDING)
-                    .padding(.trailing, CARD_PADDING)
+            .frame(height: minHeight / 2, alignment: .top)
+            .foregroundColor(computedBackgroundColor.getForegroundColor())
+            .background(computedBackgroundColor)
+            .animation(ANIMATION, value: cardExpanded)
+            
+            content()
+                .frame(maxWidth: .infinity, maxHeight: maxHeightContent)
+                .opacity(cardExpanded ? 1 : 0)
+//                .animation(ANIMATION.delay(ANIMATION_SECS/2), value: cardExpanded)
+//                .transition(AnyTransition.asymmetric(
+//                    insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS)),
+//                    removal: .opacity.animation(ANIMATION)
+//                ))
+//                .matchedGeometryEffect(id: "content_" + id, in: namespace)
+            
+            ZStack {
+                Rectangle().frame(minHeight: 0).opacity(0)
+//                if caption != nil && computedCaptionShown {
+                if caption != nil {
+                    Text(caption!)
+                        .font(.caption)
+                        .frame(
+                            minWidth: 0,
+                            maxWidth: .infinity,
+                            alignment: .bottomLeading
+                        )
+                        .padding(CARD_PADDING)
+                        .transition(AnyTransition.asymmetric(
+                            insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2)),
+                            removal: .identity
+                        ))
+                }
             }
+            .frame(height: minHeight / 2, alignment: .bottom)
+            .foregroundColor(computedBackgroundColor.getForegroundColor())
+            .background(computedBackgroundColor)
+            .animation(ANIMATION, value: cardExpanded)
         }
-        .frame(height: 120)
-        .foregroundColor(computedBackgroundColor.getForegroundColor())
-        .background(computedBackgroundColor)
-//        .background(material)
+        .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous))
-//        .shadow(color: .black.lighter(), radius: 1, x: 0, y: 1)
         .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
             .stroke(.ultraThinMaterial)
-//            .foregroundColor(backgroundColor)
         )
+//        .animation(ANIMATION.delay(ANIMATION_SECS/2), value: cardExpanded)
+        .onAppear() {
+                animationInitialized = true
+        }
+        .animation(ANIMATION_SHORT, value: title) // Semi-hack to animate transitions within a card
         .matchedGeometryEffect(id: id, in: namespace)
     }
 }

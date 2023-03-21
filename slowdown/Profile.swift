@@ -18,10 +18,6 @@ struct Profile {
     var presets: OrderedSet<String>
     var color: Color
     
-    var defaultPreset: Preset {
-        Preset.presets[defaultPresetID]!
-    }
-    
     static let profiles: OrderedDictionary<String, Profile> = [
         "casual": Profile(
             id: "casual",

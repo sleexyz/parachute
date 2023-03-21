@@ -85,6 +85,8 @@ message Settings {
 
     // id of the currently loaded profile
     string profile_id = 13;
+
+    Preset parachute_preset = 14;
 }
 
 message Request {

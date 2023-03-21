@@ -214,6 +214,15 @@ public struct Proxyservice_Settings {
     set {_uniqueStorage()._profileID = newValue}
   }
 
+  public var parachutePreset: Proxyservice_Preset {
+    get {return _storage._parachutePreset ?? Proxyservice_Preset()}
+    set {_uniqueStorage()._parachutePreset = newValue}
+  }
+  /// Returns true if `parachutePreset` has been explicitly set.
+  public var hasParachutePreset: Bool {return _storage._parachutePreset != nil}
+  /// Clears the value of `parachutePreset`. Subsequent reads from it will return its default value.
+  public mutating func clearParachutePreset() {_uniqueStorage()._parachutePreset = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -610,6 +619,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     11: .same(proto: "defaultPreset"),
     12: .same(proto: "overlay"),
     13: .standard(proto: "profile_id"),
+    14: .standard(proto: "parachute_preset"),
   ]
 
   fileprivate class _StorageClass {
@@ -619,6 +629,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _defaultPreset: Proxyservice_Preset? = nil
     var _overlay: Proxyservice_Overlay? = nil
     var _profileID: String = String()
+    var _parachutePreset: Proxyservice_Preset? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -631,6 +642,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _defaultPreset = source._defaultPreset
       _overlay = source._overlay
       _profileID = source._profileID
+      _parachutePreset = source._parachutePreset
     }
   }
 
@@ -655,6 +667,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 11: try { try decoder.decodeSingularMessageField(value: &_storage._defaultPreset) }()
         case 12: try { try decoder.decodeSingularMessageField(value: &_storage._overlay) }()
         case 13: try { try decoder.decodeSingularStringField(value: &_storage._profileID) }()
+        case 14: try { try decoder.decodeSingularMessageField(value: &_storage._parachutePreset) }()
         default: break
         }
       }
@@ -685,6 +698,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       if !_storage._profileID.isEmpty {
         try visitor.visitSingularStringField(value: _storage._profileID, fieldNumber: 13)
       }
+      try { if let v = _storage._parachutePreset {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -700,6 +716,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._defaultPreset != rhs_storage._defaultPreset {return false}
         if _storage._overlay != rhs_storage._overlay {return false}
         if _storage._profileID != rhs_storage._profileID {return false}
+        if _storage._parachutePreset != rhs_storage._parachutePreset {return false}
         return true
       }
       if !storagesAreEqual {return false}

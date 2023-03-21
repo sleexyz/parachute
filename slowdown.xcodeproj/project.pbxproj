@@ -83,6 +83,7 @@
 		A0915BDC2991FB2700874313 /* TunConn.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BDB2991FB2700874313 /* TunConn.swift */; };
 		A0915BDE2991FED700874313 /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BDD2991FED700874313 /* SettingsHelper.swift */; };
 		A096625529C8E93C00D2E0A9 /* PresetSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625429C8E93C00D2E0A9 /* PresetSelector.swift */; };
+		A096625729C93EFC00D2E0A9 /* ParachutePresetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */; };
 		A09C5A0029BC26B70077A59B /* PresetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C59FF29BC26B70077A59B /* PresetContent.swift */; };
 		A09C5A0429BC30560077A59B /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C5A0329BC30560077A59B /* Profile.swift */; };
 		A09C5A0629BD16650077A59B /* ProfileCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C5A0529BD16650077A59B /* ProfileCard.swift */; };
@@ -275,6 +276,7 @@
 		A0915BDB2991FB2700874313 /* TunConn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunConn.swift; sourceTree = "<group>"; };
 		A0915BDD2991FED700874313 /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
 		A096625429C8E93C00D2E0A9 /* PresetSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetSelector.swift; sourceTree = "<group>"; };
+		A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParachutePresetPicker.swift; sourceTree = "<group>"; };
 		A09C59FF29BC26B70077A59B /* PresetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetContent.swift; sourceTree = "<group>"; };
 		A09C5A0329BC30560077A59B /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		A09C5A0529BD16650077A59B /* ProfileCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCard.swift; sourceTree = "<group>"; };
@@ -562,6 +564,7 @@
 				A09C5A0529BD16650077A59B /* ProfileCard.swift */,
 				A09C5A0729BD1CCD0077A59B /* ProfileSelector.swift */,
 				A096625429C8E93C00D2E0A9 /* PresetSelector.swift */,
+				A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */,
 			);
 			path = AppView;
 			sourceTree = "<group>";
@@ -948,6 +951,7 @@
 				A068DCF529A6FABC0036E9A2 /* Preset+Cardable.swift in Sources */,
 				A0F764EB29A2B5A2001F9B24 /* PresetSelectorOld.swift in Sources */,
 				A081F2442967BC9800863FE3 /* BreakModeView.swift in Sources */,
+				A096625729C93EFC00D2E0A9 /* ParachutePresetPicker.swift in Sources */,
 				A081F2422967BC5500863FE3 /* FocusModeView.swift in Sources */,
 				A081F250296A125300863FE3 /* DamageBar.swift in Sources */,
 				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,

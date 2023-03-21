@@ -8,26 +8,36 @@
 import Foundation
 import SwiftUI
 
-protocol Cardable {
+public protocol Cardable {
     associatedtype V: View
-    @ViewBuilder
-    func makeCard() -> V
     func getID() -> String
+    func getExpandedBody() -> AnyView
+    @ViewBuilder func _makeCard(content: @escaping () -> AnyView) -> V
 }
 
 extension Cardable {
     func eraseToAnyCardable() -> AnyCardable {
         return AnyCardable(cardable: self)
     }
+    @ViewBuilder func makeCard<Content: View>(content: @escaping () -> Content) -> V {
+        _makeCard {
+            AnyView(content())
+        }
+    }
 }
 
 struct AnyCardable: Identifiable, Cardable {
-    func makeCard() -> AnyView {
-        AnyView(self.cardable.makeCard())
+    func _makeCard(content: @escaping () -> AnyView) -> AnyView {
+        AnyView(self.cardable._makeCard {
+            content()
+        })
     }
     
     func getID() -> String {
         self.cardable.getID()
+    }
+    func getExpandedBody() -> AnyView {
+        return self.cardable.getExpandedBody()
     }
     
     typealias V = AnyView
