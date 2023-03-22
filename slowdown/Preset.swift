@@ -26,6 +26,7 @@ struct Preset {
     var description: String
     var badgeText: String?
     var presetData: Proxyservice_Preset
+    var value: Double
     var mainColor: Color
     var overlayDurationSecs: Double?
     var expandedBody: AnyView?

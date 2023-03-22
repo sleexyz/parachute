@@ -32,6 +32,31 @@ extension ShapeStyle {
     }
 }
 
+
+extension View {
+    
+    func multicolorGlow(value: Double) -> some View {
+        self.blur(radius: 5)
+            .overlay(self)
+//        ZStack(alignment: .bottom) {
+//            ForEach(0..<2) { i in
+//                Rectangle()
+//                    .fill(
+//                        AngularGradient(gradient: Gradient(colors: [
+//                            ProfileManager.makeMainColor(value + 2),
+//                            ProfileManager.makeMainColor(value),
+//                            ProfileManager.makeMainColor(value + 1),
+//                            ProfileManager.makeMainColor(value),
+//                            ProfileManager.makeMainColor(value + 2),
+//                        ]), center: .center, angle: .degrees(-45 - 90)))
+//                    .padding(-20)
+////                    .overlay(self.blur(radius: 5 - CGFloat(i * 5)))
+//            }
+//        }
+    }
+}
+
+
 extension Color {
     // Returns the corresponding foreground color for a background color.
     func getForegroundColor() -> Color {

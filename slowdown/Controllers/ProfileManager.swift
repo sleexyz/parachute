@@ -18,8 +18,8 @@ var ANIMATION_SECS: Double = 0.35
 var ANIMATION: Animation = .timingCurve(0.30,0.20,0,1, duration: ANIMATION_SECS * 1.7)
 var ANIMATION_SHORT: Animation = .timingCurve(0.30,0.20,0,1, duration: ANIMATION_SECS)
 
-var PRESET_OPACITY: Double = 0.8
-var OVERLAY_PRESET_OPACITY: Double = PRESET_OPACITY * 0.3
+var PRESET_OPACITY: Double = 1
+var OVERLAY_PRESET_OPACITY: Double = PRESET_OPACITY * 0.5
 
 class ProfileManager: ObservableObject {
     struct Provider : Dep {
@@ -64,7 +64,7 @@ class ProfileManager: ObservableObject {
         return allPresets[settingsStore.defaultPreset.id]!
     }
     
-    var presets: OrderedDictionary<String, Preset> {
+    var aboveTheFoldPresets: OrderedDictionary<String, Preset> {
         var map = OrderedDictionary<String, Preset>()
         map[defaultPreset.id] = defaultPreset
         for presetID in defaultPreset.childPresets {
@@ -116,6 +116,7 @@ class ProfileManager: ObservableObject {
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
             },
+            value: 2,
             mainColor: makeMainColor(2).opacity(PRESET_OPACITY),
             childPresets: [
                 "relax"
@@ -131,6 +132,7 @@ class ProfileManager: ObservableObject {
                 $0.baseRxSpeedTarget = .infinity
                 $0.mode = .focus
             },
+            value: 2,
             mainColor: makeMainColor(2).opacity(OVERLAY_PRESET_OPACITY),
             overlayDurationSecs: 3 * 60
         ),
@@ -148,6 +150,7 @@ class ProfileManager: ObservableObject {
                     $0.matchAllTraffic = true
                 }
             },
+            value: 0,
             mainColor: makeMainColor(0).opacity(PRESET_OPACITY),
             childPresets: [
                 "unplug_break",
@@ -166,6 +169,7 @@ class ProfileManager: ObservableObject {
                     $0.matchAllTraffic = true
                 }
             },
+            value: 0,
             mainColor: makeMainColor(0).opacity(OVERLAY_PRESET_OPACITY),
             overlayDurationSecs: 1 * 60
         ),
@@ -181,13 +185,14 @@ class ProfileManager: ObservableObject {
         }
     }
     
-    static func makeMainColor(_ value: Double) -> Color {
+    static func makeMainColor(_ _value: Double) -> Color {
+        let value = max(min(_value, 7), 0)
         var h, s, b, a: CGFloat
         (h, s, b, a) = (0, 0, 0, 0)
         UIColor(.blue).getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-        h = h + Mapping(a: 0, b: 5, c: 0.1, d: 0.35).map(value)
+        h = h + Mapping(a: 0, b: 5, c: 0, d: 0.35).map(value)
         s = Mapping(a: 0, b: 5, c: 0.5, d: 0.5).map(value)
-        b = Mapping(a: 0, b: 5, c: 0.4, d: 0.7).map(value)
+        b = Mapping(a: 0, b: 5, c: 0.5, d: 0.6).map(value)
         return Color(UIColor(hue: h, saturation: s, brightness: b, alpha: a))
     }
     
@@ -199,6 +204,7 @@ class ProfileManager: ObservableObject {
             description: "Slow down content after \(Int(presetData.usageMaxHp)) minutes of usage",
             badgeText: "∞",
             presetData: presetData,
+            value: 5,
             mainColor: makeMainColor(5).opacity(PRESET_OPACITY),
 //            mainColor: .purple.lighter().lighter().lighter().opacity(Mapping(a: 2, b: 10, c: 0.7, d: 0.3).map(presetData.usageMaxHp)),
             expandedBody:  AnyView(ParachutePresetPicker())

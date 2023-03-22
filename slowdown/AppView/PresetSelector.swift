@@ -20,7 +20,7 @@ struct PresetSelector: View {
     
     var cards: OrderedDictionary<String, AnyCardable> {
         var map = OrderedDictionary<String, AnyCardable>()
-        for entry in profileManager.presets {
+        for entry in profileManager.aboveTheFoldPresets {
             map[entry.key] = entry.value.eraseToAnyCardable()
         }
         map[Pause().id] = Pause().eraseToAnyCardable()
@@ -128,7 +128,7 @@ struct PresetSelector: View {
                 }
             }
             .frame(maxWidth: .infinity, minHeight: height, alignment: .bottom)
-            .background(material)
+//            .background(material)
             .animation(ANIMATION, value: shouldRenderSelector)
         }
     }

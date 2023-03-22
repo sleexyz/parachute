@@ -29,12 +29,10 @@ struct ParachutePresetItem: View {
             .opacity(active ? 1 : 0)
     }
     var computedBackgroundColor: Color {
-        var color: Color
         if colorScheme == .dark {
-            color = background.deepenByAlphaAndBake()
+            return background.deepenByAlphaAndBake()
         }
-        color = background.bakeAlpha(colorScheme)
-        return color
+        return background.bakeAlpha(colorScheme)
     }
     
     var foregroundColor: Color {

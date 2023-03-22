@@ -44,6 +44,7 @@ struct Card<Content: View, S: ShapeStyle>: View {
     var backgroundColor: Color?
     var material: S
     var id: String
+    var value: Double?
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.namespace) var namespace: Namespace.ID
     @Environment(\.cardExpanded) var cardExpanded: Bool
@@ -74,17 +75,36 @@ struct Card<Content: View, S: ShapeStyle>: View {
         return 120
     }
     
+    
     @ViewBuilder
     var content: () -> Content
     
     var computedBackgroundColor: Color {
         guard let backgroundColor = backgroundColor else {
-            return .clear
+            return .gray.opacity(0.5)
         }
-        if colorScheme == .dark {
-            return backgroundColor.deepenByAlphaAndBake()
+//        if colorScheme == .dark {
+//            return backgroundColor.opacity(1).deepenByAlphaAndBake()
+//        }
+        return backgroundColor.opacity(1).bakeAlpha(.light)
+    }
+    
+    @ViewBuilder var overlay: some View {
+        if id == Pause().id {
+            RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
+                .strokeBorder(computedBackgroundColor, style: StrokeStyle(lineWidth: 1))
+            
+        } else {
+            MulticolorStroke(value: profileManager.allPresets[id]!.value)
+                .opacity(profileManager.allPresets[id]?.overlayDurationSecs != nil ? 0.5 : 1)
+//                .multicolorGlow(value: profileManager.allPresets[id]!.value)
+//                .overlay(
+//                    MulticolorStroke(value: profileManager.allPresets[id]!.value)
+//                        .blur(radius: 2)
+////                        .padding(-4)
+//                )
+//                .multicolorGlow(value: profileManager.allPresets[id]!.value)
         }
-        return backgroundColor.bakeAlpha(colorScheme)
     }
     
     var body: some View {
@@ -107,7 +127,8 @@ struct Card<Content: View, S: ShapeStyle>: View {
                         .padding(10)
                         .padding(.leading, 5)
                         .padding(.trailing, 5)
-                        .background(computedBackgroundColor.bakeAlpha(colorScheme).deepen(1).opacity(0.05))
+                        .background(computedBackgroundColor.bakeAlpha(colorScheme).opacity(0.4))
+//                        .foregroundColor(computedBackgroundColor.bakeAlpha(colorScheme).getForegroundColor())
                         .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous))
                         .padding(CARD_PADDING - 10)
                         .zIndex(2)
@@ -118,8 +139,9 @@ struct Card<Content: View, S: ShapeStyle>: View {
                 }
             }
             .frame(height: minHeight / 2, alignment: .top)
-            .foregroundColor(computedBackgroundColor.bakeAlpha(colorScheme).getForegroundColor())
-            .background(computedBackgroundColor)
+//            .foregroundColor(computedBackgroundColor.bakeAlpha(colorScheme).getForegroundColor())
+//            .background(computedBackgroundColor)
+            .background(material.opacity(0.1))
             .animation(ANIMATION, value: cardExpanded)
             
             content()
@@ -151,20 +173,38 @@ struct Card<Content: View, S: ShapeStyle>: View {
                 }
             }
             .frame(height: minHeight / 2, alignment: .bottom)
-            .foregroundColor(computedBackgroundColor.bakeAlpha(colorScheme).getForegroundColor())
-            .background(computedBackgroundColor)
+//            .foregroundColor(computedBackgroundColor.bakeAlpha(colorScheme).getForegroundColor())
+//            .background(computedBackgroundColor)
+            .background(material.opacity(0.1))
             .animation(ANIMATION, value: cardExpanded)
         }
-        .background(material)
+        .background(material.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
-            .stroke(.ultraThinMaterial)
-        )
+        .overlay(overlay)
+//        .multicolorGlow(value: profileManager.allPresets[id]?.value ?? 0)
+//        .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
+//            .stroke(material.opacity(0.2), style: StrokeStyle(lineWidth: 4))
+//        )
 //        .animation(ANIMATION.delay(ANIMATION_SECS/2), value: cardExpanded)
         .onAppear() {
                 animationInitialized = true
         }
         .animation(ANIMATION_SHORT, value: caption) // Semi-hack to animate transitions within a card
         .matchedGeometryEffect(id: id, in: namespace)
+    }
+}
+struct MulticolorStroke: View {
+    var value: Double
+    var body: some View {
+        RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
+            .strokeBorder(
+                AngularGradient(gradient: Gradient(colors: [
+                    ProfileManager.makeMainColor(value + 2),
+                    ProfileManager.makeMainColor(value),
+                    ProfileManager.makeMainColor(value),
+                    ProfileManager.makeMainColor(value + 2),
+                ]), center: .center, angle: .degrees(-45 - 90))
+                , style: StrokeStyle(lineWidth: 1))
+//            .padding(-2)
     }
 }

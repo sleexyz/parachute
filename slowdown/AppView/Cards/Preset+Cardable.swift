@@ -79,6 +79,7 @@ struct WiredPresetCard<Content: View>: View {
         card
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                
                 if !profileManager.presetSelectorOpen {
                     profileManager.presetSelectorOpen = true
                     return
