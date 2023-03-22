@@ -55,8 +55,8 @@ struct ConnectedView: View {
                     .id(profileManager.activePreset.id)
             }
             
-            ProfileSelector()
-                .zIndex(3)
+//            ProfileSelector()
+//                .zIndex(3)
         }
         .namespace(namespace)
     }

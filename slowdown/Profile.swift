@@ -10,50 +10,18 @@ import OrderedCollections
 import ProxyService
 import SwiftUI
 
+typealias PresetID = String
+
 struct Profile {
+    // id should match defaultpreset id
     var id: String
-    var name: String
-    var icon: String
-    var defaultPresetID: String
-    var presets: OrderedSet<String>
-    var color: Color
-    
-    static let profiles: OrderedDictionary<String, Profile> = [
-        "casual": Profile(
-            id: "casual",
-            name: "Parachute",
-            icon: "🪂",
-            defaultPresetID: "casual",
-            presets: [
-                "casual",
-                "supercasual",
-                "ultracasual",
-            ],
-            color: .red.darker()
-        ),
-        "detox": Profile(
-            id: "detox",
-            name: "Detox",
-            icon: "🫧",
-            defaultPresetID: "focus",
-            presets: [
-                "focus",
-                "relax"
-            ],
-            color: .indigo.lighter().lighter()
-        ),
-        "unplug": Profile(
-            id: "unplug",
-            name: "Sleep",
-            icon: "🌌",
-            defaultPresetID: "unplug",
-            presets: [
-                "unplug",
-                "unplug_break",
-            ],
-            color: .blue
-        ),
-    ]
+    var childPresets: OrderedSet<PresetID> = []
+    var presets: OrderedSet<PresetID> {
+        var ret = OrderedSet<PresetID>()
+        ret.append(id)
+        ret.append(contentsOf: childPresets)
+        return ret
+    }
 }
 
 extension Profile: Identifiable {

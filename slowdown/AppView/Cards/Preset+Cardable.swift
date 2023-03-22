@@ -79,19 +79,24 @@ struct WiredPresetCard<Content: View>: View {
         card
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-//                withAnimation {
-                    if !profileManager.presetSelectorOpen {
-                        profileManager.presetSelectorOpen = true
-                        return
+                if !profileManager.presetSelectorOpen {
+                    profileManager.presetSelectorOpen = true
+                    return
+                }
+                if !isActive {
+                    if preset.presetData.mode == .progressive {
+                        stateController.heal()
                     }
+                    profileManager.loadPreset(preset: preset)
+//                    Task {
+//                        try await Task.sleep(nanoseconds:500_000_000)
                     profileManager.presetSelectorOpen = false
-                    if !isActive {
-                        profileManager.loadPreset(preset: preset)
-                        if preset.presetData.mode == .progressive {
-                            stateController.heal()
-                        }
-                    }
-//                }
+                    profileManager.profileSelectorOpen = false
+//                    }
+                } else {
+                    profileManager.presetSelectorOpen = false
+                    profileManager.profileSelectorOpen = false
+                }
             }
     }
 }

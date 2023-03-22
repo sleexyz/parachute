@@ -28,8 +28,8 @@ struct Preset {
     var presetData: Proxyservice_Preset
     var mainColor: Color
     var overlayDurationSecs: Double?
-    
     var expandedBody: AnyView?
+    var childPresets: [PresetID] = []
     
     var id: String {
         presetData.id

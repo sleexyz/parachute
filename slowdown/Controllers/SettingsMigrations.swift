@@ -8,22 +8,13 @@
 import Foundation
 import ProxyService
 
-let LATEST_VERSION = 5
+let LATEST_VERSION = 6
 
 final class SettingsMigrations {
     private static var migrations: [Int: (inout Proxyservice_Settings) -> Void] = [
         2: { settings in
-            settings.defaultPreset = ProfileManager.presetDefaults.elements[0].value.presetData
+            settings.defaultPreset = ProfileManager.presetDefaults["focus"]!.presetData
             settings.version = 2
-        },
-        3: { settings in
-            settings.profileID = Profile.profiles.elements[0].key
-            settings.version = 3
-        },
-        4: { settings in
-            settings.profileID = Profile.profiles.elements[0].key
-            settings.defaultPreset = ProfileManager.presetDefaults[Profile.profiles[settings.profileID]!.presets.elements[0]]!.presetData
-            settings.version = 4
         },
         5: { settings in
             if settings.defaultPreset.id == "supercasual" {
@@ -33,6 +24,9 @@ final class SettingsMigrations {
                 settings.defaultPreset.id = "casual"
             }
             settings.version = 5
+        },
+        6: { settings in
+            settings.version = 6
         }
     ]
     public static func setDefaults(settings: inout Proxyservice_Settings, from: Int = 0) {

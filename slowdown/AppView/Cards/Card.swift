@@ -164,7 +164,7 @@ struct Card<Content: View, S: ShapeStyle>: View {
         .onAppear() {
                 animationInitialized = true
         }
-        .animation(ANIMATION_SHORT, value: title) // Semi-hack to animate transitions within a card
+        .animation(ANIMATION_SHORT, value: caption) // Semi-hack to animate transitions within a card
         .matchedGeometryEffect(id: id, in: namespace)
     }
 }

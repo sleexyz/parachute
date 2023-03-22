@@ -83,8 +83,7 @@ message Settings {
     // NOT used by the backend:
     //
 
-    // id of the currently loaded profile
-    string profile_id = 13;
+    reserved 13;
 
     Preset parachute_preset = 14;
 }

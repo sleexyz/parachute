@@ -47,8 +47,8 @@ struct ParachutePresetItem: View {
 //            .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
 //                .stroke(.ultraThinMaterial)
 //            )
-            .padding(.top)
-            .padding(.bottom)
+            .padding(.top, 10)
+            .padding(.bottom, 10)
             .foregroundColor(foregroundColor)
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -67,7 +67,7 @@ struct ParachutePresetItem: View {
 
 struct ParachutePresetPicker: View {
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             ParachutePresetItem(hp: 10)
             ParachutePresetItem(hp: 5)
             ParachutePresetItem(hp: 2)

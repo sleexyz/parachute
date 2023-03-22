@@ -45,15 +45,6 @@ class ProfileManager: ObservableObject {
     @Published var presetSelectorOpen: Bool = false
     @Published var profileSelectorOpen: Bool = false
     
-    
-    var activeProfile: Profile {
-        Profile.profiles[activeProfileID]!
-    }
-    
-    var activeProfileID: String {
-        settingsStore.settings.profileID
-    }
-    
     // Convert to derived publisher
     var activePreset: Preset {
         allPresets[settingsStore.activePreset.id]!
@@ -72,19 +63,13 @@ class ProfileManager: ObservableObject {
     
     var presets: OrderedDictionary<String, Preset> {
         var map = OrderedDictionary<String, Preset>()
-        for presetID in activeProfile.presets {
+        map[defaultPreset.id] = defaultPreset
+        for presetID in defaultPreset.childPresets {
             map[presetID] = allPresets[presetID]
         }
         return map
     }
         
-    func loadProfile(profileID: String) {
-        settingsStore.settings.profileID = profileID
-        settingsStore.settings.defaultPreset = allPresets[Profile.profiles[profileID]!.defaultPresetID]!.presetData
-        settingsStore.settings.clearOverlay()
-        settingsController.syncSettings()
-    }
-    
     // Inclusive of loadOverlay
     func loadPreset(preset: Preset) {
         if preset.overlayDurationSecs != nil {
@@ -128,7 +113,10 @@ class ProfileManager: ObservableObject {
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
             },
-            mainColor: Profile.profiles["detox"]!.color.opacity(0.6)
+            mainColor: .indigo.lighter().lighter().opacity(0.6),
+            childPresets: [
+                "relax"
+            ]
         ),
         "relax": Preset(
             name: "Break",
@@ -140,7 +128,7 @@ class ProfileManager: ObservableObject {
                 $0.baseRxSpeedTarget = .infinity
                 $0.mode = .focus
             },
-            mainColor: Profile.profiles["detox"]!.color.opacity(0.3),
+            mainColor: .indigo.lighter().lighter().opacity(0.3),
             overlayDurationSecs: 3 * 60
         ),
         "unplug": Preset(
@@ -157,7 +145,10 @@ class ProfileManager: ObservableObject {
                     $0.matchAllTraffic = true
                 }
             },
-            mainColor: Profile.profiles["unplug"]!.color.opacity(0.6)
+            mainColor: .blue.opacity(0.6),
+            childPresets: [
+                "unplug_break",
+            ]
         ),
         "unplug_break": Preset(
             name: "Break",
@@ -172,7 +163,7 @@ class ProfileManager: ObservableObject {
                     $0.matchAllTraffic = true
                 }
             },
-            mainColor: Profile.profiles["unplug"]!.color.opacity(0.3),
+            mainColor: .blue.opacity(0.3),
             overlayDurationSecs: 1 * 60
         ),
         "casual": makeParachutePreset(ProfileManager.makeParachutePresetData(hp: 5)),
@@ -189,13 +180,13 @@ class ProfileManager: ObservableObject {
     
     static func makeParachutePreset(_ presetData: Proxyservice_Preset) -> Preset {
         return Preset(
-            name: "Parachute — \(Int(presetData.usageMaxHp)) min",
+            name: "Parachute",
             icon: "🪂",
             type: .relax,
             description: "Slow down content after \(Int(presetData.usageMaxHp)) minutes of usage",
             badgeText: "∞",
             presetData: presetData,
-            mainColor: Profile.profiles["casual"]!.color.opacity(Mapping(a: 2, b: 10, c: 1, d: 0.5).map(presetData.usageMaxHp)),
+            mainColor: .red.darker().opacity(Mapping(a: 2, b: 10, c: 1, d: 0.7).map(presetData.usageMaxHp)),
             expandedBody:  AnyView(ParachutePresetPicker())
         )
     }
@@ -209,12 +200,22 @@ class ProfileManager: ObservableObject {
     
     
     var allPresets: OrderedDictionary<String, Preset> {
+        var ret = OrderedDictionary<String, Preset>()
+        for elem in topLevelPresets.elements {
+            ret[elem.key] = elem.value
+            for child in elem.value.childPresets {
+                ret[child] = ProfileManager.presetDefaults[child]
+            }
+        }
+        return ret
+    }
+    
+    var topLevelPresets: OrderedDictionary<String, Preset> {
         [
+            "casual": ProfileManager.makeParachutePreset(parachutePresetData),
             "focus": ProfileManager.presetDefaults["focus"]!,
-            "relax": ProfileManager.presetDefaults["relax"]!,
             "unplug": ProfileManager.presetDefaults["unplug"]!,
-            "unplug_break": ProfileManager.presetDefaults["unplug_break"]!,
-            "casual": ProfileManager.makeParachutePreset(parachutePresetData)
         ]
     }
+    
 }
