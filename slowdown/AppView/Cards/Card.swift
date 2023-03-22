@@ -107,7 +107,7 @@ struct Card<Content: View, S: ShapeStyle>: View {
                         .padding(10)
                         .padding(.leading, 5)
                         .padding(.trailing, 5)
-                        .background(computedBackgroundColor.deepen(1).opacity(0.2))
+                        .background(computedBackgroundColor.bakeAlpha(colorScheme).deepen(1).opacity(0.05))
                         .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous))
                         .padding(CARD_PADDING - 10)
                         .zIndex(2)
@@ -118,7 +118,7 @@ struct Card<Content: View, S: ShapeStyle>: View {
                 }
             }
             .frame(height: minHeight / 2, alignment: .top)
-            .foregroundColor(computedBackgroundColor.getForegroundColor())
+            .foregroundColor(computedBackgroundColor.bakeAlpha(colorScheme).getForegroundColor())
             .background(computedBackgroundColor)
             .animation(ANIMATION, value: cardExpanded)
             
@@ -151,11 +151,11 @@ struct Card<Content: View, S: ShapeStyle>: View {
                 }
             }
             .frame(height: minHeight / 2, alignment: .bottom)
-            .foregroundColor(computedBackgroundColor.getForegroundColor())
+            .foregroundColor(computedBackgroundColor.bakeAlpha(colorScheme).getForegroundColor())
             .background(computedBackgroundColor)
             .animation(ANIMATION, value: cardExpanded)
         }
-        .background(.ultraThinMaterial)
+        .background(material)
         .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
             .stroke(.ultraThinMaterial)

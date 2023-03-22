@@ -10,6 +10,9 @@ import XCTest
 @testable import slowdown
 
 class linmapTests: XCTestCase {
+    func testNegativeRange() throws {
+        XCTAssertEqual(3.applyMapping(Mapping(a: 0, b: 10, c: -100, d: 100)), -40)
+    }
     func testLinear() throws {
         XCTAssertEqual(3.applyMapping ( Mapping(a: 0, b: 10, c: 0, d: 100)), 30)
         XCTAssertEqual(13.applyMapping( Mapping(a: 0, b: 10, c: 0, d: 100)), 130)

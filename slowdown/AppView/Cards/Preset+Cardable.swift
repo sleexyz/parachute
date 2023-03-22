@@ -66,7 +66,7 @@ struct WiredPresetCard<Content: View>: View {
             badgeText: badgeText,
             caption: preset.description,
             backgroundColor: preset.mainColor,
-            material: .regularMaterial,
+            material: .ultraThinMaterial,
             id: preset.id
 //            id: preset.name // HACK to animate when id is same but name changes
         ) {

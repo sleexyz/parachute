@@ -25,17 +25,20 @@ struct ParachutePresetItem: View {
     }
     
     var background: Color {
-        profileManager.activePreset.mainColor.opacity(active ? 1 : 0)
+        profileManager.activePreset.mainColor
+            .opacity(active ? 1 : 0)
     }
     var computedBackgroundColor: Color {
+        var color: Color
         if colorScheme == .dark {
-            return background.deepenByAlphaAndBake()
+            color = background.deepenByAlphaAndBake()
         }
-        return background.bakeAlpha(colorScheme)
+        color = background.bakeAlpha(colorScheme)
+        return color
     }
     
     var foregroundColor: Color {
-        computedBackgroundColor.getForegroundColor()
+        computedBackgroundColor.bakeAlpha(colorScheme).getForegroundColor()
     }
     
     var body: some View {
@@ -44,9 +47,9 @@ struct ParachutePresetItem: View {
 //            .frame(maxWidth: .infinity)
             .background(computedBackgroundColor)
             .clipShape(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous))
-//            .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
-//                .stroke(.ultraThinMaterial)
-//            )
+            .overlay(RoundedRectangle(cornerRadius: CARD_PADDING, style: .continuous)
+                .stroke(.ultraThinMaterial)
+            )
             .padding(.top, 10)
             .padding(.bottom, 10)
             .foregroundColor(foregroundColor)
@@ -68,9 +71,13 @@ struct ParachutePresetItem: View {
 struct ParachutePresetPicker: View {
     var body: some View {
         VStack(spacing: 0) {
+            Spacer()
             ParachutePresetItem(hp: 10)
+            Spacer()
             ParachutePresetItem(hp: 5)
+            Spacer()
             ParachutePresetItem(hp: 2)
+            Spacer()
         }
     }
 }

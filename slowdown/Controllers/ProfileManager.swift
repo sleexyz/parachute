@@ -18,6 +18,9 @@ var ANIMATION_SECS: Double = 0.35
 var ANIMATION: Animation = .timingCurve(0.30,0.20,0,1, duration: ANIMATION_SECS * 1.7)
 var ANIMATION_SHORT: Animation = .timingCurve(0.30,0.20,0,1, duration: ANIMATION_SECS)
 
+var PRESET_OPACITY: Double = 0.8
+var OVERLAY_PRESET_OPACITY: Double = PRESET_OPACITY * 0.3
+
 class ProfileManager: ObservableObject {
     struct Provider : Dep {
         func create(r: Registry) -> ProfileManager {
@@ -113,7 +116,7 @@ class ProfileManager: ObservableObject {
                 $0.baseRxSpeedTarget = 40e3
                 $0.mode = .focus
             },
-            mainColor: .indigo.lighter().lighter().opacity(0.6),
+            mainColor: makeMainColor(2).opacity(PRESET_OPACITY),
             childPresets: [
                 "relax"
             ]
@@ -128,7 +131,7 @@ class ProfileManager: ObservableObject {
                 $0.baseRxSpeedTarget = .infinity
                 $0.mode = .focus
             },
-            mainColor: .indigo.lighter().lighter().opacity(0.3),
+            mainColor: makeMainColor(2).opacity(OVERLAY_PRESET_OPACITY),
             overlayDurationSecs: 3 * 60
         ),
         "unplug": Preset(
@@ -145,7 +148,7 @@ class ProfileManager: ObservableObject {
                     $0.matchAllTraffic = true
                 }
             },
-            mainColor: .blue.opacity(0.6),
+            mainColor: makeMainColor(0).opacity(PRESET_OPACITY),
             childPresets: [
                 "unplug_break",
             ]
@@ -163,7 +166,7 @@ class ProfileManager: ObservableObject {
                     $0.matchAllTraffic = true
                 }
             },
-            mainColor: .blue.opacity(0.3),
+            mainColor: makeMainColor(0).opacity(OVERLAY_PRESET_OPACITY),
             overlayDurationSecs: 1 * 60
         ),
         "casual": makeParachutePreset(ProfileManager.makeParachutePresetData(hp: 5)),
@@ -178,6 +181,16 @@ class ProfileManager: ObservableObject {
         }
     }
     
+    static func makeMainColor(_ value: Double) -> Color {
+        var h, s, b, a: CGFloat
+        (h, s, b, a) = (0, 0, 0, 0)
+        UIColor(.blue).getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        h = h + Mapping(a: 0, b: 5, c: 0.1, d: 0.35).map(value)
+        s = Mapping(a: 0, b: 5, c: 0.5, d: 0.5).map(value)
+        b = Mapping(a: 0, b: 5, c: 0.4, d: 0.7).map(value)
+        return Color(UIColor(hue: h, saturation: s, brightness: b, alpha: a))
+    }
+    
     static func makeParachutePreset(_ presetData: Proxyservice_Preset) -> Preset {
         return Preset(
             name: "Parachute",
@@ -186,7 +199,8 @@ class ProfileManager: ObservableObject {
             description: "Slow down content after \(Int(presetData.usageMaxHp)) minutes of usage",
             badgeText: "∞",
             presetData: presetData,
-            mainColor: .red.darker().opacity(Mapping(a: 2, b: 10, c: 1, d: 0.7).map(presetData.usageMaxHp)),
+            mainColor: makeMainColor(5).opacity(PRESET_OPACITY),
+//            mainColor: .purple.lighter().lighter().lighter().opacity(Mapping(a: 2, b: 10, c: 0.7, d: 0.3).map(presetData.usageMaxHp)),
             expandedBody:  AnyView(ParachutePresetPicker())
         )
     }

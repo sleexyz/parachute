@@ -13,7 +13,7 @@ let LATEST_VERSION = 6
 final class SettingsMigrations {
     private static var migrations: [Int: (inout Proxyservice_Settings) -> Void] = [
         2: { settings in
-            settings.defaultPreset = ProfileManager.presetDefaults["focus"]!.presetData
+            settings.defaultPreset = ProfileManager.presetDefaults["casual"]!.presetData
             settings.version = 2
         },
         5: { settings in

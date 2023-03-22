@@ -40,8 +40,7 @@ struct WiredPauseCard<Content: View>: View {
             title: "Disable",
             badgeText: "1 HOUR",
             caption: "Temporarily disconnect from VPN",
-            backgroundColor: .clear.opacity(0.5),
-            material: .ultraThinMaterial,
+            material: .ultraThinMaterial.opacity(0),
             id: id
         ) {
             content()
