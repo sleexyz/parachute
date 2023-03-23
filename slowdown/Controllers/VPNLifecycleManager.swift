@@ -28,37 +28,13 @@ class VPNLifecycleManager: ObservableObject {
         self.vpnConfigurationService = vpnConfigurationService
         self.settingsController = settingsController
         self.settingsStore = settingsStore
-        self.initialize()
-    }
-    func initialize() {
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: "industries.strange.slowdown.unpause", using: nil) { task in
-            self.handleAppRefresh(task: task as! BGAppRefreshTask)
-        }
-    }
-    
-    func handleAppRefresh(task: BGAppRefreshTask) {
-        let updateTask = Task {
-            do {
-                logger.info("Unpausing")
-                // Enable on-demand before starting connection to retry automatically if startConnection fails.
-                try await self.vpnConfigurationService.enableOnDemand()
-//                try await self.vpnConfigurationService.startConnection()
-                logger.info("Unpaused")
-                task.setTaskCompleted(success: true)
-            } catch {
-                task.setTaskCompleted(success: false)
-            }
-        }
-        task.expirationHandler = {
-            updateTask.cancel()
-        }
     }
     
     public func pauseConnection() {
         Task {
             try await self.vpnConfigurationService.stopConnectionAndDisableOnDemand()
             let request = BGAppRefreshTaskRequest(identifier: "industries.strange.slowdown.unpause")
-            request.earliestBeginDate = Date(timeIntervalSinceNow: 5*60) // 15 min for now
+            request.earliestBeginDate = Date(timeIntervalSinceNow: 60*60)
             do {
                 try BGTaskScheduler.shared.submit(request)
             } catch {
@@ -69,7 +45,7 @@ class VPNLifecycleManager: ObservableObject {
     
     public func startConnection() {
         Task {
-            try await self.vpnConfigurationService.startConnectionAndEnableOnDemand()
+            try await self.vpnConfigurationService.startConnectionAndEnableOnDemand(settingsOverride: settingsStore.settings)
         }
     }
     

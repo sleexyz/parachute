@@ -13,6 +13,7 @@ import SwiftUI
 import Combine
 import Common
 import FirebaseCrashlytics
+import BackgroundTasks
 
 enum UserError: Error {
     case message(message: String)
@@ -54,7 +55,7 @@ extension Future where Failure == Never {
 open class VPNConfigurationService: ObservableObject {
     struct Provider: Dep {
         func create(r: Registry) -> VPNConfigurationService {
-            return VPNConfigurationService(store: r.resolve(SettingsStore.self))
+            return .shared
         }
     }
     
@@ -72,10 +73,10 @@ open class VPNConfigurationService: ObservableObject {
         return manager != nil
     }
     
-    private let store: SettingsStore
+    static let shared = VPNConfigurationService()
     
-    init(store: SettingsStore) {
-        self.store = store
+    
+    init() {
         
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.manager = managers?.first
@@ -123,6 +124,28 @@ open class VPNConfigurationService: ObservableObject {
             }.store(in: &bag)
     }
     
+    
+    func registerBackgroundTasks() {
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: "industries.strange.slowdown.unpause", using: nil) { task in
+            self.handleAppRefresh(task: task as! BGAppRefreshTask)
+        }
+    }
+    
+    func handleAppRefresh(task: BGAppRefreshTask) {
+        let updateTask = Task {
+            do {
+                // We can't start the connection while the app is backgrounded.
+                try await self.enableOnDemand()
+                task.setTaskCompleted(success: true)
+            } catch {
+                task.setTaskCompleted(success: false)
+            }
+        }
+        task.expirationHandler = {
+            updateTask.cancel()
+        }
+    }
+    
     @MainActor
     private func updateStatus(connStatus: NEVPNStatus) {
         switch connStatus {
@@ -143,8 +166,12 @@ open class VPNConfigurationService: ObservableObject {
     
     
     @MainActor
-    func startConnectionAndEnableOnDemand() async throws {
-        try self.manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: try store.settings.serializedData())])
+    func startConnectionAndEnableOnDemand(settingsOverride: Proxyservice_Settings?) async throws {
+        if let settingsOverride = settingsOverride {
+            try self.manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: try settingsOverride.serializedData())])
+        } else {
+            try self.manager?.connection.startVPNTunnel()
+        }
         self.isTransitioning = true
         try await enableOnDemand()
     }
@@ -153,12 +180,6 @@ open class VPNConfigurationService: ObservableObject {
     func enableOnDemand() async throws {
         self.manager?.isOnDemandEnabled = true
         try await self.saveManagerPreferences()
-    }
-    
-    @MainActor
-    func startConnection() async throws {
-        try self.manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: try store.settings.serializedData())])
-        self.isTransitioning = true
     }
     
     @MainActor

@@ -31,7 +31,7 @@ class MockVPNConfigurationService: VPNConfigurationService {
     struct Provider: MockDep {
         typealias MockT = MockVPNConfigurationService
         func create(r: Registry) -> VPNConfigurationService {
-            return MockVPNConfigurationService(store: r.resolve(SettingsStore.self))
+            return MockVPNConfigurationService()
         }
     }
     

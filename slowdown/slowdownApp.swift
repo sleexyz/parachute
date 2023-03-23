@@ -33,6 +33,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         if Env.value == .prod {
             FirebaseApp.configure()
         }
+        VPNConfigurationService.shared.registerBackgroundTasks()
         return true
     }
 }
