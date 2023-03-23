@@ -69,9 +69,7 @@ message Settings {
 
     bool debug = 7;
 
-    // TODO: move to a State message
-    // When pause should be lifted.
-    google.protobuf.Timestamp pauseExpiry = 10;
+    reserved 10;
 
     // Parameters of the active preset.
     Preset defaultPreset = 11;

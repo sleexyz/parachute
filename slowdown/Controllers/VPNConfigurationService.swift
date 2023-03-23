@@ -146,8 +146,19 @@ open class VPNConfigurationService: ObservableObject {
     func startConnectionAndEnableOnDemand() async throws {
         try self.manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: try store.settings.serializedData())])
         self.isTransitioning = true
+        try await enableOnDemand()
+    }
+    
+    @MainActor
+    func enableOnDemand() async throws {
         self.manager?.isOnDemandEnabled = true
         try await self.saveManagerPreferences()
+    }
+    
+    @MainActor
+    func startConnection() async throws {
+        try self.manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: try store.settings.serializedData())])
+        self.isTransitioning = true
     }
     
     @MainActor

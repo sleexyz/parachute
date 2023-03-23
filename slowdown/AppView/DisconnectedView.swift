@@ -17,9 +17,6 @@ struct DisconnectedView: View {
     @EnvironmentObject var service: VPNConfigurationService
     
     var buttonTitle: String {
-        if settingsStore.settings.isPaused() {
-            return "Resume VPN connection"
-        }
         return "Start VPN connection"
     }
     
@@ -44,23 +41,6 @@ struct DisconnectedView_Previews: PreviewProvider {
         DisconnectedView()
             .consumeDep(MockVPNConfigurationService.self) { value in
                 value.setIsConnected(value: false)
-            }
-            .provideDeps(previewDeps)
-    }
-}
-
-struct DisconnectedViewPaused_Previews: PreviewProvider {
-    static var previews: some View {
-        DisconnectedView()
-            .consumeDep(MockVPNConfigurationService.self) { value in
-                value.setIsConnected(value: false)
-            }
-            .consumeDep(SettingsController.self) { value in
-                Task {
-                    try await value.setSettings { settings in
-                        settings.pauseExpiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: 5 * 60))
-                    }
-                }
             }
             .provideDeps(previewDeps)
     }

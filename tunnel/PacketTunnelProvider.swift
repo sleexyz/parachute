@@ -65,12 +65,6 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             let settings = try Proxyservice_Settings(serializedData: settingsData)
             self.logger.info("loading settings -- done")
             
-            if settings.isPaused() {
-                self.logger.info("stopping tunnel -- VPN is paused")
-                completionHandler(ProxyError.pauseError)
-                return
-            }
-            
             self.logger.info("starting server")
             self.server = Server.InitTunnelServer(settings: settings, deviceCallbacks: deviceCallbacks)
             self.server!.startDirectProxyConnection(tunConn: self.tunConn!, settingsData: settingsData)

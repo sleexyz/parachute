@@ -84,13 +84,6 @@ export interface Settings {
    */
   version: number;
   debug: boolean;
-  /**
-   * TODO: move to a State message
-   * When pause should be lifted.
-   */
-  pauseExpiry:
-    | Date
-    | undefined;
   /** Parameters of the active preset. */
   defaultPreset:
     | Preset
@@ -397,14 +390,7 @@ export const Overlay = {
 };
 
 function createBaseSettings(): Settings {
-  return {
-    version: 0,
-    debug: false,
-    pauseExpiry: undefined,
-    defaultPreset: undefined,
-    overlay: undefined,
-    parachutePreset: undefined,
-  };
+  return { version: 0, debug: false, defaultPreset: undefined, overlay: undefined, parachutePreset: undefined };
 }
 
 export const Settings = {
@@ -414,9 +400,6 @@ export const Settings = {
     }
     if (message.debug === true) {
       writer.uint32(56).bool(message.debug);
-    }
-    if (message.pauseExpiry !== undefined) {
-      Timestamp.encode(toTimestamp(message.pauseExpiry), writer.uint32(82).fork()).ldelim();
     }
     if (message.defaultPreset !== undefined) {
       Preset.encode(message.defaultPreset, writer.uint32(90).fork()).ldelim();
@@ -443,9 +426,6 @@ export const Settings = {
         case 7:
           message.debug = reader.bool();
           break;
-        case 10:
-          message.pauseExpiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
-          break;
         case 11:
           message.defaultPreset = Preset.decode(reader, reader.uint32());
           break;
@@ -467,7 +447,6 @@ export const Settings = {
     return {
       version: isSet(object.version) ? Number(object.version) : 0,
       debug: isSet(object.debug) ? Boolean(object.debug) : false,
-      pauseExpiry: isSet(object.pauseExpiry) ? fromJsonTimestamp(object.pauseExpiry) : undefined,
       defaultPreset: isSet(object.defaultPreset) ? Preset.fromJSON(object.defaultPreset) : undefined,
       overlay: isSet(object.overlay) ? Overlay.fromJSON(object.overlay) : undefined,
       parachutePreset: isSet(object.parachutePreset) ? Preset.fromJSON(object.parachutePreset) : undefined,
@@ -478,7 +457,6 @@ export const Settings = {
     const obj: any = {};
     message.version !== undefined && (obj.version = Math.round(message.version));
     message.debug !== undefined && (obj.debug = message.debug);
-    message.pauseExpiry !== undefined && (obj.pauseExpiry = message.pauseExpiry.toISOString());
     message.defaultPreset !== undefined &&
       (obj.defaultPreset = message.defaultPreset ? Preset.toJSON(message.defaultPreset) : undefined);
     message.overlay !== undefined && (obj.overlay = message.overlay ? Overlay.toJSON(message.overlay) : undefined);
@@ -491,7 +469,6 @@ export const Settings = {
     const message = createBaseSettings();
     message.version = object.version ?? 0;
     message.debug = object.debug ?? false;
-    message.pauseExpiry = object.pauseExpiry ?? undefined;
     message.defaultPreset = (object.defaultPreset !== undefined && object.defaultPreset !== null)
       ? Preset.fromPartial(object.defaultPreset)
       : undefined;

@@ -15,7 +15,7 @@ struct AppView: View {
     @EnvironmentObject var controller: SettingsController
     
     var showTransitioning: Bool {
-        return service.isTransitioning && !store.settings.isPaused()
+        return service.isTransitioning
     }
     
     var body: some View {

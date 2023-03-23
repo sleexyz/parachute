@@ -8,13 +8,6 @@
 import Foundation
 import ProxyService
 
-extension Proxyservice_Settings {
-    public func isPaused() -> Bool {
-        return self.hasPauseExpiry && self.pauseExpiry.date.timeIntervalSinceNow > 0
-    }
-}
-
-
 extension Proxyservice_Preset: Identifiable {
     public typealias ID = String
 }
