@@ -7,7 +7,7 @@
     let
       pkgs = import nixpkgs { system = "aarch64-darwin"; };
       xcodewrapper = pkgs.xcodeenv.composeXcodeWrapper {
-        version = "14.2";
+        version = "14.3";
         xcodeBaseDir = "/Applications/Xcode.app";
       };
     in
@@ -23,12 +23,13 @@
           entr
           flatbuffers
           graphviz # for pprof
-          llvmPackages_11.clang
           buildifier
           bazel_5
         ];
         shellHook = ''
+          export LD=/usr/bin/clang # https://stackoverflow.com/questions/65146106/xcodebuild-using-ld-rather-than-clang-for-linking
           export PATH=${xcodewrapper}/bin:$PATH
+
           export GOPATH=$(pwd)/.gopath
           export PATH=$PATH:$GOPATH/bin
           export CGO_ENABLED=1

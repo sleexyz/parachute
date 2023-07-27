@@ -24,7 +24,7 @@ ci_scripts/push_bin: ci_scripts/push/main.go
 go-files := $(shell git ls-files | grep ^go-proxy/.*\.go$ ) 
 
 go-proxy/analysis-sandbox/node_modules/.bin/protoc-gen-ts_proto:
-	(cd analysis-sandbox; npm install)
+	(cd go-proxy/analysis-sandbox; npm install)
 
 .external/swift-protobuf/.build/release/protoc-gen-swift:
 	mkdir -p .external
