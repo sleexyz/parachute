@@ -12,6 +12,7 @@ import LoggingOSLog
 import Firebase
 import Common
 
+
 @main
 struct slowdownApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate

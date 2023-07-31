@@ -10,7 +10,6 @@ import SwiftUI
 import ProxyService
 import OrderedCollections
 
-
 struct ProfileCardModifier: ViewModifier {
     @EnvironmentObject var profileManager: ProfileManager
     

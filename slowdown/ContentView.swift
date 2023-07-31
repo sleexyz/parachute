@@ -9,12 +9,14 @@ import SwiftUI
 
 import Foundation
 import Logging
+import Inject
 
 struct ContentView: View {
     @EnvironmentObject var store: SettingsStore
     @EnvironmentObject var service: VPNConfigurationService
     
     private let logger: Logger = Logger(label: "industries.strange.slowdown.ContentView")
+    @ObservedObject private var i0 = Inject.observer
     
     @ViewBuilder
     var body: some View {
@@ -24,18 +26,21 @@ struct ContentView: View {
             SplashView(text: "Loading VPN state...")
         } else if !service.hasManager {
             SetupView()
+                .enableInjection()
         } else {
             AppView()
                 .provideDeps([
                     AppViewModel.Provider(),
                     CheatController.Provider(),
                 ])
+                .enableInjection()
         }
     }
 }
 
 struct ContentViewLoader: View {
     private let logger = Logger(label: "industries.strange.slowdown.ContentViewLoader")
+    
     var body: some View {
         ContentView()
             .consumeDep(SettingsStore.self) { store in

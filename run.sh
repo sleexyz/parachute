@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -exo pipefail
+
 DEVICE_NAME="Sean's iPhone"
 SCHEME="slowdown"
 CONFIGURATION="Debug"
@@ -13,4 +15,5 @@ xcrun xcodebuild \
   -configuration $CONFIGURATION \
   -derivedDataPath "$DERIVED_DATA_PATH"
 
-ios-deploy --justlaunch --debug --bundle "$DERIVED_DATA_PATH/Build/Products/$CONFIGURATION-iphoneos/$PROJECT_NAME.app"
+ios-deploy --debug --bundle "$DERIVED_DATA_PATH/Build/Products/$CONFIGURATION-iphoneos/$PROJECT_NAME.app" \
+  --envs "INJECTION_HOST=$(ipconfig getifaddr en0)"
