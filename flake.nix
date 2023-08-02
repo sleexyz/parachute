@@ -1,13 +1,13 @@
 {
   description = "slowdown-dev-shell";
   # inputs.nixpkgs.url = "github:stephank/nixpkgs/feat/swift-darwin"; # Swift works here
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/22.11";
+  # inputs.nixpkgs.url = "github:nixos/nixpkgs/22.11";
   outputs =
     { self , nixpkgs , }:
     let
       pkgs = import nixpkgs { system = "aarch64-darwin"; };
       xcodewrapper = pkgs.xcodeenv.composeXcodeWrapper {
-        version = "14.3";
+        version = "14.3.1";
         xcodeBaseDir = "/Applications/Xcode.app";
       };
     in
