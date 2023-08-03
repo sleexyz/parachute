@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Requires ios-deploy (https://github.com/ios-control/ios-deploy) for device deployment
+
 set -exo pipefail
 
 DEVICE_NAME="Sean's iPhone"
