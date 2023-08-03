@@ -38,6 +38,14 @@
 		A04332CD296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
 		A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A0458BF9285FB5A300CE4CCB /* Logging */; };
 		A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A0458C0028614D6500CE4CCB /* LoggingOSLog */; };
+		A04ADFB02A7B5513008700C4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04ADFAF2A7B5513008700C4 /* WidgetKit.framework */; };
+		A04ADFB22A7B5513008700C4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04ADFB12A7B5513008700C4 /* SwiftUI.framework */; };
+		A04ADFB52A7B5513008700C4 /* SlowdownWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04ADFB42A7B5513008700C4 /* SlowdownWidgetBundle.swift */; };
+		A04ADFB72A7B5513008700C4 /* SlowdownWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04ADFB62A7B5513008700C4 /* SlowdownWidgetLiveActivity.swift */; };
+		A04ADFB92A7B5513008700C4 /* SlowdownWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04ADFB82A7B5513008700C4 /* SlowdownWidget.swift */; };
+		A04ADFBB2A7B5513008700C4 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04ADFBA2A7B5513008700C4 /* AppIntent.swift */; };
+		A04ADFBD2A7B5515008700C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A04ADFBC2A7B5515008700C4 /* Assets.xcassets */; };
+		A04ADFC12A7B5515008700C4 /* SlowdownWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A04ADFAE2A7B5513008700C4 /* SlowdownWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A04FAD9C294D60960002C19B /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A04FAD9B294D60960002C19B /* SwiftProtobuf */; };
 		A052AE1E29977B3700AB43B7 /* StateUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = A052AE1D29977B3700AB43B7 /* StateUpdater.swift */; };
 		A052AE20299A900100AB43B7 /* HealButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A052AE1F299A900100AB43B7 /* HealButton.swift */; };
@@ -125,6 +133,13 @@
 			remoteGlobalIDString = A02F58DB27A6F14500D3330F;
 			remoteInfo = slowdown;
 		};
+		A04ADFBF2A7B5515008700C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A02F58D427A6F14500D3330F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A04ADFAD2A7B5513008700C4;
+			remoteInfo = SlowdownWidgetExtension;
+		};
 		A0774F78296A6F3A001F278B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A02F58D427A6F14500D3330F /* Project object */;
@@ -201,6 +216,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				A08719EC281A617500113F3F /* tunnel.appex in Embed Foundation Extensions */,
+				A04ADFC12A7B5515008700C4 /* SlowdownWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -245,6 +261,15 @@
 		A0312E2D297F16ED00EB0B8A /* linmapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = linmapTests.swift; sourceTree = "<group>"; };
 		A0312E332983AD5C00EB0B8A /* Dep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dep.swift; sourceTree = "<group>"; };
 		A04332CB296BA2A400D69210 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A04ADFAE2A7B5513008700C4 /* SlowdownWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SlowdownWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A04ADFAF2A7B5513008700C4 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		A04ADFB12A7B5513008700C4 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		A04ADFB42A7B5513008700C4 /* SlowdownWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlowdownWidgetBundle.swift; sourceTree = "<group>"; };
+		A04ADFB62A7B5513008700C4 /* SlowdownWidgetLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlowdownWidgetLiveActivity.swift; sourceTree = "<group>"; };
+		A04ADFB82A7B5513008700C4 /* SlowdownWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlowdownWidget.swift; sourceTree = "<group>"; };
+		A04ADFBA2A7B5513008700C4 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
+		A04ADFBC2A7B5515008700C4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A04ADFBE2A7B5515008700C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A04FADA2294F7A9F0002C19B /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ProxyService; sourceTree = "<group>"; };
 		A052AE1D29977B3700AB43B7 /* StateUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateUpdater.swift; sourceTree = "<group>"; };
 		A052AE1F299A900100AB43B7 /* HealButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealButton.swift; sourceTree = "<group>"; };
@@ -347,6 +372,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A04ADFAB2A7B5513008700C4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A04ADFB22A7B5513008700C4 /* SwiftUI.framework in Frameworks */,
+				A04ADFB02A7B5513008700C4 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0774F62296A6F0D001F278B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -446,6 +480,7 @@
 				A0774F74296A6F3A001F278B /* ServerTests */,
 				A02A67AF298BFD5100FF0B27 /* Common */,
 				A0F094422A74583600F1C8CB /* UIPlayground */,
+				A04ADFB32A7B5513008700C4 /* SlowdownWidget */,
 				A02F58DD27A6F14500D3330F /* Products */,
 				A02F590A27B09A7A00D3330F /* Frameworks */,
 			);
@@ -462,6 +497,7 @@
 				A0774F73296A6F3A001F278B /* ServerTests.xctest */,
 				A02A67AE298BFD5100FF0B27 /* libCommon.a */,
 				A0F094412A74583500F1C8CB /* UIPlayground.app */,
+				A04ADFAE2A7B5513008700C4 /* SlowdownWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -519,8 +555,23 @@
 			isa = PBXGroup;
 			children = (
 				A02F590B27B09A7A00D3330F /* NetworkExtension.framework */,
+				A04ADFAF2A7B5513008700C4 /* WidgetKit.framework */,
+				A04ADFB12A7B5513008700C4 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A04ADFB32A7B5513008700C4 /* SlowdownWidget */ = {
+			isa = PBXGroup;
+			children = (
+				A04ADFB42A7B5513008700C4 /* SlowdownWidgetBundle.swift */,
+				A04ADFB62A7B5513008700C4 /* SlowdownWidgetLiveActivity.swift */,
+				A04ADFB82A7B5513008700C4 /* SlowdownWidget.swift */,
+				A04ADFBA2A7B5513008700C4 /* AppIntent.swift */,
+				A04ADFBC2A7B5515008700C4 /* Assets.xcassets */,
+				A04ADFBE2A7B5515008700C4 /* Info.plist */,
+			);
+			path = SlowdownWidget;
 			sourceTree = "<group>";
 		};
 		A06516E52956A08F00227A95 /* elements */ = {
@@ -679,6 +730,7 @@
 			);
 			dependencies = (
 				A08719EB281A617500113F3F /* PBXTargetDependency */,
+				A04ADFC02A7B5515008700C4 /* PBXTargetDependency */,
 			);
 			name = slowdown;
 			packageProductDependencies = (
@@ -733,6 +785,23 @@
 			productName = slowdownUITests;
 			productReference = A02F58F627A6F14600D3330F /* slowdownUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		A04ADFAD2A7B5513008700C4 /* SlowdownWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A04ADFC22A7B5515008700C4 /* Build configuration list for PBXNativeTarget "SlowdownWidgetExtension" */;
+			buildPhases = (
+				A04ADFAA2A7B5513008700C4 /* Sources */,
+				A04ADFAB2A7B5513008700C4 /* Frameworks */,
+				A04ADFAC2A7B5513008700C4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SlowdownWidgetExtension;
+			productName = SlowdownWidgetExtension;
+			productReference = A04ADFAE2A7B5513008700C4 /* SlowdownWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		A0774F64296A6F0D001F278B /* Server */ = {
 			isa = PBXNativeTarget;
@@ -832,7 +901,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1430;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1410;
 				TargetAttributes = {
 					A02A67AD298BFD5000FF0B27 = {
@@ -848,6 +917,9 @@
 					A02F58F527A6F14600D3330F = {
 						CreatedOnToolsVersion = 13.2.1;
 						TestTargetID = A02F58DB27A6F14500D3330F;
+					};
+					A04ADFAD2A7B5513008700C4 = {
+						CreatedOnToolsVersion = 15.0;
 					};
 					A0774F64296A6F0D001F278B = {
 						CreatedOnToolsVersion = 14.2;
@@ -894,6 +966,7 @@
 				A0774F72296A6F3A001F278B /* ServerTests */,
 				A02A67AD298BFD5000FF0B27 /* Common */,
 				A0F094402A74583500F1C8CB /* UIPlayground */,
+				A04ADFAD2A7B5513008700C4 /* SlowdownWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -920,6 +993,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A04ADFAC2A7B5513008700C4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A04ADFBD2A7B5515008700C4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1076,6 +1157,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A04ADFAA2A7B5513008700C4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A04ADFB72A7B5513008700C4 /* SlowdownWidgetLiveActivity.swift in Sources */,
+				A04ADFBB2A7B5513008700C4 /* AppIntent.swift in Sources */,
+				A04ADFB92A7B5513008700C4 /* SlowdownWidget.swift in Sources */,
+				A04ADFB52A7B5513008700C4 /* SlowdownWidgetBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0774F61296A6F0D001F278B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1126,6 +1218,11 @@
 			isa = PBXTargetDependency;
 			target = A02F58DB27A6F14500D3330F /* slowdown */;
 			targetProxy = A02F58F727A6F14600D3330F /* PBXContainerItemProxy */;
+		};
+		A04ADFC02A7B5515008700C4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A04ADFAD2A7B5513008700C4 /* SlowdownWidgetExtension */;
+			targetProxy = A04ADFBF2A7B5515008700C4 /* PBXContainerItemProxy */;
 		};
 		A0774F79296A6F3A001F278B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1458,6 +1555,73 @@
 			};
 			name = Release;
 		};
+		A04ADFC32A7B5515008700C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SlowdownWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SlowdownWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.SlowdownWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A04ADFC42A7B5515008700C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SlowdownWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SlowdownWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.SlowdownWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		A0774F6A296A6F0D001F278B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1695,6 +1859,15 @@
 			buildConfigurations = (
 				A02F590727A6F14600D3330F /* Debug */,
 				A02F590827A6F14600D3330F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A04ADFC22A7B5515008700C4 /* Build configuration list for PBXNativeTarget "SlowdownWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A04ADFC32A7B5515008700C4 /* Debug */,
+				A04ADFC42A7B5515008700C4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
