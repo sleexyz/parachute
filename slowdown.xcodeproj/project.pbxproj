@@ -462,9 +462,9 @@
 			children = (
 				A077851D297785490038BB4B /* ci_scripts */,
 				A04FADA2294F7A9F0002C19B /* ProxyService */,
-				A02F58DE27A6F14500D3330F /* slowdown */,
-				A02F58EF27A6F14600D3330F /* slowdownTests */,
-				A02F58F927A6F14600D3330F /* slowdownUITests */,
+				A02F58DE27A6F14500D3330F /* ParachuteApp */,
+				A02F58EF27A6F14600D3330F /* ParachuteAppTests */,
+				A02F58F927A6F14600D3330F /* ParachuteAppUITests */,
 				A08719E5281A617500113F3F /* tunnel */,
 				A0774F66296A6F0D001F278B /* Server */,
 				A0774F74296A6F3A001F278B /* ServerTests */,
@@ -492,7 +492,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A02F58DE27A6F14500D3330F /* slowdown */ = {
+		A02F58DE27A6F14500D3330F /* ParachuteApp */ = {
 			isa = PBXGroup;
 			children = (
 				A01B059D29850A6300298976 /* Preview Helpers.swift */,
@@ -513,7 +513,7 @@
 				A09C5A0329BC30560077A59B /* Profile.swift */,
 				A02A679E2985BD3C00FF0B27 /* DI */,
 			);
-			path = slowdown;
+			path = ParachuteApp;
 			sourceTree = "<group>";
 		};
 		A02F58E527A6F14500D3330F /* Preview Content */ = {
@@ -524,21 +524,21 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		A02F58EF27A6F14600D3330F /* slowdownTests */ = {
+		A02F58EF27A6F14600D3330F /* ParachuteAppTests */ = {
 			isa = PBXGroup;
 			children = (
 				A0312E2D297F16ED00EB0B8A /* linmapTests.swift */,
 			);
-			path = slowdownTests;
+			path = ParachuteAppTests;
 			sourceTree = "<group>";
 		};
-		A02F58F927A6F14600D3330F /* slowdownUITests */ = {
+		A02F58F927A6F14600D3330F /* ParachuteAppUITests */ = {
 			isa = PBXGroup;
 			children = (
 				A02F58FA27A6F14600D3330F /* slowdownUITests.swift */,
 				A02F58FC27A6F14600D3330F /* slowdownUITestsLaunchTests.swift */,
 			);
-			path = slowdownUITests;
+			path = ParachuteAppUITests;
 			sourceTree = "<group>";
 		};
 		A02F590A27B09A7A00D3330F /* Frameworks */ = {
@@ -1381,15 +1381,15 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = slowdown/slowdown.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ParachuteApp/slowdown.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_ASSET_PATHS = "\"slowdown/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"ParachuteApp/Preview Content\"";
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = slowdown/Info.plist;
+				INFOPLIST_FILE = ParachuteApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Turtlenet;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -1425,14 +1425,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = slowdown/slowdown.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ParachuteApp/slowdown.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"slowdown/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"ParachuteApp/Preview Content\"";
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = slowdown/Info.plist;
+				INFOPLIST_FILE = ParachuteApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Turtlenet;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
