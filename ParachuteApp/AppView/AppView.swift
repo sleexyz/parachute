@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Controllers
 
 struct AppView: View {
     @EnvironmentObject var model: AppViewModel

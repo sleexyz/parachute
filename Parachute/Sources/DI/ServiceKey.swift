@@ -19,7 +19,7 @@ extension EnvironmentValues {
     }
 }
 
-struct ServiceKey {
+public struct ServiceKey {
   let serviceType: Any.Type
 }
 
@@ -29,6 +29,6 @@ extension ServiceKey: Hashable {
     }
 }
 
-func == (lhs: ServiceKey, rhs: ServiceKey) -> Bool {
+public func == (lhs: ServiceKey, rhs: ServiceKey) -> Bool {
     return lhs.serviceType == rhs.serviceType
 }

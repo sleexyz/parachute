@@ -9,6 +9,8 @@ import Foundation
 import Combine
 import Logging
 import SwiftUI
+import DI
+import Controllers
 
 let INITIAL_FETCH_DELAY_SECS: Int = 5
 let LOOP_FETCH_DELAY_SECS: Int = 5

@@ -7,6 +7,8 @@
 
 import Foundation
 import SwiftUI
+import DI
+import Controllers
 
 let previewDeps : [any Dep] = [
     AppViewModel.Provider(),
@@ -27,15 +29,18 @@ let connectedPreviewDeps : [any Dep] = {
 
 
 class MockVPNConfigurationService: VPNConfigurationService {
-    struct Provider: MockDep {
+    public struct Provider: MockDep {
         typealias MockT = MockVPNConfigurationService
-        func create(r: Registry) -> VPNConfigurationService {
+        public func create(r: Registry) -> VPNConfigurationService {
             return MockVPNConfigurationService()
         }
     }
-    
+    override public init() {
+        super.init()
+    }
+
     var hasManagerOverride: Bool?
-    override var hasManager: Bool {
+    override public var hasManager: Bool {
         return hasManagerOverride ?? super.hasManager
     }
     func setIsConnected(value: Bool) {

@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftProtobuf
 import Common
+import Controllers
 
 struct DisconnectedView: View {
     @EnvironmentObject var settingsStore: SettingsStore

@@ -10,6 +10,7 @@ import SwiftUI
 import Foundation
 import Logging
 import Inject
+import Controllers
 
 struct ContentView: View {
     @EnvironmentObject var store: SettingsStore
