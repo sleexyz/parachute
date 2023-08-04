@@ -58,7 +58,6 @@
 		A081F2382967B10600863FE3 /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A081F2372967B10600863FE3 /* ProxyService */; };
 		A081F23A2967B10F00863FE3 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A081F2392967B10F00863FE3 /* SwiftProtobuf */; };
 		A081F23C2967B10F00863FE3 /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = A081F23B2967B10F00863FE3 /* SwiftProtobufPluginLibrary */; };
-		A081F2462967BCEE00863FE3 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F2452967BCEE00863FE3 /* AppViewModel.swift */; };
 		A081F24E296922F300863FE3 /* StateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F24D296922F300863FE3 /* StateController.swift */; };
 		A081F250296A125300863FE3 /* DamageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F24F296A125300863FE3 /* DamageBar.swift */; };
 		A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D5281A4BF900113F3F /* PrimaryButton.swift */; };
@@ -213,7 +212,6 @@
 		A081F230295B732900863FE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A081F231295BB3D700863FE3 /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
 		A081F2352966A6BA00863FE3 /* SettingsMigrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMigrations.swift; sourceTree = "<group>"; };
-		A081F2452967BCEE00863FE3 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		A081F24D296922F300863FE3 /* StateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateController.swift; sourceTree = "<group>"; };
 		A081F24F296A125300863FE3 /* DamageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DamageBar.swift; sourceTree = "<group>"; };
 		A08719D5281A4BF900113F3F /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
@@ -225,6 +223,7 @@
 		A08719E8281A617500113F3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A08719E9281A617500113F3F /* tunnel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tunnel.entitlements; sourceTree = "<group>"; };
 		A08819A929726A6D0052D5D6 /* NotificationsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsController.swift; sourceTree = "<group>"; };
+		A089610F2A7DA22700742B70 /* SlowdownWidgetExtensionDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SlowdownWidgetExtensionDebug.entitlements; sourceTree = "<group>"; };
 		A0915BDB2991FB2700874313 /* TunConn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunConn.swift; sourceTree = "<group>"; };
 		A096625429C8E93C00D2E0A9 /* PresetSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetSelector.swift; sourceTree = "<group>"; };
 		A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParachutePresetPicker.swift; sourceTree = "<group>"; };
@@ -334,6 +333,7 @@
 		A02F58D327A6F14500D3330F = {
 			isa = PBXGroup;
 			children = (
+				A089610F2A7DA22700742B70 /* SlowdownWidgetExtensionDebug.entitlements */,
 				A01BBC9A2A7D7A450027FF75 /* Parachute */,
 				A077851D297785490038BB4B /* ci_scripts */,
 				A04FADA2294F7A9F0002C19B /* ProxyService */,
@@ -480,7 +480,6 @@
 		A081F24C2967DA3C00863FE3 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				A081F2452967BCEE00863FE3 /* AppViewModel.swift */,
 				A081F2352966A6BA00863FE3 /* SettingsMigrations.swift */,
 				A0BF9201293FCF1700C090E9 /* SettingsStore.swift */,
 				A080EDF9294F9B1C005401E4 /* SettingsController.swift */,
@@ -854,7 +853,6 @@
 				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,
 				A052AE1E29977B3700AB43B7 /* StateUpdater.swift in Sources */,
 				A024F15929A467D2007B572A /* HealSettings.swift in Sources */,
-				A081F2462967BCEE00863FE3 /* AppViewModel.swift in Sources */,
 				A09C5A0429BC30560077A59B /* Profile.swift in Sources */,
 				A081F232295BB3D700863FE3 /* SetupView.swift in Sources */,
 				A0F764E3299DD6CA001F9B24 /* VPNLifecycleManager.swift in Sources */,
@@ -1235,6 +1233,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = SlowdownWidgetExtensionDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
@@ -1255,6 +1254,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.SlowdownWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1289,6 +1291,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.SlowdownWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

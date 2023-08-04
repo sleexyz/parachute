@@ -9,7 +9,6 @@ import SwiftUI
 import Controllers
 
 struct AppView: View {
-    @EnvironmentObject var model: AppViewModel
     @EnvironmentObject var store: SettingsStore
     @EnvironmentObject var service: VPNConfigurationService
     @EnvironmentObject var controller: SettingsController
@@ -33,13 +32,6 @@ struct AppView: View {
             }
         }
         .disabled(showTransitioning)
-        .alert(isPresented: $model.isShowingError) {
-            Alert(
-                title: Text(self.model.errorTitle),
-                message: Text(self.model.errorMessage),
-                dismissButton: .cancel()
-            )
-        }
         .navigationBarItems(trailing:
                                 Spinner(isAnimating: showTransitioning, color: .label, style: .medium)
         )

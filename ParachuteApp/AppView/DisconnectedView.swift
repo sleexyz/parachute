@@ -13,7 +13,8 @@ import Controllers
 
 struct DisconnectedView: View {
     @EnvironmentObject var settingsStore: SettingsStore
-    @EnvironmentObject var model: AppViewModel
+    @EnvironmentObject var settingsController: SettingsController
+
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     @EnvironmentObject var service: VPNConfigurationService
     
@@ -30,7 +31,7 @@ struct DisconnectedView: View {
                 Toggle(isOn: $settingsStore.settings.debug, label: { Text("Debug")})
                     .disabled(service.isTransitioning)
                     .onChange(of: settingsStore.settings.debug) { _ in
-                        model.saveSettings()
+                        settingsController.syncSettings()
                     }
             }
         }.padding()

@@ -30,9 +30,6 @@ struct ContentView: View {
                 .enableInjection()
         } else {
             AppView()
-                .provideDeps([
-                    AppViewModel.Provider(),
-                ])
                 .enableInjection()
         }
     }

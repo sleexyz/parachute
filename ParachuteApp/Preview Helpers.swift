@@ -11,7 +11,6 @@ import DI
 import Controllers
 
 let previewDeps : [any Dep] = [
-    AppViewModel.Provider(),
     VPNLifecycleManager.Provider(),
     SettingsController.Provider(),
     MockVPNConfigurationService.Provider(),

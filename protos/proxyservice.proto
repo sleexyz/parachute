@@ -79,6 +79,7 @@ message Settings {
 
     //
     // NOT used by the backend:
+    // TODO: move these to a preferences proto.
     //
 
     reserved 13;
