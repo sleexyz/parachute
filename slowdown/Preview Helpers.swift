@@ -10,7 +10,6 @@ import SwiftUI
 
 let previewDeps : [any Dep] = [
     AppViewModel.Provider(),
-    CheatController.Provider(),
     VPNLifecycleManager.Provider(),
     SettingsController.Provider(),
     MockVPNConfigurationService.Provider(),

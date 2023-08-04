@@ -11,7 +11,6 @@ struct AppView: View {
     @EnvironmentObject var model: AppViewModel
     @EnvironmentObject var store: SettingsStore
     @EnvironmentObject var service: VPNConfigurationService
-    @EnvironmentObject var cheatController: CheatController
     @EnvironmentObject var controller: SettingsController
     
     var showTransitioning: Bool {

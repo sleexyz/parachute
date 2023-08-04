@@ -31,7 +31,6 @@ struct ContentView: View {
             AppView()
                 .provideDeps([
                     AppViewModel.Provider(),
-                    CheatController.Provider(),
                 ])
                 .enableInjection()
         }

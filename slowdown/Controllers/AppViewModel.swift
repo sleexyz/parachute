@@ -16,7 +16,6 @@ final class AppViewModel: ObservableObject {
         func create(r: Registry) -> AppViewModel {
             return AppViewModel(
                 service: r.resolve(VPNConfigurationService.self),
-                cheatController: r.resolve(CheatController.self),
                 settingsController: r.resolve(SettingsController.self),
                 settingsStore: r.resolve(SettingsStore.self)
             )
@@ -24,7 +23,6 @@ final class AppViewModel: ObservableObject {
     }
     
     private var logger: Logger = Logger(label: "industries.strange.slowdown.AppViewModel")
-    @Published var currentCarouselIndex: Int = 0
     @Published var isShowingError = false
     @Published private(set) var errorTitle = ""
     @Published private(set) var errorMessage = ""
@@ -38,58 +36,15 @@ final class AppViewModel: ObservableObject {
     }
     
     let service: VPNConfigurationService
-    let cheatController: CheatController
     let settingsController: SettingsController
     let settingsStore: SettingsStore
     
     
-    init(service: VPNConfigurationService, cheatController: CheatController, settingsController: SettingsController, settingsStore: SettingsStore) {
+    init(service: VPNConfigurationService, settingsController: SettingsController, settingsStore: SettingsStore) {
         self.service = service
-        self.cheatController = cheatController
         self.settingsController = settingsController
         self.settingsStore = settingsStore
-        self.settingsStore.onLoad {
-            self.currentCarouselIndex = self.canonicalCarouselIndex()
-            self.logger.info("index: \(self.currentCarouselIndex)")
-        }
         logger.info("init appviewmodel")
-    }
-    
-    // Finds the canonical carousel index for the given state
-    func canonicalCarouselIndex() -> Int {
-        if settingsStore.activePreset.mode == .progressive {
-            return 0
-        }
-        if !cheatController.isCheating {
-            return 1
-        }
-        return 2
-    }
-    
-    func startCheat() {
-        Task {
-            do {
-                try await self.cheatController.addCheat()
-            } catch {
-                self.showError(
-                    title: "Failed to start cheat",
-                    message: error.localizedDescription
-                )
-            }
-        }
-    }
-    
-    func stopCheat() {
-            Task {
-                do {
-                    try await self.cheatController.stopCheat()
-                } catch {
-                    self.showError(
-                        title: "Failed to stop cheat",
-                        message: error.localizedDescription
-                    )
-                }
-            }
     }
     
     func saveSettings() {

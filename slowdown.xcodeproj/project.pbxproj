@@ -75,11 +75,7 @@
 		A081F2382967B10600863FE3 /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A081F2372967B10600863FE3 /* ProxyService */; };
 		A081F23A2967B10F00863FE3 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A081F2392967B10F00863FE3 /* SwiftProtobuf */; };
 		A081F23C2967B10F00863FE3 /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = A081F23B2967B10F00863FE3 /* SwiftProtobufPluginLibrary */; };
-		A081F23E2967B27A00863FE3 /* SnapCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F23D2967B27A00863FE3 /* SnapCarousel.swift */; };
-		A081F2422967BC5500863FE3 /* FocusModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F2412967BC5500863FE3 /* FocusModeView.swift */; };
-		A081F2442967BC9800863FE3 /* BreakModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F2432967BC9800863FE3 /* BreakModeView.swift */; };
 		A081F2462967BCEE00863FE3 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F2452967BCEE00863FE3 /* AppViewModel.swift */; };
-		A081F2482967C83800863FE3 /* AppModeCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F2472967C83800863FE3 /* AppModeCarousel.swift */; };
 		A081F24E296922F300863FE3 /* StateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F24D296922F300863FE3 /* StateController.swift */; };
 		A081F250296A125300863FE3 /* DamageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F24F296A125300863FE3 /* DamageBar.swift */; };
 		A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D5281A4BF900113F3F /* PrimaryButton.swift */; };
@@ -100,7 +96,6 @@
 		A09C5A0429BC30560077A59B /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C5A0329BC30560077A59B /* Profile.swift */; };
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
 		A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9201293FCF1700C090E9 /* SettingsStore.swift */; };
-		A0BF9204294175AE00C090E9 /* CheatController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9203294175AE00C090E9 /* CheatController.swift */; };
 		A0E71ABA299DC9D60009B6E4 /* DeviceCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E71AB9299DC9D60009B6E4 /* DeviceCallbacks.swift */; };
 		A0F094442A74583600F1C8CB /* UIPlaygroundApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F094432A74583600F1C8CB /* UIPlaygroundApp.swift */; };
 		A0F094462A74583600F1C8CB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F094452A74583600F1C8CB /* ContentView.swift */; };
@@ -288,11 +283,7 @@
 		A081F230295B732900863FE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A081F231295BB3D700863FE3 /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
 		A081F2352966A6BA00863FE3 /* SettingsMigrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMigrations.swift; sourceTree = "<group>"; };
-		A081F23D2967B27A00863FE3 /* SnapCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCarousel.swift; sourceTree = "<group>"; };
-		A081F2412967BC5500863FE3 /* FocusModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusModeView.swift; sourceTree = "<group>"; };
-		A081F2432967BC9800863FE3 /* BreakModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakModeView.swift; sourceTree = "<group>"; };
 		A081F2452967BCEE00863FE3 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
-		A081F2472967C83800863FE3 /* AppModeCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModeCarousel.swift; sourceTree = "<group>"; };
 		A081F24D296922F300863FE3 /* StateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateController.swift; sourceTree = "<group>"; };
 		A081F24F296A125300863FE3 /* DamageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DamageBar.swift; sourceTree = "<group>"; };
 		A08719D5281A4BF900113F3F /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
@@ -313,7 +304,6 @@
 		A09C59FF29BC26B70077A59B /* PresetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetContent.swift; sourceTree = "<group>"; };
 		A09C5A0329BC30560077A59B /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		A0BF9201293FCF1700C090E9 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
-		A0BF9203294175AE00C090E9 /* CheatController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatController.swift; sourceTree = "<group>"; };
 		A0E71AB9299DC9D60009B6E4 /* DeviceCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCallbacks.swift; sourceTree = "<group>"; };
 		A0F094412A74583500F1C8CB /* UIPlayground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UIPlayground.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0F094432A74583600F1C8CB /* UIPlaygroundApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIPlaygroundApp.swift; sourceTree = "<group>"; };
@@ -579,7 +569,6 @@
 			children = (
 				A08719D5281A4BF900113F3F /* PrimaryButton.swift */,
 				A08719DD281A54A900113F3F /* Spinner.swift */,
-				A081F23D2967B27A00863FE3 /* SnapCarousel.swift */,
 			);
 			path = elements;
 			sourceTree = "<group>";
@@ -626,10 +615,7 @@
 			children = (
 				A068DCF329A6FA900036E9A2 /* Cards */,
 				A02A67A92989605F00FF0B27 /* Progressive */,
-				A081F2412967BC5500863FE3 /* FocusModeView.swift */,
 				A08719D9281A4E1100113F3F /* AppView.swift */,
-				A081F2432967BC9800863FE3 /* BreakModeView.swift */,
-				A081F2472967C83800863FE3 /* AppModeCarousel.swift */,
 				A0F764DE299DD37C001F9B24 /* ConnectedView.swift */,
 				A0F764E0299DD491001F9B24 /* DisconnectedView.swift */,
 				A09C59FF29BC26B70077A59B /* PresetContent.swift */,
@@ -647,7 +633,6 @@
 				A08719DB281A513200113F3F /* VPNConfigurationService.swift */,
 				A0BF9201293FCF1700C090E9 /* SettingsStore.swift */,
 				A080EDF9294F9B1C005401E4 /* SettingsController.swift */,
-				A0BF9203294175AE00C090E9 /* CheatController.swift */,
 				A081F24D296922F300863FE3 /* StateController.swift */,
 				A08819A929726A6D0052D5D6 /* NotificationsController.swift */,
 				A052AE1D29977B3700AB43B7 /* StateUpdater.swift */,
@@ -1104,12 +1089,9 @@
 				A081F24E296922F300863FE3 /* StateController.swift in Sources */,
 				A068DCF729A6FB260036E9A2 /* PauseCard.swift in Sources */,
 				A068DCF529A6FABC0036E9A2 /* Preset+Cardable.swift in Sources */,
-				A081F2442967BC9800863FE3 /* BreakModeView.swift in Sources */,
 				A096625729C93EFC00D2E0A9 /* ParachutePresetPicker.swift in Sources */,
-				A081F2422967BC5500863FE3 /* FocusModeView.swift in Sources */,
 				A081F250296A125300863FE3 /* DamageBar.swift in Sources */,
 				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,
-				A081F23E2967B27A00863FE3 /* SnapCarousel.swift in Sources */,
 				A052AE1E29977B3700AB43B7 /* StateUpdater.swift in Sources */,
 				A024F15929A467D2007B572A /* HealSettings.swift in Sources */,
 				A024F15729A463E1007B572A /* EnvironmentObjectProxy.swift in Sources */,
@@ -1123,13 +1105,11 @@
 				A01B059E29850A6300298976 /* Preview Helpers.swift in Sources */,
 				A0F764ED29A2E0A8001F9B24 /* PresetViewModel.swift in Sources */,
 				A02A67A62985BE3700FF0B27 /* Provider.swift in Sources */,
-				A081F2482967C83800863FE3 /* AppModeCarousel.swift in Sources */,
 				A024F15B29A4845B007B572A /* Card.swift in Sources */,
 				A0312E342983AD5C00EB0B8A /* Dep.swift in Sources */,
 				A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */,
 				A080EDFA294F9B1C005401E4 /* SettingsController.swift in Sources */,
 				A0F764E1299DD491001F9B24 /* DisconnectedView.swift in Sources */,
-				A0BF9204294175AE00C090E9 /* CheatController.swift in Sources */,
 				A081F2362966A6BA00863FE3 /* SettingsMigrations.swift in Sources */,
 				A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */,
 				A08819AA29726A6D0052D5D6 /* NotificationsController.swift in Sources */,
