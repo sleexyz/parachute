@@ -231,6 +231,7 @@
 /* Begin PBXFileReference section */
 		A019EBD0297A0D05002A6F94 /* ci_post_xcodebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_xcodebuild.sh; sourceTree = "<group>"; };
 		A01B059D29850A6300298976 /* Preview Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preview Helpers.swift"; sourceTree = "<group>"; };
+		A01BBC9A2A7D7A450027FF75 /* Parachute */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Parachute; sourceTree = "<group>"; };
 		A024F15629A463E1007B572A /* EnvironmentObjectProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentObjectProxy.swift; sourceTree = "<group>"; };
 		A024F15829A467D2007B572A /* HealSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealSettings.swift; sourceTree = "<group>"; };
 		A024F15A29A4845B007B572A /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
@@ -460,6 +461,7 @@
 		A02F58D327A6F14500D3330F = {
 			isa = PBXGroup;
 			children = (
+				A01BBC9A2A7D7A450027FF75 /* Parachute */,
 				A077851D297785490038BB4B /* ci_scripts */,
 				A04FADA2294F7A9F0002C19B /* ProxyService */,
 				A02F58DE27A6F14500D3330F /* ParachuteApp */,
@@ -1390,7 +1392,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ParachuteApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Turtlenet;
+				INFOPLIST_KEY_CFBundleDisplayName = Parachute;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1411,6 +1413,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1433,7 +1436,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ParachuteApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Turtlenet;
+				INFOPLIST_KEY_CFBundleDisplayName = Parachute;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1453,6 +1456,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
