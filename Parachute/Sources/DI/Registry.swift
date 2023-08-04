@@ -8,8 +8,8 @@
 import Foundation
 import SwiftUI
 
-class Registry: ObservableObject {
-    func resolve<T>(_ type: T.Type) -> T {
+public class Registry: ObservableObject {
+    public func resolve<T>(_ type: T.Type) -> T {
         fatalError("\(type) does not exist")
     }
 }

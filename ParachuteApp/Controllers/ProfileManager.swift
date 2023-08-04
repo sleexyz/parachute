@@ -12,6 +12,7 @@ import Logging
 import Combine
 import OrderedCollections
 import SwiftProtobuf
+import DI
 
 var ANIMATION_SECS: Double = 0.35
 

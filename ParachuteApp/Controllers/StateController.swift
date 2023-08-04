@@ -10,6 +10,8 @@ import ProxyService
 import Logging
 import SwiftUI
 import Combine
+import Controllers
+import DI
 
 class StateController: ObservableObject  {
     struct Provider: Dep {

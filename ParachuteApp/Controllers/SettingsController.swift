@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 import ProxyService
+import DI
+import Controllers
 
 // Operations for changing settings
 class SettingsController: ObservableObject {

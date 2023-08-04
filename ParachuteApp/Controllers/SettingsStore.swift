@@ -11,6 +11,7 @@ import SwiftProtobuf
 import SwiftUI
 import Logging
 import Combine
+import DI
 
 
 class SettingsStore: ObservableObject {

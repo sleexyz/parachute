@@ -1,4 +1,5 @@
 .external
 .gopath
 **/xcuserdata
+.build
 Build

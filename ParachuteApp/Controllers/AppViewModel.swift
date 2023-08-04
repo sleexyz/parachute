@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 import Combine
 import Logging
+import DI
+import Controllers
  
 // TODO: deprecate. Have a Error handler.
 final class AppViewModel: ObservableObject {

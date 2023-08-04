@@ -9,6 +9,8 @@ import Foundation
 import SwiftProtobuf
 import BackgroundTasks
 import Logging
+import DI
+import Controllers
 
 class VPNLifecycleManager: ObservableObject {
     struct Provider: Dep {

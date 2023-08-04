@@ -11,15 +11,16 @@ import ProxyService
 import Logging
 import SwiftUI
 import Combine
+import BackgroundTasks
 import Common
 import FirebaseCrashlytics
-import BackgroundTasks
+import DI
 
 enum UserError: Error {
     case message(message: String)
 }
 
-enum VPNStatus {
+public enum VPNStatus {
     case unknown
     case connected
     case connecting
@@ -53,31 +54,31 @@ extension Future where Failure == Never {
 }
 
 open class VPNConfigurationService: ObservableObject {
-    struct Provider: Dep {
-        func create(r: Registry) -> VPNConfigurationService {
+    public struct Provider: Dep {
+        public func create(r: Registry) -> VPNConfigurationService {
             return .shared
         }
+        public init() {}
     }
     
     private let logger: Logger = Logger(label: "industries.strange.slowdown.VPNConfigurationService")
-    @Published private(set) var isInitializing = true
-    @Published var isConnected = false
-    @Published var isTransitioning = false
+    @Published private(set) public var isInitializing = true
+    @Published public var isConnected = false
+    @Published public var isTransitioning = false
     @Published private var manager: NETunnelProviderManager?
-    @Published var status: VPNStatus = .unknown
-    @Published var connectedDate: Date?
+    @Published public var status: VPNStatus = .unknown
+    @Published public var connectedDate: Date?
     
     private var bag = Set<AnyCancellable>()
     
-    var hasManager: Bool {
+    open var hasManager: Bool {
         return manager != nil
     }
     
-    static let shared = VPNConfigurationService()
+    public static let shared = VPNConfigurationService()
     
     
-    init() {
-        
+    public init() {
         NETunnelProviderManager.loadAllFromPreferences { managers, error in
             self.manager = managers?.first
             self.isInitializing = false
@@ -125,7 +126,7 @@ open class VPNConfigurationService: ObservableObject {
     }
     
     
-    func registerBackgroundTasks() {
+    public func registerBackgroundTasks() {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: "industries.strange.slowdown.unpause", using: nil) { task in
             self.handleAppRefresh(task: task as! BGAppRefreshTask)
         }
@@ -166,7 +167,7 @@ open class VPNConfigurationService: ObservableObject {
     
     
     @MainActor
-    func startConnectionAndEnableOnDemand(settingsOverride: Proxyservice_Settings?) async throws {
+    public func startConnectionAndEnableOnDemand(settingsOverride: Proxyservice_Settings?) async throws {
         if let settingsOverride = settingsOverride {
             try self.manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: try settingsOverride.serializedData())])
         } else {
@@ -246,20 +247,20 @@ open class VPNConfigurationService: ObservableObject {
         return tunnel
     }
     
-    func SetSettings(settings: Proxyservice_Settings) async throws {
+    public func SetSettings(settings: Proxyservice_Settings) async throws {
         _ = try await Rpc(request: Proxyservice_Request.with {
             $0.setSettings = settings
         })
     }
     
-    func GetState() async throws -> Proxyservice_GetStateResponse {
+    public func GetState() async throws -> Proxyservice_GetStateResponse {
         let data = try await Rpc(request: Proxyservice_Request.with {
             $0.getState = Proxyservice_GetStateRequest()
         })
         return try Proxyservice_GetStateResponse(serializedData: data)
     }
     
-    func Heal() async throws -> Proxyservice_HealResponse{
+    public func Heal() async throws -> Proxyservice_HealResponse{
         let data = try await Rpc(request: Proxyservice_Request.with {
             $0.heal = Proxyservice_HealRequest()
         })

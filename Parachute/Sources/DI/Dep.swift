@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-extension View {
+public extension View {
     func provideDep(_ dep: any Dep) -> some View {
         self.modifier(SimpleProvider(dep: dep))
     }
@@ -20,14 +20,14 @@ extension View {
     }
 }
 
-protocol Dep {
+public protocol Dep {
     associatedtype T: ObservableObject
     func create(r: Registry) -> T
     func getServiceKeys() -> [ServiceKey]
     func _environmentObject<Content: View>(registry: Registry, content: Content) -> any View
 }
 
-extension Dep {
+public extension Dep {
     func getServiceKeys() -> [ServiceKey] {
         return [ServiceKey(serviceType: T.self)]
     }
@@ -38,11 +38,11 @@ extension Dep {
 
 // A MockDep allows binding for a mock type (MockT) as well as the mocked type (T).
 
-protocol MockDep: Dep {
+public protocol MockDep: Dep {
     associatedtype MockT: ObservableObject
 }
 
-extension MockDep {
+public extension MockDep {
     func getServiceKeys() -> [ServiceKey] {
         return [
             ServiceKey(serviceType: MockT.self),

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Inject
+import Controllers
 
 struct SetupView: View {
     @EnvironmentObject private var service: VPNConfigurationService

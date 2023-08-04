@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import ProxyService
 import OrderedCollections
+import Controllers
 
 struct ProfileCardModifier: ViewModifier {
     @EnvironmentObject var profileManager: ProfileManager
