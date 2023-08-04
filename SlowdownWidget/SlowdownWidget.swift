@@ -42,11 +42,9 @@ struct SlowdownWidgetEntryView : View {
 
     var body: some View {
         VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
-
-            Text("Favorite Emoji:")
-            Text(entry.configuration.favoriteEmoji)
+            Button(intent: StartSession()) {
+                Text("Start")
+            }
         }
     }
 }
@@ -76,7 +74,7 @@ extension ConfigurationAppIntent {
     }
 }
 
-#Preview(as: .systemSmall) {
+#Preview(as: .systemLarge) {
     SlowdownWidget()
 } timeline: {
     SimpleEntry(date: .now, configuration: .smiley)

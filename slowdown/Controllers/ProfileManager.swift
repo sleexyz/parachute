@@ -106,10 +106,10 @@ class ProfileManager: ObservableObject {
     
     static var presetDefaults: OrderedDictionary<String, Preset> = [
         "focus": Preset(
-            name: "Detox",
+            name: "Active",
             icon: "🫧",
             type: .focus,
-            description: "Slows down content",
+            description: "Slowing down content...",
             badgeText: "∞",
             presetData: Proxyservice_Preset.with {
                 $0.id = "focus"
@@ -122,52 +122,17 @@ class ProfileManager: ObservableObject {
             ]
         ),
         "relax": Preset(
-            name: "Break",
+            name: "Scroll break",
             type: .relax,
-            description: "Temporarily disable slowing",
-            badgeText: "3 min",
+            description: "Slowing disabled.",
+            badgeText: "30s",
             presetData: Proxyservice_Preset.with {
                 $0.id = "relax"
                 $0.baseRxSpeedTarget = .infinity
                 $0.mode = .focus
             },
             mainColor: makeMainColor(2).opacity(OVERLAY_PRESET_OPACITY),
-            overlayDurationSecs: 3 * 60
-        ),
-        "unplug": Preset(
-            name: "Sleep",
-            icon: "🌌",
-            type: .focus,
-            description: "Slows down all internet",
-            badgeText: "∞",
-            presetData: Proxyservice_Preset.with {
-                $0.id = "unplug"
-                $0.baseRxSpeedTarget = 40e3
-                $0.mode = .focus
-                $0.trafficRules = Proxyservice_TrafficRules.with {
-                    $0.matchAllTraffic = true
-                }
-            },
-            mainColor: makeMainColor(0).opacity(PRESET_OPACITY),
-            childPresets: [
-                "unplug_break",
-            ]
-        ),
-        "unplug_break": Preset(
-            name: "Break",
-            type: .relax,
-            description: "Temporarily disable slowing",
-            badgeText: "1 min",
-            presetData: Proxyservice_Preset.with {
-                $0.id = "unplug_break"
-                $0.baseRxSpeedTarget = .infinity
-                $0.mode = .focus
-                $0.trafficRules = Proxyservice_TrafficRules.with {
-                    $0.matchAllTraffic = true
-                }
-            },
-            mainColor: makeMainColor(0).opacity(OVERLAY_PRESET_OPACITY),
-            overlayDurationSecs: 1 * 60
+            overlayDurationSecs: 30
         ),
         "casual": makeParachutePreset(ProfileManager.makeParachutePresetData(hp: 5)),
     ]
@@ -200,7 +165,6 @@ class ProfileManager: ObservableObject {
             badgeText: "∞",
             presetData: presetData,
             mainColor: makeMainColor(5).opacity(PRESET_OPACITY),
-//            mainColor: .purple.lighter().lighter().lighter().opacity(Mapping(a: 2, b: 10, c: 0.7, d: 0.3).map(presetData.usageMaxHp)),
             expandedBody:  AnyView(ParachutePresetPicker())
         )
     }
@@ -228,7 +192,6 @@ class ProfileManager: ObservableObject {
         [
             "casual": ProfileManager.makeParachutePreset(parachutePresetData),
             "focus": ProfileManager.presetDefaults["focus"]!,
-            "unplug": ProfileManager.presetDefaults["unplug"]!,
         ]
     }
     

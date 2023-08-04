@@ -41,12 +41,6 @@ class SettingsStore: ObservableObject {
         }.store(in: &bag)
     }
     
-    @MainActor
-    func setCheatSettings(expiry: Date, speed: Double) {
-        activePresetBinding.wrappedValue.temporaryRxSpeedExpiry = Google_Protobuf_Timestamp(date: expiry)
-        activePresetBinding.wrappedValue.temporaryRxSpeedTarget = speed
-    }
-    
     var activePreset: Proxyservice_Preset {
         return activePresetBinding.wrappedValue
     }
@@ -128,10 +122,6 @@ class SettingsStore: ObservableObject {
             }
         }
     }
-    
-//    var activePreset: Proxyservice_Preset {
-//        return settings.store.settings.defaultPreset
-//    }
     
     @MainActor
     private func setSettings(value: Proxyservice_Settings) {
