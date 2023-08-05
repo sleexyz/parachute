@@ -10,6 +10,8 @@ import SwiftUI
 import ProxyService
 import Combine
 import Logging
+import Models
+import RangeMapping
 
 struct PresetViewModel {
     @Binding var presetData: Proxyservice_Preset

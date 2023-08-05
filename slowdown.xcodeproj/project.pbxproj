@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A0016E3D2A787DC400CA9BE6 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = A0016E3C2A787DC400CA9BE6 /* Inject */; };
 		A0016E3F2A787DD600CA9BE6 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = A0016E3E2A787DD600CA9BE6 /* Inject */; };
+		A00A09CC2A7DB76600011260 /* Animation Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00A09CB2A7DB76600011260 /* Animation Globals.swift */; };
 		A00AF05129AD006200673B31 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = A00AF05029AD006200673B31 /* OrderedCollections */; };
 		A01AB95C2A7D8015004E87B3 /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = A01AB95B2A7D8015004E87B3 /* Common */; };
 		A01AB95E2A7D8015004E87B3 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A01AB95D2A7D8015004E87B3 /* Controllers */; };
@@ -52,9 +53,7 @@
 		A080EDF0294F7B89005401E4 /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDEF294F7B89005401E4 /* ProxyService */; };
 		A080EDF6294F9864005401E4 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF5294F9864005401E4 /* Logging */; };
 		A080EDF8294F9868005401E4 /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF7294F9868005401E4 /* LoggingOSLog */; };
-		A080EDFA294F9B1C005401E4 /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A080EDF9294F9B1C005401E4 /* SettingsController.swift */; };
 		A081F232295BB3D700863FE3 /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F231295BB3D700863FE3 /* SetupView.swift */; };
-		A081F2362966A6BA00863FE3 /* SettingsMigrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F2352966A6BA00863FE3 /* SettingsMigrations.swift */; };
 		A081F2382967B10600863FE3 /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A081F2372967B10600863FE3 /* ProxyService */; };
 		A081F23A2967B10F00863FE3 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A081F2392967B10F00863FE3 /* SwiftProtobuf */; };
 		A081F23C2967B10F00863FE3 /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = A081F23B2967B10F00863FE3 /* SwiftProtobufPluginLibrary */; };
@@ -73,9 +72,7 @@
 		A096625529C8E93C00D2E0A9 /* PresetSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625429C8E93C00D2E0A9 /* PresetSelector.swift */; };
 		A096625729C93EFC00D2E0A9 /* ParachutePresetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */; };
 		A09C5A0029BC26B70077A59B /* PresetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C59FF29BC26B70077A59B /* PresetContent.swift */; };
-		A09C5A0429BC30560077A59B /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C5A0329BC30560077A59B /* Profile.swift */; };
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
-		A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF9201293FCF1700C090E9 /* SettingsStore.swift */; };
 		A0E71ABA299DC9D60009B6E4 /* DeviceCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E71AB9299DC9D60009B6E4 /* DeviceCallbacks.swift */; };
 		A0F094442A74583600F1C8CB /* UIPlaygroundApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F094432A74583600F1C8CB /* UIPlaygroundApp.swift */; };
 		A0F094462A74583600F1C8CB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F094452A74583600F1C8CB /* ContentView.swift */; };
@@ -85,10 +82,8 @@
 		A0F764DF299DD37C001F9B24 /* ConnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764DE299DD37C001F9B24 /* ConnectedView.swift */; };
 		A0F764E1299DD491001F9B24 /* DisconnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764E0299DD491001F9B24 /* DisconnectedView.swift */; };
 		A0F764E3299DD6CA001F9B24 /* VPNLifecycleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764E2299DD6CA001F9B24 /* VPNLifecycleManager.swift */; };
-		A0F764E929A193D5001F9B24 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764E829A193D5001F9B24 /* ProfileManager.swift */; };
 		A0F764ED29A2E0A8001F9B24 /* PresetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EC29A2E0A8001F9B24 /* PresetViewModel.swift */; };
 		A0F764EF29A3F737001F9B24 /* TimerLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EE29A3F737001F9B24 /* TimerLock.swift */; };
-		A0FBF66A29ACF90E0030FCD7 /* Preset.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FBF66929ACF90E0030FCD7 /* Preset.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -168,6 +163,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A00A09CB2A7DB76600011260 /* Animation Globals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Animation Globals.swift"; sourceTree = "<group>"; };
 		A019EBD0297A0D05002A6F94 /* ci_post_xcodebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_xcodebuild.sh; sourceTree = "<group>"; };
 		A01B059D29850A6300298976 /* Preview Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preview Helpers.swift"; sourceTree = "<group>"; };
 		A01BBC9A2A7D7A450027FF75 /* Parachute */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Parachute; sourceTree = "<group>"; };
@@ -207,10 +203,8 @@
 		A077851F29779CB50038BB4B /* Ffi.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = Ffi.xcframework; sourceTree = "<group>"; };
 		A0790B2A2A74689C00A24338 /* Carousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel.swift; sourceTree = "<group>"; };
 		A0790B2E2A75611800A24338 /* 2023-07-29-swirl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "2023-07-29-swirl.swift"; sourceTree = "<group>"; };
-		A080EDF9294F9B1C005401E4 /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		A081F230295B732900863FE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A081F231295BB3D700863FE3 /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
-		A081F2352966A6BA00863FE3 /* SettingsMigrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMigrations.swift; sourceTree = "<group>"; };
 		A081F24D296922F300863FE3 /* StateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateController.swift; sourceTree = "<group>"; };
 		A081F24F296A125300863FE3 /* DamageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DamageBar.swift; sourceTree = "<group>"; };
 		A08719D5281A4BF900113F3F /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
@@ -226,8 +220,6 @@
 		A096625429C8E93C00D2E0A9 /* PresetSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetSelector.swift; sourceTree = "<group>"; };
 		A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParachutePresetPicker.swift; sourceTree = "<group>"; };
 		A09C59FF29BC26B70077A59B /* PresetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetContent.swift; sourceTree = "<group>"; };
-		A09C5A0329BC30560077A59B /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
-		A0BF9201293FCF1700C090E9 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		A0E71AB9299DC9D60009B6E4 /* DeviceCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCallbacks.swift; sourceTree = "<group>"; };
 		A0F094412A74583500F1C8CB /* UIPlayground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UIPlayground.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0F094432A74583600F1C8CB /* UIPlaygroundApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIPlaygroundApp.swift; sourceTree = "<group>"; };
@@ -238,10 +230,8 @@
 		A0F764DE299DD37C001F9B24 /* ConnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedView.swift; sourceTree = "<group>"; };
 		A0F764E0299DD491001F9B24 /* DisconnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectedView.swift; sourceTree = "<group>"; };
 		A0F764E2299DD6CA001F9B24 /* VPNLifecycleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNLifecycleManager.swift; sourceTree = "<group>"; };
-		A0F764E829A193D5001F9B24 /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		A0F764EC29A2E0A8001F9B24 /* PresetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetViewModel.swift; sourceTree = "<group>"; };
 		A0F764EE29A3F737001F9B24 /* TimerLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerLock.swift; sourceTree = "<group>"; };
-		A0FBF66929ACF90E0030FCD7 /* Preset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preset.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -376,8 +366,7 @@
 				A081F231295BB3D700863FE3 /* SetupView.swift */,
 				A081F24C2967DA3C00863FE3 /* Controllers */,
 				A0312E2B297D07D300EB0B8A /* Extensions.swift */,
-				A0FBF66929ACF90E0030FCD7 /* Preset.swift */,
-				A09C5A0329BC30560077A59B /* Profile.swift */,
+				A00A09CB2A7DB76600011260 /* Animation Globals.swift */,
 			);
 			path = ParachuteApp;
 			sourceTree = "<group>";
@@ -478,13 +467,9 @@
 		A081F24C2967DA3C00863FE3 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				A081F2352966A6BA00863FE3 /* SettingsMigrations.swift */,
-				A0BF9201293FCF1700C090E9 /* SettingsStore.swift */,
-				A080EDF9294F9B1C005401E4 /* SettingsController.swift */,
 				A081F24D296922F300863FE3 /* StateController.swift */,
 				A052AE1D29977B3700AB43B7 /* StateUpdater.swift */,
 				A0F764E2299DD6CA001F9B24 /* VPNLifecycleManager.swift */,
-				A0F764E829A193D5001F9B24 /* ProfileManager.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -837,11 +822,11 @@
 				A0F764DF299DD37C001F9B24 /* ConnectedView.swift in Sources */,
 				A068DCF229A6FA4F0036E9A2 /* Cardable.swift in Sources */,
 				A096625529C8E93C00D2E0A9 /* PresetSelector.swift in Sources */,
-				A0F764E929A193D5001F9B24 /* ProfileManager.swift in Sources */,
 				A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */,
 				A08719D8281A4CE500113F3F /* SplashView.swift in Sources */,
 				A0F764EF29A3F737001F9B24 /* TimerLock.swift in Sources */,
 				A02F58E227A6F14500D3330F /* ContentView.swift in Sources */,
+				A00A09CC2A7DB76600011260 /* Animation Globals.swift in Sources */,
 				A081F24E296922F300863FE3 /* StateController.swift in Sources */,
 				A068DCF729A6FB260036E9A2 /* PauseCard.swift in Sources */,
 				A068DCF529A6FABC0036E9A2 /* Preset+Cardable.swift in Sources */,
@@ -850,7 +835,6 @@
 				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,
 				A052AE1E29977B3700AB43B7 /* StateUpdater.swift in Sources */,
 				A024F15929A467D2007B572A /* HealSettings.swift in Sources */,
-				A09C5A0429BC30560077A59B /* Profile.swift in Sources */,
 				A081F232295BB3D700863FE3 /* SetupView.swift in Sources */,
 				A0F764E3299DD6CA001F9B24 /* VPNLifecycleManager.swift in Sources */,
 				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
@@ -858,12 +842,8 @@
 				A0F764ED29A2E0A8001F9B24 /* PresetViewModel.swift in Sources */,
 				A024F15B29A4845B007B572A /* Card.swift in Sources */,
 				A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */,
-				A080EDFA294F9B1C005401E4 /* SettingsController.swift in Sources */,
 				A0F764E1299DD491001F9B24 /* DisconnectedView.swift in Sources */,
-				A081F2362966A6BA00863FE3 /* SettingsMigrations.swift in Sources */,
-				A0BF9202293FCF1700C090E9 /* SettingsStore.swift in Sources */,
 				A052AE20299A900100AB43B7 /* HealButton.swift in Sources */,
-				A0FBF66A29ACF90E0030FCD7 /* Preset.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

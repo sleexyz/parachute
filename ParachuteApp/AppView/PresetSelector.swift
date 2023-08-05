@@ -8,6 +8,8 @@
 import Foundation
 import OrderedCollections
 import SwiftUI
+import Controllers
+import Models
 
 struct PresetSelector: View {
     @EnvironmentObject var profileManager: ProfileManager

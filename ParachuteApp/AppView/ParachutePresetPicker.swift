@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 import ProxyService
+import Controllers
+import Models
 
 struct ParachutePresetItem: View {
     @EnvironmentObject var settingsStore: SettingsStore

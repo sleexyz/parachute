@@ -9,17 +9,17 @@ import Foundation
 import SwiftUI
 import ProxyService
 import DI
-import Controllers
 
 // Operations for changing settings
-class SettingsController: ObservableObject {
-    struct Provider: Dep {
-        func create(r: Registry) -> SettingsController {
+public class SettingsController: ObservableObject {
+    public struct Provider: Dep {
+        public func create(r: Registry) -> SettingsController {
             return SettingsController(
                 store: r.resolve(SettingsStore.self),
                 service: r.resolve(VPNConfigurationService.self)
             )
         }
+        public init() {}
     }
     
     private let store: SettingsStore

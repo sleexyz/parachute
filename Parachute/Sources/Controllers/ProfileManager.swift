@@ -13,23 +13,21 @@ import Combine
 import OrderedCollections
 import SwiftProtobuf
 import DI
-
-var ANIMATION_SECS: Double = 0.35
-
-var ANIMATION: Animation = .timingCurve(0.30,0.20,0,1, duration: ANIMATION_SECS * 1.7)
-var ANIMATION_SHORT: Animation = .timingCurve(0.30,0.20,0,1, duration: ANIMATION_SECS)
+import Models
+import RangeMapping
 
 var PRESET_OPACITY: Double = 0.8
 var OVERLAY_PRESET_OPACITY: Double = PRESET_OPACITY * 0.3
 
-class ProfileManager: ObservableObject {
-    struct Provider : Dep {
-        func create(r: Registry) -> ProfileManager {
+public class ProfileManager: ObservableObject {
+    public struct Provider : Dep {
+        public func create(r: Registry) -> ProfileManager {
             return ProfileManager(
                 settingsStore: r.resolve(SettingsStore.self),
                 settingsController: r.resolve(SettingsController.self)
             )
         }
+        public init() {}
     }
     var settingsStore: SettingsStore
     var settingsController: SettingsController
@@ -37,7 +35,6 @@ class ProfileManager: ObservableObject {
     init(settingsStore: SettingsStore, settingsController: SettingsController) {
         self.settingsStore = settingsStore
         self.settingsController = settingsController
-        
         settingsStore.$settings
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
@@ -46,11 +43,11 @@ class ProfileManager: ObservableObject {
             .store(in: &bag)
     }
     
-    @Published var presetSelectorOpen: Bool = false
-    @Published var profileSelectorOpen: Bool = false
+    @Published public var presetSelectorOpen: Bool = false
+    @Published public var profileSelectorOpen: Bool = false
     
     // Convert to derived publisher
-    var activePreset: Preset {
+    public var activePreset: Preset {
         allPresets[settingsStore.activePreset.id]!
     }
     
@@ -61,11 +58,11 @@ class ProfileManager: ObservableObject {
         return nil
     }
     
-    var defaultPreset: Preset {
+    public var defaultPreset: Preset {
         return allPresets[settingsStore.defaultPreset.id]!
     }
     
-    var presets: OrderedDictionary<String, Preset> {
+    public var presets: OrderedDictionary<String, Preset> {
         var map = OrderedDictionary<String, Preset>()
         map[defaultPreset.id] = defaultPreset
         for presetID in defaultPreset.childPresets {
@@ -75,7 +72,7 @@ class ProfileManager: ObservableObject {
     }
         
     // Inclusive of loadOverlay
-    func loadPreset(preset: Preset) {
+    public func loadPreset(preset: Preset) {
         if preset.overlayDurationSecs != nil {
             return loadOverlay(preset: preset)
         }
@@ -99,7 +96,7 @@ class ProfileManager: ObservableObject {
     }
     
     // Writes through to parachute preset
-    func loadParachutePreset(preset: Preset) {
+    public func loadParachutePreset(preset: Preset) {
         loadPreset(preset: preset)
         settingsStore.settings.parachutePreset = preset.presetData
         settingsController.syncSettings()
@@ -126,19 +123,19 @@ class ProfileManager: ObservableObject {
             name: "Scroll break",
             type: .relax,
             description: "Slowing disabled.",
-            badgeText: "30s",
+            badgeText: "60s",
             presetData: Proxyservice_Preset.with {
                 $0.id = "relax"
                 $0.baseRxSpeedTarget = .infinity
                 $0.mode = .focus
             },
             mainColor: makeMainColor(2).opacity(OVERLAY_PRESET_OPACITY),
-            overlayDurationSecs: 30
+            overlayDurationSecs: 60
         ),
         "casual": makeParachutePreset(ProfileManager.makeParachutePresetData(hp: 5)),
     ]
     
-    static func makeParachutePresetData(hp: Double) -> Proxyservice_Preset {
+    public static func makeParachutePresetData(hp: Double) -> Proxyservice_Preset {
         return Proxyservice_Preset.with {
             $0.id = "casual"
             $0.usageMaxHp = hp
@@ -157,7 +154,7 @@ class ProfileManager: ObservableObject {
         return Color(UIColor(hue: h, saturation: s, brightness: b, alpha: a))
     }
     
-    static func makeParachutePreset(_ presetData: Proxyservice_Preset) -> Preset {
+    public static func makeParachutePreset(_ presetData: Proxyservice_Preset) -> Preset {
         return Preset(
             name: "Parachute",
             icon: "🪂",
@@ -165,8 +162,7 @@ class ProfileManager: ObservableObject {
             description: "Slow down content after \(Int(presetData.usageMaxHp)) minutes of usage",
             badgeText: "∞",
             presetData: presetData,
-            mainColor: makeMainColor(5).opacity(PRESET_OPACITY),
-            expandedBody:  AnyView(ParachutePresetPicker())
+            mainColor: makeMainColor(5).opacity(PRESET_OPACITY)
         )
     }
     
@@ -189,7 +185,7 @@ class ProfileManager: ObservableObject {
         return ret
     }
     
-    var topLevelPresets: OrderedDictionary<String, Preset> {
+    public var topLevelPresets: OrderedDictionary<String, Preset> {
         [
             "casual": ProfileManager.makeParachutePreset(parachutePresetData),
             "focus": ProfileManager.presetDefaults["focus"]!,

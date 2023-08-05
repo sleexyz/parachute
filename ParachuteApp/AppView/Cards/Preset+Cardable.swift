@@ -8,17 +8,19 @@
 import Foundation
 import ProxyService
 import SwiftUI
+import Models
+import Controllers
 
 extension Preset: Cardable {
-    func _makeCard(content: @escaping () -> AnyView) -> some View {
+    public func _makeCard(content: @escaping () -> AnyView) -> some View {
         WiredPresetCard(preset: self) {
             content()
         }
     }
-    func getID() -> String {
+    public func getID() -> String {
         self.id
     }
-    func getExpandedBody() -> AnyView {
+    public func getExpandedBody() -> AnyView {
         if let body = self.expandedBody {
             return AnyView(body)
         }

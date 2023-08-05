@@ -14,11 +14,12 @@ import Combine
 import DI
 
 
-class SettingsStore: ObservableObject {
-    struct Provider : Dep {
-        func create(r: Registry) -> SettingsStore {
+public class SettingsStore: ObservableObject {
+    public struct Provider : Dep {
+        public func create(r: Registry) -> SettingsStore {
             return SettingsStore()
         }
+        public init() {}
     }
     
     private var onLoadFns: Array<() -> Void> = []
@@ -29,7 +30,7 @@ class SettingsStore: ObservableObject {
         return settings
     }()
     
-    @Published var loaded = false
+    @Published public var loaded = false
     
     private let logger = Logger(label: "industries.strange.slowdown.SettingsStore")
     
@@ -42,7 +43,7 @@ class SettingsStore: ObservableObject {
         }.store(in: &bag)
     }
     
-    var activePreset: Proxyservice_Preset {
+    public var activePreset: Proxyservice_Preset {
         return activePresetBinding.wrappedValue
     }
     
@@ -64,7 +65,7 @@ class SettingsStore: ObservableObject {
         return nil
     }
     
-    var activePresetBinding: Binding<Proxyservice_Preset> {
+    public var activePresetBinding: Binding<Proxyservice_Preset> {
         Binding {
             if let preset = self.activeOverlayPreset {
                 return preset
@@ -98,7 +99,7 @@ class SettingsStore: ObservableObject {
         onLoadFns.append(fn)
     }
     
-    func load() throws {
+    public func load() throws {
         do {
             try loadFromFile()
         } catch CocoaError.fileNoSuchFile {

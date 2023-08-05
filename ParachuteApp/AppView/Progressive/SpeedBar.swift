@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import RangeMapping
 
 struct SpeedBar: View {
     @Binding var speed: Double

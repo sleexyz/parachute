@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Controllers
 
 struct HealSettings: View {
     @EnvironmentObject var controller: SettingsController

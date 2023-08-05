@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import DI
+import Controllers
 
 struct HealButton: View {
     var disabledOverride: Bool

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Controllers
 
 struct Pause {
     var id = "__pause"
