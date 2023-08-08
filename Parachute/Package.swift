@@ -8,6 +8,10 @@ let package = Package(
     platforms: [.iOS(.v15)],
     products: [
         .library(
+            name: "AppViews",
+            targets: ["AppViews"]
+        ),
+        .library(
             name: "Controllers",
             targets: ["Controllers"]
         ),
@@ -22,6 +26,10 @@ let package = Package(
         .library(
             name: "RangeMapping",
             targets: ["RangeMapping"]
+        ),
+        .library(
+            name: "CommonLoaders",
+            targets: ["CommonLoaders"]
         ),
         .library(
             name: "Models",
@@ -53,6 +61,19 @@ let package = Package(
         ),
         .target(
             name: "RangeMapping"
+        ),
+        .target(
+            name: "AppViews",
+            dependencies: [
+                "Controllers",
+            ]
+        ),
+        .target(
+            name: "CommonLoaders",
+            dependencies: [
+                "Controllers",
+                .product(name: "Logging", package: "swift-log"),
+            ]
         ),
         .testTarget(
             name: "ServerTests",

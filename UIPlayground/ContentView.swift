@@ -20,8 +20,6 @@ struct ContentView: View {
         .frame(height: UIScreen.main.bounds.height * 0.8) // Set the desired height of the carousel
         .background(Color.white)
         .enableInjection()
-        // x_2023_07_28_swirl()
-        // .frame(height: UIScreen.main.bounds.height) // Set the desired height of the carousel
     }
 }
 

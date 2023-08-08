@@ -31,7 +31,9 @@ struct DisconnectedView: View {
                 Toggle(isOn: $settingsStore.settings.debug, label: { Text("Debug")})
                     .disabled(service.isTransitioning)
                     .onChange(of: settingsStore.settings.debug) { _ in
-                        settingsController.syncSettings()
+                        Task.init(priority: .background) {
+                            try await  settingsController.syncSettings()
+                        }
                     }
             }
         }.padding()

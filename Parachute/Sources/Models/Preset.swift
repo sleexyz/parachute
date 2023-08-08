@@ -28,11 +28,12 @@ public struct Preset {
     public var badgeText: String?
     public var presetData: Proxyservice_Preset
     public var mainColor: Color
+    public var parentPreset: PresetID?
     public var overlayDurationSecs: Double?
     public var expandedBody: AnyView?
     public var childPresets: [PresetID] = []
     
-    public init(name: String, icon: String? = nil, type: PresetType, description: String, badgeText: String? = nil, presetData: Proxyservice_Preset, mainColor: Color, overlayDurationSecs: Double? = nil, expandedBody: AnyView? = nil, childPresets: [PresetID] = []) {
+    public init(name: String, icon: String? = nil, type: PresetType, description: String, badgeText: String? = nil, presetData: Proxyservice_Preset, mainColor: Color, parentPreset: PresetID? = nil, overlayDurationSecs: Double? = nil, expandedBody: AnyView? = nil, childPresets: [PresetID] = []) {
         self.name = name
         self.icon = icon
         self.type = type
@@ -40,6 +41,7 @@ public struct Preset {
         self.badgeText = badgeText
         self.presetData = presetData
         self.mainColor = mainColor
+        self.parentPreset = parentPreset
         self.overlayDurationSecs = overlayDurationSecs
         self.expandedBody = expandedBody
         self.childPresets = childPresets

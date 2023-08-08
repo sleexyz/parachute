@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Controllers
+import AppViews
 
 struct AppView: View {
     @EnvironmentObject var store: SettingsStore
@@ -22,13 +23,14 @@ struct AppView: View {
             if !service.isConnected {
                 DisconnectedView()
             } else {
-                ConnectedView()
-                .modifier(StateUpdater.IsVisibleUpdater())
-                    .provideDeps([
-                        ProfileManager.Provider(),
-                        StateUpdater.Provider(),
-                        StateController.Provider()
-                    ])
+                WidgetUpdater {
+                    ConnectedView()
+                    .modifier(StateUpdater.IsVisibleUpdater())
+                        .provideDeps([
+                            StateUpdater.Provider(),
+                            StateController.Provider()
+                        ])
+                }
             }
         }
         .disabled(showTransitioning)

@@ -89,12 +89,11 @@ struct WiredPresetCard<Content: View>: View {
                     if preset.presetData.mode == .progressive {
                         stateController.heal()
                     }
-                    profileManager.loadPreset(preset: preset)
-//                    Task {
-//                        try await Task.sleep(nanoseconds:500_000_000)
+                    Task { @MainActor in
+                        try await profileManager.loadPresetLegacy(preset: preset)
+                    }
                     profileManager.presetSelectorOpen = false
                     profileManager.profileSelectorOpen = false
-//                    }
                 } else {
                     profileManager.presetSelectorOpen = false
                     profileManager.profileSelectorOpen = false

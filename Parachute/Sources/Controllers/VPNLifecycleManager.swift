@@ -10,17 +10,17 @@ import SwiftProtobuf
 import BackgroundTasks
 import Logging
 import DI
-import Controllers
 
-class VPNLifecycleManager: ObservableObject {
-    struct Provider: Dep {
-        func create(r: Registry) -> VPNLifecycleManager {
+public class VPNLifecycleManager: ObservableObject {
+    public struct Provider: Dep {
+        public func create(r: Registry) -> VPNLifecycleManager {
             return VPNLifecycleManager(
                 vpnConfigurationService: r.resolve(VPNConfigurationService.self),
                 settingsController: r.resolve(SettingsController.self),
                 settingsStore: r.resolve(SettingsStore.self)
             )
         }
+        public init() {}
     }
     private var vpnConfigurationService: VPNConfigurationService
     private var settingsController: SettingsController

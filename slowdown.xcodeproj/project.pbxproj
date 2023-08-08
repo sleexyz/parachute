@@ -10,6 +10,9 @@
 		A0016E3D2A787DC400CA9BE6 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = A0016E3C2A787DC400CA9BE6 /* Inject */; };
 		A0016E3F2A787DD600CA9BE6 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = A0016E3E2A787DD600CA9BE6 /* Inject */; };
 		A00A09CC2A7DB76600011260 /* Animation Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00A09CB2A7DB76600011260 /* Animation Globals.swift */; };
+		A00A09CE2A7EDA7000011260 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A00A09CD2A7EDA7000011260 /* Controllers */; };
+		A00A09D02A7EEF7100011260 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A00A09CF2A7EEF7100011260 /* Logging */; };
+		A00A09D22A7EEF9100011260 /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A00A09D12A7EEF9100011260 /* LoggingOSLog */; };
 		A00AF05129AD006200673B31 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = A00AF05029AD006200673B31 /* OrderedCollections */; };
 		A01AB95C2A7D8015004E87B3 /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = A01AB95B2A7D8015004E87B3 /* Common */; };
 		A01AB95E2A7D8015004E87B3 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A01AB95D2A7D8015004E87B3 /* Controllers */; };
@@ -42,6 +45,9 @@
 		A04FAD9C294D60960002C19B /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A04FAD9B294D60960002C19B /* SwiftProtobuf */; };
 		A052AE1E29977B3700AB43B7 /* StateUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = A052AE1D29977B3700AB43B7 /* StateUpdater.swift */; };
 		A052AE20299A900100AB43B7 /* HealButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A052AE1F299A900100AB43B7 /* HealButton.swift */; };
+		A056C36A2A819E7F00E4ED9A /* CommonLoaders in Frameworks */ = {isa = PBXBuildFile; productRef = A056C3692A819E7F00E4ED9A /* CommonLoaders */; };
+		A056C36C2A819E8A00E4ED9A /* CommonLoaders in Frameworks */ = {isa = PBXBuildFile; productRef = A056C36B2A819E8A00E4ED9A /* CommonLoaders */; };
+		A056C36E2A819E8F00E4ED9A /* AppViews in Frameworks */ = {isa = PBXBuildFile; productRef = A056C36D2A819E8F00E4ED9A /* AppViews */; };
 		A05AD0B3285D0CD100878904 /* NIO in Frameworks */ = {isa = PBXBuildFile; productRef = A05AD0B2285D0CD100878904 /* NIO */; };
 		A068DCF229A6FA4F0036E9A2 /* Cardable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A068DCF129A6FA4F0036E9A2 /* Cardable.swift */; };
 		A068DCF529A6FABC0036E9A2 /* Preset+Cardable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A068DCF429A6FABC0036E9A2 /* Preset+Cardable.swift */; };
@@ -81,7 +87,6 @@
 		A0F094502A74588800F1C8CB /* 2023-07-28-swirl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F0944F2A74588700F1C8CB /* 2023-07-28-swirl.swift */; };
 		A0F764DF299DD37C001F9B24 /* ConnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764DE299DD37C001F9B24 /* ConnectedView.swift */; };
 		A0F764E1299DD491001F9B24 /* DisconnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764E0299DD491001F9B24 /* DisconnectedView.swift */; };
-		A0F764E3299DD6CA001F9B24 /* VPNLifecycleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764E2299DD6CA001F9B24 /* VPNLifecycleManager.swift */; };
 		A0F764ED29A2E0A8001F9B24 /* PresetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EC29A2E0A8001F9B24 /* PresetViewModel.swift */; };
 		A0F764EF29A3F737001F9B24 /* TimerLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EE29A3F737001F9B24 /* TimerLock.swift */; };
 /* End PBXBuildFile section */
@@ -229,7 +234,6 @@
 		A0F0944F2A74588700F1C8CB /* 2023-07-28-swirl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "2023-07-28-swirl.swift"; sourceTree = "<group>"; };
 		A0F764DE299DD37C001F9B24 /* ConnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedView.swift; sourceTree = "<group>"; };
 		A0F764E0299DD491001F9B24 /* DisconnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectedView.swift; sourceTree = "<group>"; };
-		A0F764E2299DD6CA001F9B24 /* VPNLifecycleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNLifecycleManager.swift; sourceTree = "<group>"; };
 		A0F764EC29A2E0A8001F9B24 /* PresetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetViewModel.swift; sourceTree = "<group>"; };
 		A0F764EE29A3F737001F9B24 /* TimerLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerLock.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -248,7 +252,9 @@
 				A080EDF0294F7B89005401E4 /* ProxyService in Frameworks */,
 				A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */,
 				A080EDF8294F9868005401E4 /* LoggingOSLog in Frameworks */,
+				A056C36E2A819E8F00E4ED9A /* AppViews in Frameworks */,
 				A04FAD9C294D60960002C19B /* SwiftProtobuf in Frameworks */,
+				A056C36C2A819E8A00E4ED9A /* CommonLoaders in Frameworks */,
 				A0016E3D2A787DC400CA9BE6 /* Inject in Frameworks */,
 				A01AB95C2A7D8015004E87B3 /* Common in Frameworks */,
 			);
@@ -273,7 +279,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				A04ADFB22A7B5513008700C4 /* SwiftUI.framework in Frameworks */,
+				A00A09D22A7EEF9100011260 /* LoggingOSLog in Frameworks */,
 				A04ADFB02A7B5513008700C4 /* WidgetKit.framework in Frameworks */,
+				A00A09D02A7EEF7100011260 /* Logging in Frameworks */,
+				A056C36A2A819E7F00E4ED9A /* CommonLoaders in Frameworks */,
+				A00A09CE2A7EDA7000011260 /* Controllers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -469,7 +479,6 @@
 			children = (
 				A081F24D296922F300863FE3 /* StateController.swift */,
 				A052AE1D29977B3700AB43B7 /* StateUpdater.swift */,
-				A0F764E2299DD6CA001F9B24 /* VPNLifecycleManager.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -542,6 +551,8 @@
 				A0016E3C2A787DC400CA9BE6 /* Inject */,
 				A01AB95B2A7D8015004E87B3 /* Common */,
 				A01AB95D2A7D8015004E87B3 /* Controllers */,
+				A056C36B2A819E8A00E4ED9A /* CommonLoaders */,
+				A056C36D2A819E8F00E4ED9A /* AppViews */,
 			);
 			productName = slowdown;
 			productReference = A02F58DC27A6F14500D3330F /* slowdown.app */;
@@ -598,6 +609,12 @@
 			dependencies = (
 			);
 			name = SlowdownWidgetExtension;
+			packageProductDependencies = (
+				A00A09CD2A7EDA7000011260 /* Controllers */,
+				A00A09CF2A7EEF7100011260 /* Logging */,
+				A00A09D12A7EEF9100011260 /* LoggingOSLog */,
+				A056C3692A819E7F00E4ED9A /* CommonLoaders */,
+			);
 			productName = SlowdownWidgetExtension;
 			productReference = A04ADFAE2A7B5513008700C4 /* SlowdownWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -836,7 +853,6 @@
 				A052AE1E29977B3700AB43B7 /* StateUpdater.swift in Sources */,
 				A024F15929A467D2007B572A /* HealSettings.swift in Sources */,
 				A081F232295BB3D700863FE3 /* SetupView.swift in Sources */,
-				A0F764E3299DD6CA001F9B24 /* VPNLifecycleManager.swift in Sources */,
 				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
 				A01B059E29850A6300298976 /* Preview Helpers.swift in Sources */,
 				A0F764ED29A2E0A8001F9B24 /* PresetViewModel.swift in Sources */,
@@ -1538,6 +1554,20 @@
 			package = A0016E3B2A787DC400CA9BE6 /* XCRemoteSwiftPackageReference "Inject" */;
 			productName = Inject;
 		};
+		A00A09CD2A7EDA7000011260 /* Controllers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Controllers;
+		};
+		A00A09CF2A7EEF7100011260 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+		A00A09D12A7EEF9100011260 /* LoggingOSLog */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A0458BFF28614D6500CE4CCB /* XCRemoteSwiftPackageReference "swift-log-oslog" */;
+			productName = LoggingOSLog;
+		};
 		A00AF05029AD006200673B31 /* OrderedCollections */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A00AF04F29AD006200673B31 /* XCRemoteSwiftPackageReference "swift-collections" */;
@@ -1570,6 +1600,18 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobuf;
+		};
+		A056C3692A819E7F00E4ED9A /* CommonLoaders */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CommonLoaders;
+		};
+		A056C36B2A819E8A00E4ED9A /* CommonLoaders */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CommonLoaders;
+		};
+		A056C36D2A819E8F00E4ED9A /* AppViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppViews;
 		};
 		A05AD0B2285D0CD100878904 /* NIO */ = {
 			isa = XCSwiftPackageProductDependency;

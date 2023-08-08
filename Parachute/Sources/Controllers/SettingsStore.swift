@@ -14,21 +14,28 @@ import Combine
 import DI
 
 
+struct HandlerWrapper {
+    let handler: () -> Void
+    let id: UUID
+}
+
 public class SettingsStore: ObservableObject {
     public struct Provider : Dep {
         public func create(r: Registry) -> SettingsStore {
-            return SettingsStore()
+            return .shared
         }
         public init() {}
     }
-    
-    private var onLoadFns: Array<() -> Void> = []
+
+    public static let shared = SettingsStore()
     
     @Published public var settings: Proxyservice_Settings = {
         var settings = Proxyservice_Settings()
         SettingsMigrations.setDefaults(settings: &settings)
         return settings
     }()
+
+    @Published public var savedSettings: Proxyservice_Settings? = nil
     
     @Published public var loaded = false
     
@@ -38,7 +45,7 @@ public class SettingsStore: ObservableObject {
     
     init() {
         logger.info("init settings store")
-        $settings.sink {
+        $settings.dropFirst().sink {
             self.logger.info("Changed: \($0.debugDescription)")
         }.store(in: &bag)
     }
@@ -95,9 +102,18 @@ public class SettingsStore: ObservableObject {
         return groupURL.appendingPathComponent("settings.data")
     }
     
-    func onLoad(fn: @escaping () -> Void) {
-        onLoadFns.append(fn)
-    }
+    public func waitForLoaded() async -> () {
+        await withCheckedContinuation {continuation in
+            if self.loaded {
+                continuation.resume(returning: ())
+            } else {
+                let cancellable  = self.$loaded.first().sink { _ in
+                    continuation.resume(returning: ())
+                }
+                cancellable.store(in: &self.bag)
+            }
+        }
+   }
     
     public func load() throws {
         do {
@@ -119,9 +135,6 @@ public class SettingsStore: ObservableObject {
         Task {
             await self.setSettings(value: upgradedNewSettings)
             await self.setLoaded(value: true)
-            for fn in onLoadFns {
-                fn()
-            }
         }
     }
     
@@ -134,8 +147,9 @@ public class SettingsStore: ObservableObject {
     private func setActivePreset(value: Proxyservice_Preset) {
         if isOverlayActive {
             self.settings.overlay.preset = value
+        } else {
+            self.settings.defaultPreset = value
         }
-        self.settings.defaultPreset = value
     }
     
     @MainActor
@@ -152,5 +166,6 @@ public class SettingsStore: ObservableObject {
         let data = try self.settings.serializedData()
         let outfile = try SettingsStore.fileUrl()
         try data.write(to:outfile)
+        savedSettings = settings
     }
 }

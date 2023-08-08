@@ -65,6 +65,7 @@ open class VPNConfigurationService: ObservableObject {
     @Published private(set) public var isInitializing = true
     @Published public var isConnected = false
     @Published public var isTransitioning = false
+    @Published public var conn: NEVPNConnection? = nil
     @Published private var manager: NETunnelProviderManager?
     @Published public var status: VPNStatus = .unknown
     @Published public var connectedDate: Date?
@@ -79,36 +80,6 @@ open class VPNConfigurationService: ObservableObject {
     
     
     public init() {
-        NETunnelProviderManager.loadAllFromPreferences { managers, error in
-            self.manager = managers?.first
-            self.isInitializing = false
-            self.connectedDate = self.manager?.connection.connectedDate
-        }
-        
-        // Register to receive notification in your class
-        NotificationCenter.default.addObserver(forName: .NEVPNStatusDidChange, object: nil, queue: nil) { notification in
-            DispatchQueue.main.async {
-                let conn = notification.object as! NEVPNConnection
-                self.connectedDate = self.manager?.connection.connectedDate
-                self.updateStatus(connStatus: conn.status)
-                if conn.status == NEVPNStatus.connected {
-                    self.isConnected = true
-                    self.isTransitioning = false;
-                }
-                if conn.status == NEVPNStatus.connecting{
-                    self.isTransitioning = true
-                }
-                if conn.status == NEVPNStatus.disconnecting{
-                    self.isTransitioning = true
-                }
-                if conn.status == NEVPNStatus.disconnected {
-                    self.isConnected = false
-                    self.isTransitioning = false;
-                }
-            }
-        }
-        
-        
         $status
             .debounce(for: .seconds(10), scheduler: DispatchQueue.main)
             .sink {value in
@@ -123,6 +94,46 @@ open class VPNConfigurationService: ObservableObject {
                     }
                 }
             }.store(in: &bag)
+    }
+
+    public func load() async -> () {
+        self.logger.info("VPNConfigurationService initializing...")
+        if isInitializing {
+            NETunnelProviderManager.loadAllFromPreferences { managers, error in
+                self.manager = managers?.first
+                self.isInitializing = false
+                self.connectedDate = self.manager?.connection.connectedDate
+                self.logger.info("VPNConfigurationService initialized")
+            }
+        }
+        if conn == nil {
+            await Future { promise in
+                // Register to receive notification in your class
+                NotificationCenter.default.addObserver(forName: .NEVPNStatusDidChange, object: nil, queue: nil) { notification in
+                    DispatchQueue.main.async {
+                        let conn = notification.object as! NEVPNConnection
+                        self.connectedDate = self.manager?.connection.connectedDate
+                        self.updateStatus(connStatus: conn.status)
+                        if conn.status == NEVPNStatus.connected {
+                            self.isConnected = true
+                            self.isTransitioning = false
+                        }
+                        if conn.status == NEVPNStatus.connecting{
+                            self.isTransitioning = true
+                        }
+                        if conn.status == NEVPNStatus.disconnecting{
+                            self.isTransitioning = true
+                        }
+                        if conn.status == NEVPNStatus.disconnected {
+                            self.isConnected = false
+                            self.isTransitioning = false
+                        }
+                        self.conn = conn
+                        promise(.success(()))
+                    }
+                }
+            }.value
+        }
     }
     
     

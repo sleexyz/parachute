@@ -22,10 +22,12 @@ var OVERLAY_PRESET_OPACITY: Double = PRESET_OPACITY * 0.3
 public class ProfileManager: ObservableObject {
     public struct Provider : Dep {
         public func create(r: Registry) -> ProfileManager {
-            return ProfileManager(
+            let instance = ProfileManager(
                 settingsStore: r.resolve(SettingsStore.self),
                 settingsController: r.resolve(SettingsController.self)
             )
+            ProfileManager.shared = instance
+            return instance
         }
         public init() {}
     }
@@ -42,11 +44,15 @@ public class ProfileManager: ObservableObject {
             }
             .store(in: &bag)
     }
+
+    public static var shared: ProfileManager? = nil
     
     @Published public var presetSelectorOpen: Bool = false
     @Published public var profileSelectorOpen: Bool = false
-    
-    // Convert to derived publisher
+
+    public var overlayTimer: Timer? = nil
+
+    // TODO: Convert to derived publisher. Right now all views need to also listen to settingsStore.$settings
     public var activePreset: Preset {
         allPresets[settingsStore.activePreset.id]!
     }
@@ -70,39 +76,55 @@ public class ProfileManager: ObservableObject {
         }
         return map
     }
+
         
-    // Inclusive of loadOverlay
-    public func loadPreset(preset: Preset) {
-        if preset.overlayDurationSecs != nil {
-            return loadOverlay(preset: preset)
-        }
+    @MainActor
+    public func loadPreset(preset: Preset, overlay: Preset? = nil) async throws -> () {
         settingsStore.settings.defaultPreset = preset.presetData
+        if let overlay = overlay {
+            if overlay.overlayDurationSecs != nil {
+                settingsStore.settings.overlay = Proxyservice_Overlay.with {
+                    $0.preset = overlay.presetData
+                    $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!))
+                }
+                try await settingsController.syncSettings()
+
+                overlayTimer?.invalidate()
+                overlayTimer = Timer.scheduledTimer(withTimeInterval: overlay.overlayDurationSecs!, repeats: false) { _ in
+                    Task { @MainActor in
+                        self.settingsStore.settings.clearOverlay()
+                        try await self.settingsController.syncSettings()
+                    }
+                }
+
+                return
+            } 
+        } 
         settingsStore.settings.clearOverlay()
-        settingsController.syncSettings()
+        try await settingsController.syncSettings()
     }
-    
-    func loadOverlay(preset: Preset) {
-        if preset.presetData.id == settingsStore.defaultPreset.id {
-            settingsStore.settings.clearOverlay()
-            settingsController.syncSettings()
-            return
+
+    // Inclusive of loadOverlay
+    public func loadPresetLegacy(preset: Preset) async throws -> () {
+        if preset.overlayDurationSecs != nil {
+            if let parentPresetID = preset.parentPreset {
+                try await loadPreset(preset: ProfileManager.presetDefaults[parentPresetID]!, overlay: preset)
+                return
+            }
         }
-        
-        settingsStore.settings.overlay = Proxyservice_Overlay.with {
-            $0.preset = preset.presetData
-            $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: preset.overlayDurationSecs!))
-        }
-        settingsController.syncSettings()
+        try await loadPreset(preset: preset)
     }
     
     // Writes through to parachute preset
     public func loadParachutePreset(preset: Preset) {
-        loadPreset(preset: preset)
-        settingsStore.settings.parachutePreset = preset.presetData
-        settingsController.syncSettings()
+        Task.init(priority: .background) {
+            try await loadPreset(preset: preset)
+            settingsStore.settings.parachutePreset = preset.presetData
+            try await settingsController.syncSettings()
+        }
     }
     
-    static var presetDefaults: OrderedDictionary<String, Preset> = [
+    public static var presetDefaults: OrderedDictionary<String, Preset> = [
         "focus": Preset(
             name: "Active",
             icon: "🫧",
@@ -130,7 +152,8 @@ public class ProfileManager: ObservableObject {
                 $0.mode = .focus
             },
             mainColor: makeMainColor(2).opacity(OVERLAY_PRESET_OPACITY),
-            overlayDurationSecs: 60
+            parentPreset: "focus",
+            overlayDurationSecs: 10
         ),
         "casual": makeParachutePreset(ProfileManager.makeParachutePresetData(hp: 5)),
     ]

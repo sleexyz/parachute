@@ -10,7 +10,7 @@ import SwiftUI
 import Controllers
 
 struct HealSettings: View {
-    @EnvironmentObject var controller: SettingsController
+    @EnvironmentObject var settingsController: SettingsController
     var model: PresetViewModel
     
     @FocusState private var scrollTimeFocused: Bool
@@ -40,7 +40,9 @@ struct HealSettings: View {
                     .padding()
                     .removeFocusOnTap(enabled: scrollTimeFocused)
                     .onChange(of: model.scrollTimeLimit.wrappedValue) { _ in
-                        controller.syncSettings()
+                        Task.init(priority: .background) {
+                            try await settingsController.syncSettings()
+                        }
                     }
             }
             HStack {
@@ -52,18 +54,24 @@ struct HealSettings: View {
                     .padding()
                     .removeFocusOnTap(enabled: restTimeFocused)
                     .onChange(of: model.restTime.wrappedValue) { _ in
-                        controller.syncSettings()
+                        Task.init(priority: .background) {
+                            try await settingsController.syncSettings()
+                        }
                     }
             }
             VStack {
                 Toggle("Set max speed", isOn: baselineSpeedEnabled)
                     .onChange(of: baselineSpeedEnabled.wrappedValue) { _ in
-                        controller.syncSettings()
+                        Task.init(priority: .background) {
+                            try await settingsController.syncSettings()
+                        }
                     }
                     .tint(.purple)
                 if baselineSpeedEnabled.wrappedValue {
                     SpeedBar(speed: model.$presetData.usageBaseRxSpeedTarget, minSpeed: 40e3, maxSpeed: 10e6) {
-                        controller.syncSettings()
+                        Task.init(priority: .background) {
+                            try await settingsController.syncSettings()
+                        }
                     }
                     .tint(.purple)
                 }

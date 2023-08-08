@@ -10,6 +10,7 @@ import SwiftUI
 import ProxyService
 import OrderedCollections
 import Controllers
+import AppViews
 
 struct ProfileCardModifier: ViewModifier {
     @EnvironmentObject var profileManager: ProfileManager
@@ -40,20 +41,20 @@ struct ConnectedView: View {
 //            .animation(ANIMATION, value: profileManager.profileSelectorOpen)
 //            }
             
-            PresetSelector()
+            SimpleSelector()
                 .zIndex(2)
-            if !profileManager.profileSelectorOpen && !profileManager.presetSelectorOpen {
-                PresetContent()
-                    .animation(nil, value: profileManager.profileSelectorOpen)
-                    .padding(.top, 120)
-                    .frame(maxHeight: .infinity, alignment: .top)
-                    .zIndex(1)
-                    .transition(AnyTransition.asymmetric(
-                        insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2 )),
-                        removal: .opacity.animation(ANIMATION)
-                    ))
-                    .id(profileManager.activePreset.id)
-            }
+            // if !profileManager.profileSelectorOpen && !profileManager.presetSelectorOpen {
+            //     PresetContent()
+            //         .animation(nil, value: profileManager.profileSelectorOpen)
+            //         .padding(.top, 120)
+            //         .frame(maxHeight: .infinity, alignment: .top)
+            //         .zIndex(1)
+            //         .transition(AnyTransition.asymmetric(
+            //             insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2 )),
+            //             removal: .opacity.animation(ANIMATION)
+            //         ))
+            //         .id(profileManager.activePreset.id)
+            // }
             
 //            ProfileSelector()
 //                .zIndex(3)

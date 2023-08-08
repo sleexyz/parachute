@@ -7,29 +7,22 @@
 
 import Foundation
 import SwiftUI
-import Inject
 import Controllers
 
 struct SetupView: View {
     @EnvironmentObject private var service: VPNConfigurationService
-    @ObserveInjection var inject
 
     @State private var isLoading = false
     @State private var isShowingError = false
     @State private var errorMessage = ""
 
-
     var body: some View {
         NavigationView {
             VStack {
                 buttonInstall
-                //SpiralView(t: t)
             }.padding()
-                .enableInjection()
         }
     }
-
-
 
     private var buttonInstall: some View {
         PrimaryButton(
