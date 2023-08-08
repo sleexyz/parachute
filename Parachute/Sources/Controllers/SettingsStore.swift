@@ -27,6 +27,7 @@ public class SettingsStore: ObservableObject {
         public init() {}
     }
 
+    public static let id = Bundle.main.bundleIdentifier!
     public static let shared = SettingsStore()
     
     @Published public var settings: Proxyservice_Settings = {
@@ -47,6 +48,9 @@ public class SettingsStore: ObservableObject {
         logger.info("init settings store")
         $settings.dropFirst().sink {
             self.logger.info("Changed: \($0.debugDescription)")
+            // if !$0.hasOverlay {
+            //     WidgetCenter.shared.reloadAllTimelines()
+            // }
         }.store(in: &bag)
     }
     
@@ -58,7 +62,7 @@ public class SettingsStore: ObservableObject {
         return defaultPresetBinding.wrappedValue
     }
     
-    var isOverlayActive: Bool {
+    public var isOverlayActive: Bool {
         if Date.now < settings.overlay.expiry.date {
             return true
         }
@@ -118,9 +122,12 @@ public class SettingsStore: ObservableObject {
     public func load() throws {
         do {
             try loadFromFile()
+            logger.info("loaded settings from file")
         } catch CocoaError.fileNoSuchFile {
             try save()
-            return try loadFromFile()
+            try loadFromFile()
+            logger.info("created settings file")
+            return
         }
     }
     
@@ -163,6 +170,9 @@ public class SettingsStore: ObservableObject {
     }
     
     public func save() throws {
+        self.settings.changeMetadata = Proxyservice_ChangeMetadata.with {
+            $0.id = SettingsStore.id
+        }
         let data = try self.settings.serializedData()
         let outfile = try SettingsStore.fileUrl()
         try data.write(to:outfile)

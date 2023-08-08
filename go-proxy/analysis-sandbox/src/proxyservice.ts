@@ -90,7 +90,15 @@ export interface Settings {
     | undefined;
   /** Overlay preset */
   overlay: Overlay | undefined;
-  parachutePreset: Preset | undefined;
+  parachutePreset:
+    | Preset
+    | undefined;
+  /** Tracks the last change to the settings. */
+  changeMetadata: ChangeMetadata | undefined;
+}
+
+export interface ChangeMetadata {
+  id: string;
 }
 
 export interface Request {
@@ -390,7 +398,14 @@ export const Overlay = {
 };
 
 function createBaseSettings(): Settings {
-  return { version: 0, debug: false, defaultPreset: undefined, overlay: undefined, parachutePreset: undefined };
+  return {
+    version: 0,
+    debug: false,
+    defaultPreset: undefined,
+    overlay: undefined,
+    parachutePreset: undefined,
+    changeMetadata: undefined,
+  };
 }
 
 export const Settings = {
@@ -409,6 +424,9 @@ export const Settings = {
     }
     if (message.parachutePreset !== undefined) {
       Preset.encode(message.parachutePreset, writer.uint32(114).fork()).ldelim();
+    }
+    if (message.changeMetadata !== undefined) {
+      ChangeMetadata.encode(message.changeMetadata, writer.uint32(122).fork()).ldelim();
     }
     return writer;
   },
@@ -435,6 +453,9 @@ export const Settings = {
         case 14:
           message.parachutePreset = Preset.decode(reader, reader.uint32());
           break;
+        case 15:
+          message.changeMetadata = ChangeMetadata.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -450,6 +471,7 @@ export const Settings = {
       defaultPreset: isSet(object.defaultPreset) ? Preset.fromJSON(object.defaultPreset) : undefined,
       overlay: isSet(object.overlay) ? Overlay.fromJSON(object.overlay) : undefined,
       parachutePreset: isSet(object.parachutePreset) ? Preset.fromJSON(object.parachutePreset) : undefined,
+      changeMetadata: isSet(object.changeMetadata) ? ChangeMetadata.fromJSON(object.changeMetadata) : undefined,
     };
   },
 
@@ -462,6 +484,8 @@ export const Settings = {
     message.overlay !== undefined && (obj.overlay = message.overlay ? Overlay.toJSON(message.overlay) : undefined);
     message.parachutePreset !== undefined &&
       (obj.parachutePreset = message.parachutePreset ? Preset.toJSON(message.parachutePreset) : undefined);
+    message.changeMetadata !== undefined &&
+      (obj.changeMetadata = message.changeMetadata ? ChangeMetadata.toJSON(message.changeMetadata) : undefined);
     return obj;
   },
 
@@ -478,6 +502,56 @@ export const Settings = {
     message.parachutePreset = (object.parachutePreset !== undefined && object.parachutePreset !== null)
       ? Preset.fromPartial(object.parachutePreset)
       : undefined;
+    message.changeMetadata = (object.changeMetadata !== undefined && object.changeMetadata !== null)
+      ? ChangeMetadata.fromPartial(object.changeMetadata)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseChangeMetadata(): ChangeMetadata {
+  return { id: "" };
+}
+
+export const ChangeMetadata = {
+  encode(message: ChangeMetadata, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ChangeMetadata {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseChangeMetadata();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ChangeMetadata {
+    return { id: isSet(object.id) ? String(object.id) : "" };
+  },
+
+  toJSON(message: ChangeMetadata): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<ChangeMetadata>, I>>(object: I): ChangeMetadata {
+    const message = createBaseChangeMetadata();
+    message.id = object.id ?? "";
     return message;
   },
 };

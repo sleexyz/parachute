@@ -85,6 +85,13 @@ message Settings {
     reserved 13;
 
     Preset parachute_preset = 14;
+
+    // Tracks the last change to the settings.
+    ChangeMetadata change_metadata = 15;
+}
+
+message ChangeMetadata {
+    string id = 1;
 }
 
 message Request {

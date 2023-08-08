@@ -206,11 +206,33 @@ public struct Proxyservice_Settings {
   /// Clears the value of `parachutePreset`. Subsequent reads from it will return its default value.
   public mutating func clearParachutePreset() {_uniqueStorage()._parachutePreset = nil}
 
+  /// Tracks the last change to the settings.
+  public var changeMetadata: Proxyservice_ChangeMetadata {
+    get {return _storage._changeMetadata ?? Proxyservice_ChangeMetadata()}
+    set {_uniqueStorage()._changeMetadata = newValue}
+  }
+  /// Returns true if `changeMetadata` has been explicitly set.
+  public var hasChangeMetadata: Bool {return _storage._changeMetadata != nil}
+  /// Clears the value of `changeMetadata`. Subsequent reads from it will return its default value.
+  public mutating func clearChangeMetadata() {_uniqueStorage()._changeMetadata = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
+}
+
+public struct Proxyservice_ChangeMetadata {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var id: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
 }
 
 public struct Proxyservice_Request {
@@ -412,6 +434,7 @@ extension Proxyservice_Preset: @unchecked Sendable {}
 extension Proxyservice_TrafficRules: @unchecked Sendable {}
 extension Proxyservice_Overlay: @unchecked Sendable {}
 extension Proxyservice_Settings: @unchecked Sendable {}
+extension Proxyservice_ChangeMetadata: @unchecked Sendable {}
 extension Proxyservice_Request: @unchecked Sendable {}
 extension Proxyservice_Request.OneOf_Message: @unchecked Sendable {}
 extension Proxyservice_SetSettingsResponse: @unchecked Sendable {}
@@ -601,6 +624,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     11: .same(proto: "defaultPreset"),
     12: .same(proto: "overlay"),
     14: .standard(proto: "parachute_preset"),
+    15: .standard(proto: "change_metadata"),
   ]
 
   fileprivate class _StorageClass {
@@ -609,6 +633,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _defaultPreset: Proxyservice_Preset? = nil
     var _overlay: Proxyservice_Overlay? = nil
     var _parachutePreset: Proxyservice_Preset? = nil
+    var _changeMetadata: Proxyservice_ChangeMetadata? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -620,6 +645,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _defaultPreset = source._defaultPreset
       _overlay = source._overlay
       _parachutePreset = source._parachutePreset
+      _changeMetadata = source._changeMetadata
     }
   }
 
@@ -643,6 +669,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 11: try { try decoder.decodeSingularMessageField(value: &_storage._defaultPreset) }()
         case 12: try { try decoder.decodeSingularMessageField(value: &_storage._overlay) }()
         case 14: try { try decoder.decodeSingularMessageField(value: &_storage._parachutePreset) }()
+        case 15: try { try decoder.decodeSingularMessageField(value: &_storage._changeMetadata) }()
         default: break
         }
       }
@@ -670,6 +697,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       try { if let v = _storage._parachutePreset {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
       } }()
+      try { if let v = _storage._changeMetadata {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -684,10 +714,43 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._defaultPreset != rhs_storage._defaultPreset {return false}
         if _storage._overlay != rhs_storage._overlay {return false}
         if _storage._parachutePreset != rhs_storage._parachutePreset {return false}
+        if _storage._changeMetadata != rhs_storage._changeMetadata {return false}
         return true
       }
       if !storagesAreEqual {return false}
     }
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_ChangeMetadata: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ChangeMetadata"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.id.isEmpty {
+      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_ChangeMetadata, rhs: Proxyservice_ChangeMetadata) -> Bool {
+    if lhs.id != rhs.id {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
