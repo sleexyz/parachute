@@ -169,10 +169,8 @@ public class SettingsStore: ObservableObject {
         self.loaded = value
     }
     
-    public func save() throws {
-        self.settings.changeMetadata = Proxyservice_ChangeMetadata.with {
-            $0.id = SettingsStore.id
-        }
+    // NOTE: use SettingsController.save() instead of this method
+    func save() throws {
         let data = try self.settings.serializedData()
         let outfile = try SettingsStore.fileUrl()
         try data.write(to:outfile)

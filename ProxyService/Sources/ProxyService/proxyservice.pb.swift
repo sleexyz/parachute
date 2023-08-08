@@ -230,6 +230,8 @@ public struct Proxyservice_ChangeMetadata {
 
   public var id: String = String()
 
+  public var reason: String = String()
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -728,6 +730,7 @@ extension Proxyservice_ChangeMetadata: SwiftProtobuf.Message, SwiftProtobuf._Mes
   public static let protoMessageName: String = _protobuf_package + ".ChangeMetadata"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "id"),
+    2: .same(proto: "reason"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -737,6 +740,7 @@ extension Proxyservice_ChangeMetadata: SwiftProtobuf.Message, SwiftProtobuf._Mes
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.reason) }()
       default: break
       }
     }
@@ -746,11 +750,15 @@ extension Proxyservice_ChangeMetadata: SwiftProtobuf.Message, SwiftProtobuf._Mes
     if !self.id.isEmpty {
       try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
     }
+    if !self.reason.isEmpty {
+      try visitor.visitSingularStringField(value: self.reason, fieldNumber: 2)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Proxyservice_ChangeMetadata, rhs: Proxyservice_ChangeMetadata) -> Bool {
     if lhs.id != rhs.id {return false}
+    if lhs.reason != rhs.reason {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

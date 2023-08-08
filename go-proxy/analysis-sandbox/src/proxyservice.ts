@@ -99,6 +99,7 @@ export interface Settings {
 
 export interface ChangeMetadata {
   id: string;
+  reason: string;
 }
 
 export interface Request {
@@ -510,13 +511,16 @@ export const Settings = {
 };
 
 function createBaseChangeMetadata(): ChangeMetadata {
-  return { id: "" };
+  return { id: "", reason: "" };
 }
 
 export const ChangeMetadata = {
   encode(message: ChangeMetadata, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== "") {
       writer.uint32(10).string(message.id);
+    }
+    if (message.reason !== "") {
+      writer.uint32(18).string(message.reason);
     }
     return writer;
   },
@@ -531,6 +535,9 @@ export const ChangeMetadata = {
         case 1:
           message.id = reader.string();
           break;
+        case 2:
+          message.reason = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -540,18 +547,20 @@ export const ChangeMetadata = {
   },
 
   fromJSON(object: any): ChangeMetadata {
-    return { id: isSet(object.id) ? String(object.id) : "" };
+    return { id: isSet(object.id) ? String(object.id) : "", reason: isSet(object.reason) ? String(object.reason) : "" };
   },
 
   toJSON(message: ChangeMetadata): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.reason !== undefined && (obj.reason = message.reason);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<ChangeMetadata>, I>>(object: I): ChangeMetadata {
     const message = createBaseChangeMetadata();
     message.id = object.id ?? "";
+    message.reason = object.reason ?? "";
     return message;
   },
 };

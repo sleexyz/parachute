@@ -93,7 +93,7 @@ public class ProfileManager: ObservableObject {
                 overlayTimer = Timer.scheduledTimer(withTimeInterval: overlay.overlayDurationSecs!, repeats: false) { _ in
                     Task { @MainActor in
                         self.settingsStore.settings.clearOverlay()
-                        try await self.settingsController.syncSettings()
+                        try await self.settingsController.syncSettings(reason: "Overlay expired")
                     }
                 }
 
@@ -145,7 +145,7 @@ public class ProfileManager: ObservableObject {
             name: "Scroll break",
             type: .relax,
             description: "Slowing disabled.",
-            badgeText: "60s",
+            badgeText: "10s",
             presetData: Proxyservice_Preset.with {
                 $0.id = "relax"
                 $0.baseRxSpeedTarget = .infinity

@@ -48,7 +48,11 @@ public class SettingsController: ObservableObject {
         try self.store.save()
     }
     
-    public func syncSettings() async throws -> () {
+    public func syncSettings(reason: String = "") async throws -> () {
+        store.settings.changeMetadata = Proxyservice_ChangeMetadata.with {
+            $0.id = SettingsStore.id
+            $0.reason = reason
+        }
         try await service.SetSettings(settings: store.settings)
         try self.store.save()
     }
