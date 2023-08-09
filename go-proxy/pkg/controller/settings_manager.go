@@ -9,7 +9,8 @@ import (
 
 type SettingsChangeListener interface {
 	BeforeSettingsChange()
-	OnSettingsChange(oldPreset *proxyservice.Preset, newPreset *proxyservice.Preset)
+	OnPresetChange(oldPreset *proxyservice.Preset, newPreset *proxyservice.Preset)
+	OnSettingsChange(oldSettings *proxyservice.Settings, newSettings *proxyservice.Settings)
 }
 
 type SettingsProvider interface {
@@ -65,11 +66,14 @@ func (sm *SettingsManagerImpl) SetSettings(settings *proxyservice.Settings) {
 		settings.DefaultPreset = &proxyservice.Preset{}
 	}
 
+	oldSettings := sm.settings
+
 	log.Printf("settings: %v", settings)
 	oldPreset := sm.ActivePreset()
 	sm.settings = settings
 
 	for _, listener := range sm.changeListeners {
-		listener.OnSettingsChange(oldPreset, sm.ActivePreset())
+		listener.OnPresetChange(oldPreset, sm.ActivePreset())
+		listener.OnSettingsChange(oldSettings, settings)
 	}
 }

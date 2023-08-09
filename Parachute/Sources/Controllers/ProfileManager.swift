@@ -145,7 +145,7 @@ public class ProfileManager: ObservableObject {
             name: "Scroll break",
             type: .relax,
             description: "Slowing disabled.",
-            badgeText: "10s",
+            badgeText: "30s",
             presetData: Proxyservice_Preset.with {
                 $0.id = "relax"
                 $0.baseRxSpeedTarget = .infinity
@@ -153,7 +153,7 @@ public class ProfileManager: ObservableObject {
             },
             mainColor: makeMainColor(2).opacity(OVERLAY_PRESET_OPACITY),
             parentPreset: "focus",
-            overlayDurationSecs: 10
+            overlayDurationSecs: 30
         ),
         "casual": makeParachutePreset(ProfileManager.makeParachutePresetData(hp: 5)),
     ]

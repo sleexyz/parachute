@@ -21,6 +21,7 @@ type Controller struct {
 	sm             SettingsManager
 	dc             DeviceCallbacks
 	temporaryTimer *time.Timer
+	overlayTimer   *time.Timer
 	fm             map[string]*ControllableFlow
 	gcTicker       *time.Ticker
 
@@ -66,34 +67,64 @@ func (c *Controller) BeforeSettingsChange() {
 	// c.updateAppUsagePoints()
 }
 
-func (c *Controller) OnSettingsChange(oldPreset *proxyservice.Preset, newPreset *proxyservice.Preset) {
+func (c *Controller) OnSettingsChange(oldSettings *proxyservice.Settings, newSettings *proxyservice.Settings) {
+	if newSettings.Overlay != nil {
+		if newSettings.Overlay.Expiry.AsTime().After(time.Now()) {
+			c.setOverlayTimer(newSettings.Overlay.Expiry.AsTime())
+		} else {
+			c.evictExistingOverlayTimer()
+		}
+	}
+}
+
+func (c *Controller) OnPresetChange(oldPreset *proxyservice.Preset, newPreset *proxyservice.Preset) {
 	if oldPreset == nil || oldPreset.TemporaryRxSpeedExpiry != newPreset.TemporaryRxSpeedExpiry {
 		expiry := newPreset.TemporaryRxSpeedExpiry.AsTime()
 		if expiry.After(time.Now()) {
 			c.setTemporaryRxSpeedTimer(expiry)
 		} else {
-			c.evictExistingTimer()
+			c.evictExistingTemporaryRxSpeedTimer()
 		}
 	}
 	c.usagePoints.SetCap(newPreset.UsageMaxHP)
 }
 
-func (c *Controller) evictExistingTimer() {
+func (c *Controller) evictExistingOverlayTimer() {
+	if c.overlayTimer != nil {
+		c.overlayTimer.Stop()
+		c.overlayTimer = nil
+	}
+}
+
+func (c *Controller) evictExistingTemporaryRxSpeedTimer() {
 	if c.temporaryTimer != nil {
 		c.temporaryTimer.Stop()
 		c.temporaryTimer = nil
 	}
 }
 
+func (c *Controller) setOverlayTimer(expiry time.Time) {
+	c.evictExistingOverlayTimer()
+	c.overlayTimer = time.NewTimer(expiry.Sub(time.Now()))
+	go func() {
+		if c.overlayTimer == nil {
+			return
+		}
+		<-c.overlayTimer.C
+		c.dc.SendNotification("Overlay expired", "Overlay expired")
+		c.evictExistingOverlayTimer()
+	}()
+}
+
 func (c *Controller) setTemporaryRxSpeedTimer(expiry time.Time) {
-	c.evictExistingTimer()
+	c.evictExistingTemporaryRxSpeedTimer()
 	c.temporaryTimer = time.NewTimer(expiry.Sub(time.Now()))
 	go func() {
 		if c.temporaryTimer == nil {
 			return
 		}
 		<-c.temporaryTimer.C
-		c.evictExistingTimer()
+		c.evictExistingTemporaryRxSpeedTimer()
 	}()
 }
 
