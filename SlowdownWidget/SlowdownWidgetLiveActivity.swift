@@ -8,16 +8,7 @@
 import ActivityKit
 import WidgetKit
 import SwiftUI
-
-struct SlowdownWidgetAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        // Dynamic stateful properties about your activity go here!
-        var emoji: String
-    }
-
-    // Fixed non-changing properties about your activity go here!
-    var name: String
-}
+import Activities
 
 struct SlowdownWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {

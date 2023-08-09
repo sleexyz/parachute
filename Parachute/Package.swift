@@ -16,6 +16,14 @@ let package = Package(
             targets: ["Controllers"]
         ),
         .library(
+            name: "AppHelpers",
+            targets: ["AppHelpers"]
+        ),
+        .library(
+            name: "Activities",
+            targets: ["Activities"]
+        ),
+        .library(
             name: "Server",
             targets: ["Server"]
         ),
@@ -63,9 +71,19 @@ let package = Package(
             name: "RangeMapping"
         ),
         .target(
+            name: "Activities"
+        ),
+        .target(
+            name: "AppHelpers",
+            dependencies: [
+                "Activities",
+            ]
+        ),
+        .target(
             name: "AppViews",
             dependencies: [
                 "Controllers",
+                "AppHelpers",
             ]
         ),
         .target(

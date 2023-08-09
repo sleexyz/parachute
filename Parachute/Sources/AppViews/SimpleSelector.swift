@@ -1,5 +1,6 @@
 import SwiftUI
 import Controllers
+import AppHelpers
 
 
 public struct SimpleSelector: View {
@@ -17,6 +18,12 @@ public struct SimpleSelector: View {
                             preset: ProfileManager.presetDefaults["focus"]!,
                             overlay: ProfileManager.presetDefaults["relax"]!
                         )
+                    }
+                    
+                    if #available(iOS 16.2, *) {
+                        ActivitiesHelper.shared.start()
+                    } else {
+                        // Fallback on earlier versions
                     }
                 }) {
                     Text("Start scroll break 🍪")
