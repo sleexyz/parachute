@@ -9,17 +9,33 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 import Activities
+import Controllers
+import CommonLoaders
+import ProxyService
+import SwiftProtobuf
+
+struct SlowdownWidgetLiveActivityView: View {
+    var isStale: Bool
+    var contentState: SlowdownWidgetAttributes.ContentState
+
+    var body: some View {
+        SlowdownWidgetView(
+            settings: contentState.settings
+        )
+    }
+}
 
 struct SlowdownWidgetLiveActivity: Widget {
+    init() {
+        try? SettingsStore.shared.load()
+    }
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: SlowdownWidgetAttributes.self) { context in
-            // Lock screen/banner UI goes here
-            VStack {
-                Text("Hello \(context.state.emoji)")
-            }
-            .activityBackgroundTint(Color.cyan)
-            .activitySystemActionForegroundColor(Color.black)
-
+            SlowdownWidgetView(settings: context.state.settings)
+                .activityBackgroundTint(Color(.systemGray4).opacity(0.6))
+                .padding([.leading, .trailing], 20)
+                .activitySystemActionForegroundColor(.black)
+            
         } dynamicIsland: { context in
             DynamicIsland {
                 // Expanded UI goes here.  Compose the expanded UI through
@@ -31,15 +47,15 @@ struct SlowdownWidgetLiveActivity: Widget {
                     Text("Trailing")
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.state.emoji)")
+                    Text("Bottom \(context.state.settings.activePreset.id)")
                     // more content
                 }
             } compactLeading: {
                 Text("L")
             } compactTrailing: {
-                Text("T \(context.state.emoji)")
+                Text("T \(context.state.settings.activePreset.id)")
             } minimal: {
-                Text(context.state.emoji)
+                Text(context.state.settings.activePreset.id)
             }
             .widgetURL(URL(string: "http://www.apple.com"))
             .keylineTint(Color.red)
@@ -48,24 +64,26 @@ struct SlowdownWidgetLiveActivity: Widget {
 }
 
 extension SlowdownWidgetAttributes {
-    fileprivate static var preview: SlowdownWidgetAttributes {
-        SlowdownWidgetAttributes(name: "World")
+   fileprivate static var preview: SlowdownWidgetAttributes {
+       SlowdownWidgetAttributes()
+   }
+}
+
+
+
+extension SlowdownWidgetAttributes.ContentState {
+   fileprivate static var focus: SlowdownWidgetAttributes.ContentState {
+       SlowdownWidgetAttributes.ContentState(settings: .focus)
+    }
+    
+    fileprivate static var relax: SlowdownWidgetAttributes.ContentState {
+        SlowdownWidgetAttributes.ContentState(settings: .relax)
     }
 }
 
-extension SlowdownWidgetAttributes.ContentState {
-    fileprivate static var smiley: SlowdownWidgetAttributes.ContentState {
-        SlowdownWidgetAttributes.ContentState(emoji: "😀")
-     }
-     
-     fileprivate static var starEyes: SlowdownWidgetAttributes.ContentState {
-         SlowdownWidgetAttributes.ContentState(emoji: "🤩")
-     }
-}
-
 #Preview("Notification", as: .content, using: SlowdownWidgetAttributes.preview) {
-   SlowdownWidgetLiveActivity()
+  SlowdownWidgetLiveActivity()
 } contentStates: {
-    SlowdownWidgetAttributes.ContentState.smiley
-    SlowdownWidgetAttributes.ContentState.starEyes
+   SlowdownWidgetAttributes.ContentState.focus
+   SlowdownWidgetAttributes.ContentState.relax
 }

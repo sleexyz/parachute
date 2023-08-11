@@ -111,7 +111,7 @@ func (c *Controller) setOverlayTimer(expiry time.Time) {
 			return
 		}
 		<-c.overlayTimer.C
-		c.dc.SendNotification("Overlay expired", "Overlay expired")
+		// c.dc.SendNotification("Overlay expired", "Overlay expired")
 		c.evictExistingOverlayTimer()
 	}()
 }

@@ -12,6 +12,7 @@ import SwiftUI
 import Logging
 import Combine
 import DI
+import Models
 
 
 struct HandlerWrapper {
@@ -29,12 +30,8 @@ public class SettingsStore: ObservableObject {
 
     public static let id = Bundle.main.bundleIdentifier!
     public static let shared = SettingsStore()
-    
-    @Published public var settings: Proxyservice_Settings = {
-        var settings = Proxyservice_Settings()
-        SettingsMigrations.setDefaults(settings: &settings)
-        return settings
-    }()
+
+    @Published public var settings: Proxyservice_Settings = .defaultSettings
 
     @Published public var savedSettings: Proxyservice_Settings? = nil
     

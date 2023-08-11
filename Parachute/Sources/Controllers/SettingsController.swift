@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import ProxyService
 import DI
+import SwiftProtobuf
 
 // Operations for changing settings
 public class SettingsController: ObservableObject {
@@ -52,6 +53,7 @@ public class SettingsController: ObservableObject {
         store.settings.changeMetadata = Proxyservice_ChangeMetadata.with {
             $0.id = SettingsStore.id
             $0.reason = reason
+            $0.timestamp = Google_Protobuf_Timestamp(date: Date())
         }
         try await service.SetSettings(settings: store.settings)
         try self.store.save()

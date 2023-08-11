@@ -100,6 +100,7 @@ export interface Settings {
 export interface ChangeMetadata {
   id: string;
   reason: string;
+  timestamp: Date | undefined;
 }
 
 export interface Request {
@@ -511,7 +512,7 @@ export const Settings = {
 };
 
 function createBaseChangeMetadata(): ChangeMetadata {
-  return { id: "", reason: "" };
+  return { id: "", reason: "", timestamp: undefined };
 }
 
 export const ChangeMetadata = {
@@ -521,6 +522,9 @@ export const ChangeMetadata = {
     }
     if (message.reason !== "") {
       writer.uint32(18).string(message.reason);
+    }
+    if (message.timestamp !== undefined) {
+      Timestamp.encode(toTimestamp(message.timestamp), writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -538,6 +542,9 @@ export const ChangeMetadata = {
         case 2:
           message.reason = reader.string();
           break;
+        case 3:
+          message.timestamp = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -547,13 +554,18 @@ export const ChangeMetadata = {
   },
 
   fromJSON(object: any): ChangeMetadata {
-    return { id: isSet(object.id) ? String(object.id) : "", reason: isSet(object.reason) ? String(object.reason) : "" };
+    return {
+      id: isSet(object.id) ? String(object.id) : "",
+      reason: isSet(object.reason) ? String(object.reason) : "",
+      timestamp: isSet(object.timestamp) ? fromJsonTimestamp(object.timestamp) : undefined,
+    };
   },
 
   toJSON(message: ChangeMetadata): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
     message.reason !== undefined && (obj.reason = message.reason);
+    message.timestamp !== undefined && (obj.timestamp = message.timestamp.toISOString());
     return obj;
   },
 
@@ -561,6 +573,7 @@ export const ChangeMetadata = {
     const message = createBaseChangeMetadata();
     message.id = object.id ?? "";
     message.reason = object.reason ?? "";
+    message.timestamp = object.timestamp ?? undefined;
     return message;
   },
 };

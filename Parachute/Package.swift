@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "Parachute",
-    platforms: [.iOS(.v15)],
+    platforms: [.iOS(.v16)],
     products: [
         .library(
             name: "AppViews",
@@ -71,12 +71,16 @@ let package = Package(
             name: "RangeMapping"
         ),
         .target(
-            name: "Activities"
+            name: "Activities",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+            ]
         ),
         .target(
             name: "AppHelpers",
             dependencies: [
                 "Activities",
+                .product(name: "ProxyService", package: "ProxyService"),
             ]
         ),
         .target(
@@ -106,6 +110,7 @@ let package = Package(
                 "Common",
                 "DI",
                 "Models",
+                "AppHelpers",
                 .product(name: "ProxyService", package: "ProxyService"),
                 .product(name: "OrderedCollections", package: "swift-collections"),
                 .product(name: "Logging", package: "swift-log"),
