@@ -54,5 +54,51 @@ public struct Preset {
     public var scrollTimeLimit: Double {
         return self.presetData.usageMaxHp / 2
     }
+
+    public static var relax: Preset {
+        Preset(
+            name: "Scroll break",
+            type: .relax,
+            description: "Slowing disabled.",
+            badgeText: "15s",
+            presetData: .relax,
+            mainColor: .blue,
+            parentPreset: "focus",
+            overlayDurationSecs: 15
+        )
+    }
+
+    public static var focus: Preset {
+        Preset(
+            name: "Active",
+            icon: "🫧",
+            type: .focus,
+            description: "Slowing down content...",
+            badgeText: "∞",
+            presetData: .focus,
+            mainColor: .blue,
+            childPresets: [
+                "relax"
+            ]
+        )
+    }
+}
+
+public extension Proxyservice_Preset {
+    static var focus: Proxyservice_Preset {
+        Proxyservice_Preset.with {
+            $0.id = "focus"
+            $0.baseRxSpeedTarget = 40e3
+            $0.mode = .focus
+        }
+    }
+
+    static var relax: Proxyservice_Preset {
+        Proxyservice_Preset.with {
+            $0.id = "relax"
+            $0.baseRxSpeedTarget = .infinity
+            $0.mode = .focus
+        }
+    }
 }
 

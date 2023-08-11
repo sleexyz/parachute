@@ -15,6 +15,7 @@ import SwiftProtobuf
 import DI
 import Models
 import RangeMapping
+import AppHelpers
 
 var PRESET_OPACITY: Double = 0.8
 var OVERLAY_PRESET_OPACITY: Double = PRESET_OPACITY * 0.3
@@ -94,6 +95,9 @@ public class ProfileManager: ObservableObject {
                     Task { @MainActor in
                         self.settingsStore.settings.clearOverlay()
                         try await self.settingsController.syncSettings(reason: "Overlay expired")
+                        if #available(iOS 16.2, *) {
+                            await ActivitiesHelper.shared.update(settings: self.settingsStore.settings)
+                        }
                     }
                 }
 
@@ -125,36 +129,8 @@ public class ProfileManager: ObservableObject {
     }
     
     public static var presetDefaults: OrderedDictionary<String, Preset> = [
-        "focus": Preset(
-            name: "Active",
-            icon: "🫧",
-            type: .focus,
-            description: "Slowing down content...",
-            badgeText: "∞",
-            presetData: Proxyservice_Preset.with {
-                $0.id = "focus"
-                $0.baseRxSpeedTarget = 40e3
-                $0.mode = .focus
-            },
-            mainColor: makeMainColor(2).opacity(PRESET_OPACITY),
-            childPresets: [
-                "relax"
-            ]
-        ),
-        "relax": Preset(
-            name: "Scroll break",
-            type: .relax,
-            description: "Slowing disabled.",
-            badgeText: "30s",
-            presetData: Proxyservice_Preset.with {
-                $0.id = "relax"
-                $0.baseRxSpeedTarget = .infinity
-                $0.mode = .focus
-            },
-            mainColor: makeMainColor(2).opacity(OVERLAY_PRESET_OPACITY),
-            parentPreset: "focus",
-            overlayDurationSecs: 30
-        ),
+        "focus": .focus,
+        "relax": .relax,
         "casual": makeParachutePreset(ProfileManager.makeParachutePresetData(hp: 5)),
     ]
     

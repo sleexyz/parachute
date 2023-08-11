@@ -56,11 +56,9 @@
 		A077852029779CB50038BB4B /* Ffi.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A077851F29779CB50038BB4B /* Ffi.xcframework */; };
 		A0790B2B2A74689C00A24338 /* Carousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0790B2A2A74689C00A24338 /* Carousel.swift */; };
 		A0790B2F2A75611800A24338 /* 2023-07-29-swirl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0790B2E2A75611800A24338 /* 2023-07-29-swirl.swift */; };
-		A080EDF0294F7B89005401E4 /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDEF294F7B89005401E4 /* ProxyService */; };
 		A080EDF6294F9864005401E4 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF5294F9864005401E4 /* Logging */; };
 		A080EDF8294F9868005401E4 /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF7294F9868005401E4 /* LoggingOSLog */; };
 		A081F232295BB3D700863FE3 /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F231295BB3D700863FE3 /* SetupView.swift */; };
-		A081F2382967B10600863FE3 /* ProxyService in Frameworks */ = {isa = PBXBuildFile; productRef = A081F2372967B10600863FE3 /* ProxyService */; };
 		A081F23A2967B10F00863FE3 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A081F2392967B10F00863FE3 /* SwiftProtobuf */; };
 		A081F23C2967B10F00863FE3 /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = A081F23B2967B10F00863FE3 /* SwiftProtobufPluginLibrary */; };
 		A081F24E296922F300863FE3 /* StateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F24D296922F300863FE3 /* StateController.swift */; };
@@ -77,9 +75,16 @@
 		A0915BDC2991FB2700874313 /* TunConn.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BDB2991FB2700874313 /* TunConn.swift */; };
 		A096625529C8E93C00D2E0A9 /* PresetSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625429C8E93C00D2E0A9 /* PresetSelector.swift */; };
 		A096625729C93EFC00D2E0A9 /* ParachutePresetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */; };
+		A0975B452A83261D0079FCBD /* StartSessionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0975B432A8325870079FCBD /* StartSessionIntent.swift */; };
+		A0975B472A832DA70079FCBD /* AppHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A0975B462A832DA70079FCBD /* AppHelpers */; };
+		A0975B492A832F380079FCBD /* AppHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A0975B482A832F380079FCBD /* AppHelpers */; };
+		A0975B4B2A8448DD0079FCBD /* StartSessionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0975B432A8325870079FCBD /* StartSessionIntent.swift */; };
 		A09C5A0029BC26B70077A59B /* PresetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C59FF29BC26B70077A59B /* PresetContent.swift */; };
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
+		A0AB50402A84846B002C84FB /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = A0AB503F2A84846B002C84FB /* Models */; };
 		A0E71ABA299DC9D60009B6E4 /* DeviceCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E71AB9299DC9D60009B6E4 /* DeviceCallbacks.swift */; };
+		A0EE20AC2A82E84E00F34B98 /* Activities in Frameworks */ = {isa = PBXBuildFile; productRef = A0EE20AB2A82E84E00F34B98 /* Activities */; };
+		A0EE20AE2A82E86300F34B98 /* Activities in Frameworks */ = {isa = PBXBuildFile; productRef = A0EE20AD2A82E86300F34B98 /* Activities */; };
 		A0F094442A74583600F1C8CB /* UIPlaygroundApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F094432A74583600F1C8CB /* UIPlaygroundApp.swift */; };
 		A0F094462A74583600F1C8CB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F094452A74583600F1C8CB /* ContentView.swift */; };
 		A0F094482A74583700F1C8CB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0F094472A74583700F1C8CB /* Assets.xcassets */; };
@@ -198,7 +203,6 @@
 		A04ADFBA2A7B5513008700C4 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
 		A04ADFBC2A7B5515008700C4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A04ADFBE2A7B5515008700C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A04FADA2294F7A9F0002C19B /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ProxyService; sourceTree = "<group>"; };
 		A052AE1D29977B3700AB43B7 /* StateUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateUpdater.swift; sourceTree = "<group>"; };
 		A052AE1F299A900100AB43B7 /* HealButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealButton.swift; sourceTree = "<group>"; };
 		A068DCF129A6FA4F0036E9A2 /* Cardable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cardable.swift; sourceTree = "<group>"; };
@@ -224,8 +228,10 @@
 		A0915BDB2991FB2700874313 /* TunConn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunConn.swift; sourceTree = "<group>"; };
 		A096625429C8E93C00D2E0A9 /* PresetSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetSelector.swift; sourceTree = "<group>"; };
 		A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParachutePresetPicker.swift; sourceTree = "<group>"; };
+		A0975B432A8325870079FCBD /* StartSessionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartSessionIntent.swift; sourceTree = "<group>"; };
 		A09C59FF29BC26B70077A59B /* PresetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetContent.swift; sourceTree = "<group>"; };
 		A0E71AB9299DC9D60009B6E4 /* DeviceCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCallbacks.swift; sourceTree = "<group>"; };
+		A0EE20AF2A82EBA500F34B98 /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ProxyService; sourceTree = "<group>"; };
 		A0F094412A74583500F1C8CB /* UIPlayground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UIPlayground.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0F094432A74583600F1C8CB /* UIPlaygroundApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIPlaygroundApp.swift; sourceTree = "<group>"; };
 		A0F094452A74583600F1C8CB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -249,9 +255,9 @@
 				A01AB95E2A7D8015004E87B3 /* Controllers in Frameworks */,
 				A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */,
 				A05AD0B3285D0CD100878904 /* NIO in Frameworks */,
-				A080EDF0294F7B89005401E4 /* ProxyService in Frameworks */,
 				A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */,
 				A080EDF8294F9868005401E4 /* LoggingOSLog in Frameworks */,
+				A0EE20AE2A82E86300F34B98 /* Activities in Frameworks */,
 				A056C36E2A819E8F00E4ED9A /* AppViews in Frameworks */,
 				A04FAD9C294D60960002C19B /* SwiftProtobuf in Frameworks */,
 				A056C36C2A819E8A00E4ED9A /* CommonLoaders in Frameworks */,
@@ -283,6 +289,8 @@
 				A04ADFB02A7B5513008700C4 /* WidgetKit.framework in Frameworks */,
 				A00A09D02A7EEF7100011260 /* Logging in Frameworks */,
 				A056C36A2A819E7F00E4ED9A /* CommonLoaders in Frameworks */,
+				A0EE20AC2A82E84E00F34B98 /* Activities in Frameworks */,
+				A0975B492A832F380079FCBD /* AppHelpers in Frameworks */,
 				A00A09CE2A7EDA7000011260 /* Controllers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -291,12 +299,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0AB50402A84846B002C84FB /* Models in Frameworks */,
 				A08719E4281A617500113F3F /* NetworkExtension.framework in Frameworks */,
 				A081F23C2967B10F00863FE3 /* SwiftProtobufPluginLibrary in Frameworks */,
+				A0975B472A832DA70079FCBD /* AppHelpers in Frameworks */,
 				A077852029779CB50038BB4B /* Ffi.xcframework in Frameworks */,
 				A0458C0128614D6500CE4CCB /* LoggingOSLog in Frameworks */,
 				A089610C2A7D8B3200742B70 /* Common in Frameworks */,
-				A081F2382967B10600863FE3 /* ProxyService in Frameworks */,
 				A089610E2A7D8C5200742B70 /* Server in Frameworks */,
 				A04332CA296BA21A00D69210 /* FirebaseCrashlytics in Frameworks */,
 				A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */,
@@ -331,10 +340,11 @@
 		A02F58D327A6F14500D3330F = {
 			isa = PBXGroup;
 			children = (
+				A0975B4A2A84488D0079FCBD /* App Intent */,
+				A0EE20AF2A82EBA500F34B98 /* ProxyService */,
 				A089610F2A7DA22700742B70 /* SlowdownWidgetExtensionDebug.entitlements */,
 				A01BBC9A2A7D7A450027FF75 /* Parachute */,
 				A077851D297785490038BB4B /* ci_scripts */,
-				A04FADA2294F7A9F0002C19B /* ProxyService */,
 				A02F58DE27A6F14500D3330F /* ParachuteApp */,
 				A02F58EF27A6F14600D3330F /* ParachuteAppTests */,
 				A02F58F927A6F14600D3330F /* ParachuteAppUITests */,
@@ -495,6 +505,14 @@
 			path = tunnel;
 			sourceTree = "<group>";
 		};
+		A0975B4A2A84488D0079FCBD /* App Intent */ = {
+			isa = PBXGroup;
+			children = (
+				A0975B432A8325870079FCBD /* StartSessionIntent.swift */,
+			);
+			path = "App Intent";
+			sourceTree = "<group>";
+		};
 		A0F094422A74583600F1C8CB /* UIPlayground */ = {
 			isa = PBXGroup;
 			children = (
@@ -543,7 +561,6 @@
 				A05AD0B2285D0CD100878904 /* NIO */,
 				A0717CCC294D260C00186AFE /* SwiftProtobufPluginLibrary */,
 				A04FAD9B294D60960002C19B /* SwiftProtobuf */,
-				A080EDEF294F7B89005401E4 /* ProxyService */,
 				A080EDF5294F9864005401E4 /* Logging */,
 				A080EDF7294F9868005401E4 /* LoggingOSLog */,
 				A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */,
@@ -553,6 +570,7 @@
 				A01AB95D2A7D8015004E87B3 /* Controllers */,
 				A056C36B2A819E8A00E4ED9A /* CommonLoaders */,
 				A056C36D2A819E8F00E4ED9A /* AppViews */,
+				A0EE20AD2A82E86300F34B98 /* Activities */,
 			);
 			productName = slowdown;
 			productReference = A02F58DC27A6F14500D3330F /* slowdown.app */;
@@ -614,6 +632,8 @@
 				A00A09CF2A7EEF7100011260 /* Logging */,
 				A00A09D12A7EEF9100011260 /* LoggingOSLog */,
 				A056C3692A819E7F00E4ED9A /* CommonLoaders */,
+				A0EE20AB2A82E84E00F34B98 /* Activities */,
+				A0975B482A832F380079FCBD /* AppHelpers */,
 			);
 			productName = SlowdownWidgetExtension;
 			productReference = A04ADFAE2A7B5513008700C4 /* SlowdownWidgetExtension.appex */;
@@ -637,12 +657,13 @@
 			packageProductDependencies = (
 				A0458BF9285FB5A300CE4CCB /* Logging */,
 				A0458C0028614D6500CE4CCB /* LoggingOSLog */,
-				A081F2372967B10600863FE3 /* ProxyService */,
 				A081F2392967B10F00863FE3 /* SwiftProtobuf */,
 				A081F23B2967B10F00863FE3 /* SwiftProtobufPluginLibrary */,
 				A04332C9296BA21A00D69210 /* FirebaseCrashlytics */,
 				A089610B2A7D8B3200742B70 /* Common */,
 				A089610D2A7D8C5200742B70 /* Server */,
+				A0975B462A832DA70079FCBD /* AppHelpers */,
+				A0AB503F2A84846B002C84FB /* Models */,
 			);
 			productName = tunnel;
 			productReference = A08719E3281A617500113F3F /* tunnel.appex */;
@@ -852,6 +873,7 @@
 				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,
 				A052AE1E29977B3700AB43B7 /* StateUpdater.swift in Sources */,
 				A024F15929A467D2007B572A /* HealSettings.swift in Sources */,
+				A0975B4B2A8448DD0079FCBD /* StartSessionIntent.swift in Sources */,
 				A081F232295BB3D700863FE3 /* SetupView.swift in Sources */,
 				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
 				A01B059E29850A6300298976 /* Preview Helpers.swift in Sources */,
@@ -885,6 +907,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A04ADFB72A7B5513008700C4 /* SlowdownWidgetLiveActivity.swift in Sources */,
+				A0975B452A83261D0079FCBD /* StartSessionIntent.swift in Sources */,
 				A04ADFBB2A7B5513008700C4 /* AppIntent.swift in Sources */,
 				A04ADFB92A7B5513008700C4 /* SlowdownWidget.swift in Sources */,
 				A04ADFB52A7B5513008700C4 /* SlowdownWidgetBundle.swift in Sources */,
@@ -1072,12 +1095,14 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ParachuteApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Parachute;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1116,12 +1141,14 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ParachuteApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Parachute;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1304,7 +1331,7 @@
 				INFOPLIST_FILE = tunnel/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = tunnel;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1333,7 +1360,7 @@
 				INFOPLIST_FILE = tunnel/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = tunnel;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1623,10 +1650,6 @@
 			package = A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobufPluginLibrary;
 		};
-		A080EDEF294F7B89005401E4 /* ProxyService */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ProxyService;
-		};
 		A080EDF5294F9864005401E4 /* Logging */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */;
@@ -1636,10 +1659,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A0458BFF28614D6500CE4CCB /* XCRemoteSwiftPackageReference "swift-log-oslog" */;
 			productName = LoggingOSLog;
-		};
-		A081F2372967B10600863FE3 /* ProxyService */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ProxyService;
 		};
 		A081F2392967B10F00863FE3 /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1659,10 +1678,30 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Server;
 		};
+		A0975B462A832DA70079FCBD /* AppHelpers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppHelpers;
+		};
+		A0975B482A832F380079FCBD /* AppHelpers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppHelpers;
+		};
 		A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A0A81D5A296B98D800B9E1DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
+		};
+		A0AB503F2A84846B002C84FB /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
+		};
+		A0EE20AB2A82E84E00F34B98 /* Activities */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Activities;
+		};
+		A0EE20AD2A82E86300F34B98 /* Activities */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Activities;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
