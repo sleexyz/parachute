@@ -11,6 +11,7 @@ import ProxyService
 import OrderedCollections
 import Controllers
 import AppViews
+import CommonViews
 
 struct ProfileCardModifier: ViewModifier {
     @EnvironmentObject var profileManager: ProfileManager
@@ -21,45 +22,23 @@ struct ProfileCardModifier: ViewModifier {
 }
 
 struct ConnectedView: View {
-    @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
-    @EnvironmentObject var service: VPNConfigurationService
-    @EnvironmentObject var stateController: StateController
+    @EnvironmentObject var scrollSessionViewController: ScrollSessionViewController
     @EnvironmentObject var settingsStore: SettingsStore
-    @EnvironmentObject var profileManager: ProfileManager
-    
-    @Namespace var namespace
     
     var body: some View {
-        ZStack(alignment: .top) {
-//            if !profileManager.profileSelectorOpen {
-//            ProfileHeader(
-//                profile: profileManager.activeProfile
-//            )
-//            .frame(maxWidth: .infinity, alignment: .leading)
-//            .offset(y: 60)
-//            .zIndex(0)
-//            .animation(ANIMATION, value: profileManager.profileSelectorOpen)
-//            }
-            
-            SimpleSelector()
-                .zIndex(2)
-            // if !profileManager.profileSelectorOpen && !profileManager.presetSelectorOpen {
-            //     PresetContent()
-            //         .animation(nil, value: profileManager.profileSelectorOpen)
-            //         .padding(.top, 120)
-            //         .frame(maxHeight: .infinity, alignment: .top)
-            //         .zIndex(1)
-            //         .transition(AnyTransition.asymmetric(
-            //             insertion: .opacity.animation(ANIMATION.delay(ANIMATION_SECS * 2 )),
-            //             removal: .opacity.animation(ANIMATION)
-            //         ))
-            //         .id(profileManager.activePreset.id)
-            // }
-            
-//            ProfileSelector()
-//                .zIndex(3)
+        Group {
+            if scrollSessionViewController.open {
+                ScrollSessionView()
+            } else {
+                if #available(iOS 17.0, *) {
+                    SlowdownWidgetView(settings: settingsStore.settings)
+                        .padding()
+                } else {
+                    SimpleSelector()
+                }
+            }
         }
-        .namespace(namespace)
+        .backgroundStyle(Color.parachuteBgDark)
     }
 }
 

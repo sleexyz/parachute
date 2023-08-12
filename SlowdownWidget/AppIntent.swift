@@ -9,6 +9,7 @@ import WidgetKit
 import AppIntents
 import Controllers
 
+@available(iOS 17.0, *)
 struct ConfigurationAppIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "Configuration"
     static var description = IntentDescription("This is an example widget.")

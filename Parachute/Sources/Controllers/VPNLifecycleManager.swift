@@ -35,7 +35,7 @@ public class VPNLifecycleManager: ObservableObject {
     public func pauseConnection() {
         Task {
             try await self.vpnConfigurationService.stopConnectionAndDisableOnDemand()
-            let request = BGAppRefreshTaskRequest(identifier: "industries.strange.slowdown.unpause")
+            let request = BGAppRefreshTaskRequest(identifier: VPNConfigurationService.unpauseIdentifier)
             request.earliestBeginDate = Date(timeIntervalSinceNow: 60*60)
             do {
                 try BGTaskScheduler.shared.submit(request)

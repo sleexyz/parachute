@@ -25,10 +25,8 @@ struct AppView: View {
             } else {
                 WidgetUpdater {
                     ConnectedView()
-                    .modifier(StateUpdater.IsVisibleUpdater())
                         .provideDeps([
-                            StateUpdater.Provider(),
-                            StateController.Provider()
+                            ScrollSessionViewController.Provider()
                         ])
                 }
             }

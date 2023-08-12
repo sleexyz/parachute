@@ -12,6 +12,10 @@ let package = Package(
             targets: ["AppViews"]
         ),
         .library(
+            name: "CommonViews",
+            targets: ["CommonViews"]
+        ),
+        .library(
             name: "Controllers",
             targets: ["Controllers"]
         ),
@@ -88,7 +92,11 @@ let package = Package(
             dependencies: [
                 "Controllers",
                 "AppHelpers",
+                "CommonViews",
             ]
+        ),
+        .target(
+            name: "CommonViews"
         ),
         .target(
             name: "CommonLoaders",

@@ -32,6 +32,7 @@ public class ProfileManager: ObservableObject {
         }
         public init() {}
     }
+    private let logger: Logger = Logger(label: "industries.strange.slowdown.ProfileManager")
     var settingsStore: SettingsStore
     var settingsController: SettingsController
     var bag = Set<AnyCancellable>()
@@ -78,34 +79,49 @@ public class ProfileManager: ObservableObject {
         return map
     }
 
-        
+    
+    // NOTE: this does not support long overlays very well.
     @MainActor
     public func loadPreset(preset: Preset, overlay: Preset? = nil) async throws -> () {
         settingsStore.settings.defaultPreset = preset.presetData
-        if let overlay = overlay {
-            if overlay.overlayDurationSecs != nil {
-                settingsStore.settings.overlay = Proxyservice_Overlay.with {
-                    $0.preset = overlay.presetData
-                    $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!))
-                }
-                try await settingsController.syncSettings()
+        
+        guard let overlay = overlay else {
+            settingsStore.settings.clearOverlay()
+            try await settingsController.syncSettings()
+            return
+        }
 
-                overlayTimer?.invalidate()
-                overlayTimer = Timer.scheduledTimer(withTimeInterval: overlay.overlayDurationSecs!, repeats: false) { _ in
-                    Task { @MainActor in
-                        self.settingsStore.settings.clearOverlay()
-                        try await self.settingsController.syncSettings(reason: "Overlay expired")
-                        if #available(iOS 16.2, *) {
-                            await ActivitiesHelper.shared.update(settings: self.settingsStore.settings)
-                        }
+        guard overlay.overlayDurationSecs != nil else {
+            throw UnexpectedError.unexpectedError
+        }
+        settingsStore.settings.overlay = Proxyservice_Overlay.with {
+            $0.preset = overlay.presetData
+            $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!))
+        }
+        try await settingsController.syncSettings()
+        overlayTimer?.invalidate()
+        let taskId = UIApplication.shared.beginBackgroundTask(withName: "overlayExpiry") {
+            self.logger.info("We are about to kill your task")
+         }
+        
+        overlayTimer = Timer.scheduledTimer(withTimeInterval: overlay.overlayDurationSecs!, repeats: false) { _ in
+            Task { @MainActor in
+                defer {
+                    self.overlayTimer?.invalidate()
+                    if UIApplication.shared.backgroundTimeRemaining <= 10 {
+                        UIApplication.shared.endBackgroundTask(taskId)
                     }
                 }
-
-                return
-            } 
-        } 
-        settingsStore.settings.clearOverlay()
-        try await settingsController.syncSettings()
+                self.settingsStore.settings.clearOverlay()
+                try await self.settingsController.syncSettings(reason: "Overlay expired")
+                if #available(iOS 16.2, *) {
+                    await ActivitiesHelper.shared.update(settings: self.settingsStore.settings)
+                }
+            }
+        }
+        
+        return
+        
     }
 
     // Inclusive of loadOverlay
@@ -130,7 +146,7 @@ public class ProfileManager: ObservableObject {
     
     public static var presetDefaults: OrderedDictionary<String, Preset> = [
         "focus": .focus,
-        "relax": .relax,
+        "relax": .quickBreak,
         "casual": makeParachutePreset(ProfileManager.makeParachutePresetData(hp: 5)),
     ]
     
@@ -143,16 +159,6 @@ public class ProfileManager: ObservableObject {
         }
     }
     
-    static func makeMainColor(_ value: Double) -> Color {
-        var h, s, b, a: CGFloat
-        (h, s, b, a) = (0, 0, 0, 0)
-        UIColor(.blue).getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-        h = h + Mapping(a: 0, b: 5, c: 0.1, d: 0.35).map(value)
-        s = Mapping(a: 0, b: 5, c: 0.5, d: 0.5).map(value)
-        b = Mapping(a: 0, b: 5, c: 0.4, d: 0.7).map(value)
-        return Color(UIColor(hue: h, saturation: s, brightness: b, alpha: a))
-    }
-    
     public static func makeParachutePreset(_ presetData: Proxyservice_Preset) -> Preset {
         return Preset(
             name: "Parachute",
@@ -161,7 +167,7 @@ public class ProfileManager: ObservableObject {
             description: "Slow down content after \(Int(presetData.usageMaxHp)) minutes of usage",
             badgeText: "∞",
             presetData: presetData,
-            mainColor: makeMainColor(5).opacity(PRESET_OPACITY)
+            mainColor: .blue
         )
     }
     
@@ -190,5 +196,8 @@ public class ProfileManager: ObservableObject {
             "focus": ProfileManager.presetDefaults["focus"]!,
         ]
     }
-    
+}
+
+enum UnexpectedError: Error {
+    case unexpectedError
 }

@@ -55,16 +55,29 @@ public struct Preset {
         return self.presetData.usageMaxHp / 2
     }
 
-    public static var relax: Preset {
+    public static var quickBreak: Preset {
         Preset(
             name: "Scroll break",
             type: .relax,
             description: "Slowing disabled.",
-            badgeText: "15s",
+            badgeText: "10s",
             presetData: .relax,
             mainColor: .blue,
             parentPreset: "focus",
-            overlayDurationSecs: 15
+            overlayDurationSecs: 10
+        )
+    }
+    
+    public static var scrollSession: Preset {
+        Preset(
+            name: "Scroll session",
+            type: .relax,
+            description: "Slowing disabled.",
+            badgeText: "3min",
+            presetData: .relax,
+            mainColor: .blue,
+            parentPreset: "focus",
+            overlayDurationSecs: 3 * 60
         )
     }
 

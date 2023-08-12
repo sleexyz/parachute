@@ -136,9 +136,9 @@ open class VPNConfigurationService: ObservableObject {
         }
     }
     
-    
+    static let unpauseIdentifier = "industries.strange.slowdown.unpause"
     public func registerBackgroundTasks() {
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: "industries.strange.slowdown.unpause", using: nil) { task in
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: VPNConfigurationService.unpauseIdentifier, using: nil) { task in
             self.handleAppRefresh(task: task as! BGAppRefreshTask)
         }
     }

@@ -75,10 +75,10 @@
 		A0915BDC2991FB2700874313 /* TunConn.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0915BDB2991FB2700874313 /* TunConn.swift */; };
 		A096625529C8E93C00D2E0A9 /* PresetSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625429C8E93C00D2E0A9 /* PresetSelector.swift */; };
 		A096625729C93EFC00D2E0A9 /* ParachutePresetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */; };
-		A0975B452A83261D0079FCBD /* StartSessionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0975B432A8325870079FCBD /* StartSessionIntent.swift */; };
+		A0975B452A83261D0079FCBD /* QuickBreakIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0975B432A8325870079FCBD /* QuickBreakIntent.swift */; };
 		A0975B472A832DA70079FCBD /* AppHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A0975B462A832DA70079FCBD /* AppHelpers */; };
 		A0975B492A832F380079FCBD /* AppHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A0975B482A832F380079FCBD /* AppHelpers */; };
-		A0975B4B2A8448DD0079FCBD /* StartSessionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0975B432A8325870079FCBD /* StartSessionIntent.swift */; };
+		A0975B4B2A8448DD0079FCBD /* QuickBreakIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0975B432A8325870079FCBD /* QuickBreakIntent.swift */; };
 		A09C5A0029BC26B70077A59B /* PresetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C59FF29BC26B70077A59B /* PresetContent.swift */; };
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
 		A0AB50402A84846B002C84FB /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = A0AB503F2A84846B002C84FB /* Models */; };
@@ -94,6 +94,14 @@
 		A0F764E1299DD491001F9B24 /* DisconnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764E0299DD491001F9B24 /* DisconnectedView.swift */; };
 		A0F764ED29A2E0A8001F9B24 /* PresetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EC29A2E0A8001F9B24 /* PresetViewModel.swift */; };
 		A0F764EF29A3F737001F9B24 /* TimerLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F764EE29A3F737001F9B24 /* TimerLock.swift */; };
+		A0F98C952A85DAB600D5E88E /* ScrollSessionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F98C942A85DAB600D5E88E /* ScrollSessionIntent.swift */; };
+		A0F98C962A85DAB600D5E88E /* ScrollSessionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F98C942A85DAB600D5E88E /* ScrollSessionIntent.swift */; };
+		A0F98C982A869E4F00D5E88E /* MyIntentError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F98C972A869E4F00D5E88E /* MyIntentError.swift */; };
+		A0F98C992A869E4F00D5E88E /* MyIntentError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F98C972A869E4F00D5E88E /* MyIntentError.swift */; };
+		A0F98C9E2A86B1D600D5E88E /* CommonViews in Frameworks */ = {isa = PBXBuildFile; productRef = A0F98C9D2A86B1D600D5E88E /* CommonViews */; };
+		A0F98CA02A86B1F500D5E88E /* CommonViews in Frameworks */ = {isa = PBXBuildFile; productRef = A0F98C9F2A86B1F500D5E88E /* CommonViews */; };
+		A0F98CA82A86B5A400D5E88E /* SlowdownWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F98CA72A86B5A400D5E88E /* SlowdownWidgetView.swift */; };
+		A0F98CA92A86B5A400D5E88E /* SlowdownWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F98CA72A86B5A400D5E88E /* SlowdownWidgetView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -228,7 +236,7 @@
 		A0915BDB2991FB2700874313 /* TunConn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunConn.swift; sourceTree = "<group>"; };
 		A096625429C8E93C00D2E0A9 /* PresetSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetSelector.swift; sourceTree = "<group>"; };
 		A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParachutePresetPicker.swift; sourceTree = "<group>"; };
-		A0975B432A8325870079FCBD /* StartSessionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartSessionIntent.swift; sourceTree = "<group>"; };
+		A0975B432A8325870079FCBD /* QuickBreakIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickBreakIntent.swift; sourceTree = "<group>"; };
 		A09C59FF29BC26B70077A59B /* PresetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetContent.swift; sourceTree = "<group>"; };
 		A0E71AB9299DC9D60009B6E4 /* DeviceCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCallbacks.swift; sourceTree = "<group>"; };
 		A0EE20AF2A82EBA500F34B98 /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ProxyService; sourceTree = "<group>"; };
@@ -242,6 +250,9 @@
 		A0F764E0299DD491001F9B24 /* DisconnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectedView.swift; sourceTree = "<group>"; };
 		A0F764EC29A2E0A8001F9B24 /* PresetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetViewModel.swift; sourceTree = "<group>"; };
 		A0F764EE29A3F737001F9B24 /* TimerLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerLock.swift; sourceTree = "<group>"; };
+		A0F98C942A85DAB600D5E88E /* ScrollSessionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollSessionIntent.swift; sourceTree = "<group>"; };
+		A0F98C972A869E4F00D5E88E /* MyIntentError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyIntentError.swift; sourceTree = "<group>"; };
+		A0F98CA72A86B5A400D5E88E /* SlowdownWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlowdownWidgetView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -258,6 +269,7 @@
 				A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */,
 				A080EDF8294F9868005401E4 /* LoggingOSLog in Frameworks */,
 				A0EE20AE2A82E86300F34B98 /* Activities in Frameworks */,
+				A0F98C9E2A86B1D600D5E88E /* CommonViews in Frameworks */,
 				A056C36E2A819E8F00E4ED9A /* AppViews in Frameworks */,
 				A04FAD9C294D60960002C19B /* SwiftProtobuf in Frameworks */,
 				A056C36C2A819E8A00E4ED9A /* CommonLoaders in Frameworks */,
@@ -290,6 +302,7 @@
 				A00A09D02A7EEF7100011260 /* Logging in Frameworks */,
 				A056C36A2A819E7F00E4ED9A /* CommonLoaders in Frameworks */,
 				A0EE20AC2A82E84E00F34B98 /* Activities in Frameworks */,
+				A0F98CA02A86B1F500D5E88E /* CommonViews in Frameworks */,
 				A0975B492A832F380079FCBD /* AppHelpers in Frameworks */,
 				A00A09CE2A7EDA7000011260 /* Controllers in Frameworks */,
 			);
@@ -340,6 +353,7 @@
 		A02F58D327A6F14500D3330F = {
 			isa = PBXGroup;
 			children = (
+				A0F98CA62A86B58900D5E88E /* SlowdownWidgetView */,
 				A0975B4A2A84488D0079FCBD /* App Intent */,
 				A0EE20AF2A82EBA500F34B98 /* ProxyService */,
 				A089610F2A7DA22700742B70 /* SlowdownWidgetExtensionDebug.entitlements */,
@@ -508,7 +522,9 @@
 		A0975B4A2A84488D0079FCBD /* App Intent */ = {
 			isa = PBXGroup;
 			children = (
-				A0975B432A8325870079FCBD /* StartSessionIntent.swift */,
+				A0975B432A8325870079FCBD /* QuickBreakIntent.swift */,
+				A0F98C942A85DAB600D5E88E /* ScrollSessionIntent.swift */,
+				A0F98C972A869E4F00D5E88E /* MyIntentError.swift */,
 			);
 			path = "App Intent";
 			sourceTree = "<group>";
@@ -533,6 +549,14 @@
 				A0F0944A2A74583700F1C8CB /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		A0F98CA62A86B58900D5E88E /* SlowdownWidgetView */ = {
+			isa = PBXGroup;
+			children = (
+				A0F98CA72A86B5A400D5E88E /* SlowdownWidgetView.swift */,
+			);
+			path = SlowdownWidgetView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -571,6 +595,7 @@
 				A056C36B2A819E8A00E4ED9A /* CommonLoaders */,
 				A056C36D2A819E8F00E4ED9A /* AppViews */,
 				A0EE20AD2A82E86300F34B98 /* Activities */,
+				A0F98C9D2A86B1D600D5E88E /* CommonViews */,
 			);
 			productName = slowdown;
 			productReference = A02F58DC27A6F14500D3330F /* slowdown.app */;
@@ -634,6 +659,7 @@
 				A056C3692A819E7F00E4ED9A /* CommonLoaders */,
 				A0EE20AB2A82E84E00F34B98 /* Activities */,
 				A0975B482A832F380079FCBD /* AppHelpers */,
+				A0F98C9F2A86B1F500D5E88E /* CommonViews */,
 			);
 			productName = SlowdownWidgetExtension;
 			productReference = A04ADFAE2A7B5513008700C4 /* SlowdownWidgetExtension.appex */;
@@ -858,6 +884,7 @@
 				A09C5A0029BC26B70077A59B /* PresetContent.swift in Sources */,
 				A02A67A8298820B300FF0B27 /* SpeedBar.swift in Sources */,
 				A0F764DF299DD37C001F9B24 /* ConnectedView.swift in Sources */,
+				A0F98CA82A86B5A400D5E88E /* SlowdownWidgetView.swift in Sources */,
 				A068DCF229A6FA4F0036E9A2 /* Cardable.swift in Sources */,
 				A096625529C8E93C00D2E0A9 /* PresetSelector.swift in Sources */,
 				A08719D6281A4BF900113F3F /* PrimaryButton.swift in Sources */,
@@ -869,11 +896,12 @@
 				A068DCF729A6FB260036E9A2 /* PauseCard.swift in Sources */,
 				A068DCF529A6FABC0036E9A2 /* Preset+Cardable.swift in Sources */,
 				A096625729C93EFC00D2E0A9 /* ParachutePresetPicker.swift in Sources */,
+				A0F98C952A85DAB600D5E88E /* ScrollSessionIntent.swift in Sources */,
 				A081F250296A125300863FE3 /* DamageBar.swift in Sources */,
 				A08719DE281A54A900113F3F /* Spinner.swift in Sources */,
 				A052AE1E29977B3700AB43B7 /* StateUpdater.swift in Sources */,
 				A024F15929A467D2007B572A /* HealSettings.swift in Sources */,
-				A0975B4B2A8448DD0079FCBD /* StartSessionIntent.swift in Sources */,
+				A0975B4B2A8448DD0079FCBD /* QuickBreakIntent.swift in Sources */,
 				A081F232295BB3D700863FE3 /* SetupView.swift in Sources */,
 				A08719DA281A4E1100113F3F /* AppView.swift in Sources */,
 				A01B059E29850A6300298976 /* Preview Helpers.swift in Sources */,
@@ -881,6 +909,7 @@
 				A024F15B29A4845B007B572A /* Card.swift in Sources */,
 				A02F58E027A6F14500D3330F /* slowdownApp.swift in Sources */,
 				A0F764E1299DD491001F9B24 /* DisconnectedView.swift in Sources */,
+				A0F98C982A869E4F00D5E88E /* MyIntentError.swift in Sources */,
 				A052AE20299A900100AB43B7 /* HealButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -907,10 +936,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A04ADFB72A7B5513008700C4 /* SlowdownWidgetLiveActivity.swift in Sources */,
-				A0975B452A83261D0079FCBD /* StartSessionIntent.swift in Sources */,
+				A0975B452A83261D0079FCBD /* QuickBreakIntent.swift in Sources */,
 				A04ADFBB2A7B5513008700C4 /* AppIntent.swift in Sources */,
 				A04ADFB92A7B5513008700C4 /* SlowdownWidget.swift in Sources */,
 				A04ADFB52A7B5513008700C4 /* SlowdownWidgetBundle.swift in Sources */,
+				A0F98C992A869E4F00D5E88E /* MyIntentError.swift in Sources */,
+				A0F98C962A85DAB600D5E88E /* ScrollSessionIntent.swift in Sources */,
+				A0F98CA92A86B5A400D5E88E /* SlowdownWidgetView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1702,6 +1734,14 @@
 		A0EE20AD2A82E86300F34B98 /* Activities */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Activities;
+		};
+		A0F98C9D2A86B1D600D5E88E /* CommonViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CommonViews;
+		};
+		A0F98C9F2A86B1F500D5E88E /* CommonViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CommonViews;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
