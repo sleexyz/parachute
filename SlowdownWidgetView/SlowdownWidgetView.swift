@@ -63,7 +63,6 @@ struct SlowdownWidgetView : View {
                             .frame(maxWidth: 40)
 
                     }
-                    .font(.subheadline.smallCaps())
                     .foregroundColor(.secondary)
                 } else {
                     Text("...")
