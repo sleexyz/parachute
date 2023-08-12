@@ -29,6 +29,7 @@ struct ConnectedView: View {
         Group {
             if scrollSessionViewController.open {
                 ScrollSessionView()
+                    .transition(.opacity.animation(.default))
             } else {
                 if #available(iOS 17.0, *) {
                     SlowdownWidgetView(settings: settingsStore.settings)

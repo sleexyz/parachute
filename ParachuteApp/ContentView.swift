@@ -10,6 +10,7 @@ import SwiftUI
 import Foundation
 import Logging
 import Controllers
+import CommonViews
 
 struct ContentView: View {
     @EnvironmentObject var store: SettingsStore
@@ -31,6 +32,8 @@ struct ContentView: View {
                 AppView()
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(UIColor(named: "Background")!))
         .onChange(of: scenePhase) { phase in
             // Reload settings when app becomes active
             // in case they were changed in the widget
@@ -45,6 +48,7 @@ struct ContentView: View {
             }
         }
     }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {

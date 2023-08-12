@@ -23,11 +23,11 @@ struct SlowdownWidgetView : View {
 
     var logger = Logger(label: "industries.strange.slowdown.SlowdownWidgetView")
 
-    var statusMessage: String? {
+    var statusMessage: String {
         if settings.changeMetadata.reason == "Overlay expired" && settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
             return "Session ended"
         }
-        return nil
+        return "Active"
     }
 
     var body: some View {
@@ -37,24 +37,21 @@ struct SlowdownWidgetView : View {
                 HStack {
                     Button(intent: ScrollSessionIntent()) {
                         Image(systemName: "play.fill")
-                            .foregroundColor(.white) 
-                        Text("3 minutes")
-                            .foregroundStyle(.white)
+                        Text("\(Int(Preset.scrollSession.overlayDurationSecs!  / 60)) min")
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.bordered)
                     .tint(.parachuteOrange)
 
-                    Spacer()
-
                     Button(intent: QuickBreakIntent()) {
-                        Image(systemName: "play.fill")
-                            .foregroundColor(.white) 
-                        Text("\(Int(Preset.quickBreak.overlayDurationSecs!)) seconds")
-                            .foregroundStyle(.white)
-
+                        //Image(systemName: "play.fill")
+                        Text("\(Int(Preset.quickBreak.overlayDurationSecs!))s")
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.bordered)
                     .tint(.secondaryFill)
+                    Spacer()
+                    Text(statusMessage)
+                        .font(.subheadline.smallCaps())
+                        .foregroundColor(.secondary)
                 }
             } else {
                 if settings.hasOverlay {
@@ -66,13 +63,14 @@ struct SlowdownWidgetView : View {
                             .frame(maxWidth: 40)
 
                     }
+                    .font(.subheadline.smallCaps())
+                    .foregroundColor(.secondary)
                 } else {
                     Text("...")
                 }
             }
         }
-        .foregroundStyle(.black.opacity(0.6))
         .buttonBorderShape(.capsule)
-            // .blendMode(.lighten)
+        .blendMode(.lighten)
     }
 }

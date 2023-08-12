@@ -1,23 +1,24 @@
-//
-//  TimerLock.swift
-//  slowdown
-//
-//  Created by Sean Lee on 2/20/23.
-//
-
-import Foundation
 import SwiftUI
 import Combine
 
-struct TimerLock<Content: View>: View{
-    var content: (_ timeLeft: Int) -> Content
+public struct TimerLock<Content: View>: View{
+    var duration: Int = 10
+
+    @ViewBuilder var content: (_ timeLeft: Int) -> Content
     @Environment(\.scenePhase) var scenePhase
 
-    @State var timeLeft: Int = 10
+    @State var timeLeft: Int
     @State var timer: AnyCancellable?
+
+    public init(duration: Int, @ViewBuilder content: @escaping (_ timeLeft: Int) -> Content) {
+        self.duration = duration
+        self.content = content
+        self._timeLeft = State(initialValue: duration)
+        self._timer = State(initialValue: nil)
+    }
     
 
-    var body: some View {
+    public var body: some View {
         content(timeLeft)
             .onChange(of: scenePhase) { newPhase in
                 if newPhase == .active {
@@ -32,7 +33,7 @@ struct TimerLock<Content: View>: View{
     }
     
     func startSubscription() {
-        timeLeft = 10
+        timeLeft = duration
         timer?.cancel()
         timer = Timer.publish(every: 1, tolerance: 0, on: .main, in: .common).autoconnect()
             .sink { _ in
@@ -42,16 +43,5 @@ struct TimerLock<Content: View>: View{
                 }
                 timeLeft -= 1
             }
-    }
-}
-
-struct TimerLockBadge: View {
-    var timeLeft: Int
-    var body: some View {
-        Text("🔒 " + timeLeft.description)
-            .frame(width: 60, height: 30)
-            .foregroundColor(Color.white)
-            .background(Color.accentColor.grayscale(1))
-            .clipShape(Capsule())
     }
 }

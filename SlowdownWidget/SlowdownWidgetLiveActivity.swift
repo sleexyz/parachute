@@ -29,10 +29,11 @@ struct SlowdownWidgetLiveActivity: Widget {
     init() {
         try? SettingsStore.shared.load()
     }
+    
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: SlowdownWidgetAttributes.self) { context in
             SlowdownWidgetView(settings: context.state.settings)
-                .activityBackgroundTint(Color(.systemGray4).opacity(0.6))
+                .activityBackgroundTint(Color(UIColor(named:"Background")!))
                 .padding([.leading, .trailing], 20)
                 .activitySystemActionForegroundColor(.black)
             

@@ -69,7 +69,9 @@ struct SlowdownWidget: Widget {
             ControllersLoader {
                 SlowdownWidgetView(settings: entry.settings)
                     .environmentObject(VPNConfigurationService.shared)
-                    .containerBackground(.fill.tertiary, for: .widget)
+                    .containerBackground(Color(UIColor(named:"Background")!), for: .widget)
+                    //.containerBackground(.fill.tertiary, for: .widget)
+                    //.containerBackground(.fill.tertiary, for: .widget)
             }
         }
     }

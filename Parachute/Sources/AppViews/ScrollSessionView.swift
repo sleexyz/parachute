@@ -25,55 +25,51 @@ public struct ScrollSessionView: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .top) {
-            HStack {
-                Spacer()
-                Button(action: {
-                    scrollSessionViewController.setClosed()
-                }) {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.gray)
-                        .font(.system(size: 24, weight: .thin))
-                        .padding()
-                }
-            }
-            .padding(.top, 44)
-
-            VStack {
-                Spacer()
-                Text("Do you want to keep scrolling?")
+        
+        TimerLock(duration: 10) { timeLeft in
+            if timeLeft > 0 {
+                Text("Take a deep breath...")
                     .font(.system(size: 24, weight: .bold))
                     .padding(.bottom, 16)
-                    .foregroundStyle(.black)
-
-                HStack {
+                    .foregroundStyle(Color(UIColor.label))
+                    .transition(.opacity.animation(.default))
+            } else {
+                VStack {
                     Spacer()
-                    Button(action: {
-                        startScrollSession()
-                    }) {
-                        Text("Start \(Int(Preset.scrollSession.overlayDurationSecs!  / 60)) minute session")
-                            .foregroundStyle(.white)
+                    Text("Do you want to keep scrolling?")
+                        .font(.system(size: 24, weight: .bold))
+                        .padding(.bottom, 16)
+                        .foregroundStyle(Color(UIColor.label))
+                    
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            startScrollSession()
+                        }) {
+                            Image(systemName: "play.fill")
+                            Text("\(Int(Preset.scrollSession.overlayDurationSecs!  / 60)) minutes")
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.parachuteOrange)
+                        Spacer()
+                        Button(action: {
+                            scrollSessionViewController.setClosed()
+                        }) {
+                            Text("Never mind")
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.secondaryFill)
+                        Spacer()
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.parachuteOrange)
-                    Spacer()
-                    Button(action: {
-                        scrollSessionViewController.setClosed()
-                    }) {
-                        Text("Never mind")
-                            .foregroundStyle(.white)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.secondaryFill)
                     Spacer()
                 }
-                Spacer()
-            }.frame(height: UIScreen.main.bounds.height)
-
+                .transition(.opacity.animation(.default))
+            }
         }
-        .foregroundStyle(Color(.label))
+        .frame(height: UIScreen.main.bounds.height)
         .buttonBorderShape(.capsule)
     }
+
 }
 
 struct ScrollSessionView_Previews: PreviewProvider {

@@ -6,11 +6,11 @@ public extension Color {
     }
 
     static var parachuteOrange: Color {
-        Color(red: 246/255, green: 146/255, blue: 30/255)
+        Color(UIColor(named: "Orange")!)
     }
     
     static var secondaryFill: Color {
-        Color(red: 164/255, green: 164/255, blue: 164/255)
+        Color(red: 124/255, green: 124/255, blue: 124/255)
     }
 
     static var parachuteBgLight: Color {

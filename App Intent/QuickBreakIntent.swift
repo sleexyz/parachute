@@ -27,7 +27,7 @@ public struct QuickBreakIntent: AppIntent, LiveActivityIntent {
         if #available(iOS 16.2, *) {
             await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings)
         }
-        ScrollSessionViewController.shared.setClosed()
+        await ScrollSessionViewController.shared.setClosed()
         return .result()
     }
 }

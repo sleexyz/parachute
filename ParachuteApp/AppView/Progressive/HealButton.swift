@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import DI
 import Controllers
+import AppViews
 
 struct HealButton: View {
     var disabledOverride: Bool
@@ -37,7 +38,7 @@ struct HealButton: View {
 
 struct LockedHealButton: View {
     var body: some View {
-        TimerLock { timeLeft in
+        TimerLock(duration: 10) { timeLeft in
             ZStack (alignment: .topTrailing) {
                 HealButton(disabledOverride: timeLeft > 0)
                 if timeLeft > 0 {
