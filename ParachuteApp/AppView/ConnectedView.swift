@@ -26,20 +26,19 @@ struct ConnectedView: View {
     @EnvironmentObject var settingsStore: SettingsStore
     
     var body: some View {
-        Group {
-            if scrollSessionViewController.open {
-                ScrollSessionView()
-                    .transition(.opacity.animation(.default))
+        
+        if scrollSessionViewController.open {
+            ScrollSessionView()
+        } else {
+            if #available(iOS 17.0, *) {
+                SlowdownWidgetView(settings: settingsStore.settings)
+                    .padding()
             } else {
-                if #available(iOS 17.0, *) {
-                    SlowdownWidgetView(settings: settingsStore.settings)
-                        .padding()
-                } else {
-                    SimpleSelector()
-                }
+                SimpleSelector()
             }
         }
-        .backgroundStyle(Color.parachuteBgDark)
+        
+        //.backgroundStyle(Color.parachuteBgDark)
     }
 }
 

@@ -5,7 +5,7 @@ public struct TimerLock<Content: View>: View{
     var duration: Int = 10
 
     @ViewBuilder var content: (_ timeLeft: Int) -> Content
-    @Environment(\.scenePhase) var scenePhase
+//    @Environment(\.scenePhase) var scenePhase
 
     @State var timeLeft: Int
     @State var timer: AnyCancellable?
@@ -20,13 +20,13 @@ public struct TimerLock<Content: View>: View{
 
     public var body: some View {
         content(timeLeft)
-            .onChange(of: scenePhase) { newPhase in
-                if newPhase == .active {
-                    startSubscription()
-                } else {
-                    timer?.cancel()
-                }
-            }
+//            .onChange(of: scenePhase) { newPhase in
+//                if newPhase == .active {
+//                    startSubscription()
+//                } else {
+//                    timer?.cancel()
+//                }
+//            }
             .onAppear {
                 startSubscription()
             }

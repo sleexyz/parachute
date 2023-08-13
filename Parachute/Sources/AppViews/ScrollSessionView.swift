@@ -4,12 +4,48 @@ import Controllers
 import AppHelpers
 import CommonViews
 import Models
+import Logging
 
 public struct ScrollSessionView: View {
     public init() {}
+    static var animation: Animation = .easeInOut(duration: 3)
 
+    var logger = Logger(label: "industries.strange.slowdown.ScrollSessionView")
+
+
+    // TODO: remove timerlock
+    public var body: some View {
+        TimerLock(duration: 9) { timeLeft in
+            if timeLeft > 3 {
+                Text("Take a deep breath...")
+                    .font(.system(size: 24, weight: .bold))
+                    .padding([.leading, .trailing, .bottom], 24)
+                    .foregroundStyle(Color(UIColor.label))
+                    .transition(.opacity.animation(ScrollSessionView.animation))
+            } else if timeLeft == 0 {
+                ScrollPrompt()
+                    .transition(AnyTransition.asymmetric(
+                        insertion:.opacity.animation(ScrollSessionView.animation),
+                        removal: .identity
+                        ))
+            } else {
+                Color.clear
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+        .frame(height: UIScreen.main.bounds.height)
+        .buttonBorderShape(.capsule)
+    }
+
+}
+
+struct ScrollPrompt: View {
+    @State var showButtons: Bool = false
+    @State var showCaption: Bool = false
+    
     @EnvironmentObject var scrollSessionViewController: ScrollSessionViewController
     @EnvironmentObject var profileManager: ProfileManager
+
     
     public func startScrollSession() {
         Task { @MainActor in
@@ -24,52 +60,53 @@ public struct ScrollSessionView: View {
         }
     }
 
-    public var body: some View {
-        
-        TimerLock(duration: 10) { timeLeft in
-            if timeLeft > 0 {
-                Text("Take a deep breath...")
-                    .font(.system(size: 24, weight: .bold))
-                    .padding(.bottom, 16)
-                    .foregroundStyle(Color(UIColor.label))
-                    .transition(.opacity.animation(.default))
-            } else {
-                VStack {
-                    Spacer()
-                    Text("Do you want to keep scrolling?")
-                        .font(.system(size: 24, weight: .bold))
-                        .padding(.bottom, 16)
-                        .foregroundStyle(Color(UIColor.label))
-                    
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            startScrollSession()
-                        }) {
-                            Image(systemName: "play.fill")
-                            Text("\(Int(Preset.scrollSession.overlayDurationSecs!  / 60)) minutes")
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(.parachuteOrange)
-                        Spacer()
-                        Button(action: {
-                            scrollSessionViewController.setClosed()
-                        }) {
-                            Text("Never mind")
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(.secondaryFill)
-                        Spacer()
-                    }
-                    Spacer()
+    var body: some View {
+        VStack {
+            Spacer()
+            Text("How are you feeling right now?")
+                .font(.system(size: 24, weight: .bold))
+                .padding(.bottom, 24)
+                .foregroundStyle(Color(UIColor.label))
+            Text("Take a moment and sit with that feeling.")
+                .font(.system(size: 18, weight: .regular))
+                .foregroundColor(.secondary)
+                .padding(.bottom, 96)
+                .foregroundStyle(Color(UIColor.label))
+                .opacity(showCaption ? 1 : 0)
+                .animation(ScrollSessionView.animation, value: showCaption)
+            HStack {
+                Spacer()
+                Button(action: {
+                    startScrollSession()
+                }) {
+                    Image(systemName: "play.fill")
+                    Text("Scroll for \(Int(Preset.scrollSession.overlayDurationSecs! / 60)) min")
                 }
-                .transition(.opacity.animation(.default))
+                .buttonStyle(.bordered)
+                .tint(.parachuteOrange)
+                Spacer()
+                Button(action: {
+                    scrollSessionViewController.setClosed()
+                }) {
+                    Text("Never mind")
+                }
+                .buttonStyle(.bordered)
+                .tint(.secondaryFill)
+                Spacer()
+            }
+            .opacity(showButtons ? 1 : 0)
+            .animation(ScrollSessionView.animation, value: showButtons)
+            Spacer()
+        }
+        .onAppear {
+            Task {@MainActor in
+                try await Task.sleep(nanoseconds: 1 * 1_000_000_000)
+                showCaption = true
+                try await Task.sleep(nanoseconds: 6 * 1_000_000_000)
+                showButtons = true
             }
         }
-        .frame(height: UIScreen.main.bounds.height)
-        .buttonBorderShape(.capsule)
     }
-
 }
 
 struct ScrollSessionView_Previews: PreviewProvider {

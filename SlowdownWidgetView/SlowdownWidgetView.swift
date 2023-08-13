@@ -27,7 +27,7 @@ struct SlowdownWidgetView : View {
         if settings.changeMetadata.reason == "Overlay expired" && settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
             return "Session ended"
         }
-        return "Active"
+        return "Slowing Active"
     }
 
     var body: some View {
@@ -37,17 +37,17 @@ struct SlowdownWidgetView : View {
                 HStack {
                     Button(intent: ScrollSessionIntent()) {
                         Image(systemName: "play.fill")
-                        Text("\(Int(Preset.scrollSession.overlayDurationSecs!  / 60)) min")
+                        Text("Scroll for \(Int(Preset.scrollSession.overlayDurationSecs!  / 60)) min")
                     }
                     .buttonStyle(.bordered)
                     .tint(.parachuteOrange)
 
-                    Button(intent: QuickBreakIntent()) {
-                        //Image(systemName: "play.fill")
-                        Text("\(Int(Preset.quickBreak.overlayDurationSecs!))s")
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.secondaryFill)
+//                    Button(intent: QuickBreakIntent()) {
+//                        //Image(systemName: "play.fill")
+//                        Text("\(Int(Preset.quickBreak.overlayDurationSecs!))s")
+//                    }
+//                    .buttonStyle(.bordered)
+//                    .tint(.secondaryFill)
                     Spacer()
                     Text(statusMessage)
                         .font(.subheadline.smallCaps())
@@ -61,7 +61,6 @@ struct SlowdownWidgetView : View {
                         Text("Session ends in")
                         Text(futureDate, style: .timer)
                             .frame(maxWidth: 40)
-
                     }
                     .foregroundColor(.secondary)
                 } else {

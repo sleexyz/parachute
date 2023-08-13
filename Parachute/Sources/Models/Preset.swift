@@ -60,7 +60,7 @@ public struct Preset {
             name: "Scroll break",
             type: .relax,
             description: "Slowing disabled.",
-            badgeText: "10s",
+            badgeText: "",
             presetData: .relax,
             mainColor: .blue,
             parentPreset: "focus",
@@ -73,11 +73,11 @@ public struct Preset {
             name: "Scroll session",
             type: .relax,
             description: "Slowing disabled.",
-            badgeText: "3min",
+            badgeText: "",
             presetData: .relax,
             mainColor: .blue,
             parentPreset: "focus",
-            overlayDurationSecs: 3 * 60
+            overlayDurationSecs: 5 * 60
         )
     }
 
