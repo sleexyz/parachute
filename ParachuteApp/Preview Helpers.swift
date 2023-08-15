@@ -26,24 +26,3 @@ let connectedPreviewDeps : [any Dep] = {
     return value
 }()
 
-
-class MockVPNConfigurationService: VPNConfigurationService {
-    public struct Provider: MockDep {
-        typealias MockT = MockVPNConfigurationService
-        public func create(r: Registry) -> VPNConfigurationService {
-            return MockVPNConfigurationService()
-        }
-    }
-    override public init() {
-        super.init()
-    }
-
-    var hasManagerMockOverride: Bool?
-
-    override public var hasManager: Bool {
-        return hasManagerMockOverride ?? super.hasManager
-    }
-    func setIsConnected(value: Bool) {
-        self.isConnected = value
-    }
-}

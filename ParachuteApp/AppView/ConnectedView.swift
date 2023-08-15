@@ -24,17 +24,35 @@ struct ProfileCardModifier: ViewModifier {
 struct ConnectedView: View {
     @EnvironmentObject var scrollSessionViewController: ScrollSessionViewController
     @EnvironmentObject var settingsStore: SettingsStore
+    @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     
     var body: some View {
         
         if scrollSessionViewController.open {
             ScrollSessionView()
         } else {
-            if #available(iOS 17.0, *) {
-                SlowdownWidgetView(settings: settingsStore.settings)
+            ZStack {
+                VStack {
+                    Button(action: {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        vpnLifecycleManager.pauseConnection()
+                    }, label: {
+                        Text("Disable")
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.gray)
+                            .cornerRadius(10)
+                    })
                     .padding()
-            } else {
-                SimpleSelector()
+                    Spacer()
+                }
+                if #available(iOS 17.0, *) {
+                    SlowdownWidgetView(settings: settingsStore.settings)
+                        .padding()
+                } else {
+                    SimpleSelector()
+                }
             }
         }
         

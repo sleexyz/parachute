@@ -40,13 +40,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             FirebaseApp.configure()
         }
         Task { @MainActor in
-            await VPNConfigurationService.shared.load()
+            await NEConfigurationService.shared.load()
             if #available(iOS 16.2, *) {
                 try SettingsStore.shared.load()
                 ActivitiesHelper.shared.start(settings: SettingsStore.shared.settings)
             } 
         }
-        VPNConfigurationService.shared.registerBackgroundTasks()
+        // NEConfigurationService.shared.registerBackgroundTasks()
         return true
     }
 }

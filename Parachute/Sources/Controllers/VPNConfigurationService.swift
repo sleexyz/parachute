@@ -19,6 +19,8 @@ enum UserError: Error {
     case message(message: String)
 }
 
+// TODO: consolidate to this
+// and then derive impls for isConnected / isTransitioning from this.
 public enum VPNStatus {
     case unknown
     case connected
@@ -57,8 +59,7 @@ public protocol VPNConfigurationServiceProtocol: NEConfigurationServiceProtocol 
     var conn: NEVPNConnection? { get }
     var status: VPNStatus { get }
     var connectedDate: Date? { get }
-    var isInitializing: Bool { get }
-    var hasManager: Bool { get }
+    var isLoaded: Bool { get }
     
     func registerBackgroundTasks()
     func setOnDemand(_ value: Bool) async throws
@@ -66,22 +67,22 @@ public protocol VPNConfigurationServiceProtocol: NEConfigurationServiceProtocol 
 
 public extension VPNConfigurationServiceProtocol {
     @MainActor
-    public func stopConnectionAndDisableOnDemand() async throws {
+    func stopConnectionAndDisableOnDemand() async throws {
         try await self.stop()
         try await self.setOnDemand(false)
     }
 
     @MainActor
-    public func startConnectionAndEnableOnDemand(settingsOverride: Proxyservice_Settings) async throws {
+    func startConnectionAndEnableOnDemand(settingsOverride: Proxyservice_Settings) async throws {
         try await self.start(settingsOverride: settingsOverride)
         try await self.setOnDemand(true)
     }
 }
 
-open class VPNConfigurationService: VPNConfigurationServiceProtocol { 
+public class VPNConfigurationService: VPNConfigurationServiceProtocol { 
     public static let shared = VPNConfigurationService()
     public struct Provider: Dep {
-        public func create(r: Registry) -> VPNConfigurationService {
+        public func create(r: Registry) -> NEConfigurationService {
             return .shared
         }
         public init() {}
@@ -93,14 +94,14 @@ open class VPNConfigurationService: VPNConfigurationServiceProtocol {
     @Published public var status: VPNStatus = .unknown
     @Published public var connectedDate: Date?
 
-    @Published private(set) public var isInitializing = true
+    @Published private(set) public var isLoaded = false
     @Published private var manager: NETunnelProviderManager?
 
     static let unpauseIdentifier = "industries.strange.slowdown.unpause"
     private let logger: Logger = Logger(label: "industries.strange.slowdown.VPNConfigurationService")
     private var bag = Set<AnyCancellable>()
     
-    open var hasManager: Bool {
+    open var isInstalled: Bool {
         return manager != nil
     }
     
@@ -123,10 +124,10 @@ open class VPNConfigurationService: VPNConfigurationServiceProtocol {
 
     public func load() async -> () {
         self.logger.info("VPNConfigurationService initializing...")
-        if isInitializing {
+        if !isLoaded {
             NETunnelProviderManager.loadAllFromPreferences { managers, error in
                 self.manager = managers?.first
-                self.isInitializing = false
+                self.isLoaded = true
                 self.connectedDate = self.manager?.connection.connectedDate
                 self.logger.info("VPNConfigurationService initialized")
             }
@@ -233,19 +234,21 @@ open class VPNConfigurationService: VPNConfigurationServiceProtocol {
     }
     
     
-    public func install(_ completion: @escaping (Result<Void, Error>) -> Void) {
-        let tunnel = makeNewTunnel()
-        tunnel.saveToPreferences { [weak self] error in
-            if let error = error {
-                return completion(.failure(error))
+    public func install() async throws -> () {
+        try await Future<(), Error> { promise in
+            let tunnel = self.makeNewTunnel()
+            tunnel.saveToPreferences { [weak self] error in
+                if let error = error {
+                    return promise(.failure(error))
+                }
+                
+                // See https://forums.developer.apple.com/thread/25928
+                tunnel.loadFromPreferences { [weak self] error in
+                    self?.manager = tunnel
+                    promise(.success(()))
+                }
             }
-            
-            // See https://forums.developer.apple.com/thread/25928
-            tunnel.loadFromPreferences { [weak self] error in
-                self?.manager = tunnel
-                completion(.success(()))
-            }
-        }
+        }.value
     }
     
     private func makeNewTunnel() -> NETunnelProviderManager {
@@ -292,3 +295,25 @@ open class VPNConfigurationService: VPNConfigurationServiceProtocol {
     }
 }
 
+
+public class MockVPNConfigurationService: VPNConfigurationService {
+    public struct Provider: MockDep {
+        public typealias MockT = MockVPNConfigurationService
+        public func create(r: Registry) -> VPNConfigurationService {
+            return MockVPNConfigurationService()
+        }
+        public init() {}
+    }
+    override public init() {
+        super.init()
+    }
+
+    public var isInstalledMockOverride: Bool?
+
+    override public var isInstalled: Bool {
+        return isInstalledMockOverride ?? super.isInstalled
+    }
+    public func setIsConnected(value: Bool) {
+        self.isConnected = value
+    }
+}

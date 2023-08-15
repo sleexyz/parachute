@@ -2,12 +2,13 @@ import ProxyService
 import Foundation
 import Combine
 
+public typealias NEConfigurationService = FilterConfigurationService
+
 public protocol NEConfigurationServiceProtocol: ObservableObject {
     var isConnected: Bool { get }
+    var isLoaded: Bool { get }
+    var isInstalled: Bool { get }
     var isTransitioning: Bool { get }
-    var isInitializing: Bool { get }
-    var connectedDate: Date? { get }
-    var hasManager: Bool { get }
     
     // Loads the network extension configuration.
     func load() async -> ()
@@ -19,7 +20,7 @@ public protocol NEConfigurationServiceProtocol: ObservableObject {
     func stop() async throws
 
     // Installs the network extension.
-    func install(_ completion: @escaping (Result<Void, Error>) -> Void)
+    func install() async throws
 
     // Sends a message to the network extension.
     func Rpc(request: Proxyservice_Request) async throws -> Data

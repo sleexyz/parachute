@@ -60,7 +60,7 @@ struct SlowdownWidget: Widget {
     init() {
         LoggingSystem.bootstrap(LoggingOSLog.init)
         Task {
-            await VPNConfigurationService.shared.load()
+            await NEConfigurationService.shared.load()
         }
     }
 
@@ -68,7 +68,7 @@ struct SlowdownWidget: Widget {
         AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
             ControllersLoader {
                 SlowdownWidgetView(settings: entry.settings)
-                    .environmentObject(VPNConfigurationService.shared)
+                    .environmentObject(NEConfigurationService.shared)
                     .containerBackground(Color(UIColor(named:"Background")!), for: .widget)
                     //.containerBackground(.fill.tertiary, for: .widget)
                     //.containerBackground(.fill.tertiary, for: .widget)

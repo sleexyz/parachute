@@ -18,7 +18,7 @@ class StateController: ObservableObject  {
         func create(r: Registry) -> StateController  {
             return StateController(
                 settings: r.resolve(SettingsStore.self),
-                service: r.resolve(VPNConfigurationService.self)
+                service: r.resolve(NEConfigurationService.self)
             )
         }
     }
@@ -27,11 +27,11 @@ class StateController: ObservableObject  {
     @Published var state: Proxyservice_GetStateResponse = Proxyservice_GetStateResponse()
     
     let settings: SettingsStore
-    let service: VPNConfigurationService
+    let service: NEConfigurationService
     
     var bag = Set<AnyCancellable>()
     
-    init(settings: SettingsStore, service: VPNConfigurationService) {
+    init(settings: SettingsStore, service: NEConfigurationService) {
         self.settings = settings
         self.service = service
         self.settings.$settings.sink { _ in

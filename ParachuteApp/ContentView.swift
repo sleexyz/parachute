@@ -14,7 +14,7 @@ import CommonViews
 
 struct ContentView: View {
     @EnvironmentObject var store: SettingsStore
-    @EnvironmentObject var service: VPNConfigurationService
+    @EnvironmentObject var service: NEConfigurationService
     @Environment(\.scenePhase) var scenePhase
     
     private let logger: Logger = Logger(label: "industries.strange.slowdown.ContentView")
@@ -24,9 +24,9 @@ struct ContentView: View {
         Group {
             if !store.loaded  {
                 SplashView(text: "Loading settings...")
-            } else if service.isInitializing {
+            } else if !service.isLoaded {
                 SplashView(text: "Loading VPN state...")
-            } else if !service.hasManager {
+            } else if !service.isInstalled {
                 SetupView()
             } else {
                 AppView()
@@ -58,13 +58,13 @@ struct ContentView_Previews: PreviewProvider {
                 service.loaded = true
             }
             .consumeDep(MockVPNConfigurationService.self) { service in
-                service.hasManagerMockOverride =  false
+                service.isInstalledMockOverride =  false
             }
             .provideDeps(previewDeps)
         
         ContentView()
             .consumeDep(MockVPNConfigurationService.self) { service in
-                service.hasManagerMockOverride = true
+                service.isInstalledMockOverride = true
             }
             .provideDeps(previewDeps)
     }

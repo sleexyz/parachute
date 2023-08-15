@@ -10,7 +10,7 @@ import SwiftUI
 import Controllers
 
 struct SetupView: View {
-    @EnvironmentObject private var service: VPNConfigurationService
+    @EnvironmentObject private var service: NEConfigurationService
 
     @State private var isLoading = false
     @State private var isShowingError = false
@@ -39,17 +39,16 @@ struct SetupView: View {
     }
 
     private func installProfile() {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         self.isLoading = true
-
-        service.install { result in
-            self.isLoading = false
-            switch result {
-            case .success:
-                break // Do nothing, router will show what's next
-            case let .failure(error):
+        Task { @MainActor in
+            do {
+                try await service.install()
+            } catch let error {
                 self.errorMessage = error.localizedDescription
                 self.isShowingError = true
             }
+            self.isLoading = false
         }
     }
 }
