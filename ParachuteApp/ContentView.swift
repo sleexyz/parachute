@@ -58,13 +58,13 @@ struct ContentView_Previews: PreviewProvider {
                 service.loaded = true
             }
             .consumeDep(MockVPNConfigurationService.self) { service in
-                service.hasManagerOverride =  false
+                service.hasManagerMockOverride =  false
             }
             .provideDeps(previewDeps)
         
         ContentView()
             .consumeDep(MockVPNConfigurationService.self) { service in
-                service.hasManagerOverride = true
+                service.hasManagerMockOverride = true
             }
             .provideDeps(previewDeps)
     }

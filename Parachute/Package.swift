@@ -77,7 +77,9 @@ let package = Package(
         .target(
             name: "Activities",
             dependencies: [
+                "Models",
                 .product(name: "Logging", package: "swift-log"),
+                .product(name: "ProxyService", package: "ProxyService"),
             ]
         ),
         .target(

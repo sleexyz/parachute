@@ -38,9 +38,10 @@ class MockVPNConfigurationService: VPNConfigurationService {
         super.init()
     }
 
-    var hasManagerOverride: Bool?
+    var hasManagerMockOverride: Bool?
+
     override public var hasManager: Bool {
-        return hasManagerOverride ?? super.hasManager
+        return hasManagerMockOverride ?? super.hasManager
     }
     func setIsConnected(value: Bool) {
         self.isConnected = value
