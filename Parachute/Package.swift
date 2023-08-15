@@ -7,6 +7,14 @@ let package = Package(
     name: "Parachute",
     platforms: [.iOS(.v16)],
     products: [
+       .library(
+           name: "FilterData",
+           targets: ["FilterData"]
+       ),
+//        .library(
+//            name: "FilterControl",
+//            targets: ["FilterControl"]
+//        ),
         .library(
             name: "AppViews",
             targets: ["AppViews"]
@@ -54,11 +62,28 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../ProxyService"),
+        .package(url: "https://github.com/chrisajoudi/swift-log-oslog.git", from: "0.2.2"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.0"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", branch: "master"),
     ],
     targets: [
+       .target(
+           name: "FilterData",
+           dependencies: [
+               .product(name: "ProxyService", package: "ProxyService"),
+               .product(name: "Logging", package: "swift-log"),
+               .product(name: "LoggingOSLog", package: "swift-log-oslog"),
+           ]
+       ),
+//        .target(
+//            name: "FilterControl",
+//            dependencies: [
+//                .product(name: "ProxyService", package: "ProxyService"),
+//                .product(name: "Logging", package: "swift-log"),
+//                .product(name: "LoggingOSLog", package: "swift-log-oslog"),
+//            ]
+//        ),
         .target(
             name: "Server",
             dependencies: [

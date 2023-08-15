@@ -1,6 +1,6 @@
 //
 //  FilterControlProvider.swift
-//  FilterControl
+//  FilterControlProviderExtension
 //
 //  Created by Sean Lee on 8/15/23.
 //

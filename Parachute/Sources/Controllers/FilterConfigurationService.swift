@@ -25,30 +25,6 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
     private var manager: NEFilterManager = NEFilterManager.shared()
     private let logger: Logger = Logger(label: "industries.strange.slowdown.FilterConfigurationService")
 
-
-    // Get the Bundle of the system extension.
-    lazy var extensionBundle: Bundle = {
-        let extensionsDirectoryURL = URL(fileURLWithPath: "Contents/Library/SystemExtensions", relativeTo: Bundle.main.bundleURL)
-        let extensionURLs: [URL]
-        do {
-            extensionURLs = try FileManager.default.contentsOfDirectory(at: extensionsDirectoryURL,
-                                                                        includingPropertiesForKeys: nil,
-                                                                        options: .skipsHiddenFiles)
-        } catch let error {
-            fatalError("Failed to get the contents of \(extensionsDirectoryURL.absoluteString): \(error.localizedDescription)")
-        }
-
-        guard let extensionURL = extensionURLs.first else {
-            fatalError("Failed to find any system extensions")
-        }
-
-        guard let extensionBundle = Bundle(url: extensionURL) else {
-            fatalError("Failed to create a bundle with URL \(extensionURL.absoluteString)")
-        }
-
-        return extensionBundle
-    }()
-
     @MainActor
     public func load() async -> () {
         self.logger.info("Loading filter configuration service")
@@ -61,6 +37,7 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
         }
         do {
             try await loadFilterConfiguration()
+            // try await install()
             self.logger.info("Successfully loaded the filter configuration")
             self.isConnected = self.manager.isEnabled
             self.isLoaded = true
@@ -86,7 +63,10 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
 
     public func install() async throws -> () {
         let providerConfiguration = NEFilterProviderConfiguration()
+        providerConfiguration.filterBrowsers = true
         providerConfiguration.filterSockets = true
+//        providerConfiguration.filterDataProviderBundleIdentifier = "industries.strange.slowdown.FilterDataProviderExtension"
+//        providerConfiguration.filterControlProviderBundleIdentifier = "industries.strange.slowdown.FilterControlProviderExtension"
 //        providerConfiguration.filterPackets = false
         NEFilterManager.shared().providerConfiguration = providerConfiguration
         NEFilterManager.shared().isEnabled = true
@@ -152,14 +132,6 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
         self.isConnected = false
         self.logger.info("Successfully saved the filter configuration")
     }
-
-    // func registerWithProvider() {
-    //     IPCConnection.shared.register(withExtension: extensionBundle, delegate: self) { success in
-    //         DispatchQueue.main.async {
-    //             self.status = (success ? .running : .stopped)
-    //         }
-    //     }
-    // }
 
     public func Rpc(request: ProxyService.Proxyservice_Request) async throws -> Data {
         throw RpcError.serverNotInitializedError
