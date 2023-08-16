@@ -20,9 +20,7 @@ import CommonViews
 @available(iOS 17.0, *)
 struct SlowdownWidgetView : View {
     var settings: Proxyservice_Settings
-
     var logger = Logger(label: "industries.strange.slowdown.SlowdownWidgetView")
-
     var statusMessage: String {
         if settings.changeMetadata.reason == "Overlay expired" && settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
             return "Session ended"
@@ -31,7 +29,6 @@ struct SlowdownWidgetView : View {
     }
 
     var body: some View {
-        let _ = logger.info("rendering widget entry view, \(settings.activePreset.id)")
         VStack {
             if settings.activePreset.id == Proxyservice_Preset.focus.id {
                 HStack {
@@ -69,6 +66,7 @@ struct SlowdownWidgetView : View {
             }
         }
         .buttonBorderShape(.capsule)
-        .blendMode(.lighten)
+        .environment(\.colorScheme, .dark) // For some reason .preferredColorScheme doesn't work with widgets
+
     }
 }

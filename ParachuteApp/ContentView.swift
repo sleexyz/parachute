@@ -33,7 +33,8 @@ struct ContentView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(UIColor(named: "Background")!))
+        .background(Color.background)
+        .preferredColorScheme(.dark)
         .onChange(of: scenePhase) { phase in
             // Reload settings when app becomes active
             // in case they were changed in the widget

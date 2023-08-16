@@ -8,6 +8,14 @@ public extension Color {
     static var parachuteOrange: Color {
         Color(UIColor(named: "Orange")!)
     }
+
+    static var label: Color {
+        Color(UIColor.label)
+    }
+
+    static var background: Color {
+        Color(UIColor(named: "Background")!)
+    }
     
     static var secondaryFill: Color {
         Color(red: 124/255, green: 124/255, blue: 124/255)

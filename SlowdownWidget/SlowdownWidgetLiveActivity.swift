@@ -33,7 +33,7 @@ struct SlowdownWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: SlowdownWidgetAttributes.self) { context in
             SlowdownWidgetView(settings: context.state.settings)
-                .activityBackgroundTint(Color(UIColor(named:"Background")!))
+                .activityBackgroundTint(Color.background)
                 .padding([.leading, .trailing], 20)
                 .activitySystemActionForegroundColor(.black)
             
