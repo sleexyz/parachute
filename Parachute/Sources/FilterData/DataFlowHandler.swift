@@ -2,14 +2,14 @@ import NetworkExtension
 import Logging
 import LoggingOSLog
 
-public class FlowHandler {
+public class DataFlowHandler {
     let logger: Logger = {
         LoggingSystem.bootstrap(LoggingOSLog.init)
-        return Logger(label: "industries.strange.slowdown.FlowHandler")
+        return Logger(label: "industries.strange.slowdown.DataFlowHandler")
     }()
 
     public init() {
-        logger.info("FlowHandler init")
+        logger.info("DataFlowHandler init")
     }
 
     public func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {

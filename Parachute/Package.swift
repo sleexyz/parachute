@@ -11,10 +11,10 @@ let package = Package(
            name: "FilterData",
            targets: ["FilterData"]
        ),
-//        .library(
-//            name: "FilterControl",
-//            targets: ["FilterControl"]
-//        ),
+       .library(
+           name: "FilterControl",
+           targets: ["FilterControl"]
+       ),
         .library(
             name: "AppViews",
             targets: ["AppViews"]
@@ -76,14 +76,14 @@ let package = Package(
                .product(name: "LoggingOSLog", package: "swift-log-oslog"),
            ]
        ),
-//        .target(
-//            name: "FilterControl",
-//            dependencies: [
-//                .product(name: "ProxyService", package: "ProxyService"),
-//                .product(name: "Logging", package: "swift-log"),
-//                .product(name: "LoggingOSLog", package: "swift-log-oslog"),
-//            ]
-//        ),
+       .target(
+           name: "FilterControl",
+           dependencies: [
+               .product(name: "ProxyService", package: "ProxyService"),
+               .product(name: "Logging", package: "swift-log"),
+               .product(name: "LoggingOSLog", package: "swift-log-oslog"),
+           ]
+       ),
         .target(
             name: "Server",
             dependencies: [

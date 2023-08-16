@@ -9,7 +9,7 @@ import FilterData
 import NetworkExtension
 
 class FilterDataProvider: NEFilterDataProvider {
-    let flowHandler: FlowHandler = FlowHandler()
+    let dataFlowHandler: DataFlowHandler = DataFlowHandler()
 
     override init() {
         super.init()
@@ -26,6 +26,6 @@ class FilterDataProvider: NEFilterDataProvider {
     }
     
     override func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
-        return flowHandler.handleNewFlow(flow)
+        return dataFlowHandler.handleNewFlow(flow)
     }
 }

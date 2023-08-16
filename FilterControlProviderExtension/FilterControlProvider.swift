@@ -5,9 +5,11 @@
 //  Created by Sean Lee on 8/15/23.
 //
 
+import FilterControl
 import NetworkExtension
 
 class FilterControlProvider: NEFilterControlProvider {
+    let controlFlowHandler: ControlFlowHandler = ControlFlowHandler()
 
     override func startFilter(completionHandler: @escaping (Error?) -> Void) {
         // Add code to initialize the filter
@@ -21,6 +23,7 @@ class FilterControlProvider: NEFilterControlProvider {
     
     override func handleNewFlow(_ flow: NEFilterFlow, completionHandler: @escaping (NEFilterControlVerdict) -> Void) {
         // Add code to determine if the flow should be dropped or not, downloading new rules if required
-        completionHandler(.allow(withUpdateRules: false))
+        let verdict = controlFlowHandler.handleNewFlow(flow)
+        completionHandler(verdict)
     }
 }

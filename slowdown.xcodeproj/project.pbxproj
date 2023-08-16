@@ -42,6 +42,7 @@
 		A04ADFBB2A7B5513008700C4 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04ADFBA2A7B5513008700C4 /* AppIntent.swift */; };
 		A04ADFBD2A7B5515008700C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A04ADFBC2A7B5515008700C4 /* Assets.xcassets */; };
 		A04ADFC12A7B5515008700C4 /* SlowdownWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A04ADFAE2A7B5513008700C4 /* SlowdownWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A04D70992A8D48F9004E52E1 /* FilterControl in Frameworks */ = {isa = PBXBuildFile; productRef = A04D70982A8D48F9004E52E1 /* FilterControl */; };
 		A04FAD9C294D60960002C19B /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A04FAD9B294D60960002C19B /* SwiftProtobuf */; };
 		A052AE1E29977B3700AB43B7 /* StateUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = A052AE1D29977B3700AB43B7 /* StateUpdater.swift */; };
 		A052AE20299A900100AB43B7 /* HealButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A052AE1F299A900100AB43B7 /* HealButton.swift */; };
@@ -369,6 +370,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A04D70992A8D48F9004E52E1 /* FilterControl in Frameworks */,
 				A0FE9A712A8C29EF00D891CE /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -813,6 +815,7 @@
 			);
 			name = FilterControlProviderExtension;
 			packageProductDependencies = (
+				A04D70982A8D48F9004E52E1 /* FilterControl */,
 			);
 			productName = FilterControlProviderExtension;
 			productReference = A0FE9A702A8C29EF00D891CE /* FilterControlProviderExtension.appex */;
@@ -1940,6 +1943,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A0458BFF28614D6500CE4CCB /* XCRemoteSwiftPackageReference "swift-log-oslog" */;
 			productName = LoggingOSLog;
+		};
+		A04D70982A8D48F9004E52E1 /* FilterControl */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FilterControl;
 		};
 		A04FAD9B294D60960002C19B /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;
