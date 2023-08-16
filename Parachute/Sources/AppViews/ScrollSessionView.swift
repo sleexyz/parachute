@@ -20,7 +20,7 @@ public struct ScrollSessionView: View {
                 Text("Take a deep breath...")
                     .font(.system(size: 24, weight: .bold))
                     .padding([.leading, .trailing, .bottom], 24)
-                    .foregroundStyle(Color.label)
+                    .foregroundStyle(Color.parachuteLabel)
                     .transition(.opacity.animation(ScrollSessionView.animation))
             } else if timeLeft == 0 {
                 ScrollPrompt()
@@ -66,12 +66,12 @@ struct ScrollPrompt: View {
             Text("How are you feeling right now?")
                 .font(.system(size: 24, weight: .bold))
                 .padding(.bottom, 24)
-                .foregroundStyle(Color.label)
+                .foregroundStyle(Color.parachuteLabel)
             Text("Take a moment and sit with that feeling.")
                 .font(.system(size: 18, weight: .regular))
                 .foregroundColor(.secondary)
                 .padding(.bottom, 96)
-                .foregroundStyle(Color.label)
+                .foregroundStyle(Color.parachuteLabel)
                 .opacity(showCaption ? 1 : 0)
                 .animation(ScrollSessionView.animation, value: showCaption)
             HStack {

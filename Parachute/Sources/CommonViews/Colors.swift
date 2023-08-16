@@ -6,10 +6,10 @@ public extension Color {
     }
 
     static var parachuteOrange: Color {
-        Color(UIColor(named: "Orange")!)
+        Color(UIColor(named: "parachuteOrange")!)
     }
 
-    static var label: Color {
+    static var parachuteLabel: Color {
         Color(UIColor.label)
     }
 
