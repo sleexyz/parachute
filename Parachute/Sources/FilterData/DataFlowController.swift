@@ -1,15 +1,21 @@
 import NetworkExtension
 import Logging
-import LoggingOSLog
+import SwiftProtobuf
+import SwiftProtobufPluginLibrary
+import ProxyService
 
-public class DataFlowHandler {
-    let logger: Logger = {
-        LoggingSystem.bootstrap(LoggingOSLog.init)
-        return Logger(label: "industries.strange.slowdown.DataFlowHandler")
-    }()
+public class DataFlowController {
+    let logger: Logger = Logger(label: "industries.strange.slowdown.DataFlowController")
+    
+    let settings: Proxyservice_Settings
 
-    public init() {
-        logger.info("DataFlowHandler init")
+    public init(settings: Proxyservice_Settings) {
+        logger.info("DataFlowController init")
+        self.settings = settings
+    }
+
+    public func updateSettings(settings: Proxyservice_Settings) {
+        logger.info("updateSettings: \(settings.debugDescription)")
     }
 
     public func matchSocialMedia(flow: NEFilterFlow) -> Bool {
@@ -23,21 +29,14 @@ public class DataFlowHandler {
             return true
         }
         return false
-
-    }
-
-    public func handleRulesChanged() {
-        logger.info("Rules changed")
     }
 
     public func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
         logger.info("New flow: \(flow)")
-
         if matchSocialMedia(flow: flow) {
             logger.info("Matched social media")
-            return .needRules()
+            return .allow()
         }
-        
         return .allow()
     }
 }

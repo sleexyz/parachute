@@ -4,32 +4,31 @@
 //
 //  Created by Sean Lee on 8/15/23.
 //
+// NOTE: This is currently unused.
 
 import FilterControl
 import NetworkExtension
-// import Common
+import Common
 
 class FilterControlProvider: NEFilterControlProvider {
     let controlFlowHandler = ControlFlowHandler()
-    // let filterConfigurationUpdateHandler = FilterConfigurationUpdateHandler()
+	var observerContext = 0
+//
+    override init() {
+        super.init()
+        self.addObserver(self, forKeyPath: "filterConfiguration", options: [.initial, .new], context: &observerContext)
+    }
 
-    // var kvoToken: NSKeyValueObservation?
 
-    // override init() {
-    //     // CommonLogging.initialize()
-    //     super.init()
-    //     // self.filterConfigurationUpdateHandler.registerProvider(provider: self)
-    //     // self.addObserver(self, forKeyPath: "filterConfiguration", options: [.initial, .new], context: &observerContext)
-    //     // kvoToken = self.observe(\.filterConfiguration, options: [.initial, .new]) { (person, change) in
-    //     //     // guard let filterConfiguration = change.new else { return }
-    //     //     self.filterConfigurationUpdateHandler.update(filterConfiguration: self.filterConfiguration)
-    //     // }
-    // }
-
-    // deinit {
-    //     kvoToken?.invalidate()
-    // }
-
+    /// Observe changes to the configuration.
+	override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+		if keyPath == "filterConfiguration" && context == &observerContext {
+            NSLog("configuration changed")
+		} else {
+			super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+		}
+	}
+    
     override func startFilter(completionHandler: @escaping (Error?) -> Void) {
         // Add code to initialize the filter
         completionHandler(nil)

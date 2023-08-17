@@ -66,14 +66,18 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.0"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", branch: "master"),
+        .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.0.0"),
+
     ],
     targets: [
        .target(
            name: "FilterData",
            dependencies: [
-               .product(name: "ProxyService", package: "ProxyService"),
-               .product(name: "Logging", package: "swift-log"),
-                .product(name: "LoggingOSLog", package: "swift-log-oslog"),
+                "Models",
+                "Common",
+                .product(name: "ProxyService", package: "ProxyService"),
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "SwiftProtobuf", package: "swift-protobuf"),
            ]
        ),
        .target(
@@ -81,7 +85,6 @@ let package = Package(
            dependencies: [
                .product(name: "ProxyService", package: "ProxyService"),
                .product(name: "Logging", package: "swift-log"),
-               .product(name: "LoggingOSLog", package: "swift-log-oslog"),
            ]
        ),
         .target(

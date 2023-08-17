@@ -14,7 +14,7 @@ public class ControlFlowHandler {
 
     public func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterControlVerdict {
         logger.info("New flow: \(flow)")
-        return .allow(withUpdateRules: true)
+        return .allow(withUpdateRules: false)
         // return .drop(withUpdateRules: false)
     }
 }

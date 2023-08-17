@@ -1,8 +1,8 @@
 import ProxyService
 import Foundation
 
-extension Proxyservice_Settings {
-    public static var defaultSettings: Proxyservice_Settings {
+public extension Proxyservice_Settings {
+    static var defaultSettings: Proxyservice_Settings {
         var settings = Proxyservice_Settings()
         SettingsMigrations.setDefaults(settings: &settings)
         return settings
