@@ -4,6 +4,7 @@ import Logging
 import NetworkExtension
 import Combine
 import DI
+import Common
 
 public class FilterConfigurationService: NEConfigurationServiceProtocol {
     public static let shared = FilterConfigurationService()
@@ -61,17 +62,14 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
         }.value
     }
 
+    // TODO: make this take a settings object
     public func install() async throws -> () {
         let providerConfiguration = NEFilterProviderConfiguration()
         providerConfiguration.filterBrowsers = true
         providerConfiguration.filterSockets = true
-//        providerConfiguration.filterDataProviderBundleIdentifier = "industries.strange.slowdown.FilterDataProviderExtension"
-//        providerConfiguration.filterControlProviderBundleIdentifier = "industries.strange.slowdown.FilterControlProviderExtension"
-//        providerConfiguration.filterPackets = false
         NEFilterManager.shared().providerConfiguration = providerConfiguration
         NEFilterManager.shared().isEnabled = true
         try await saveFilterConfiguration()
-        // registerWithProvider()
     }
 
     func saveFilterConfiguration() async throws -> () {
@@ -134,6 +132,21 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
     }
 
     public func Rpc(request: ProxyService.Proxyservice_Request) async throws -> Data {
-        throw RpcError.serverNotInitializedError
+        let providerConfiguration = NEFilterProviderConfiguration()
+        providerConfiguration.filterBrowsers = true
+        providerConfiguration.filterSockets = true
+        let value = try request.serializedData()
+        providerConfiguration.vendorConfiguration = [
+            .vendorConfigurationKey: value
+        ]
+
+        NEFilterManager.shared().providerConfiguration = providerConfiguration
+        NEFilterManager.shared().isEnabled = true
+        try await saveFilterConfiguration()
+        logger.info("Successfully saved the filter configuration \(providerConfiguration.vendorConfiguration?.count ?? 0) \(providerConfiguration.vendorConfiguration!)")
+        logger.info("\(providerConfiguration.vendorConfiguration?.count ?? 0) \(providerConfiguration.vendorConfiguration![.vendorConfigurationKey]!)")
+
+        // TODO: implement when we actually need real data
+        return Data()
     }
 }

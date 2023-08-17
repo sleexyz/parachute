@@ -8,6 +8,10 @@
 import Foundation
 import ProxyService
 
+public extension String {
+    public static var vendorConfigurationKey = "slowdown-settings"
+}
+
 extension Proxyservice_Preset: Identifiable {
     public typealias ID = String
 }

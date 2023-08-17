@@ -22,7 +22,7 @@ public class SettingsController: ObservableObject {
         }
         public init() {}
     }
-    
+ 
     private let store: SettingsStore
     private let service: any NEConfigurationServiceProtocol
     
@@ -49,6 +49,7 @@ public class SettingsController: ObservableObject {
         try self.store.save()
     }
     
+    @MainActor
     public func syncSettings(reason: String = "") async throws -> () {
         store.settings.changeMetadata = Proxyservice_ChangeMetadata.with {
             $0.id = SettingsStore.id

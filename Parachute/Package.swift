@@ -73,7 +73,7 @@ let package = Package(
            dependencies: [
                .product(name: "ProxyService", package: "ProxyService"),
                .product(name: "Logging", package: "swift-log"),
-               .product(name: "LoggingOSLog", package: "swift-log-oslog"),
+                .product(name: "LoggingOSLog", package: "swift-log-oslog"),
            ]
        ),
        .target(
@@ -156,6 +156,8 @@ let package = Package(
             name: "Common",
             dependencies: [
                 .product(name: "ProxyService", package: "ProxyService"),
+                .product(name: "LoggingOSLog", package: "swift-log-oslog"),
+                .product(name: "Logging", package: "swift-log"),
             ]
         ),
         .target(name: "DI"),

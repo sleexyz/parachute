@@ -7,13 +7,12 @@
 
 import SwiftUI
 import ProxyService
-import Logging
-import LoggingOSLog
 import Firebase
 import Common
 import Controllers
 import CommonLoaders
 import AppHelpers
+import Logging
 
 @main
 struct slowdownApp: App {
@@ -22,7 +21,7 @@ struct slowdownApp: App {
     private let logger = Logger(label: "industries.strange.slowdown.slowdownApp")
     
     init() {
-        LoggingSystem.bootstrap(LoggingOSLog.init)
+        CommonLogging.initialize()
     }
     
     var body: some Scene {

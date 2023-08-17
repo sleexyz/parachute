@@ -77,7 +77,8 @@ public struct Preset {
             presetData: .relax,
             mainColor: .blue,
             parentPreset: "focus",
-            overlayDurationSecs: 5 * 60
+            // overlayDurationSecs: 5 * 60
+            overlayDurationSecs: 10
         )
     }
 

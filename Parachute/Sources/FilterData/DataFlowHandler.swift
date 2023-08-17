@@ -12,16 +12,30 @@ public class DataFlowHandler {
         logger.info("DataFlowHandler init")
     }
 
-    public func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
-        logger.info("New flow: \(flow)")
+    public func matchSocialMedia(flow: NEFilterFlow) -> Bool {
         if flow.sourceAppIdentifier?.hasSuffix(".com.zhiliaoapp.musically") ?? false {
-            return .drop()
+            return true
         }
         if flow.sourceAppIdentifier?.hasSuffix(".com.burbn.instagram") ?? false {
-            return .drop()
+            return true
         }
         if flow.sourceAppIdentifier?.hasSuffix(".com.atebits.Tweetie2") ?? false {
-            return .drop()
+            return true
+        }
+        return false
+
+    }
+
+    public func handleRulesChanged() {
+        logger.info("Rules changed")
+    }
+
+    public func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
+        logger.info("New flow: \(flow)")
+
+        if matchSocialMedia(flow: flow) {
+            logger.info("Matched social media")
+            return .needRules()
         }
         
         return .allow()

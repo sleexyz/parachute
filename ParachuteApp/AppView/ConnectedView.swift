@@ -29,7 +29,8 @@ struct ConnectedView: View {
     var body: some View {
         
         if scrollSessionViewController.open {
-            ScrollSessionView()
+            // TODO: remove before testing
+            ScrollSessionView(duration: 0)
         } else {
             ZStack {
                 VStack {

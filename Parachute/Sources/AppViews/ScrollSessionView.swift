@@ -7,7 +7,13 @@ import Models
 import Logging
 
 public struct ScrollSessionView: View {
-    public init() {}
+    var duration: Int
+
+    public init(duration: Int = 9) {
+        self.duration = duration
+    }
+
+
     static var animation: Animation = .easeInOut(duration: 3)
 
     var logger = Logger(label: "industries.strange.slowdown.ScrollSessionView")
@@ -15,7 +21,7 @@ public struct ScrollSessionView: View {
 
     // TODO: remove timerlock
     public var body: some View {
-        TimerLock(duration: 9) { timeLeft in
+        TimerLock(duration: duration) { timeLeft in
             if timeLeft > 3 {
                 Text("Take a deep breath...")
                     .font(.system(size: 24, weight: .bold))
@@ -23,7 +29,7 @@ public struct ScrollSessionView: View {
                     .foregroundStyle(Color.parachuteLabel)
                     .transition(.opacity.animation(ScrollSessionView.animation))
             } else if timeLeft == 0 {
-                ScrollPrompt()
+                ScrollPrompt(shouldAnimate: duration != 0)
                     .transition(AnyTransition.asymmetric(
                         insertion:.opacity.animation(ScrollSessionView.animation),
                         removal: .identity
@@ -40,23 +46,30 @@ public struct ScrollSessionView: View {
 }
 
 struct ScrollPrompt: View {
+    var shouldAnimate: Bool = true
+
     @State var showButtons: Bool = false
     @State var showCaption: Bool = false
     
     @EnvironmentObject var scrollSessionViewController: ScrollSessionViewController
     @EnvironmentObject var profileManager: ProfileManager
 
+    private let logger: Logger = Logger(label: "industries.strange.slowdown.ScrollPrompt")
     
     public func startScrollSession() {
         Task { @MainActor in
-            try await profileManager.loadPreset(
-                preset: .focus,
-                overlay: .scrollSession
-            )
-            if #available(iOS 16.2, *) {
-                await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings)
+            do {
+                try await profileManager.loadPreset(
+                    preset: .focus,
+                    overlay: .scrollSession
+                )
+                if #available(iOS 16.2, *) {
+                    await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings)
+                }
+                scrollSessionViewController.setClosed()
+            } catch {
+                logger.error("Failed to load preset: \(error)")
             }
-            scrollSessionViewController.setClosed()
         }
     }
 
@@ -100,9 +113,13 @@ struct ScrollPrompt: View {
         }
         .onAppear {
             Task {@MainActor in
-                try await Task.sleep(nanoseconds: 1 * 1_000_000_000)
+                if shouldAnimate {
+                    try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+                }
                 showCaption = true
-                try await Task.sleep(nanoseconds: 6 * 1_000_000_000)
+                if shouldAnimate {
+                    try await Task.sleep(nanoseconds: 8 * 1_000_000_000)
+                }
                 showButtons = true
             }
         }

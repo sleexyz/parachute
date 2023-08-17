@@ -7,9 +7,28 @@
 
 import FilterControl
 import NetworkExtension
+// import Common
 
 class FilterControlProvider: NEFilterControlProvider {
-    let controlFlowHandler: ControlFlowHandler = ControlFlowHandler()
+    let controlFlowHandler = ControlFlowHandler()
+    // let filterConfigurationUpdateHandler = FilterConfigurationUpdateHandler()
+
+    // var kvoToken: NSKeyValueObservation?
+
+    // override init() {
+    //     // CommonLogging.initialize()
+    //     super.init()
+    //     // self.filterConfigurationUpdateHandler.registerProvider(provider: self)
+    //     // self.addObserver(self, forKeyPath: "filterConfiguration", options: [.initial, .new], context: &observerContext)
+    //     // kvoToken = self.observe(\.filterConfiguration, options: [.initial, .new]) { (person, change) in
+    //     //     // guard let filterConfiguration = change.new else { return }
+    //     //     self.filterConfigurationUpdateHandler.update(filterConfiguration: self.filterConfiguration)
+    //     // }
+    // }
+
+    // deinit {
+    //     kvoToken?.invalidate()
+    // }
 
     override func startFilter(completionHandler: @escaping (Error?) -> Void) {
         // Add code to initialize the filter
@@ -26,4 +45,5 @@ class FilterControlProvider: NEFilterControlProvider {
         let verdict = controlFlowHandler.handleNewFlow(flow)
         completionHandler(verdict)
     }
+
 }
