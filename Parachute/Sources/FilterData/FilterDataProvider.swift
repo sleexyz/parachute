@@ -18,8 +18,11 @@ public class FilterDataProvider: NEFilterDataProvider {
         return Logger(label: "industries.strange.slowdown.FilterDataProvider")
     }()
 
+
     lazy var dataFlowController: DataFlowController = {
-        return DataFlowController(settings: self.settings ?? .defaultSettings)
+        // TODO: load settings from disk
+        // return DataFlowController(settings: (try? SettingsHelper.loadSettings()) ?? .defaultSettings)
+        return DataFlowController(settings: .defaultSettings)
     }()
 
     var observerContext = 0
@@ -28,21 +31,21 @@ public class FilterDataProvider: NEFilterDataProvider {
         self.addObserver(self, forKeyPath: "filterConfiguration", options: [.initial, .new], context: &observerContext)
     }
     
-    var settings: Proxyservice_Settings? {
-        guard let settingsData = self.filterConfiguration.vendorConfiguration?[.vendorConfigurationKey] as? Data else {
-            return nil
-        }
-        return try? Proxyservice_Settings(serializedData: settingsData)
-    }
-
-
     /// Observe changes to the configuration.
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "filterConfiguration" && context == &observerContext {
-            if let settings = self.settings {
-                dataFlowController.updateSettings(settings: settings)
+            defer {
+                logger.info("configuration changed")
             }
-            logger.info("configuration changed")
+            guard let requestData = self.filterConfiguration.vendorConfiguration?[.vendorConfigurationKey] as? Data else {
+                return
+            }
+            guard let request = try? Proxyservice_Request(serializedData: requestData) else {
+                return
+            }
+            if case(.setSettings(let setSettings)) = request.message {
+                dataFlowController.updateSettings(settings: setSettings)
+            }
         } else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }

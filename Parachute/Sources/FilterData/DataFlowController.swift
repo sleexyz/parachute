@@ -7,7 +7,7 @@ import ProxyService
 public class DataFlowController {
     let logger: Logger = Logger(label: "industries.strange.slowdown.DataFlowController")
     
-    let settings: Proxyservice_Settings
+    var settings: Proxyservice_Settings
 
     public init(settings: Proxyservice_Settings) {
         logger.info("DataFlowController init")
@@ -15,7 +15,8 @@ public class DataFlowController {
     }
 
     public func updateSettings(settings: Proxyservice_Settings) {
-        logger.info("updateSettings: \(settings.debugDescription)")
+        self.settings = settings
+        logger.info("updated settings: \(settings.debugDescription)")
     }
 
     public func matchSocialMedia(flow: NEFilterFlow) -> Bool {
@@ -31,11 +32,20 @@ public class DataFlowController {
         return false
     }
 
+    var shouldAllowSocialMedia: Bool {
+        return settings.activePreset.baseRxSpeedTarget == .infinity
+    }
+
     public func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
         logger.info("New flow: \(flow)")
         if matchSocialMedia(flow: flow) {
-            logger.info("Matched social media")
-            return .allow()
+            if shouldAllowSocialMedia {
+                logger.info("Allowing social media")
+                return .allow()
+            } else {
+                logger.info("Blocking social media")
+                return .drop()
+            }
         }
         return .allow()
     }

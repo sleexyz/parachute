@@ -234,7 +234,7 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
     }
     
     
-    public func install() async throws -> () {
+    public func install(settings: Proxyservice_Settings) async throws -> () {
         try await Future<(), Error> { promise in
             let tunnel = self.makeNewTunnel()
             tunnel.saveToPreferences { [weak self] error in

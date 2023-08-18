@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ProxyService
 
 public class SettingsHelper {
     private static func fileUrl() throws -> URL {
@@ -18,5 +19,10 @@ public class SettingsHelper {
     public static func loadSettingsData() throws -> Data {
         let file = try FileHandle(forReadingFrom: SettingsHelper.fileUrl())
         return file.availableData
+    }
+
+    public static func loadSettings() throws -> Proxyservice_Settings {
+        let data = try SettingsHelper.loadSettingsData()
+        return try Proxyservice_Settings(serializedData: data)
     }
 }

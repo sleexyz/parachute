@@ -62,14 +62,8 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
         }.value
     }
 
-    // TODO: make this take a settings object
-    public func install() async throws -> () {
-        let providerConfiguration = NEFilterProviderConfiguration()
-        providerConfiguration.filterBrowsers = true
-        providerConfiguration.filterSockets = true
-        NEFilterManager.shared().providerConfiguration = providerConfiguration
-        NEFilterManager.shared().isEnabled = true
-        try await saveFilterConfiguration()
+    public func install(settings: Proxyservice_Settings) async throws -> () {
+        try await self.SetSettings(settings: settings)
     }
 
     func saveFilterConfiguration() async throws -> () {

@@ -100,19 +100,15 @@ public class ProfileManager: ObservableObject {
         }
         try await settingsController.syncSettings()
         overlayTimer?.invalidate()
-        // TODO: uncomment
-        // let taskId = UIApplication.shared.beginBackgroundTask(withName: "overlayExpiry") {
-        //     self.logger.info("We are about to kill your task")
-        //  }
+         let taskId = UIApplication.shared.beginBackgroundTask(withName: "overlayExpiry") {
+             self.logger.info("We are about to kill your task")
+          }
         
         overlayTimer = Timer.scheduledTimer(withTimeInterval: overlay.overlayDurationSecs!, repeats: false) { _ in
             Task { @MainActor in
                 defer {
                     self.overlayTimer?.invalidate()
-                    // TODO: uncomment
-                    // if UIApplication.shared.backgroundTimeRemaining <= 10 {
-                    //     UIApplication.shared.endBackgroundTask(taskId)
-                    // }
+                    UIApplication.shared.endBackgroundTask(taskId)
                 }
                 self.settingsStore.settings.clearOverlay()
                 try await self.settingsController.syncSettings(reason: "Overlay expired")

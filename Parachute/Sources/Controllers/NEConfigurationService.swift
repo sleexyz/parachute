@@ -20,7 +20,7 @@ public protocol NEConfigurationServiceProtocol: ObservableObject {
     func stop() async throws
 
     // Installs the network extension.
-    func install() async throws
+    func install(settings: Proxyservice_Settings) async throws
 
     // Sends a message to the network extension.
     func Rpc(request: Proxyservice_Request) async throws -> Data

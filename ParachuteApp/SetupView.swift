@@ -11,6 +11,7 @@ import Controllers
 
 struct SetupView: View {
     @EnvironmentObject private var service: NEConfigurationService
+    @EnvironmentObject var settingsStore: SettingsStore
 
     @State private var isLoading = false
     @State private var isShowingError = false
@@ -43,7 +44,7 @@ struct SetupView: View {
         self.isLoading = true
         Task { @MainActor in
             do {
-                try await service.install()
+                try await service.install(settings: settingsStore.settings)
             } catch let error {
                 self.errorMessage = error.localizedDescription
                 self.isShowingError = true
