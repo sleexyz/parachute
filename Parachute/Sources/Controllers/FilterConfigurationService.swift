@@ -62,8 +62,15 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
         }.value
     }
 
+    @MainActor
     public func install(settings: Proxyservice_Settings) async throws -> () {
+        self.isTransitioning = true
+        defer {
+            self.isTransitioning = false
+        }
         try await self.SetSettings(settings: settings)
+        self.isConnected = true
+        self.logger.info("Successfully saved the filter configuration")
     }
 
     func saveFilterConfiguration() async throws -> () {
@@ -81,21 +88,8 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
     }
 
     @MainActor
-    public func start(settingsOverride: Proxyservice_Settings?) async throws -> () {
-        self.logger.info("Starting filter configuration service")
-        self.isTransitioning = true
-        defer {
-            self.isTransitioning = false
-        }
-        guard !NEFilterManager.shared().isEnabled else {
-            return
-        }
-        
-        try await loadFilterConfiguration()
-        NEFilterManager.shared().isEnabled = true
-        try await saveFilterConfiguration()
-        self.isConnected = true
-        self.logger.info("Successfully saved the filter configuration")
+    public func start(settingsOverride: Proxyservice_Settings) async throws -> () {
+        try await install(settings: settingsOverride)
     }
 
     @MainActor
@@ -111,19 +105,11 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
             self.isConnected = false
             return
         }
-
-        guard (try? await loadFilterConfiguration()) != nil else {
-            return
-        }
-
-        NEFilterManager.shared().isEnabled = false 
-        guard (try? await saveFilterConfiguration()) != nil else {
-            // Should this revert the isEnabled flag?
-            return
-        }
+        try await NEFilterManager.shared().removeFromPreferences()
         self.isConnected = false
-        self.logger.info("Successfully saved the filter configuration")
+        self.logger.info("Successfully removed the filter configuration")
     }
+    
 
     public func Rpc(request: ProxyService.Proxyservice_Request) async throws -> Data {
         let providerConfiguration = NEFilterProviderConfiguration()

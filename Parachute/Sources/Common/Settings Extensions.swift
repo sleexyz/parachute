@@ -9,7 +9,7 @@ import Foundation
 import ProxyService
 
 public extension String {
-    public static var vendorConfigurationKey = "slowdown-settings"
+    static var vendorConfigurationKey = "slowdown-settings"
 }
 
 extension Proxyservice_Preset: Identifiable {

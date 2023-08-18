@@ -207,12 +207,9 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
     }
     
     @MainActor
-    public func start(settingsOverride: Proxyservice_Settings?) async throws {
-        if let settingsOverride = settingsOverride {
+    public func start(settingsOverride: Proxyservice_Settings) async throws {
             try self.manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: try settingsOverride.serializedData())])
-        } else {
-            try self.manager?.connection.startVPNTunnel()
-        }
+
         self.isTransitioning = true
     }
     

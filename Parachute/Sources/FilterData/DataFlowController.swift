@@ -1,7 +1,6 @@
 import NetworkExtension
 import Logging
 import SwiftProtobuf
-import SwiftProtobufPluginLibrary
 import ProxyService
 
 let PEEK_SIZE = 1024
@@ -26,6 +25,15 @@ public class DataFlowController {
             return true
         }
         if flow.sourceAppIdentifier?.hasSuffix(".com.burbn.instagram") ?? false {
+            // Check if is NEFilterSocketFlow
+            if let flow = flow as? NEFilterSocketFlow {
+                if flow.remoteHostname?.hasPrefix("chat-e2ee") ?? false {
+                    return false
+                }
+                if flow.remoteHostname?.hasPrefix("mqtt.") ?? false {
+                    return false
+                }
+            }
             return true
         }
         if flow.sourceAppIdentifier?.hasSuffix(".com.atebits.Tweetie2") ?? false {

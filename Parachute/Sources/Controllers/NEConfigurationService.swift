@@ -14,7 +14,7 @@ public protocol NEConfigurationServiceProtocol: ObservableObject {
     func load() async -> ()
 
     // Starts the network extension.
-    func start(settingsOverride: Proxyservice_Settings?) async throws
+    func start(settingsOverride: Proxyservice_Settings) async throws
 
     // Stops the network extension.
     func stop() async throws
