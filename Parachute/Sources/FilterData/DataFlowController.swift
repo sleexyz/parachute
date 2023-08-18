@@ -4,6 +4,8 @@ import SwiftProtobuf
 import SwiftProtobufPluginLibrary
 import ProxyService
 
+let PEEK_SIZE = 1024
+
 public class DataFlowController {
     let logger: Logger = Logger(label: "industries.strange.slowdown.DataFlowController")
     
@@ -39,14 +41,18 @@ public class DataFlowController {
     public func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
         logger.info("New flow: \(flow)")
         if matchSocialMedia(flow: flow) {
-            if shouldAllowSocialMedia {
-                logger.info("Allowing social media")
-                return .allow()
-            } else {
-                logger.info("Blocking social media")
-                return .drop()
-            }
+            return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: PEEK_SIZE,  filterOutbound: false, peekOutboundBytes: 0)
         }
         return .allow()
+    }
+
+    public func handleInboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
+        if shouldAllowSocialMedia {
+            // logger.info("Allowing social media")
+            return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: PEEK_SIZE)
+        } else {
+            // logger.info("Blocking social media")
+            return .drop()
+        }
     }
 }

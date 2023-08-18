@@ -64,4 +64,8 @@ public class FilterDataProvider: NEFilterDataProvider {
     public override func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
         return dataFlowController.handleNewFlow(flow)
     }
+    
+    public override func handleInboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
+        return dataFlowController.handleInboundData(from: flow, readBytesStartOffset: offset, readBytes: readBytes)
+    }
 }
