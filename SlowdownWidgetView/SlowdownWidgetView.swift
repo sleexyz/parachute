@@ -8,18 +8,18 @@
 import WidgetKit
 import SwiftUI
 import Controllers
-import Logging
 import CommonLoaders
 import Activities
 import Models
 import ProxyService
 import SwiftProtobuf
 import CommonViews
+import OSLog
 
 @available(iOS 17.0, *)
 struct SlowdownWidgetView : View {
     var settings: Proxyservice_Settings
-    var logger = Logger(label: "industries.strange.slowdown.SlowdownWidgetView")
+    var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SlowdownWidgetView")
     var statusMessage: String {
         if settings.changeMetadata.reason == "Overlay expired" && settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
             return "Session ended"

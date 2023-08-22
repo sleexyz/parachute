@@ -7,13 +7,13 @@
 
 import Foundation
 import Ffi
-import Logging
+import OSLog
 import ProxyService
 import Common
 
 public struct Server {
     let bridge: FfiProxyBridgeProtocol
-    let logger: Logger = Logger(label: "industries.strange.slowdown.Server")
+    let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Server")
     
     private init(bridge: FfiProxyBridgeProtocol) {
         self.bridge = bridge

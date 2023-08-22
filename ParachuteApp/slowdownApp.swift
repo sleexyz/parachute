@@ -12,17 +12,13 @@ import Common
 import Controllers
 import CommonLoaders
 import AppHelpers
-import Logging
+import OSLog
 
 @main
 struct slowdownApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
-    private let logger = Logger(label: "industries.strange.slowdown.slowdownApp")
-    
-    init() {
-        CommonLogging.initialize()
-    }
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "slowdownApp")
     
     var body: some Scene {
         WindowGroup {

@@ -8,7 +8,7 @@
 import WidgetKit
 import SwiftUI
 import Controllers
-import Logging
+import OSLog
 import CommonLoaders
 import Activities
 import Models
@@ -16,8 +16,8 @@ import ProxyService
 import SwiftProtobuf
 import CommonViews
 
-struct Provider: AppIntentTimelineProvider {
-    let logger = Logger(label: "industries.strange.slowdown.SlowdownWidget")
+struct SlowdownWidgetProvider: AppIntentTimelineProvider {
+    let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SlowdownWidgetProvider")
 
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(date: Date(), settings: .defaultSettings)
@@ -63,7 +63,7 @@ struct SlowdownWidget: Widget {
     }
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: SlowdownWidgetProvider()) { entry in
             ControllersLoader {
                 SlowdownWidgetView(settings: entry.settings)
                     .environmentObject(NEConfigurationService.shared)

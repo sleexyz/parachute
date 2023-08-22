@@ -11,7 +11,6 @@
 		A0016E3F2A787DD600CA9BE6 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = A0016E3E2A787DD600CA9BE6 /* Inject */; };
 		A00A09CC2A7DB76600011260 /* Animation Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00A09CB2A7DB76600011260 /* Animation Globals.swift */; };
 		A00A09CE2A7EDA7000011260 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A00A09CD2A7EDA7000011260 /* Controllers */; };
-		A00A09D02A7EEF7100011260 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A00A09CF2A7EEF7100011260 /* Logging */; };
 		A00AF05129AD006200673B31 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = A00AF05029AD006200673B31 /* OrderedCollections */; };
 		A01AB95C2A7D8015004E87B3 /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = A01AB95B2A7D8015004E87B3 /* Common */; };
 		A01AB95E2A7D8015004E87B3 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A01AB95D2A7D8015004E87B3 /* Controllers */; };
@@ -31,7 +30,6 @@
 		A04332CA296BA21A00D69210 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A04332C9296BA21A00D69210 /* FirebaseCrashlytics */; };
 		A04332CC296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
 		A04332CD296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
-		A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A0458BF9285FB5A300CE4CCB /* Logging */; };
 		A04ADFB02A7B5513008700C4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04ADFAF2A7B5513008700C4 /* WidgetKit.framework */; };
 		A04ADFB22A7B5513008700C4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04ADFB12A7B5513008700C4 /* SwiftUI.framework */; };
 		A04ADFB52A7B5513008700C4 /* SlowdownWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04ADFB42A7B5513008700C4 /* SlowdownWidgetBundle.swift */; };
@@ -57,7 +55,6 @@
 		A077852029779CB50038BB4B /* Ffi.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A077851F29779CB50038BB4B /* Ffi.xcframework */; };
 		A0790B2B2A74689C00A24338 /* Carousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0790B2A2A74689C00A24338 /* Carousel.swift */; };
 		A0790B2F2A75611800A24338 /* 2023-07-29-swirl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0790B2E2A75611800A24338 /* 2023-07-29-swirl.swift */; };
-		A080EDF6294F9864005401E4 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = A080EDF5294F9864005401E4 /* Logging */; };
 		A081F232295BB3D700863FE3 /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A081F231295BB3D700863FE3 /* SetupView.swift */; };
 		A081F23A2967B10F00863FE3 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = A081F2392967B10F00863FE3 /* SwiftProtobuf */; };
 		A081F23C2967B10F00863FE3 /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = A081F23B2967B10F00863FE3 /* SwiftProtobufPluginLibrary */; };
@@ -285,7 +282,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A00AF05129AD006200673B31 /* OrderedCollections in Frameworks */,
-				A080EDF6294F9864005401E4 /* Logging in Frameworks */,
 				A0717CCD294D260C00186AFE /* SwiftProtobufPluginLibrary in Frameworks */,
 				A01AB95E2A7D8015004E87B3 /* Controllers in Frameworks */,
 				A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */,
@@ -320,7 +316,6 @@
 			files = (
 				A04ADFB22A7B5513008700C4 /* SwiftUI.framework in Frameworks */,
 				A04ADFB02A7B5513008700C4 /* WidgetKit.framework in Frameworks */,
-				A00A09D02A7EEF7100011260 /* Logging in Frameworks */,
 				A056C36A2A819E7F00E4ED9A /* CommonLoaders in Frameworks */,
 				A0EE20AC2A82E84E00F34B98 /* Activities in Frameworks */,
 				A0F98CA02A86B1F500D5E88E /* CommonViews in Frameworks */,
@@ -341,7 +336,6 @@
 				A089610C2A7D8B3200742B70 /* Common in Frameworks */,
 				A089610E2A7D8C5200742B70 /* Server in Frameworks */,
 				A04332CA296BA21A00D69210 /* FirebaseCrashlytics in Frameworks */,
-				A0458BFA285FB5A300CE4CCB /* Logging in Frameworks */,
 				A081F23A2967B10F00863FE3 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -649,7 +643,6 @@
 			packageProductDependencies = (
 				A0717CCC294D260C00186AFE /* SwiftProtobufPluginLibrary */,
 				A04FAD9B294D60960002C19B /* SwiftProtobuf */,
-				A080EDF5294F9864005401E4 /* Logging */,
 				A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */,
 				A00AF05029AD006200673B31 /* OrderedCollections */,
 				A0016E3C2A787DC400CA9BE6 /* Inject */,
@@ -717,7 +710,6 @@
 			name = SlowdownWidgetExtension;
 			packageProductDependencies = (
 				A00A09CD2A7EDA7000011260 /* Controllers */,
-				A00A09CF2A7EEF7100011260 /* Logging */,
 				A056C3692A819E7F00E4ED9A /* CommonLoaders */,
 				A0EE20AB2A82E84E00F34B98 /* Activities */,
 				A0975B482A832F380079FCBD /* AppHelpers */,
@@ -743,7 +735,6 @@
 			);
 			name = tunnel;
 			packageProductDependencies = (
-				A0458BF9285FB5A300CE4CCB /* Logging */,
 				A081F2392967B10F00863FE3 /* SwiftProtobuf */,
 				A081F23B2967B10F00863FE3 /* SwiftProtobufPluginLibrary */,
 				A04332C9296BA21A00D69210 /* FirebaseCrashlytics */,
@@ -868,7 +859,6 @@
 			);
 			mainGroup = A02F58D327A6F14500D3330F;
 			packageReferences = (
-				A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */,
 				A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				A0A81D5A296B98D800B9E1DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				A00AF04F29AD006200673B31 /* XCRemoteSwiftPackageReference "swift-collections" */,
@@ -1917,14 +1907,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-log.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-protobuf.git";
@@ -1958,11 +1940,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Controllers;
 		};
-		A00A09CF2A7EEF7100011260 /* Logging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */;
-			productName = Logging;
-		};
 		A00AF05029AD006200673B31 /* OrderedCollections */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A00AF04F29AD006200673B31 /* XCRemoteSwiftPackageReference "swift-collections" */;
@@ -1980,11 +1957,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A0A81D5A296B98D800B9E1DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
-		};
-		A0458BF9285FB5A300CE4CCB /* Logging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */;
-			productName = Logging;
 		};
 		A04D70982A8D48F9004E52E1 /* FilterControl */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -2015,11 +1987,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobufPluginLibrary;
-		};
-		A080EDF5294F9864005401E4 /* Logging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A0458BF8285FB5A300CE4CCB /* XCRemoteSwiftPackageReference "swift-log" */;
-			productName = Logging;
 		};
 		A081F2392967B10F00863FE3 /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;

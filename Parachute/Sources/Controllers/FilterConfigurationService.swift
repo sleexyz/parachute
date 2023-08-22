@@ -1,6 +1,6 @@
 import ProxyService
 import Foundation
-import Logging
+import OSLog
 import NetworkExtension
 import Combine
 import DI
@@ -24,7 +24,7 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
     @Published public var connectedDate: Date? = nil
 
     private var manager: NEFilterManager = NEFilterManager.shared()
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.FilterConfigurationService")
+    private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FilterConfigurationService")
 
     @MainActor
     public func load() async -> () {
@@ -123,8 +123,7 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
         NEFilterManager.shared().providerConfiguration = providerConfiguration
         NEFilterManager.shared().isEnabled = true
         try await saveFilterConfiguration()
-        logger.info("Successfully saved the filter configuration \(providerConfiguration.vendorConfiguration?.count ?? 0) \(providerConfiguration.vendorConfiguration!)")
-        logger.info("\(providerConfiguration.vendorConfiguration?.count ?? 0) \(providerConfiguration.vendorConfiguration![.vendorConfigurationKey]!)")
+        logger.info("Successfully saved the filter configuration.")
 
         // TODO: implement when we actually need real data
         return Data()

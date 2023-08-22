@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import ProxyService
 import Combine
-import Logging
+import OSLog
 import Models
 import RangeMapping
 

@@ -8,7 +8,7 @@
 import SwiftUI
 
 import Foundation
-import Logging
+import OSLog
 import Controllers
 import CommonViews
 
@@ -17,7 +17,7 @@ struct ContentView: View {
     @EnvironmentObject var service: NEConfigurationService
     @Environment(\.scenePhase) var scenePhase
     
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.ContentView")
+    private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ContentView")
     
     @ViewBuilder
     var body: some View {

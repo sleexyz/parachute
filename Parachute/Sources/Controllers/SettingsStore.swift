@@ -9,7 +9,7 @@ import Foundation
 import ProxyService
 import SwiftProtobuf
 import SwiftUI
-import Logging
+import OSLog
 import Combine
 import DI
 import Models
@@ -37,7 +37,7 @@ public class SettingsStore: ObservableObject {
     
     @Published public var loaded = false
     
-    private let logger = Logger(label: "industries.strange.slowdown.SettingsStore")
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SettingsStore")
     
     private var bag = Set<AnyCancellable>()
     

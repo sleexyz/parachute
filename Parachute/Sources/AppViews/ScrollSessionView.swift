@@ -4,7 +4,7 @@ import Controllers
 import AppHelpers
 import CommonViews
 import Models
-import Logging
+import OSLog
 
 public struct ScrollSessionView: View {
     var duration: Int
@@ -16,7 +16,7 @@ public struct ScrollSessionView: View {
 
     static var animation: Animation = .easeInOut(duration: 3)
 
-    var logger = Logger(label: "industries.strange.slowdown.ScrollSessionView")
+    var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ScrollSessionView")
 
 
     // TODO: remove timerlock
@@ -54,7 +54,7 @@ struct ScrollPrompt: View {
     @EnvironmentObject var scrollSessionViewController: ScrollSessionViewController
     @EnvironmentObject var profileManager: ProfileManager
 
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.ScrollPrompt")
+    private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ScrollPrompt")
     
     public func startScrollSession() {
         Task { @MainActor in

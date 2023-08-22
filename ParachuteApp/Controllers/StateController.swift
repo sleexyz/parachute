@@ -7,7 +7,7 @@
 
 import Foundation
 import ProxyService
-import Logging
+import OSLog
 import SwiftUI
 import Combine
 import Controllers
@@ -23,7 +23,7 @@ class StateController: ObservableObject  {
         }
     }
     
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.StateController")
+    private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "StateController")
     @Published var state: Proxyservice_GetStateResponse = Proxyservice_GetStateResponse()
     
     let settings: SettingsStore

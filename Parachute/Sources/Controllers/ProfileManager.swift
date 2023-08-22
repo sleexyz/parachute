@@ -8,7 +8,6 @@
 import Foundation
 import ProxyService
 import SwiftUI
-import Logging
 import Combine
 import OrderedCollections
 import SwiftProtobuf
@@ -16,6 +15,7 @@ import DI
 import Models
 import RangeMapping
 import AppHelpers
+import OSLog
 
 var PRESET_OPACITY: Double = 0.8
 var OVERLAY_PRESET_OPACITY: Double = PRESET_OPACITY * 0.3
@@ -32,7 +32,7 @@ public class ProfileManager: ObservableObject {
         }
         public init() {}
     }
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.ProfileManager")
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ProfileManager")
     var settingsStore: SettingsStore
     var settingsController: SettingsController
     var bag = Set<AnyCancellable>()

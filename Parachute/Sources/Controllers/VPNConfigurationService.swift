@@ -8,7 +8,7 @@
 import NetworkExtension
 import Foundation
 import ProxyService
-import Logging
+import OSLog
 import Combine
 import BackgroundTasks
 import Common
@@ -98,7 +98,7 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
     @Published private var manager: NETunnelProviderManager?
 
     static let unpauseIdentifier = "industries.strange.slowdown.unpause"
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.VPNConfigurationService")
+    private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "VPNConfigurationService")
     private var bag = Set<AnyCancellable>()
     
     open var isInstalled: Bool {

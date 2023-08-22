@@ -7,7 +7,7 @@
 
 import Foundation
 import DI
-import Logging
+import OSLog
 
 public class ScrollSessionViewController: ObservableObject  {
     public static var shared: ScrollSessionViewController = ScrollSessionViewController()
@@ -18,7 +18,7 @@ public class ScrollSessionViewController: ObservableObject  {
         public init() {}
     }
 
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.ScrollSessionView")
+    private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ScrollSessionViewController")
     @Published public var open: Bool = false
 
     @MainActor

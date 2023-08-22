@@ -2,7 +2,7 @@ import SwiftUI
 import Controllers
 import Combine
 import WidgetKit
-import Logging
+import OSLog
 
 public struct WidgetUpdater<Inner: View>: View {
     @ViewBuilder var content: () -> Inner
@@ -10,7 +10,7 @@ public struct WidgetUpdater<Inner: View>: View {
 
     @State var bag = Set<AnyCancellable>()
 
-    let logger = Logger(label: "industries.strange.slowdown.WidgetUpdater") 
+    var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "WidgetUpdater")
 
     public init(@ViewBuilder content: @escaping () -> Inner) {
         self.content = content

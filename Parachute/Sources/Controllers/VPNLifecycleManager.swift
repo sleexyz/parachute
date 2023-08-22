@@ -8,7 +8,7 @@
 import Foundation
 import SwiftProtobuf
 import BackgroundTasks
-import Logging
+import OSLog
 import DI
 
 public class VPNLifecycleManager: ObservableObject {
@@ -25,7 +25,7 @@ public class VPNLifecycleManager: ObservableObject {
     private var vpnConfigurationService: NEConfigurationService
     private var settingsController: SettingsController
     private var settingsStore: SettingsStore
-    private var logger: Logger = Logger(label: "industries.strange.slowdown.VPNLifecycleManager")
+    private var logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "VPNLifecycleManager")
     init(vpnConfigurationService: NEConfigurationService, settingsController: SettingsController, settingsStore: SettingsStore) {
         self.vpnConfigurationService = vpnConfigurationService
         self.settingsController = settingsController

@@ -1,13 +1,13 @@
 import Foundation
 import ActivityKit
 import Activities
-import Logging
 import ProxyService
+import OSLog
 
 public class ActivitiesHelper {
     public static let shared = ActivitiesHelper()
 
-    var logger = Logger(label: "industries.strange.slowdown.ActivitiesHelper")
+    var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ActivitiesHelper")
 
     @available(iOS 16.2, *)
     public func start(settings: Proxyservice_Settings) {
@@ -24,7 +24,7 @@ public class ActivitiesHelper {
     private func requestActivity(settings: Proxyservice_Settings) {
         do {
             let activity = try Activity.request(attributes: SlowdownWidgetAttributes(), content: self.makeActivityContent(settings))
-            logger.info("requested activity: \(activity)")
+            logger.info("requested activity: \(activity.id)")
         } catch (let error) {
             logger.error("error requesting activity: \(error.localizedDescription)")
         }

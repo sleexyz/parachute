@@ -5,10 +5,10 @@ public extension NEFilterFlow {
         if self.sourceAppIdentifier?.hasSuffix(".com.zhiliaoapp.musically") ?? false {
             return .tiktok
         }
-        // FOR SPEED TESTING
-        if self.sourceAppIdentifier?.hasSuffix(".com.google.chrome.ios") ?? false {
-            return .instagram
-        }
+//        // FOR SPEED TESTING
+//        if self.sourceAppIdentifier?.hasSuffix(".com.google.chrome.ios") ?? false {
+//            return .instagram
+//        }
         if self.sourceAppIdentifier?.hasSuffix(".com.burbn.instagram") ?? false {
             // Check if is NEFilterSocketFlow
             if let flow = self as? NEFilterSocketFlow {

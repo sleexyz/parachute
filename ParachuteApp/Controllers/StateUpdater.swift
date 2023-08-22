@@ -7,7 +7,7 @@
 
 import Foundation
 import Combine
-import Logging
+import OSLog
 import SwiftUI
 import DI
 import Controllers
@@ -24,7 +24,7 @@ class StateUpdater: ObservableObject {
             )
         }
     }
-    private var logger = Logger.init(label: "industries.strange.slowdown.StateUpdater")
+    private var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "StateUpdater")
     private var stateController: StateController
     private var vpnConfigurationService: VPNConfigurationService
     
