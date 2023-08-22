@@ -47,11 +47,13 @@ class FilterControlProvider: NEFilterControlProvider {
 	}
     
     override func startFilter(completionHandler: @escaping (Error?) -> Void) {
+        logger.info("Starting FilterControlProvider")
         // Add code to initialize the filter
         completionHandler(nil)
     }
     
     override func stopFilter(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
+        logger.info("Stopping FilterControlProvider")
         // Add code to clean up filter resources
         completionHandler()
     }

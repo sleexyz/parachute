@@ -24,6 +24,9 @@ public extension NEFilterFlow {
         if self.sourceAppIdentifier?.hasSuffix(".com.atebits.Tweetie2") ?? false {
             return .twitter
         }
+        if self.sourceAppIdentifier?.hasSuffix(".com.google.ios.youtube") ?? false {
+            return .youtube
+        }
         return nil
     }
 }

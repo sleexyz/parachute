@@ -4,20 +4,6 @@ import FilterCommon
 
 let SAMPLE_FREQUENCY = 1.0 // Every second
 
-
-func needRulesBlocking() -> NEFilterDataVerdict {
-    let verdict = NEFilterDataVerdict.needRules()
-    verdict.setValue(0, forKey: "_passBytes")
-    return verdict
-}
-
-extension NEFilterDataVerdict {
-    
-    func passBytesIsZero() -> Bool {
-        return self.value(forKey: "_passBytes") as! Int == 0
-    }
-}
-
 struct SampleVars {
     var latencyPerByte: Double
     var rxSpeed: Double
@@ -32,11 +18,10 @@ struct SampleVars {
 // A proportional controller that throttles the download speed of a flow.
 public class AppFlowController {
     // State
-    lazy var flowDelayRegistry = FlowDelayRegistry(appId: appId)
+    lazy var flowDelayRegistry = FlowDelayRegistry(app: app)
 
     // Parameters
-    var appId: AppId
-    var targetRxSpeed: Double
+    var app: App
 
     // var gain = 1 / 1e6 // microsecond
     var gain: Double = 1000
@@ -44,10 +29,9 @@ public class AppFlowController {
     
     var logger: Logger
     
-    public init (appId: AppId, targetRxSpeed: Double) {
-        self.appId = appId
-        self.targetRxSpeed = targetRxSpeed
-        logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppFlowController.\(appId)")
+    public init (app: App) {
+        self.app = app
+        logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppFlowController.\(app.id)")
     }
 
     var lastCleared: Date = Date()
@@ -99,7 +83,7 @@ public class AppFlowController {
         // }
 
         // proportional error
-        let error = (targetRxSpeed - rxSpeed) / targetRxSpeed
+        let error = (app.targetRxSpeed - rxSpeed) / app.targetRxSpeed
         let update = -1 * error * gain
 
         var newLatencyPerByte = latencyPerByte + update
@@ -121,17 +105,15 @@ public class AppFlowController {
     }
 
     private func getVerdict(from flow: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        let allowVerdict = NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: PEEK_SIZE)
-
-        if offset < PEEK_SIZE {
+        if offset < app.peekBytes {
             logger.info("allowing initial PEEK_BYTES through for flow \(flow.identifier, privacy: .public)")
-            return allowVerdict
+            return .allowPeekBytes(passBytes: readBytes.count, app: app)
         }
 
         guard flowDelayRegistry.hasFlow(flow: flow.identifier) else {
             guard flowDelayRegistry.canRegister() else {
                 // Existing flow exists, delay.
-                return needRulesBlocking()
+                return .needRulesBlocking()
             }
 
             // Register new flow, delay.
@@ -142,11 +124,14 @@ public class AppFlowController {
 
             flowDelayRegistry.register(flow: flow.identifier, startTime: now, readyTime: readyTime)
 
-            return needRulesBlocking()
+            return .needRulesBlocking()
         }
 
         // Either delay because not ready or allow PEEK_BYTES:
-        return flowDelayRegistry.getVerdict(flow: flow.identifier, allowVerdict: allowVerdict)
+        return flowDelayRegistry.getVerdict(
+            flow: flow.identifier,
+            allowVerdict: .allowPeekBytes( passBytes: readBytes.count, app: app)
+        )
     }
 }
 
@@ -197,11 +182,11 @@ public class SingularFlowDelayRegistry {
     public func getVerdict(flow: UUID, allowVerdict: NEFilterDataVerdict) -> NEFilterDataVerdict {
         // return .drop()
         guard let entry = entry else {
-            return needRulesBlocking()
+            return .needRulesBlocking()
         }
         // If flow is different, then we delay
         guard entry.flow == flow else {
-            return needRulesBlocking()
+            return .needRulesBlocking()
         }
 
         let error = Date().timeIntervalSince(entry.readyTime)
@@ -215,7 +200,7 @@ public class SingularFlowDelayRegistry {
 
         self.entry = entry.increment()
         logger.info("sending to FCP, iteration \(self.entry?.timesSentToFCP ?? -1, privacy: .public) ")
-        return needRulesBlocking()
+        return .needRulesBlocking()
     }
 }
 
@@ -224,8 +209,9 @@ public class SingularFlowDelayRegistry {
 // Wait a fixed time, and modulate peek bytes. lmfao.
 public class FlowDelayRegistry {
     var logger: Logger
-    public init(appId: AppId) {
-        self.logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppFlowController.\(appId)")
+
+    public init(app: App) {
+        self.logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppFlowController.\(app.id)")
     }
 
     public func canRegister() -> Bool {
@@ -245,7 +231,7 @@ public class FlowDelayRegistry {
     public func getVerdict(flow: UUID, allowVerdict: NEFilterDataVerdict) -> NEFilterDataVerdict {
         guard let entry = flowDelays[flow] else {
             // Invariant error
-            return needRulesBlocking()
+            return .needRulesBlocking()
         }
 
         let error = Date().timeIntervalSince(entry.readyTime)
@@ -256,7 +242,7 @@ public class FlowDelayRegistry {
             return allowVerdict
         } else {
             flowDelays[flow] = entry.increment()
-            return needRulesBlocking()
+            return .needRulesBlocking()
         }
     }
 
