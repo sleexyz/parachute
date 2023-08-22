@@ -9,14 +9,20 @@ public extension Proxyservice_Settings {
     }
 }
 
-extension Proxyservice_Settings {
-    public var activePreset: Proxyservice_Preset {
+public extension Proxyservice_Settings {
+    var activePreset: Proxyservice_Preset {
         if Date.now < self.overlay.expiry.date {
             return self.overlay.preset
         }
         return self.defaultPreset
     }
+
+    var shouldAllowSocialMedia: Bool {
+        return self.activePreset.baseRxSpeedTarget == .infinity
+    }
 }
 
+
 extension Proxyservice_Settings: CodableMessage {
+
 }

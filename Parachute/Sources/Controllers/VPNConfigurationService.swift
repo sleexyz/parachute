@@ -12,7 +12,7 @@ import Logging
 import Combine
 import BackgroundTasks
 import Common
-import FirebaseCrashlytics
+import Firebase
 import DI
 
 enum UserError: Error {

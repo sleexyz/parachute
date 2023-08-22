@@ -8,6 +8,10 @@ let package = Package(
     platforms: [.iOS(.v16)],
     products: [
        .library(
+           name: "FilterCommon",
+           targets: ["FilterCommon"]
+       ),
+       .library(
            name: "FilterData",
            targets: ["FilterData"]
        ),
@@ -62,29 +66,35 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../ProxyService"),
-        .package(url: "https://github.com/chrisajoudi/swift-log-oslog.git", from: "0.2.2"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.0"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", branch: "master"),
         .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.0.0"),
-
+        .package(url: "https://github.com/chrisaljoudi/swift-log-oslog.git", from:"0.2.1"),
     ],
     targets: [
+       .target(
+           name: "FilterCommon"
+       ),
        .target(
            name: "FilterData",
            dependencies: [
                 "Models",
                 "Common",
+                "FilterCommon",
                 .product(name: "ProxyService", package: "ProxyService"),
-                .product(name: "Logging", package: "swift-log"),
                 .product(name: "SwiftProtobuf", package: "swift-protobuf"),
+                // .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
            ]
        ),
        .target(
            name: "FilterControl",
            dependencies: [
+                "Common",
+                "Models",
+                "FilterCommon",
                .product(name: "ProxyService", package: "ProxyService"),
-               .product(name: "Logging", package: "swift-log"),
+               .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
            ]
        ),
         .target(
@@ -159,8 +169,8 @@ let package = Package(
             name: "Common",
             dependencies: [
                 .product(name: "ProxyService", package: "ProxyService"),
-                .product(name: "LoggingOSLog", package: "swift-log-oslog"),
                 .product(name: "Logging", package: "swift-log"),
+                .product(name: "LoggingOSLog", package: "swift-log-oslog"),
             ]
         ),
         .target(name: "DI"),

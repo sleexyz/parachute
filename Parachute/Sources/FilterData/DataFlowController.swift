@@ -1,14 +1,21 @@
 import NetworkExtension
-import Logging
 import SwiftProtobuf
 import ProxyService
+import OSLog
+import FilterCommon
 
-let PEEK_SIZE = 1024
+let PEEK_SIZE = 128 * 1024 
 
 public class DataFlowController {
-    let logger: Logger = Logger(label: "industries.strange.slowdown.DataFlowController")
-    
+    let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DataFlowController")
+
     var settings: Proxyservice_Settings
+
+    weak var provider: NEFilterDataProvider?
+
+    var instagram = AppFlowController(appId: .instagram, targetRxSpeed: 40_000)
+    var tiktok = AppFlowController(appId: .tiktok, targetRxSpeed: 40_000)
+    var twitter = AppFlowController(appId: .twitter, targetRxSpeed: 40_000)
 
     public init(settings: Proxyservice_Settings) {
         logger.info("DataFlowController init")
@@ -17,50 +24,34 @@ public class DataFlowController {
 
     public func updateSettings(settings: Proxyservice_Settings) {
         self.settings = settings
-        logger.info("updated settings: \(settings.debugDescription)")
-    }
-
-    public func matchSocialMedia(flow: NEFilterFlow) -> Bool {
-        if flow.sourceAppIdentifier?.hasSuffix(".com.zhiliaoapp.musically") ?? false {
-            return true
-        }
-        if flow.sourceAppIdentifier?.hasSuffix(".com.burbn.instagram") ?? false {
-            // Check if is NEFilterSocketFlow
-            if let flow = flow as? NEFilterSocketFlow {
-                if flow.remoteHostname?.hasPrefix("chat-e2ee") ?? false {
-                    return false
-                }
-                if flow.remoteHostname?.hasPrefix("mqtt.") ?? false {
-                    return false
-                }
-            }
-            return true
-        }
-        if flow.sourceAppIdentifier?.hasSuffix(".com.atebits.Tweetie2") ?? false {
-            return true
-        }
-        return false
-    }
-
-    var shouldAllowSocialMedia: Bool {
-        return settings.activePreset.baseRxSpeedTarget == .infinity
+        logger.info("updated settings: \(settings.debugDescription, privacy: .public)")
     }
 
     public func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
-        logger.info("New flow: \(flow)")
-        if matchSocialMedia(flow: flow) {
-            return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: PEEK_SIZE,  filterOutbound: false, peekOutboundBytes: 0)
+        // logger.info("New flow: \(flow)")
+        guard flow.matchSocialMedia() != nil  else {
+            return .allow()
         }
-        return .allow()
+
+        // Pass to handleInboundData
+        return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: PEEK_SIZE,  filterOutbound: false, peekOutboundBytes: 0)
     }
 
-    public func handleInboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        if shouldAllowSocialMedia {
-            // logger.info("Allowing social media")
-            return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: PEEK_SIZE)
-        } else {
-            // logger.info("Blocking social media")
-            return .drop()
+    public func handleInboundData(from flow: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
+        let allowVerdict = NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: PEEK_SIZE)
+       guard let app = flow.matchSocialMedia() else {
+           return .allow()
+       }
+        if settings.shouldAllowSocialMedia {
+            return allowVerdict
         }
+       switch app.id {
+           case .instagram:
+               return instagram.handleInboundData(from: flow, offset: offset, readBytes: readBytes)
+           case .tiktok:
+               return tiktok.handleInboundData(from: flow, offset: offset, readBytes: readBytes)
+           case .twitter:
+               return twitter.handleInboundData(from: flow, offset: offset, readBytes: readBytes)
+       }
     }
 }

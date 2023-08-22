@@ -8,7 +8,7 @@
 import Foundation
 import NetworkExtension
 import Logging
-import LoggingOSLog
+// import LoggingOSLog
 import UIKit
 import ProxyService
 import Server
@@ -23,7 +23,7 @@ enum ProxyError: Error {
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
     private let logger: Logger = {
-        LoggingSystem.bootstrap(LoggingOSLog.init)
+        // LoggingSystem.bootstrap(LoggingOSLog.init)
         return Logger(label: "industries.strange.slowdown.tunnel.PacketTunnelProvider")
     }()
     private weak var timeoutTimer: Timer?

@@ -9,14 +9,11 @@ import NetworkExtension
 import Common
 import SwiftProtobuf
 import ProxyService
-import Logging
+import OSLog
 import Models
 
 public class FilterDataProvider: NEFilterDataProvider {
-    let logger: Logger = {
-        CommonLogging.initialize()
-        return Logger(label: "industries.strange.slowdown.FilterDataProvider")
-    }()
+    let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FilterDataProvider")
 
 
     lazy var dataFlowController: DataFlowController = {
@@ -28,15 +25,14 @@ public class FilterDataProvider: NEFilterDataProvider {
     var observerContext = 0
     public override init() {
         super.init()
+        // FirebaseApp.configure()
         self.addObserver(self, forKeyPath: "filterConfiguration", options: [.initial, .new], context: &observerContext)
     }
     
     /// Observe changes to the configuration.
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "filterConfiguration" && context == &observerContext {
-            defer {
-                logger.info("configuration changed")
-            }
+            logger.info("configuration changed")
             guard let requestData = self.filterConfiguration.vendorConfiguration?[.vendorConfigurationKey] as? Data else {
                 return
             }
@@ -62,10 +58,18 @@ public class FilterDataProvider: NEFilterDataProvider {
     }
 
     public override func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
-        return dataFlowController.handleNewFlow(flow)
+        let verdict = dataFlowController.handleNewFlow(flow)
+        if let flow = flow as? NEFilterSocketFlow {
+            logger.info("new flow verdict for \(flow, privacy: .public): \(verdict, privacy: .public)")
+        }
+        return verdict
     }
     
     public override func handleInboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        return dataFlowController.handleInboundData(from: flow, readBytesStartOffset: offset, readBytes: readBytes)
+        let verdict = dataFlowController.handleInboundData(from: flow, offset: offset, readBytes: readBytes)
+        // if let flow = flow as? NEFilterSocketFlow {
+        //     logger.info("inbound data flow verdict for \(flow.remoteHostname ?? "", privacy: .public): \(verdict, privacy: .public)")
+        // }
+        return verdict
     }
 }

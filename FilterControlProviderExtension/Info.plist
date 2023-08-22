@@ -7,7 +7,7 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.networkextension.filter-control</string>
 		<key>NSExtensionPrincipalClass</key>
-		<string>$(PRODUCT_MODULE_NAME).FilterControlProvider</string>
+		<string>FilterControl.FilterControlProvider</string>
 	</dict>
 </dict>
 </plist>
