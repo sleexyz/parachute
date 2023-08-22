@@ -1,4 +1,4 @@
-
+var PEEK_BYTES = 16 * 1024
 
 public enum AppId {
     case instagram
@@ -9,29 +9,42 @@ public enum AppId {
 
 public struct App {
     public let id: AppId
-    public var peekBytes: Int = 128 * 1024
-    public var targetRxSpeed: Double = 40_000
+    public var peekBytes: Int
+
+    // For DroppingAppFlowController only
+    public var preSlowingBytes: Int
+
+    public var targetRxSpeed: Double
+    public var sleepTime: UInt32
 }
 
 public extension App {
     static let instagram = App(
         id: .instagram,
-        peekBytes: 128 * 1024,
-        targetRxSpeed: 40_000
+        peekBytes: PEEK_BYTES,
+        preSlowingBytes: 512 * 1024,
+        targetRxSpeed: 20_000,
+        sleepTime: UInt32(40_000)
     )
     static let tiktok = App(
         id: .tiktok,
-        peekBytes: 64 * 1024,
-        targetRxSpeed: 40_000
+        peekBytes: PEEK_BYTES,
+        preSlowingBytes: 64 * 1024,
+        targetRxSpeed: 10_000,
+        sleepTime: UInt32(40_000)
     )
     static let twitter = App(
         id: .twitter,
-        peekBytes: 32 * 1024,
-        targetRxSpeed: 40_000
+        peekBytes: 1600,
+        preSlowingBytes: 32 * 1024,
+        targetRxSpeed: 10_000,
+        sleepTime: UInt32(120_000)
     )
     static let youtube = App(
         id: .youtube,
-        peekBytes: 16 * 1024,
-        targetRxSpeed: 40_000
+        peekBytes: PEEK_BYTES,
+        preSlowingBytes: 16 * 1024,
+        targetRxSpeed: 10_000,
+        sleepTime: UInt32(40_000) // 40ms sleep
     )
 }

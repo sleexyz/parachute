@@ -104,7 +104,6 @@
 		A0FE9A602A8C299000D891CE /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
 		A0FE9A682A8C299000D891CE /* FilterDataProviderExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A0FE9A5F2A8C299000D891CE /* FilterDataProviderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A0FE9A712A8C29EF00D891CE /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
-		A0FE9DD42A906C59000349CF /* FilterControlProviderExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A0FE9A702A8C29EF00D891CE /* FilterControlProviderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A0FE9DD82A906CA3000349CF /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FE9DD72A906CA3000349CF /* Placeholder.swift */; };
 /* End PBXBuildFile section */
 
@@ -137,13 +136,6 @@
 			remoteGlobalIDString = A0FE9A5E2A8C299000D891CE;
 			remoteInfo = FilterDataProviderExtension;
 		};
-		A0FE9DD52A906C59000349CF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A02F58D427A6F14500D3330F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A0FE9A6F2A8C29EF00D891CE;
-			remoteInfo = FilterControlProviderExtension;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -173,7 +165,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				A0FE9DD42A906C59000349CF /* FilterControlProviderExtension.appex in Embed Foundation Extensions */,
 				A0FE9A682A8C299000D891CE /* FilterDataProviderExtension.appex in Embed Foundation Extensions */,
 				A04ADFC12A7B5515008700C4 /* SlowdownWidgetExtension.appex in Embed Foundation Extensions */,
 			);
@@ -637,7 +628,6 @@
 			dependencies = (
 				A04ADFC02A7B5515008700C4 /* PBXTargetDependency */,
 				A0FE9A672A8C299000D891CE /* PBXTargetDependency */,
-				A0FE9DD62A906C59000349CF /* PBXTargetDependency */,
 			);
 			name = slowdown;
 			packageProductDependencies = (
@@ -1173,11 +1163,6 @@
 			isa = PBXTargetDependency;
 			target = A0FE9A5E2A8C299000D891CE /* FilterDataProviderExtension */;
 			targetProxy = A0FE9A662A8C299000D891CE /* PBXContainerItemProxy */;
-		};
-		A0FE9DD62A906C59000349CF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A0FE9A6F2A8C29EF00D891CE /* FilterControlProviderExtension */;
-			targetProxy = A0FE9DD52A906C59000349CF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

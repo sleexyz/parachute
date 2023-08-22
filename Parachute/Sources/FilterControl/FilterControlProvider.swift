@@ -67,18 +67,19 @@ class FilterControlProvider: NEFilterControlProvider {
             completionHandler(.updateRules())
             return
         }
-        logger.info("New slowed flow: \(flow.identifier, privacy: .public)")
-        Task {
+        // logger.info("New slowed flow: \(flow.identifier, privacy: .public)")
+        // Task {
             let now = Date()
-            guard now.timeIntervalSince(lastUpdated) < 1e-3 else {
-                logger.info("Delaying update rules")
-                return
-            }
-            try await Task.sleep(nanoseconds: 1_000_000)
+            // guard now.timeIntervalSince(lastUpdated) > 1e-3 else {
+            //     logger.info("Delaying update rules")
+            //     return
+            // }
+
+            // try await Task.sleep(nanoseconds: 1_000_000)
             lastUpdated = Date()
-            logger.info("Done! \(flow.identifier, privacy: .public), waited \(self.lastUpdated.timeIntervalSince(now), privacy: .public) seconds")
+            logger.info("Done! \(flow.identifier, privacy: .public)")
             completionHandler(.updateRules())
-        }
+        // }
      }
 
 }

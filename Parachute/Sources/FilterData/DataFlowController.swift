@@ -11,10 +11,10 @@ public class DataFlowController {
 
     weak var provider: NEFilterDataProvider?
 
-    var instagram = AppFlowController(app: .instagram)
-    var tiktok = AppFlowController(app: .tiktok)
-    var twitter = AppFlowController(app: .twitter)
-    var youtube = AppFlowController(app: .youtube)
+    var instagram = SlowingAppFlowController(app: .instagram)
+    var tiktok =    SlowingAppFlowController(app: .tiktok)
+    var twitter =   SlowingAppFlowController(app: .twitter)
+    var youtube =   SlowingAppFlowController(app: .youtube)
 
     public init(settings: Proxyservice_Settings) {
         logger.info("DataFlowController init")
@@ -40,6 +40,7 @@ public class DataFlowController {
         guard let app = flow.matchSocialMedia() else {
             return .allow()
         }
+        // TODO: pause sampling
         if settings.shouldAllowSocialMedia {
             return .allowPeekBytes(passBytes: readBytes.count, app: app)
         }
