@@ -2,6 +2,4 @@ go 1.19
 
 use (
 	./ci_scripts
-	./go-proxy
-	./build-deps
 )

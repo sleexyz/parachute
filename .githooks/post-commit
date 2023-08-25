@@ -1,3 +1,0 @@
-#!/bin/sh
-set -e
-(cd "$(git rev-parse --show-toplevel)"; ./post_commit.sh)
