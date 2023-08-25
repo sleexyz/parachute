@@ -7,11 +7,11 @@
 
 import Foundation
 import Ffi
-import Logging
 import Common
+import OSLog
 
 class DeviceCallbacks: NSObject, FfiDeviceCallbacksProtocol {
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.tunnel.DeviceCallbacks")
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DeviceCallbacks")
     private var notificationsEnabled: Bool = false
     let notificationsHelper: NotificationsHelper
     

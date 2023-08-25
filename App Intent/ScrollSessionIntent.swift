@@ -7,7 +7,7 @@
 
 import AppIntents
 import Controllers
-import Logging
+import OSLog
 import AppHelpers
 
 public struct ScrollSessionIntent: AppIntent, LiveActivityIntent {
@@ -16,7 +16,7 @@ public struct ScrollSessionIntent: AppIntent, LiveActivityIntent {
     
     public static var openAppWhenRun: Bool = true
 
-    var logger = Logger(label: "industries.strange.slowdown.ScrollSessionIntent")
+    var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ScrollSessionIntent")
 
     public init() {
     }

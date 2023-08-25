@@ -8,18 +8,19 @@
 import NetworkExtension
 import Foundation
 import ProxyService
-import Logging
-import SwiftUI
+import OSLog
 import Combine
 import BackgroundTasks
 import Common
-import FirebaseCrashlytics
+import Firebase
 import DI
 
 enum UserError: Error {
     case message(message: String)
 }
 
+// TODO: consolidate to this
+// and then derive impls for isConnected / isTransitioning from this.
 public enum VPNStatus {
     case unknown
     case connected
@@ -53,31 +54,56 @@ extension Future where Failure == Never {
     }
 }
 
-open class VPNConfigurationService: ObservableObject {
+public protocol VPNConfigurationServiceProtocol: NEConfigurationServiceProtocol {
+    var isTransitioning: Bool { get }
+    var conn: NEVPNConnection? { get }
+    var status: VPNStatus { get }
+    var connectedDate: Date? { get }
+    var isLoaded: Bool { get }
+    
+    func registerBackgroundTasks()
+    func setOnDemand(_ value: Bool) async throws
+} 
+
+public extension VPNConfigurationServiceProtocol {
+    @MainActor
+    func stopConnectionAndDisableOnDemand() async throws {
+        try await self.stop()
+        try await self.setOnDemand(false)
+    }
+
+    @MainActor
+    func startConnectionAndEnableOnDemand(settingsOverride: Proxyservice_Settings) async throws {
+        try await self.start(settingsOverride: settingsOverride)
+        try await self.setOnDemand(true)
+    }
+}
+
+public class VPNConfigurationService: VPNConfigurationServiceProtocol { 
+    public static let shared = VPNConfigurationService()
     public struct Provider: Dep {
-        public func create(r: Registry) -> VPNConfigurationService {
+        public func create(r: Registry) -> NEConfigurationService {
             return .shared
         }
         public init() {}
     }
     
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.VPNConfigurationService")
-    @Published private(set) public var isInitializing = true
     @Published public var isConnected = false
     @Published public var isTransitioning = false
     @Published public var conn: NEVPNConnection? = nil
-    @Published private var manager: NETunnelProviderManager?
     @Published public var status: VPNStatus = .unknown
     @Published public var connectedDate: Date?
-    
+
+    @Published private(set) public var isLoaded = false
+    @Published private var manager: NETunnelProviderManager?
+
+    static let unpauseIdentifier = "industries.strange.slowdown.unpause"
+    private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "VPNConfigurationService")
     private var bag = Set<AnyCancellable>()
     
-    open var hasManager: Bool {
+    open var isInstalled: Bool {
         return manager != nil
     }
-    
-    public static let shared = VPNConfigurationService()
-    
     
     public init() {
         $status
@@ -98,10 +124,10 @@ open class VPNConfigurationService: ObservableObject {
 
     public func load() async -> () {
         self.logger.info("VPNConfigurationService initializing...")
-        if isInitializing {
+        if !isLoaded {
             NETunnelProviderManager.loadAllFromPreferences { managers, error in
                 self.manager = managers?.first
-                self.isInitializing = false
+                self.isLoaded = true
                 self.connectedDate = self.manager?.connection.connectedDate
                 self.logger.info("VPNConfigurationService initialized")
             }
@@ -136,18 +162,17 @@ open class VPNConfigurationService: ObservableObject {
         }
     }
     
-    static let unpauseIdentifier = "industries.strange.slowdown.unpause"
     public func registerBackgroundTasks() {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: VPNConfigurationService.unpauseIdentifier, using: nil) { task in
             self.handleAppRefresh(task: task as! BGAppRefreshTask)
         }
     }
     
-    func handleAppRefresh(task: BGAppRefreshTask) {
+    private func handleAppRefresh(task: BGAppRefreshTask) {
         let updateTask = Task {
             do {
                 // We can't start the connection while the app is backgrounded.
-                try await self.enableOnDemand()
+                try await self.setOnDemand(true)
                 task.setTaskCompleted(success: true)
             } catch {
                 task.setTaskCompleted(success: false)
@@ -175,34 +200,21 @@ open class VPNConfigurationService: ObservableObject {
         }
     }
                 
-    
-    
     @MainActor
-    public func startConnectionAndEnableOnDemand(settingsOverride: Proxyservice_Settings?) async throws {
-        if let settingsOverride = settingsOverride {
-            try self.manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: try settingsOverride.serializedData())])
-        } else {
-            try self.manager?.connection.startVPNTunnel()
-        }
-        self.isTransitioning = true
-        try await enableOnDemand()
-    }
-    
-    @MainActor
-    func enableOnDemand() async throws {
+    public func setOnDemand(_ value: Bool) async throws {
         self.manager?.isOnDemandEnabled = true
         try await self.saveManagerPreferences()
     }
     
     @MainActor
-    public func stopConnectionAndDisableOnDemand() async throws {
-        try await self.stopConnection()
-        self.manager?.isOnDemandEnabled = false
-        try await self.saveManagerPreferences()
+    public func start(settingsOverride: Proxyservice_Settings) async throws {
+            try self.manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: try settingsOverride.serializedData())])
+
+        self.isTransitioning = true
     }
     
     @MainActor
-    public func stopConnection() async throws {
+    public func stop() async throws {
         self.manager?.connection.stopVPNTunnel()
         self.isTransitioning = true
     }
@@ -219,19 +231,21 @@ open class VPNConfigurationService: ObservableObject {
     }
     
     
-    public func installVPNProfile(_ completion: @escaping (Result<Void, Error>) -> Void) {
-        let tunnel = makeNewTunnel()
-        tunnel.saveToPreferences { [weak self] error in
-            if let error = error {
-                return completion(.failure(error))
+    public func install(settings: Proxyservice_Settings) async throws -> () {
+        try await Future<(), Error> { promise in
+            let tunnel = self.makeNewTunnel()
+            tunnel.saveToPreferences { [weak self] error in
+                if let error = error {
+                    return promise(.failure(error))
+                }
+                
+                // See https://forums.developer.apple.com/thread/25928
+                tunnel.loadFromPreferences { [weak self] error in
+                    self?.manager = tunnel
+                    promise(.success(()))
+                }
             }
-            
-            // See https://forums.developer.apple.com/thread/25928
-            tunnel.loadFromPreferences { [weak self] error in
-                self?.manager = tunnel
-                completion(.success(()))
-            }
-        }
+        }.value
     }
     
     private func makeNewTunnel() -> NETunnelProviderManager {
@@ -258,27 +272,7 @@ open class VPNConfigurationService: ObservableObject {
         return tunnel
     }
     
-    public func SetSettings(settings: Proxyservice_Settings) async throws {
-        _ = try await Rpc(request: Proxyservice_Request.with {
-            $0.setSettings = settings
-        })
-    }
-    
-    public func GetState() async throws -> Proxyservice_GetStateResponse {
-        let data = try await Rpc(request: Proxyservice_Request.with {
-            $0.getState = Proxyservice_GetStateRequest()
-        })
-        return try Proxyservice_GetStateResponse(serializedData: data)
-    }
-    
-    public func Heal() async throws -> Proxyservice_HealResponse{
-        let data = try await Rpc(request: Proxyservice_Request.with {
-            $0.heal = Proxyservice_HealRequest()
-        })
-        return try Proxyservice_HealResponse(serializedData: data)
-    }
-    
-    private func Rpc(request: Proxyservice_Request) async throws -> Data {
+    public func Rpc(request: Proxyservice_Request) async throws -> Data {
         guard let session = self.manager?.connection as? NETunnelProviderSession else {
             throw RpcError.serverNotInitializedError
         }
@@ -298,20 +292,25 @@ open class VPNConfigurationService: ObservableObject {
     }
 }
 
-enum RpcError: Error {
-    case serverNotInitializedError
-    case nilResponseError
-    case downstreamError(String)
-}
 
-extension RpcError: LocalizedError {
-    var errorDescription: String? {
-        switch self {
-        case .nilResponseError: return NSLocalizedString("Server returned nil response", comment: "")
-        case .serverNotInitializedError: return NSLocalizedString("Server not initialized", comment: "")
-        case .downstreamError(let message): return NSLocalizedString("Downstream error: \(message)", comment: "")
+public class MockVPNConfigurationService: VPNConfigurationService {
+    public struct Provider: MockDep {
+        public typealias MockT = MockVPNConfigurationService
+        public func create(r: Registry) -> VPNConfigurationService {
+            return MockVPNConfigurationService()
         }
+        public init() {}
     }
-    
-}
+    override public init() {
+        super.init()
+    }
 
+    public var isInstalledMockOverride: Bool?
+
+    override public var isInstalled: Bool {
+        return isInstalledMockOverride ?? super.isInstalled
+    }
+    public func setIsConnected(value: Bool) {
+        self.isConnected = value
+    }
+}

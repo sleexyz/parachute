@@ -11,7 +11,7 @@ import AppViews
 
 struct AppView: View {
     @EnvironmentObject var store: SettingsStore
-    @EnvironmentObject var service: VPNConfigurationService
+    @EnvironmentObject var service: NEConfigurationService
     @EnvironmentObject var controller: SettingsController
     
     var showTransitioning: Bool {

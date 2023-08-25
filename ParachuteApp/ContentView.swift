@@ -8,32 +8,33 @@
 import SwiftUI
 
 import Foundation
-import Logging
+import OSLog
 import Controllers
 import CommonViews
 
 struct ContentView: View {
     @EnvironmentObject var store: SettingsStore
-    @EnvironmentObject var service: VPNConfigurationService
+    @EnvironmentObject var service: NEConfigurationService
     @Environment(\.scenePhase) var scenePhase
     
-    private let logger: Logger = Logger(label: "industries.strange.slowdown.ContentView")
+    private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ContentView")
     
     @ViewBuilder
     var body: some View {
         Group {
             if !store.loaded  {
                 SplashView(text: "Loading settings...")
-            } else if service.isInitializing {
+            } else if !service.isLoaded {
                 SplashView(text: "Loading VPN state...")
-            } else if !service.hasManager {
+            } else if !service.isInstalled {
                 SetupView()
             } else {
                 AppView()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(UIColor(named: "Background")!))
+        .background(Color.background)
+        .preferredColorScheme(.dark)
         .onChange(of: scenePhase) { phase in
             // Reload settings when app becomes active
             // in case they were changed in the widget
@@ -58,13 +59,13 @@ struct ContentView_Previews: PreviewProvider {
                 service.loaded = true
             }
             .consumeDep(MockVPNConfigurationService.self) { service in
-                service.hasManagerOverride =  false
+                service.isInstalledMockOverride =  false
             }
             .provideDeps(previewDeps)
         
         ContentView()
             .consumeDep(MockVPNConfigurationService.self) { service in
-                service.hasManagerOverride = true
+                service.isInstalledMockOverride = true
             }
             .provideDeps(previewDeps)
     }

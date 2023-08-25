@@ -1,7 +1,7 @@
 import AppIntents
 import Controllers
-import Logging
 import AppHelpers
+import OSLog
 
 public struct QuickBreakIntent: AppIntent, LiveActivityIntent {
     public static var title: LocalizedStringResource = "Start session"
@@ -10,7 +10,7 @@ public struct QuickBreakIntent: AppIntent, LiveActivityIntent {
     // Not ideal UX wise, but this is necessary for consistent behavior.
     public static var openAppWhenRun: Bool = true
 
-    var logger = Logger(label: "industries.strange.slowdown.QuickBreakIntent")
+    let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "QuickBreakIntent")
 
     public init() {
     }

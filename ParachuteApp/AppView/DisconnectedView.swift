@@ -16,7 +16,7 @@ struct DisconnectedView: View {
     @EnvironmentObject var settingsController: SettingsController
 
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
-    @EnvironmentObject var service: VPNConfigurationService
+    @EnvironmentObject var service: NEConfigurationService
     
     var buttonTitle: String {
         return "Start VPN connection"

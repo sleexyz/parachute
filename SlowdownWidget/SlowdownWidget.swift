@@ -8,8 +8,7 @@
 import WidgetKit
 import SwiftUI
 import Controllers
-import LoggingOSLog
-import Logging
+import OSLog
 import CommonLoaders
 import Activities
 import Models
@@ -17,8 +16,8 @@ import ProxyService
 import SwiftProtobuf
 import CommonViews
 
-struct Provider: AppIntentTimelineProvider {
-    let logger = Logger(label: "industries.strange.slowdown.SlowdownWidget")
+struct SlowdownWidgetProvider: AppIntentTimelineProvider {
+    let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SlowdownWidgetProvider")
 
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(date: Date(), settings: .defaultSettings)
@@ -58,18 +57,17 @@ struct SlowdownWidget: Widget {
     let kind: String = "industries.strange.slowdown.SlowdownWidget"
 
     init() {
-        LoggingSystem.bootstrap(LoggingOSLog.init)
         Task {
-            await VPNConfigurationService.shared.load()
+            await NEConfigurationService.shared.load()
         }
     }
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: SlowdownWidgetProvider()) { entry in
             ControllersLoader {
                 SlowdownWidgetView(settings: entry.settings)
-                    .environmentObject(VPNConfigurationService.shared)
-                    .containerBackground(Color(UIColor(named:"Background")!), for: .widget)
+                    .environmentObject(NEConfigurationService.shared)
+                    .containerBackground(Color.background, for: .widget)
                     //.containerBackground(.fill.tertiary, for: .widget)
                     //.containerBackground(.fill.tertiary, for: .widget)
             }

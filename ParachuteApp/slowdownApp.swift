@@ -7,23 +7,18 @@
 
 import SwiftUI
 import ProxyService
-import Logging
-import LoggingOSLog
 import Firebase
 import Common
 import Controllers
 import CommonLoaders
 import AppHelpers
+import OSLog
 
 @main
 struct slowdownApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
-    private let logger = Logger(label: "industries.strange.slowdown.slowdownApp")
-    
-    init() {
-        LoggingSystem.bootstrap(LoggingOSLog.init)
-    }
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "slowdownApp")
     
     var body: some Scene {
         WindowGroup {
@@ -40,13 +35,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             FirebaseApp.configure()
         }
         Task { @MainActor in
-            await VPNConfigurationService.shared.load()
+            await NEConfigurationService.shared.load()
             if #available(iOS 16.2, *) {
                 try SettingsStore.shared.load()
                 ActivitiesHelper.shared.start(settings: SettingsStore.shared.settings)
             } 
         }
-        VPNConfigurationService.shared.registerBackgroundTasks()
+        // NEConfigurationService.shared.registerBackgroundTasks()
         return true
     }
 }

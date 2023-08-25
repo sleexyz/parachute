@@ -7,6 +7,18 @@ let package = Package(
     name: "Parachute",
     platforms: [.iOS(.v16)],
     products: [
+       .library(
+           name: "FilterCommon",
+           targets: ["FilterCommon"]
+       ),
+       .library(
+           name: "FilterData",
+           targets: ["FilterData"]
+       ),
+       .library(
+           name: "FilterControl",
+           targets: ["FilterControl"]
+       ),
         .library(
             name: "AppViews",
             targets: ["AppViews"]
@@ -54,11 +66,35 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../ProxyService"),
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.0"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", branch: "master"),
+        .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.0.0"),
     ],
     targets: [
+       .target(
+           name: "FilterCommon"
+       ),
+       .target(
+           name: "FilterData",
+           dependencies: [
+                "Models",
+                "Common",
+                "FilterCommon",
+                .product(name: "ProxyService", package: "ProxyService"),
+                .product(name: "SwiftProtobuf", package: "swift-protobuf"),
+                // .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"), // FilterDataProvider may be too sandboxed to use this.
+           ]
+       ),
+       .target(
+           name: "FilterControl",
+           dependencies: [
+                "Common",
+                "Models",
+                "FilterCommon",
+               .product(name: "ProxyService", package: "ProxyService"),
+               .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
+           ]
+       ),
         .target(
             name: "Server",
             dependencies: [
@@ -77,7 +113,8 @@ let package = Package(
         .target(
             name: "Activities",
             dependencies: [
-                .product(name: "Logging", package: "swift-log"),
+                "Models",
+                .product(name: "ProxyService", package: "ProxyService"),
             ]
         ),
         .target(
@@ -102,7 +139,6 @@ let package = Package(
             name: "CommonLoaders",
             dependencies: [
                 "Controllers",
-                .product(name: "Logging", package: "swift-log"),
             ]
         ),
         .testTarget(
@@ -121,7 +157,6 @@ let package = Package(
                 "AppHelpers",
                 .product(name: "ProxyService", package: "ProxyService"),
                 .product(name: "OrderedCollections", package: "swift-collections"),
-                .product(name: "Logging", package: "swift-log"),
                 .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
             ]
         ),

@@ -17,16 +17,16 @@ public class SettingsController: ObservableObject {
         public func create(r: Registry) -> SettingsController {
             return SettingsController(
                 store: r.resolve(SettingsStore.self),
-                service: r.resolve(VPNConfigurationService.self)
+                service: r.resolve(NEConfigurationService.self)
             )
         }
         public init() {}
     }
-    
+ 
     private let store: SettingsStore
-    private let service: VPNConfigurationService
+    private let service: any NEConfigurationServiceProtocol
     
-    init(store: SettingsStore, service: VPNConfigurationService) {
+    init(store: SettingsStore, service: any NEConfigurationServiceProtocol) {
         self.store = store
         self.service = service
     }
@@ -49,6 +49,7 @@ public class SettingsController: ObservableObject {
         try self.store.save()
     }
     
+    @MainActor
     public func syncSettings(reason: String = "") async throws -> () {
         store.settings.changeMetadata = Proxyservice_ChangeMetadata.with {
             $0.id = SettingsStore.id
