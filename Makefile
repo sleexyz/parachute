@@ -1,77 +1,30 @@
 .PHONY = all
-all: ci_scripts/Ffi.xcframework
+all: protos
 
 .PHONY = everything
-everything: ci_scripts/pull_bin ci_scripts/push_bin all
-
-compilers := $(proto-compilers) .gopath/bin/gomobile
-
-proto-compilers := .external/swift-protobuf/.build/release/protoc-gen-swift go-proxy/analysis-sandbox/node_modules/.bin/protoc-gen-ts_proto .gopath/bin/protoc-gen-go
-
-.gopath/bin/gomobile:
-	go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20221110043201-43a038452099
-	gomobile init
-
-.gopath/bin/protoc-gen-go:
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1
-
-ci_scripts/pull_bin: ci_scripts/pull/main.go
-	GOOS=darwin GOARCH=amd64 go build -o ./ci_scripts/pull_bin ./ci_scripts/pull/main.go
+everything: ci_scripts/push_bin all
 
 ci_scripts/push_bin: ci_scripts/push/main.go
 	GOOS=darwin GOARCH=amd64 go build -o ./ci_scripts/push_bin ./ci_scripts/push/main.go
 
-go-files := $(shell git ls-files | grep ^go-proxy/.*\.go$ ) 
+.PHONY = clean
+clean:
+	rm -rf $(protos)
 
-go-proxy/analysis-sandbox/node_modules/.bin/protoc-gen-ts_proto:
-	(cd go-proxy/analysis-sandbox; npm install)
+.PHONY = clean-tools
+clean-tools: 
+	rm -rf .external/swift-protobuf
+
+protos := ProxyService/Sources/ProxyService/proxyservice.pb.swift
+
+.PHONY = protos
+protos: $(protos)
+
+$(protos): protos/proxyservice.proto .external/swift-protobuf/.build/release/protoc-gen-swift
+	./build_protos.sh
 
 .external/swift-protobuf/.build/release/protoc-gen-swift:
 	mkdir -p .external
 	git clone https://github.com/apple/swift-protobuf.git .external/swift-protobuf
 	(cd .external/swift-protobuf; git checkout tags/1.20.3)
 	(cd .external/swift-protobuf; swift build -c release)	
-
-ci_scripts/Ffi.xcframework: $(go-files) $(compilers)
-	echo $?
-	(cd go-proxy ; ./build.sh)
-
-go-proxy/pkg/controller/mock_DeviceCallbacks.go: $(go-protos)
-	mockery --name=DeviceCallbacks  --recursive --inpackage --dir go-proxy/pkg/controller
-
-test-tools := .gopath/bin/mockery
-
-.gopath/bin/mockery:
-	go install github.com/vektra/mockery/v2@v2.16.0
-
-.PHONY = test
-test: $(test-tools) go-proxy/pkg/controller/mock_DeviceCallbacks.go $(go-protos)
-	go test ./go-proxy/...
-
-
-.PHONY = clean
-clean: 
-	rm -f go-proxy/pb/proxyservice/proxyservice.pb.go
-	rm -rf ci_scripts/Ffi.xcframework
-	rm -f go-proxy/pkg/controller/mock_DeviceCallbacks.go
-
-.PHONY = clean-tools
-clean-tools: 
-	rm -f .gopath/bin/gomobile
-	rm -f .gopath/bin/protoc-gen-go
-	rm -f .gopath/bin/gomobile
-	rm -f .gopath/bin/protoc-gen-go
-	rm -rf .external/swift-protobuf
-
-.PHONY = clean-test-tools
-clean-test-tools:
-	rm -f .gopath/bin/mockery
-
-go-protos := go-proxy/pb/proxyservice/proxyservice.pb.go
-protos := go-proxy/analysis-sandbox/src/proxyservice.ts $(go-protos) ProxyService/Sources/ProxyService/proxyservice.pb.swift
-
-.PHONY = protos
-protos: $(protos)
-
-$(protos): protos/proxyservice.proto $(proto-compilers)
-	./build_protos.sh

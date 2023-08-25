@@ -1,5 +1,0 @@
-build/
-.gopath/
-go-proxy
-.external
-*.xcframework
