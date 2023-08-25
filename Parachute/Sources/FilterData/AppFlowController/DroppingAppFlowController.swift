@@ -3,7 +3,7 @@ import NetworkExtension
 import FilterCommon
 import OSLog
 
-class DroppingAppFlowController: AppFlowController {
+class DroppingAppFlowController: FlowController {
     let app: App
     let logger: Logger
 

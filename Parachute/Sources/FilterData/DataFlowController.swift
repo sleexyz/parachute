@@ -11,10 +11,11 @@ public class DataFlowController {
 
     weak var provider: NEFilterDataProvider?
 
-    var instagram = SlowingAppFlowController(app: .instagram)
-    var tiktok =    SlowingAppFlowController(app: .tiktok)
-    var twitter =   SlowingAppFlowController(app: .twitter)
-    var youtube =   SlowingAppFlowController(app: .youtube)
+    var flowRegistry = FlowRegistry()
+    // var instagram = SlowingAppFlowController(app: .instagram)
+    // var tiktok =    SlowingAppFlowController(app: .tiktok)
+    // var twitter =   SlowingAppFlowController(app: .twitter)
+    // var youtube =   SlowingAppFlowController(app: .youtube)
 
     public init(settings: Proxyservice_Settings) {
         logger.info("DataFlowController init")
@@ -27,32 +28,62 @@ public class DataFlowController {
     }
 
     public func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
-        // logger.info("New flow: \(flow)")
         guard let app = flow.matchSocialMedia() else {
             return .allow()
         }
 
+        flowRegistry.register(flow: flow)
+
         // Pass to handleInboundData
-        return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.peekBytes,  filterOutbound: false, peekOutboundBytes: 0)
+        return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.preSlowingBytes,  filterOutbound: false, peekOutboundBytes: 0)
     }
 
     public func handleInboundData(from flow: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        guard let app = flow.matchSocialMedia() else {
+        guard flow.matchSocialMedia() != nil else {
             return .allow()
         }
-        // TODO: pause sampling
+
+        // TODO: pause sampling as well
         if settings.shouldAllowSocialMedia {
-            return .allowPeekBytes(passBytes: readBytes.count, app: app)
+            return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: Int(NEFilterFlowBytesMax))
         }
-        switch app.id {
-        case .instagram:
-            return instagram.handleInboundData(from: flow, offset: offset, readBytes: readBytes)
-        case .tiktok:
-            return tiktok.handleInboundData(from: flow, offset: offset, readBytes: readBytes)
-        case .twitter:
-            return twitter.handleInboundData(from: flow, offset: offset, readBytes: readBytes)
-        case .youtube:
-            return youtube.handleInboundData(from: flow, offset: offset, readBytes: readBytes)
-        }
+
+        return flowRegistry.getFlowController(for: flow).handleInboundData(from: flow, offset: offset, readBytes: readBytes)
+    }
+
+    public func handleInboundDataComplete(for flow: NEFilterFlow) -> NEFilterDataVerdict {
+        // Deregister flow
+        flowRegistry.deregister(for: flow)
+        return .allow()
     }
 }
+
+public class FlowRegistry {
+    public typealias AFC = SlowingAppFlowController
+
+    var logger: Logger
+    private var flowDelays: [UUID: AFC] = [:]
+
+    public init() {
+        logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FlowRegistry")
+    }
+
+
+
+    public func register(flow: NEFilterFlow) {
+        guard let app = flow.matchSocialMedia() else {
+            // Invariant error. We should only be registering social media flows.
+            return
+        }
+        flowDelays[flow.identifier] = AFC(app: app, allowPreSlowingBytes: true)
+    }
+
+    public func deregister(for flow: NEFilterFlow) {
+        flowDelays.removeValue(forKey: flow.identifier)
+    }
+
+    public func getFlowController(for flow: NEFilterFlow) -> AFC {
+        return flowDelays[flow.identifier]!
+    }
+}
+

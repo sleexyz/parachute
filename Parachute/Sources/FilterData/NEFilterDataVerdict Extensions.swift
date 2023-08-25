@@ -2,9 +2,6 @@ import NetworkExtension
 import FilterCommon
 
 public extension NEFilterDataVerdict {
-    static func allowPeekBytes(passBytes: Int, app: App) -> NEFilterDataVerdict {
-        return NEFilterDataVerdict(passBytes: passBytes, peekBytes: app.peekBytes)
-    }
 
     static func needRulesBlocking() -> NEFilterDataVerdict {
         let verdict = NEFilterDataVerdict.needRules()

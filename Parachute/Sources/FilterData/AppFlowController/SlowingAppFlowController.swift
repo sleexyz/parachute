@@ -3,11 +3,11 @@ import OSLog
 import FilterCommon
 
 let SAMPLE_FREQUENCY = 1.0
-let MTU = 16 * 1024
 
 // A proportional controller that throttles the download speed of a flow.
 public class SlowingAppFlowController {
     // Parameters
+    var allowPreSlowingBytes: Bool
     var app: App
 
     // var gain = 1 / 1e6 // microsecond
@@ -15,10 +15,11 @@ public class SlowingAppFlowController {
     
     var logger: Logger
     
-    public init (app: App) {
+    required public init (app: App, allowPreSlowingBytes: Bool = false) {
+        self.allowPreSlowingBytes = allowPreSlowingBytes
         self.app = app
         logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppFlowController.\(app.id)")
-        let startingLatencyPerByte = (20_000 / app.targetRxSpeed) * 4e-2 / Double(MTU) // 40ms per peek. Sweet spot computed experimentally.
+        let startingLatencyPerByte = (20_000 / app.targetRxSpeed) * 4e-2 / Double(app.peekBytes) // 40ms per peek. Sweet spot computed experimentally.
         latencyPerByte = startingLatencyPerByte
     }
 
@@ -82,13 +83,13 @@ public class SlowingAppFlowController {
     }
 
     private func getVerdict(from flow: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        if (offset < app.preSlowingBytes) {
+        if allowPreSlowingBytes && offset < app.preSlowingBytes {
             return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: app.preSlowingBytes)
         }
         let targetLatency = latencyPerByte * Double(readBytes.count)
         // logger.info("target latency: \(UInt32(targetLatency * 1e6)) microseconds")
         usleep(UInt32(targetLatency * 1e6))
-        return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: MTU)
+        return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: app.peekBytes)
     }
 }
 

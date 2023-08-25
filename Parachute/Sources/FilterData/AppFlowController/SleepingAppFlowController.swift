@@ -3,7 +3,7 @@ import NetworkExtension
 import FilterCommon
 import OSLog
 
-class SleepingAppFlowController: AppFlowController {
+class SleepingAppFlowController: FlowController {
     let app: App
     let logger: Logger
 
@@ -16,7 +16,7 @@ class SleepingAppFlowController: AppFlowController {
         // if offset < app.peekBytes {
         //     return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: app.peekBytes)
         // }
-        usleep(app.sleepTime)
+        usleep(40_000)
         return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: app.peekBytes)
     }
 }

@@ -80,4 +80,9 @@ public class FilterDataProvider: NEFilterDataProvider {
         // }
         return verdict
     }
+
+    public override func handleInboundDataComplete(for flow: NEFilterFlow) -> NEFilterDataVerdict {
+        let verdict = dataFlowController.handleInboundDataComplete(for: flow)
+        return verdict
+    }
 }
