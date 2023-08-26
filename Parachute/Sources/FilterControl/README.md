@@ -1,0 +1,1 @@
+NOTE: This is currently unused. We won't need an FCP until we need to perform side-effects with the Filter Provider, including talking to the app.
