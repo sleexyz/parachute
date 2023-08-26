@@ -40,10 +40,6 @@ let package = Package(
             targets: ["Activities"]
         ),
         .library(
-            name: "Server",
-            targets: ["Server"]
-        ),
-        .library(
             name: "DI",
             targets: ["DI"]
         ),
@@ -96,12 +92,6 @@ let package = Package(
            ]
        ),
         .target(
-            name: "Server",
-            dependencies: [
-                "Common",
-            ]
-        ),
-        .target(
             name: "Models",
             dependencies: [
                 .product(name: "ProxyService", package: "ProxyService"),
@@ -139,12 +129,6 @@ let package = Package(
             name: "CommonLoaders",
             dependencies: [
                 "Controllers",
-            ]
-        ),
-        .testTarget(
-            name: "ServerTests",
-            dependencies: [
-                "Server",
             ]
         ),
         .target(
