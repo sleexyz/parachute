@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A0016E3D2A787DC400CA9BE6 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = A0016E3C2A787DC400CA9BE6 /* Inject */; };
 		A00A09CC2A7DB76600011260 /* Animation Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00A09CB2A7DB76600011260 /* Animation Globals.swift */; };
 		A00A09CE2A7EDA7000011260 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A00A09CD2A7EDA7000011260 /* Controllers */; };
 		A00AF05129AD006200673B31 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = A00AF05029AD006200673B31 /* OrderedCollections */; };
@@ -161,7 +160,6 @@
 		A024F15829A467D2007B572A /* HealSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealSettings.swift; sourceTree = "<group>"; };
 		A024F15A29A4845B007B572A /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		A02A67A7298820B300FF0B27 /* SpeedBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedBar.swift; sourceTree = "<group>"; };
-		A02CB59C2A8BCE5D00F3942C /* slowdownDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = slowdownDebug.entitlements; sourceTree = "<group>"; };
 		A02F58DC27A6F14500D3330F /* slowdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = slowdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02F58DF27A6F14500D3330F /* slowdownApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = slowdownApp.swift; sourceTree = "<group>"; };
 		A02F58E127A6F14500D3330F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -200,7 +198,6 @@
 		A08719D7281A4CE500113F3F /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		A08719D9281A4E1100113F3F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		A08719DD281A54A900113F3F /* Spinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spinner.swift; sourceTree = "<group>"; };
-		A089610F2A7DA22700742B70 /* SlowdownWidgetExtensionDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SlowdownWidgetExtensionDebug.entitlements; sourceTree = "<group>"; };
 		A096625429C8E93C00D2E0A9 /* PresetSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetSelector.swift; sourceTree = "<group>"; };
 		A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParachutePresetPicker.swift; sourceTree = "<group>"; };
 		A0975B432A8325870079FCBD /* QuickBreakIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickBreakIntent.swift; sourceTree = "<group>"; };
@@ -208,6 +205,7 @@
 		A0AC5DD52A9005FF00011CAD /* Placeholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Placeholder.swift; sourceTree = "<group>"; };
 		A0D191DB2A99B04A00086F12 /* SlowdownWidgetProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlowdownWidgetProvider.swift; sourceTree = "<group>"; };
 		A0D191E42A99B14B00086F12 /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
+		A0D192022A9D4C7E00086F12 /* SlowdownWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SlowdownWidgetExtension.entitlements; sourceTree = "<group>"; };
 		A0EE20AF2A82EBA500F34B98 /* ProxyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ProxyService; sourceTree = "<group>"; };
 		A0F764DE299DD37C001F9B24 /* ConnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedView.swift; sourceTree = "<group>"; };
 		A0F764E0299DD491001F9B24 /* DisconnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectedView.swift; sourceTree = "<group>"; };
@@ -240,7 +238,6 @@
 				A056C36E2A819E8F00E4ED9A /* AppViews in Frameworks */,
 				A04FAD9C294D60960002C19B /* SwiftProtobuf in Frameworks */,
 				A056C36C2A819E8A00E4ED9A /* CommonLoaders in Frameworks */,
-				A0016E3D2A787DC400CA9BE6 /* Inject in Frameworks */,
 				A01AB95C2A7D8015004E87B3 /* Common in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -311,10 +308,9 @@
 		A02F58D327A6F14500D3330F = {
 			isa = PBXGroup;
 			children = (
-				A02CB59C2A8BCE5D00F3942C /* slowdownDebug.entitlements */,
+				A0D192022A9D4C7E00086F12 /* SlowdownWidgetExtension.entitlements */,
 				A0975B4A2A84488D0079FCBD /* App Intent */,
 				A0EE20AF2A82EBA500F34B98 /* ProxyService */,
-				A089610F2A7DA22700742B70 /* SlowdownWidgetExtensionDebug.entitlements */,
 				A01BBC9A2A7D7A450027FF75 /* Parachute */,
 				A077851D297785490038BB4B /* ci_scripts */,
 				A02F58DE27A6F14500D3330F /* ParachuteApp */,
@@ -525,7 +521,6 @@
 				A04FAD9B294D60960002C19B /* SwiftProtobuf */,
 				A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */,
 				A00AF05029AD006200673B31 /* OrderedCollections */,
-				A0016E3C2A787DC400CA9BE6 /* Inject */,
 				A01AB95B2A7D8015004E87B3 /* Common */,
 				A01AB95D2A7D8015004E87B3 /* Controllers */,
 				A056C36B2A819E8A00E4ED9A /* CommonLoaders */,
@@ -688,7 +683,6 @@
 				A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				A0A81D5A296B98D800B9E1DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				A00AF04F29AD006200673B31 /* XCRemoteSwiftPackageReference "swift-collections" */,
-				A0016E3B2A787DC400CA9BE6 /* XCRemoteSwiftPackageReference "Inject" */,
 			);
 			productRefGroup = A02F58DD27A6F14500D3330F /* Products */;
 			projectDirPath = "";
@@ -1065,7 +1059,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = slowdownDebug.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ParachuteApp/slowdown.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1088,7 +1082,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.03;
 				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = (
 					"-Xlinker",
 					"-interposable",
@@ -1136,7 +1130,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.03;
 				NEW_SETTING = "";
 				NEW_SETTING1 = "";
 				OTHER_LDFLAGS = "";
@@ -1238,7 +1232,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_ENTITLEMENTS = SlowdownWidgetExtensionDebug.entitlements;
+				CODE_SIGN_ENTITLEMENTS = SlowdownWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
@@ -1255,9 +1250,10 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.03;
 				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.SlowdownWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -1276,6 +1272,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = SlowdownWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H2M3Z7JR84;
@@ -1292,7 +1289,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.03;
 				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.SlowdownWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1329,7 +1326,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.03;
 				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.FilterDataProviderExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1366,7 +1363,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.03;
 				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.FilterDataProviderExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1511,14 +1508,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		A0016E3B2A787DC400CA9BE6 /* XCRemoteSwiftPackageReference "Inject" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/krzysztofzablocki/Inject.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		A00AF04F29AD006200673B31 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-collections.git";
@@ -1546,11 +1535,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		A0016E3C2A787DC400CA9BE6 /* Inject */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A0016E3B2A787DC400CA9BE6 /* XCRemoteSwiftPackageReference "Inject" */;
-			productName = Inject;
-		};
 		A00A09CD2A7EDA7000011260 /* Controllers */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Controllers;
