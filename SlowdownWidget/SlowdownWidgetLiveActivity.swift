@@ -38,19 +38,9 @@ struct SlowdownWidgetLiveActivity: Widget {
                 .activitySystemActionForegroundColor(.black)
             
         } dynamicIsland: { context in
+            
             DynamicIsland {
-                // Expanded UI goes here.  Compose the expanded UI through
-                // various regions, like leading/trailing/center/bottom
-                DynamicIslandExpandedRegion(.leading) {
-                    Text("Leading")
-                }
-                DynamicIslandExpandedRegion(.trailing) {
-                    Text("Trailing")
-                }
-                DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.state.settings.activePreset.id)")
-                    // more content
-                }
+                expandedContent()
             } compactLeading: {
                 Text("L")
             } compactTrailing: {
@@ -61,6 +51,22 @@ struct SlowdownWidgetLiveActivity: Widget {
             .widgetURL(URL(string: "http://www.apple.com"))
             .keylineTint(Color.red)
         }
+    }
+    @DynamicIslandExpandedContentBuilder
+    private func expandedContent() -> DynamicIslandExpandedContent<some View> {
+        // Expanded UI goes here.  Compose the expanded UI through
+        // various regions, like leading/trailing/center/bottom
+        DynamicIslandExpandedRegion(.leading) {
+            Text("Leading")
+        }
+        DynamicIslandExpandedRegion(.trailing) {
+            Text("Trailing")
+        }
+        DynamicIslandExpandedRegion(.bottom) {
+            Text("Bottom ")
+            // more content
+        }
+
     }
 }
 
@@ -82,9 +88,9 @@ extension SlowdownWidgetAttributes.ContentState {
     }
 }
 
-#Preview("Notification", as: .content, using: SlowdownWidgetAttributes.preview) {
-  SlowdownWidgetLiveActivity()
-} contentStates: {
-   SlowdownWidgetAttributes.ContentState.focus
-   SlowdownWidgetAttributes.ContentState.relax
-}
+//#Preview("Notification", as: .content, using: SlowdownWidgetAttributes.preview) {
+//  SlowdownWidgetLiveActivity()
+//} contentStates: {
+//   SlowdownWidgetAttributes.ContentState.focus
+//   SlowdownWidgetAttributes.ContentState.relax
+//}

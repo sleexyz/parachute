@@ -16,36 +16,6 @@ import ProxyService
 import SwiftProtobuf
 import CommonViews
 
-struct SlowdownWidgetProvider: AppIntentTimelineProvider {
-    let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SlowdownWidgetProvider")
-
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), settings: .defaultSettings)
-    }
-
-    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        try? SettingsStore.shared.load()
-        return SimpleEntry(date: Date(), settings: SettingsStore.shared.settings)
-    }
-    
-    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        var entries: [SimpleEntry] = []
-
-        try? SettingsStore.shared.load()
-        entries.append(SimpleEntry(date: Date(), settings: SettingsStore.shared.settings))
-
-        if SettingsStore.shared.settings.hasOverlay {
-            let expiry = SettingsStore.shared.settings.overlay.expiry.date
-            let components = DateComponents(second: 0)
-            let futureDate = Calendar.current.date(byAdding: components, to: expiry)!
-            let entry = SimpleEntry(date: futureDate, settings: SettingsStore.shared.settings)
-            entries.append(entry)
-            return Timeline(entries: entries, policy: .atEnd)
-        }
-
-        return Timeline(entries: entries, policy: .never)
-    }
-}
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
@@ -63,15 +33,25 @@ struct SlowdownWidget: Widget {
     }
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: SlowdownWidgetProvider()) { entry in
+        StaticConfiguration(kind: kind, provider: SlowdownWidgetProvider()) { entry in
             ControllersLoader {
                 SlowdownWidgetView(settings: entry.settings)
                     .environmentObject(NEConfigurationService.shared)
-                    .containerBackground(Color.background, for: .widget)
-                    //.containerBackground(.fill.tertiary, for: .widget)
-                    //.containerBackground(.fill.tertiary, for: .widget)
+                    //.containerBackground(Color.background, for: .widget)
             }
         }
+//        if #available(iOSApplicationExtension 17.0, *) {
+//             AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: SlowdownWidgetProvider()) { entry in
+//                ControllersLoader {
+//                    SlowdownWidgetView(settings: entry.settings)
+//                        .environmentObject(NEConfigurationService.shared)
+//                        .containerBackground(Color.background, for: .widget)
+//                }
+//            }
+//        } else {
+//            IntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: SiriKitIntentProvider()) { entry in
+//            }
+//        }
     }
 }
 

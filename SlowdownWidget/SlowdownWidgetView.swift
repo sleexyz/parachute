@@ -16,7 +16,13 @@ import SwiftProtobuf
 import CommonViews
 import OSLog
 
-@available(iOS 17.0, *)
+struct Logo: View {
+    var body: some View {
+        Text("parachute")
+            .foregroundStyle(Color.parachuteOrange)
+    }
+}
+
 struct SlowdownWidgetView : View {
     var settings: Proxyservice_Settings
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SlowdownWidgetView")
@@ -24,26 +30,15 @@ struct SlowdownWidgetView : View {
         if settings.changeMetadata.reason == "Overlay expired" && settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
             return "Session ended"
         }
-        return "Slowing Active"
+        return "Active"
     }
 
     var body: some View {
         VStack {
             if settings.activePreset.id == Proxyservice_Preset.focus.id {
                 HStack {
-                    Button(intent: ScrollSessionIntent()) {
-                        Image(systemName: "play.fill")
-                        Text("Scroll for \(Int(Preset.scrollSession.overlayDurationSecs!  / 60)) min")
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.parachuteOrange)
-
-//                    Button(intent: QuickBreakIntent()) {
-//                        //Image(systemName: "play.fill")
-//                        Text("\(Int(Preset.quickBreak.overlayDurationSecs!))s")
-//                    }
-//                    .buttonStyle(.bordered)
-//                    .tint(.secondaryFill)
+                    Logo()
+                        .frame(width: 30, height: 30)
                     Spacer()
                     Text(statusMessage)
                         .font(.subheadline.smallCaps())

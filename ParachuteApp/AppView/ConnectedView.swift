@@ -48,12 +48,15 @@ struct ConnectedView: View {
                     .padding()
                     Spacer()
                 }
-                if #available(iOS 17.0, *) {
+                VStack {
+                    Spacer()
                     SlowdownWidgetView(settings: settingsStore.settings)
                         .padding()
-                } else {
+                    Spacer()
                     SimpleSelector()
+                    Spacer()
                 }
+
             }
         }
         

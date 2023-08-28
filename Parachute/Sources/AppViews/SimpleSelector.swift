@@ -14,13 +14,17 @@ public struct SimpleSelector: View {
             if profileManager.activePreset.id == "focus" {
                 Button(action: {
                     Task { @MainActor in
+//                        guard let profileManager = ProfileManager.shared else  {
+//                            throw MyIntentError.message("ProfileManager not initialized")
+//                        }
                         try await profileManager.loadPreset(
-                            preset: ProfileManager.presetDefaults["focus"]!,
-                            overlay: ProfileManager.presetDefaults["relax"]!
+                            preset: .focus,
+                            overlay: .quickBreak
                         )
                         if #available(iOS 16.2, *) {
-                            await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings)
-                        } 
+                            await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings)
+                        }
+                        ScrollSessionViewController.shared.setClosed()
                     }
                     
                 }) {
