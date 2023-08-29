@@ -1,7 +1,7 @@
 import SwiftUI
 import Controllers
 import AppHelpers
-
+import Models
 
 public struct SimpleSelector: View {
     @EnvironmentObject private var profileManager: ProfileManager
@@ -14,19 +14,18 @@ public struct SimpleSelector: View {
             if profileManager.activePreset.id == "focus" {
                 Button(action: {
                     Task { @MainActor in
-//                        guard let profileManager = ProfileManager.shared else  {
-//                            throw MyIntentError.message("ProfileManager not initialized")
-//                        }
+                        var overlay: Preset = .quickBreak
+                        overlay.overlayDurationSecs = Double(settingsStore.settings.quickSessionSecs)
+
                         try await profileManager.loadPreset(
                             preset: .focus,
-                            overlay: .quickBreak
+                            overlay: overlay
                         )
                         if #available(iOS 16.2, *) {
                             await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings)
                         }
-                        ScrollSessionViewController.shared.setClosed()
+                        await ScrollSessionViewController.shared.setClosed()
                     }
-                    
                 }) {
                     Text("Start scroll break 🍪")
                 } 

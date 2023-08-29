@@ -245,6 +245,8 @@ public struct Proxyservice_Settings {
   /// Clears the value of `overlay`. Subsequent reads from it will return its default value.
   public mutating func clearOverlay() {_uniqueStorage()._overlay = nil}
 
+  /// NOT used by the backend:
+  /// TODO: move these to a preferences proto.
   public var parachutePreset: Proxyservice_Preset {
     get {return _storage._parachutePreset ?? Proxyservice_Preset()}
     set {_uniqueStorage()._parachutePreset = newValue}
@@ -268,6 +270,18 @@ public struct Proxyservice_Settings {
   public var apps: Dictionary<Int32,Bool> {
     get {return _storage._apps}
     set {_uniqueStorage()._apps = newValue}
+  }
+
+  /// NOT used by the backend:
+  /// TODO: move these to a preferences proto.
+  public var quickSessionSecs: Int32 {
+    get {return _storage._quickSessionSecs}
+    set {_uniqueStorage()._quickSessionSecs = newValue}
+  }
+
+  public var longSessionSecs: Int32 {
+    get {return _storage._longSessionSecs}
+    set {_uniqueStorage()._longSessionSecs = newValue}
   }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -703,6 +717,8 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     14: .standard(proto: "parachute_preset"),
     15: .standard(proto: "change_metadata"),
     16: .same(proto: "apps"),
+    17: .standard(proto: "quick_session_secs"),
+    18: .standard(proto: "long_session_secs"),
   ]
 
   fileprivate class _StorageClass {
@@ -713,6 +729,8 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _parachutePreset: Proxyservice_Preset? = nil
     var _changeMetadata: Proxyservice_ChangeMetadata? = nil
     var _apps: Dictionary<Int32,Bool> = [:]
+    var _quickSessionSecs: Int32 = 0
+    var _longSessionSecs: Int32 = 0
 
     static let defaultInstance = _StorageClass()
 
@@ -726,6 +744,8 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _parachutePreset = source._parachutePreset
       _changeMetadata = source._changeMetadata
       _apps = source._apps
+      _quickSessionSecs = source._quickSessionSecs
+      _longSessionSecs = source._longSessionSecs
     }
   }
 
@@ -751,6 +771,8 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 14: try { try decoder.decodeSingularMessageField(value: &_storage._parachutePreset) }()
         case 15: try { try decoder.decodeSingularMessageField(value: &_storage._changeMetadata) }()
         case 16: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufInt32,SwiftProtobuf.ProtobufBool>.self, value: &_storage._apps) }()
+        case 17: try { try decoder.decodeSingularInt32Field(value: &_storage._quickSessionSecs) }()
+        case 18: try { try decoder.decodeSingularInt32Field(value: &_storage._longSessionSecs) }()
         default: break
         }
       }
@@ -784,6 +806,12 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       if !_storage._apps.isEmpty {
         try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufInt32,SwiftProtobuf.ProtobufBool>.self, value: _storage._apps, fieldNumber: 16)
       }
+      if _storage._quickSessionSecs != 0 {
+        try visitor.visitSingularInt32Field(value: _storage._quickSessionSecs, fieldNumber: 17)
+      }
+      if _storage._longSessionSecs != 0 {
+        try visitor.visitSingularInt32Field(value: _storage._longSessionSecs, fieldNumber: 18)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -800,6 +828,8 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._parachutePreset != rhs_storage._parachutePreset {return false}
         if _storage._changeMetadata != rhs_storage._changeMetadata {return false}
         if _storage._apps != rhs_storage._apps {return false}
+        if _storage._quickSessionSecs != rhs_storage._quickSessionSecs {return false}
+        if _storage._longSessionSecs != rhs_storage._longSessionSecs {return false}
         return true
       }
       if !storagesAreEqual {return false}

@@ -27,6 +27,10 @@ public final class SettingsMigrations {
             settings.setAppEnabled(app: .instagram, value: true)
             settings.setAppEnabled(app: .tiktok, value: true)
             settings.setAppEnabled(app: .twitter, value: true)
+        },
+        8: { settings in
+            settings.quickSessionSecs = 30
+            settings.longSessionSecs = 300 // 5 minutes
         }
     ]
 

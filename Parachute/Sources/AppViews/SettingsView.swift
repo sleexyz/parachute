@@ -3,10 +3,167 @@ import Controllers
 import CommonViews
 
 struct SettingsContent: View {
+    @Binding var isPresented: Bool
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Spacer()
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(Color.white.opacity(0.2))
+                    .frame(width: 40, height: 5)
+                    .padding(.top, 10)
+                    .padding(.bottom, 5)
+                Spacer()
+            }
+            .contentShape(Rectangle())
+
+            Button(action: {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                vpnLifecycleManager.pauseConnection()
+                isPresented = false
+            }, label: {
+                Text("Disable Parachute")
+                    .foregroundColor(.white)
+                    .padding()
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.white, lineWidth: 1)
+                            .background(Color.white.opacity(0.2))
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                    )
+            })
+            .padding()
+
+            TimePicker()
+                .padding(.bottom, 20)
+            AppsPicker()
+                .padding(.bottom, 20)
+        }
+    }
+}
+
+struct TimePicker: View {
     @EnvironmentObject var settingsController: SettingsController
     @EnvironmentObject var settingsStore: SettingsStore
-    @Binding var isPresented: Bool
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Session Lengths")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.white.opacity(0.4))
+                .padding(.horizontal)
+                .padding(.top, 10)
+
+            HStack {
+                Text("Quick")
+                    .foregroundColor(.white)
+                Spacer()
+                HStack {
+                    Button(action: {
+                        settingsStore.settings.quickSessionSecs = 30
+                        Task {
+                            try await settingsController.syncSettings(reason: "session length 30s")
+                        }
+                    }, label: {
+                        Text("30\"")
+                            .foregroundColor(settingsStore.settings.quickSessionSecs == 30 ? .white : .gray)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(settingsStore.settings.quickSessionSecs == 30 ? Color.white.opacity(0.2) : Color.clear)
+                            .cornerRadius(20)
+                    })
+                    
+                    Button(action: {
+                        settingsStore.settings.quickSessionSecs = 45
+                        Task {
+                            try await settingsController.syncSettings(reason: "session length 45s")
+                        }
+                    }, label: {
+                        Text("45\"")
+                            .foregroundColor(settingsStore.settings.quickSessionSecs == 45 ? .white : .gray)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(settingsStore.settings.quickSessionSecs == 45 ? Color.white.opacity(0.2) : Color.clear)
+                            .cornerRadius(20)
+                    })
+                    
+                    Button(action: {
+                        settingsStore.settings.quickSessionSecs = 60
+                        Task {
+                            try await settingsController.syncSettings(reason: "session length 60s")
+                        }
+                    }, label: {
+                        Text("60\"")
+                            .foregroundColor(settingsStore.settings.quickSessionSecs == 60 ? .white : .gray)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(settingsStore.settings.quickSessionSecs == 60 ? Color.white.opacity(0.2) : Color.clear)
+                            .cornerRadius(20)
+                    })
+                }
+            }
+            .padding(.horizontal)
+
+            HStack {
+                Text("Long")
+                    .foregroundColor(.white)
+                Spacer()
+                HStack {
+                    Button(action: {
+                        settingsStore.settings.longSessionSecs = 180
+                        Task {
+                            try await settingsController.syncSettings(reason: "session length 180s")
+                        }
+                    }, label: {
+                        Text("3'")
+                            .foregroundColor(settingsStore.settings.longSessionSecs == 180 ? .white : .gray)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(settingsStore.settings.longSessionSecs == 180 ? Color.white.opacity(0.2) : Color.clear)
+                            .cornerRadius(20)
+                    })
+                    
+                    Button(action: {
+                        settingsStore.settings.longSessionSecs = 300
+                        Task {
+                            try await settingsController.syncSettings(reason: "session length 300s")
+                        }
+                    }, label: {
+                        Text("5'")
+                            .foregroundColor(settingsStore.settings.longSessionSecs == 300 ? .white : .gray)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(settingsStore.settings.longSessionSecs == 300 ? Color.white.opacity(0.2) : Color.clear)
+                            .cornerRadius(20)
+                    })
+                    
+                    Button(action: {
+                        settingsStore.settings.longSessionSecs = 480
+                        Task {
+                            try await settingsController.syncSettings(reason: "session length 480s")
+                        }
+                    }, label: {
+                        Text("8'")
+                            .foregroundColor(settingsStore.settings.longSessionSecs == 480 ? .white : .gray)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(settingsStore.settings.longSessionSecs == 480 ? Color.white.opacity(0.2) : Color.clear)
+                            .cornerRadius(20)
+                    })
+                }
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 20)
+        }
+    }
+}
+
+struct AppsPicker: View {
+    @EnvironmentObject var settingsController: SettingsController
+    @EnvironmentObject var settingsStore: SettingsStore
 
     var isInstagramEnabled: Binding<Bool> {
         Binding<Bool>(
@@ -55,39 +212,11 @@ struct SettingsContent: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Spacer()
-                RoundedRectangle(cornerRadius: 5)
-                    .fill(Color.white.opacity(0.2))
-                    .frame(width: 40, height: 5)
-                    .padding(.top, 10)
-                    .padding(.bottom, 5)
-                Spacer()
-            }
-            .contentShape(Rectangle())
-
-            Button(action: {
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                vpnLifecycleManager.pauseConnection()
-                isPresented = false
-            }, label: {
-                Text("Disable Parachute")
-                    .foregroundColor(.white)
-                    .padding()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.white, lineWidth: 1)
-                            .background(Color.white.opacity(0.2))
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                    )
-            })
-            .padding()
-
             // Apps
             Text("Apps")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white.opacity(0.3))
+                .foregroundColor(.white.opacity(0.4))
                 .padding(.horizontal)
                 .padding(.top, 10)
 

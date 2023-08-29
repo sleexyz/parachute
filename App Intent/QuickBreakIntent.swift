@@ -2,6 +2,7 @@ import AppIntents
 import Controllers
 import AppHelpers
 import OSLog
+import Models
 
 public struct QuickBreakIntent: AppIntent, LiveActivityIntent {
     public static var title: LocalizedStringResource = "Start session"
@@ -20,10 +21,15 @@ public struct QuickBreakIntent: AppIntent, LiveActivityIntent {
         guard let profileManager = ProfileManager.shared else  {
             throw MyIntentError.message("ProfileManager not initialized")
         }
+
+        var overlay: Preset = .quickBreak
+        overlay.overlayDurationSecs = Double(SettingsStore.shared.settings.quickSessionSecs)
+
         try await profileManager.loadPreset(
             preset: .focus,
-            overlay: .quickBreak
+            overlay: overlay
         )
+
         if #available(iOS 16.2, *) {
             await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings)
         }

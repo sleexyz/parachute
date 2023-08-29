@@ -83,13 +83,11 @@ message Settings {
     // Overlay preset
     Overlay overlay = 12;
 
-    //
-    // NOT used by the backend:
-    // TODO: move these to a preferences proto.
-    //
 
     reserved 13;
 
+    // NOT used by the backend:
+    // TODO: move these to a preferences proto.
     Preset parachute_preset = 14;
 
     // Tracks the last change to the settings.
@@ -97,6 +95,11 @@ message Settings {
 
     // Set of apps
     map<int32, bool> apps = 16;
+
+    // NOT used by the backend:
+    // TODO: move these to a preferences proto.
+    int32 quick_session_secs = 17;
+    int32 long_session_secs = 18;
 }
 
 message ChangeMetadata {

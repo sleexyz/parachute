@@ -12,7 +12,7 @@ import AppHelpers
 
 public struct ScrollSessionIntent: AppIntent, LiveActivityIntent {
     public static var title: LocalizedStringResource = "Start session"
-    public static var description = IntentDescription("Start a 30 second social media session.")
+    public static var description = IntentDescription("Start a scrolling session.")
     
     public static var openAppWhenRun: Bool = true
 
