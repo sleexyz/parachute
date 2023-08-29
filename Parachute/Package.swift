@@ -68,7 +68,10 @@ let package = Package(
     ],
     targets: [
        .target(
-           name: "FilterCommon"
+           name: "FilterCommon",
+           dependencies: [
+                .product(name: "ProxyService", package: "ProxyService"),
+           ]
        ),
        .target(
            name: "FilterData",
