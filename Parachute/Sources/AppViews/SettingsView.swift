@@ -59,7 +59,7 @@ struct SettingsView: View {
                 SettingsContent(isPresented: $isPresented)
             }
             .offset(y: isPresented ? topOffset + dragAmount.height : geometry.size.height + 100) // Set the offset to 0 when isSettingsPresented is true
-            .animation(Animation.easeOut(duration: 0.1), value: isPresented)
+            .animation(Animation.easeOut(duration: 0.15), value: isPresented)
             .animation(Animation.easeInOut(duration: 0.2), value: dragAmount)
             .gesture(
                 DragGesture()

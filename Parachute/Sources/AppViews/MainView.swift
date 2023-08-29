@@ -42,6 +42,7 @@ public struct MainView: View {
                             isSettingsPresented = true
                         }, label: {
                             Image(systemName: "gearshape.fill")
+                                .font(.system(size: 28))
                                 .padding()
                         })
                         .buttonStyle(.plain)
@@ -51,6 +52,7 @@ public struct MainView: View {
                             isFeedbackOpen = true
                         }, label: {
                             Image(systemName: "bubble.right.fill")
+                                .font(.system(size: 28))
                                 .padding()
                         })
                         .buttonStyle(.plain)
