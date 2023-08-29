@@ -63,7 +63,7 @@ class FilterControlProvider: NEFilterControlProvider {
             completionHandler(.allow(withUpdateRules: false))
             return
         }
-        if settings.shouldAllowSocialMedia {
+        if settings.isInScrollSession {
             completionHandler(.updateRules())
             return
         }

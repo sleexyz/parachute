@@ -8,13 +8,10 @@
 import Foundation
 import ProxyService
 
-let LATEST_VERSION = 6
-
 public final class SettingsMigrations {
     private static var migrations: [Int: (inout Proxyservice_Settings) -> Void] = [
         2: { settings in
             settings.defaultPreset = .focus
-            settings.version = 2
         },
         5: { settings in
             if settings.defaultPreset.id == "supercasual" {
@@ -23,20 +20,31 @@ public final class SettingsMigrations {
             if settings.defaultPreset.id == "ultracasual" {
                 settings.defaultPreset.id = "casual"
             }
-            settings.version = 5
         },
         6: { settings in
-            settings.version = 6
+        },
+        7: { settings in
+            settings.setAppEnabled(app: .instagram, value: true)
+            settings.setAppEnabled(app: .tiktok, value: true)
+            settings.setAppEnabled(app: .twitter, value: true)
         }
     ]
+
+    public static var LATEST_VERSION: Int {
+        migrations.keys.max()!
+    }
+
     public static func setDefaults(settings: inout Proxyservice_Settings, from: Int = 0) {
-        for i in from...LATEST_VERSION {
-            migrations[i]?(&settings)
+        for i in from...SettingsMigrations.LATEST_VERSION {
+            if let migration = migrations[i] {
+                migration(&settings)
+                settings.version = Int32(i)
+            }
         }
     }
     
     public static func upgradeToLatestVersion(settings: inout Proxyservice_Settings) {
-        if settings.version == LATEST_VERSION {
+        if settings.version == SettingsMigrations.LATEST_VERSION {
             return
         }
         setDefaults(settings: &settings, from: Int(settings.version) + 1)

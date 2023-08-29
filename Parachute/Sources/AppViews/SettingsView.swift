@@ -4,7 +4,55 @@ import CommonViews
 
 struct SettingsContent: View {
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
+    @EnvironmentObject var settingsController: SettingsController
+    @EnvironmentObject var settingsStore: SettingsStore
     @Binding var isPresented: Bool
+
+    var isInstagramEnabled: Binding<Bool> {
+        Binding<Bool>(
+            get: { settingsStore.settings.isAppEnabled(app: .instagram) },
+            set: { newValue in
+                settingsStore.settings.setAppEnabled(app: .instagram, value: newValue)
+                Task { @MainActor in
+                    try await settingsController.syncSettings(reason: "instagram toggle")
+                }
+            }
+        )
+    }
+    var isTikTokEnabled: Binding<Bool> {
+        Binding<Bool>(
+            get: { settingsStore.settings.isAppEnabled(app: .tiktok) },
+            set: { newValue in
+                settingsStore.settings.setAppEnabled(app: .tiktok, value: newValue)
+                Task { @MainActor in
+                    try await settingsController.syncSettings(reason: "tiktok toggle")
+                }
+            }
+        )
+    }
+    var isTwitterEnabled: Binding<Bool> {
+        Binding<Bool>(
+            get: { settingsStore.settings.isAppEnabled(app: .twitter) },
+            set: { newValue in
+                settingsStore.settings.setAppEnabled(app: .twitter, value: newValue)
+                Task { @MainActor in
+                    try await settingsController.syncSettings(reason: "twitter toggle")
+                }
+            }
+        )
+    }
+    var isYoutubeEnabled: Binding<Bool> {
+        Binding<Bool>(
+            get: { settingsStore.settings.isAppEnabled(app: .youtube) },
+            set: { newValue in
+                settingsStore.settings.setAppEnabled(app: .youtube, value: newValue)
+                Task { @MainActor in
+                    try await settingsController.syncSettings(reason: "youtube toggle")
+                }
+            }
+        )
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -34,6 +82,37 @@ struct SettingsContent: View {
                     )
             })
             .padding()
+
+            // Apps
+            Text("Apps")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.white.opacity(0.3))
+                .padding(.horizontal)
+                .padding(.top, 10)
+
+            
+            Toggle(isOn: isInstagramEnabled) {
+                Text("Instagram")
+                    .foregroundColor(.white)
+            }
+            .padding()
+            Toggle(isOn: isTikTokEnabled) {
+                Text("TikTok")
+                    .foregroundColor(.white)
+            }
+            .padding()
+            Toggle(isOn: isTwitterEnabled) {
+                Text("Twitter (X)")
+                    .foregroundColor(.white)
+            }
+            .padding()
+            Toggle(isOn: isYoutubeEnabled) {
+                Text("Youtube")
+                    .foregroundColor(.white)
+            }
+            .padding()
+
             Spacer()
         }
     }

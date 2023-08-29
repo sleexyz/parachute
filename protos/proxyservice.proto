@@ -10,6 +10,12 @@ enum Mode {
     FOCUS = 1;
 }
 
+enum AppType {
+    instagram = 0;
+    tiktok = 1;
+    twitter = 2;
+    youtube = 3;
+}
 
 message Preset {
     reserved 1;
@@ -88,6 +94,9 @@ message Settings {
 
     // Tracks the last change to the settings.
     ChangeMetadata change_metadata = 15;
+
+    // Set of apps
+    map<int32, bool> apps = 16;
 }
 
 message ChangeMetadata {

@@ -1,14 +1,9 @@
+import ProxyService
+
 var PEEK_BYTES = 16 * 1024
 
-public enum AppId {
-    case instagram
-    case tiktok
-    case twitter
-    case youtube
-}
-
 public struct App {
-    public let id: AppId
+    public let appType: Proxyservice_AppType
     // How much to allow through before slowing down
     public var preSlowingBytes: Int
 
@@ -22,25 +17,25 @@ public struct App {
 
 public extension App {
     static let instagram = App(
-        id: .instagram,
+        appType: .instagram,
         preSlowingBytes: 128 * 1024,
         peekBytes: 64 * 1024,
         targetRxSpeed: 25_000
     )
     static let tiktok = App(
-        id: .tiktok,
+        appType: .tiktok,
         preSlowingBytes: 64 * 1024,
         peekBytes: 64 * 1024,
         targetRxSpeed: 20_000
     )
     static let twitter = App(
-        id: .twitter,
+        appType: .twitter,
         preSlowingBytes: 1024,
         peekBytes: 64 * 1024,
         targetRxSpeed: 10_000
     )
     static let youtube = App(
-        id: .youtube,
+        appType: .youtube,
         preSlowingBytes: 32 * 1024,
         peekBytes: 32 * 1024, // Lowered from 64 to 32 to prevent buffering
         targetRxSpeed: 20_000

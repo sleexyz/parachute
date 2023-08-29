@@ -1,5 +1,6 @@
 import ProxyService
 import Foundation
+import SwiftUI
 
 public extension Proxyservice_Settings {
     static var defaultSettings: Proxyservice_Settings {
@@ -17,8 +18,16 @@ public extension Proxyservice_Settings {
         return self.defaultPreset
     }
 
-    var shouldAllowSocialMedia: Bool {
+    var isInScrollSession: Bool {
         return self.activePreset.baseRxSpeedTarget == .infinity
+    }
+
+    func isAppEnabled(app: Proxyservice_AppType) -> Bool {
+        self.apps[Int32(app.rawValue)] ?? false
+    }
+    
+    mutating func setAppEnabled(app: Proxyservice_AppType, value: Bool) {
+        self.apps[Int32(app.rawValue)] = value
     }
 }
 

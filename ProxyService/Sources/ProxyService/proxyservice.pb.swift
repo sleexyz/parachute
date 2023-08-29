@@ -60,6 +60,54 @@ extension Proxyservice_Mode: CaseIterable {
 
 #endif  // swift(>=4.2)
 
+public enum Proxyservice_AppType: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+  case instagram // = 0
+  case tiktok // = 1
+  case twitter // = 2
+  case youtube // = 3
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .instagram
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .instagram
+    case 1: self = .tiktok
+    case 2: self = .twitter
+    case 3: self = .youtube
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .instagram: return 0
+    case .tiktok: return 1
+    case .twitter: return 2
+    case .youtube: return 3
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension Proxyservice_AppType: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [Proxyservice_AppType] = [
+    .instagram,
+    .tiktok,
+    .twitter,
+    .youtube,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
 public struct Proxyservice_Preset {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -215,6 +263,12 @@ public struct Proxyservice_Settings {
   public var hasChangeMetadata: Bool {return _storage._changeMetadata != nil}
   /// Clears the value of `changeMetadata`. Subsequent reads from it will return its default value.
   public mutating func clearChangeMetadata() {_uniqueStorage()._changeMetadata = nil}
+
+  /// Set of apps
+  public var apps: Dictionary<Int32,Bool> {
+    get {return _storage._apps}
+    set {_uniqueStorage()._apps = newValue}
+  }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -443,6 +497,7 @@ public struct Proxyservice_Sample {
 
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Proxyservice_Mode: @unchecked Sendable {}
+extension Proxyservice_AppType: @unchecked Sendable {}
 extension Proxyservice_Preset: @unchecked Sendable {}
 extension Proxyservice_TrafficRules: @unchecked Sendable {}
 extension Proxyservice_Overlay: @unchecked Sendable {}
@@ -468,6 +523,15 @@ extension Proxyservice_Mode: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "PROGRESSIVE"),
     1: .same(proto: "FOCUS"),
+  ]
+}
+
+extension Proxyservice_AppType: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "instagram"),
+    1: .same(proto: "tiktok"),
+    2: .same(proto: "twitter"),
+    3: .same(proto: "youtube"),
   ]
 }
 
@@ -638,6 +702,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     12: .same(proto: "overlay"),
     14: .standard(proto: "parachute_preset"),
     15: .standard(proto: "change_metadata"),
+    16: .same(proto: "apps"),
   ]
 
   fileprivate class _StorageClass {
@@ -647,6 +712,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _overlay: Proxyservice_Overlay? = nil
     var _parachutePreset: Proxyservice_Preset? = nil
     var _changeMetadata: Proxyservice_ChangeMetadata? = nil
+    var _apps: Dictionary<Int32,Bool> = [:]
 
     static let defaultInstance = _StorageClass()
 
@@ -659,6 +725,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _overlay = source._overlay
       _parachutePreset = source._parachutePreset
       _changeMetadata = source._changeMetadata
+      _apps = source._apps
     }
   }
 
@@ -683,6 +750,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 12: try { try decoder.decodeSingularMessageField(value: &_storage._overlay) }()
         case 14: try { try decoder.decodeSingularMessageField(value: &_storage._parachutePreset) }()
         case 15: try { try decoder.decodeSingularMessageField(value: &_storage._changeMetadata) }()
+        case 16: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufInt32,SwiftProtobuf.ProtobufBool>.self, value: &_storage._apps) }()
         default: break
         }
       }
@@ -713,6 +781,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       try { if let v = _storage._changeMetadata {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
       } }()
+      if !_storage._apps.isEmpty {
+        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufInt32,SwiftProtobuf.ProtobufBool>.self, value: _storage._apps, fieldNumber: 16)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -728,6 +799,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._overlay != rhs_storage._overlay {return false}
         if _storage._parachutePreset != rhs_storage._parachutePreset {return false}
         if _storage._changeMetadata != rhs_storage._changeMetadata {return false}
+        if _storage._apps != rhs_storage._apps {return false}
         return true
       }
       if !storagesAreEqual {return false}

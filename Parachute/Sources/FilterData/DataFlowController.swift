@@ -3,6 +3,7 @@ import SwiftProtobuf
 import ProxyService
 import OSLog
 import FilterCommon
+import Models
 
 public class DataFlowController {
     let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DataFlowController")
@@ -32,6 +33,10 @@ public class DataFlowController {
             return .allow()
         }
 
+        // NOTE: we intentionally don't check the app type here and allow here, 
+        //      since .allow() will persist the entire flow and apps persist flows 
+        //      for a long time.
+
         flowRegistry.register(flow: flow)
 
         // Pass to handleInboundData
@@ -39,13 +44,22 @@ public class DataFlowController {
     }
 
     public func handleInboundData(from flow: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        guard flow.matchSocialMedia() != nil else {
+        guard let app: App = flow.matchSocialMedia() else {
             return .allow()
         }
 
+        let allowPeek = NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: 128 * 1024 * 1024)
+
+        guard settings.isAppEnabled(app: app.appType) else {
+            // #if DEBUG
+            // logger.info("App disabled: \(app.appType.rawValue)")
+            // #endif
+            return allowPeek
+        }
+
         // TODO: pause sampling as well
-        if settings.shouldAllowSocialMedia {
-            return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: Int(NEFilterFlowBytesMax))
+        if settings.isInScrollSession {
+            return allowPeek
         }
 
         return flowRegistry.getFlowController(for: flow).handleInboundData(from: flow, offset: offset, readBytes: readBytes)

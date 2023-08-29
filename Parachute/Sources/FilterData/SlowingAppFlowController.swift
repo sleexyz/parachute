@@ -18,7 +18,7 @@ public class SlowingAppFlowController {
     required public init (app: App, allowPreSlowingBytes: Bool = false) {
         self.allowPreSlowingBytes = allowPreSlowingBytes
         self.app = app
-        logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppFlowController.\(app.id)")
+        logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppFlowController.\(app.appType)")
         let startingLatencyPerByte = (20_000 / app.targetRxSpeed) * 4e-2 / Double(app.peekBytes) // 40ms per peek. Sweet spot computed experimentally.
         latencyPerByte = startingLatencyPerByte
     }
