@@ -20,7 +20,7 @@ public let previewDeps : [any Dep] = [
 public let connectedPreviewDeps : [any Dep] = {
     var value: [any Dep] = [
         ProfileManager.Provider(),
-        ScrollSessionViewController.Provider()
+        ConnectedViewController.Provider()
     ]
     value.append(contentsOf: previewDeps)
     return value

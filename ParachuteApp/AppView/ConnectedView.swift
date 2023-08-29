@@ -22,15 +22,19 @@ struct ProfileCardModifier: ViewModifier {
 }
 
 struct ConnectedView: View {
-    @EnvironmentObject var scrollSessionViewController: ScrollSessionViewController
+    @EnvironmentObject var connectedViewController: ConnectedViewController
     
     var body: some View {
-        
-        if scrollSessionViewController.open {
-            ScrollSessionView(duration: 10)
-        } else {
-            MainView()
-        }
+        Group {
+            switch connectedViewController.state {
+            case .settings, .main, .scrollSession:
+                MainView()
+                    .transition(.opacity)
+            case .longSession:
+                LongSessionView()
+                    .transition(.opacity)
+            }
+        }.background(LinearGradient.bg)
     }
 }
 

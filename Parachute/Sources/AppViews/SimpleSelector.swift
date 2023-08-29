@@ -8,6 +8,7 @@ import OSLog
 public struct SimpleSelector: View {
     @EnvironmentObject private var profileManager: ProfileManager
     @EnvironmentObject private var settingsStore: SettingsStore
+    @EnvironmentObject private var connectedViewController: ConnectedViewController
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SimpleSelector")
 
@@ -17,19 +18,7 @@ public struct SimpleSelector: View {
         VStack {
             Button(action: {
                 Task { @MainActor in
-                    // var overlay: Preset = .quickBreak
-                    // overlay.overlayDurationSecs = Double(settingsStore.settings.quickSessionSecs)
-
-                    // try await profileManager.loadPreset(
-                    //     preset: .focus,
-                    //     overlay: overlay
-                    // )
-                    // if #available(iOS 16.2, *) {
-                    //     await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings)
-                    // }
-                    // await ScrollSessionViewController.shared.setClosed()
-                    logger.info("ScrollSessionIntent.perform")
-                    await ScrollSessionViewController.shared.setOpen()
+                    connectedViewController.set(state: .scrollSession)
                 }
             }) {
                 Text("Scroll")
@@ -38,7 +27,7 @@ public struct SimpleSelector: View {
             } 
             .tint(.parachuteOrange)
             .buttonBorderShape(.capsule)
-            .buttonStyle(.bordered)
+            .buttonStyle(.borderedProminent)
         }
     }
 }

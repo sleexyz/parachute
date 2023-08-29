@@ -8,17 +8,6 @@ struct SettingsContent: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Spacer()
-                RoundedRectangle(cornerRadius: 5)
-                    .fill(Color.white.opacity(0.2))
-                    .frame(width: 40, height: 5)
-                    .padding(.top, 10)
-                    .padding(.bottom, 5)
-                Spacer()
-            }
-            .contentShape(Rectangle())
-
             Button(action: {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 vpnLifecycleManager.pauseConnection()
@@ -53,7 +42,7 @@ struct TimePicker: View {
             Text("Session Lengths")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white.opacity(0.4))
+                .foregroundColor(.white.opacity(0.6))
                 .padding(.horizontal)
                 .padding(.top, 10)
 
@@ -216,7 +205,7 @@ struct AppsPicker: View {
             Text("Apps")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white.opacity(0.4))
+                .foregroundColor(.white.opacity(0.6))
                 .padding(.horizontal)
                 .padding(.top, 10)
 
@@ -225,21 +214,25 @@ struct AppsPicker: View {
                 Text("Instagram")
                     .foregroundColor(.white)
             }
+            .tint(.parachuteOrange)
             .padding()
             Toggle(isOn: isTikTokEnabled) {
                 Text("TikTok")
                     .foregroundColor(.white)
             }
+            .tint(.parachuteOrange)
             .padding()
             Toggle(isOn: isTwitterEnabled) {
                 Text("Twitter (X)")
                     .foregroundColor(.white)
             }
+            .tint(.parachuteOrange)
             .padding()
             Toggle(isOn: isYoutubeEnabled) {
                 Text("Youtube")
                     .foregroundColor(.white)
             }
+            .tint(.parachuteOrange)
             .padding()
 
             Spacer()
@@ -249,39 +242,10 @@ struct AppsPicker: View {
 
 struct SettingsView: View {
     @Binding var isPresented: Bool
-    @GestureState private var dragAmount = CGSize.zero
 
-    var topOffset: CGFloat {
-        UIApplication.shared.connectedScenes.first?.inputView?.safeAreaInsets.top ?? 0 + 10 ?? 0
-    }
-    
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                    .background(Color.darkBlueBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .frame(minHeight: UIScreen.main.bounds.height)
-
-                SettingsContent(isPresented: $isPresented)
-            }
-            .offset(y: isPresented ? topOffset + dragAmount.height : geometry.size.height + 100) // Set the offset to 0 when isSettingsPresented is true
-            .animation(Animation.easeOut(duration: 0.15), value: isPresented)
-            .animation(Animation.easeInOut(duration: 0.2), value: dragAmount)
-            .gesture(
-                DragGesture()
-                    .updating($dragAmount) { value, state, _ in
-                        state = value.translation
-                    }
-                    .onEnded { value in
-                        if value.translation.height > 0 {
-                            isPresented = false
-                        } else {
-                            isPresented = true
-                        }
-                    }
-            )
+        Pane(isPresented: $isPresented) {
+            SettingsContent(isPresented: $isPresented)
         }
     }
 }

@@ -26,7 +26,7 @@ struct AppView: View {
                 WidgetUpdater {
                     ConnectedView()
                         .provideDeps([
-                            ScrollSessionViewController.Provider()
+                            ConnectedViewController.Provider()
                         ])
                 }
             }

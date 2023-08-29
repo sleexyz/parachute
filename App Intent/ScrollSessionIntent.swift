@@ -23,7 +23,7 @@ public struct ScrollSessionIntent: AppIntent, LiveActivityIntent {
 
     public func perform() async throws -> some IntentResult {
         logger.info("ScrollSessionIntent.perform")
-        await ScrollSessionViewController.shared.setOpen()
+        await ConnectedViewController.shared.set(state: .scrollSession)
         return .result()
     }
 }

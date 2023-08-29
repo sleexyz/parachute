@@ -5,13 +5,25 @@ import CommonViews
 public struct MainView: View {
     @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
-    @State private var isSettingsPresented = false
+    @EnvironmentObject var connectedViewController: ConnectedViewController
+
     @State private var isFeedbackOpen = false
     
-    public init() {}
+    @Binding var isSettingsPresented: Bool
+    @Binding var isScrollSessionPresented: Bool
+
+    
+    public init() {
+        self._isSettingsPresented = ConnectedViewController.shared.isSettingsPresented
+        self._isScrollSessionPresented = ConnectedViewController.shared.isScrollSessionPresented
+    }
+    
     public var body: some View {
         ZStack {
-            SettingsView(isPresented: $isSettingsPresented) 
+            SettingsView(isPresented: $isSettingsPresented)
+            .zIndex(2)
+
+            ScrollSessionView(isPresented: $isScrollSessionPresented)
             .zIndex(2)
             
             Rectangle()
@@ -29,6 +41,8 @@ public struct MainView: View {
                     SlowdownWidgetView(settings: settingsStore.settings)
                         .padding(.top, 80)
                         .padding()
+                    Spacer()
+                    Spacer()
                     Spacer()
                     SimpleSelector()
                     Spacer()
@@ -67,9 +81,9 @@ public struct MainView: View {
                 }
                 .zIndex(0)
             }
-            .blur(radius: isSettingsPresented ? 5 : 0)
-            .scaleEffect(isSettingsPresented ? 0.98 : 1) // Add scale effect when settings page is open
-            .animation(.easeInOut(duration: 0.2), value: isSettingsPresented) // Add animation to the blur effect
+            .blur(radius: isSettingsPresented || isScrollSessionPresented ? 8 : 0)
+            .scaleEffect(isSettingsPresented || isScrollSessionPresented ? 0.98 : 1) // Add scale effect when settings page is open
+            .animation(.easeInOut(duration: 0.2), value: isSettingsPresented || isScrollSessionPresented) // Add animation to the blur effect
             .zIndex(0)
         }
     }
