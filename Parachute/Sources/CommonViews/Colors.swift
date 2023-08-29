@@ -16,6 +16,10 @@ public extension Color {
     static var background: Color {
         Color(UIColor(named: "Background")!)
     }
+
+    static var darkBlueBg: Color {
+        Color(UIColor(named: "DarkBlueBg")!)
+    }
     
     static var secondaryFill: Color {
         Color(red: 124/255, green: 124/255, blue: 124/255)

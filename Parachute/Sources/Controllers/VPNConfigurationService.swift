@@ -293,10 +293,10 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
 }
 
 
-public class MockVPNConfigurationService: VPNConfigurationService {
+public class MockVPNConfigurationService: NEConfigurationService {
     public struct Provider: MockDep {
         public typealias MockT = MockVPNConfigurationService
-        public func create(r: Registry) -> VPNConfigurationService {
+        public func create(r: Registry) -> NEConfigurationService {
             return MockVPNConfigurationService()
         }
         public init() {}

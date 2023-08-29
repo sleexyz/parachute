@@ -12,6 +12,7 @@ import Activities
 import Controllers
 import CommonLoaders
 import ProxyService
+import CommonViews
 import SwiftProtobuf
 
 struct SlowdownWidgetLiveActivityView: View {

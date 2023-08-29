@@ -13,7 +13,6 @@ import Activities
 import Models
 import ProxyService
 import SwiftProtobuf
-import CommonViews
 import OSLog
 
 struct Logo: View {
@@ -23,9 +22,15 @@ struct Logo: View {
     }
 }
 
-struct SlowdownWidgetView : View {
+public struct SlowdownWidgetView : View {
     var settings: Proxyservice_Settings
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SlowdownWidgetView")
+
+    public init(settings: Proxyservice_Settings) {
+        self.settings = settings
+    }
+
+
     var statusMessage: String {
         if settings.changeMetadata.reason == "Overlay expired" && settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
             return "Session ended"
@@ -33,7 +38,7 @@ struct SlowdownWidgetView : View {
         return "Active"
     }
 
-    var body: some View {
+    public var body: some View {
         VStack {
             if settings.activePreset.id == Proxyservice_Preset.focus.id {
                 HStack {
@@ -60,7 +65,8 @@ struct SlowdownWidgetView : View {
             }
         }
         .buttonBorderShape(.capsule)
-        .environment(\.colorScheme, .dark) // For some reason .preferredColorScheme doesn't work with widgets
+        .preferredColorScheme(.dark)
+        .environment(\.colorScheme, .dark) // For some reason .preferredColorScheme doesn't work with widgets so we do both
 
     }
 }

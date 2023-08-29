@@ -65,7 +65,6 @@
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
 		A0AC5DD62A9005FF00011CAD /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0AC5DD52A9005FF00011CAD /* Placeholder.swift */; };
 		A0C1F7B02A8C400100934A8D /* FilterData in Frameworks */ = {isa = PBXBuildFile; productRef = A0C1F7AF2A8C400100934A8D /* FilterData */; };
-		A0D191D92A99AF0000086F12 /* SlowdownWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F98CA72A86B5A400D5E88E /* SlowdownWidgetView.swift */; };
 		A0D191DC2A99B04A00086F12 /* SlowdownWidgetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D191DB2A99B04A00086F12 /* SlowdownWidgetProvider.swift */; };
 		A0EE20AC2A82E84E00F34B98 /* Activities in Frameworks */ = {isa = PBXBuildFile; productRef = A0EE20AB2A82E84E00F34B98 /* Activities */; };
 		A0EE20AE2A82E86300F34B98 /* Activities in Frameworks */ = {isa = PBXBuildFile; productRef = A0EE20AD2A82E86300F34B98 /* Activities */; };
@@ -79,7 +78,6 @@
 		A0F98C992A869E4F00D5E88E /* MyIntentError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F98C972A869E4F00D5E88E /* MyIntentError.swift */; };
 		A0F98C9E2A86B1D600D5E88E /* CommonViews in Frameworks */ = {isa = PBXBuildFile; productRef = A0F98C9D2A86B1D600D5E88E /* CommonViews */; };
 		A0F98CA02A86B1F500D5E88E /* CommonViews in Frameworks */ = {isa = PBXBuildFile; productRef = A0F98C9F2A86B1F500D5E88E /* CommonViews */; };
-		A0F98CA92A86B5A400D5E88E /* SlowdownWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F98CA72A86B5A400D5E88E /* SlowdownWidgetView.swift */; };
 		A0FE9A602A8C299000D891CE /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
 		A0FE9A682A8C299000D891CE /* FilterDataProviderExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A0FE9A5F2A8C299000D891CE /* FilterDataProviderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A0FE9A712A8C29EF00D891CE /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
@@ -213,7 +211,6 @@
 		A0F764EE29A3F737001F9B24 /* TimerLockBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerLockBadge.swift; sourceTree = "<group>"; };
 		A0F98C942A85DAB600D5E88E /* ScrollSessionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollSessionIntent.swift; sourceTree = "<group>"; };
 		A0F98C972A869E4F00D5E88E /* MyIntentError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyIntentError.swift; sourceTree = "<group>"; };
-		A0F98CA72A86B5A400D5E88E /* SlowdownWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlowdownWidgetView.swift; sourceTree = "<group>"; };
 		A0FE9A5F2A8C299000D891CE /* FilterDataProviderExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FilterDataProviderExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0FE9A642A8C299000D891CE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A0FE9A652A8C299000D891CE /* FilterDataProviderExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FilterDataProviderExtension.entitlements; sourceTree = "<group>"; };
@@ -399,7 +396,6 @@
 			isa = PBXGroup;
 			children = (
 				A04ADFB42A7B5513008700C4 /* SlowdownWidgetBundle.swift */,
-				A0F98CA72A86B5A400D5E88E /* SlowdownWidgetView.swift */,
 				A04ADFB62A7B5513008700C4 /* SlowdownWidgetLiveActivity.swift */,
 				A04ADFB82A7B5513008700C4 /* SlowdownWidget.swift */,
 				A04ADFBA2A7B5513008700C4 /* AppIntent.swift */,
@@ -841,7 +837,6 @@
 				A081F24E296922F300863FE3 /* StateController.swift in Sources */,
 				A068DCF729A6FB260036E9A2 /* PauseCard.swift in Sources */,
 				A068DCF529A6FABC0036E9A2 /* Preset+Cardable.swift in Sources */,
-				A0D191D92A99AF0000086F12 /* SlowdownWidgetView.swift in Sources */,
 				A096625729C93EFC00D2E0A9 /* ParachutePresetPicker.swift in Sources */,
 				A0F98C952A85DAB600D5E88E /* ScrollSessionIntent.swift in Sources */,
 				A081F250296A125300863FE3 /* DamageBar.swift in Sources */,
@@ -889,7 +884,6 @@
 				A04ADFB52A7B5513008700C4 /* SlowdownWidgetBundle.swift in Sources */,
 				A0F98C992A869E4F00D5E88E /* MyIntentError.swift in Sources */,
 				A0F98C962A85DAB600D5E88E /* ScrollSessionIntent.swift in Sources */,
-				A0F98CA92A86B5A400D5E88E /* SlowdownWidgetView.swift in Sources */,
 				A0D191DC2A99B04A00086F12 /* SlowdownWidgetProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

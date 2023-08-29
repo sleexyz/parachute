@@ -123,7 +123,12 @@ let package = Package(
             ]
         ),
         .target(
-            name: "CommonViews"
+            name: "CommonViews",
+            dependencies: [
+                "Controllers",
+                "CommonLoaders",
+                .product(name: "ProxyService", package: "ProxyService"),
+            ]
         ),
         .target(
             name: "CommonLoaders",
