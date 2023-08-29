@@ -17,7 +17,8 @@ import OSLog
 
 struct Logo: View {
     var body: some View {
-        Text("parachute")
+        Text("parachute.")
+            .fontWeight(.bold)
             .foregroundStyle(Color.parachuteOrange)
     }
 }
@@ -43,7 +44,7 @@ public struct SlowdownWidgetView : View {
             if settings.activePreset.id == Proxyservice_Preset.focus.id {
                 HStack {
                     Logo()
-                        .frame(width: 30, height: 30)
+                        // .frame(width: 30, height: 30)
                     Spacer()
                     Text(statusMessage)
                         .font(.subheadline.smallCaps())

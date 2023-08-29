@@ -9,7 +9,7 @@ import OSLog
 public struct ScrollSessionView: View {
     var duration: Int
 
-    public init(duration: Int = 9) {
+    public init(duration: Int = 5) {
         self.duration = duration
     }
 
@@ -17,6 +17,7 @@ public struct ScrollSessionView: View {
     static var animation: Animation = .easeInOut(duration: 3)
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ScrollSessionView")
+    
 
 
     // TODO: remove timerlock
@@ -128,9 +129,11 @@ struct ScrollPrompt: View {
 
 struct ScrollSessionView_Previews: PreviewProvider {
     static var previews: some View {
-        ScrollSessionView()
-            .provideDeps([
-                ScrollSessionViewController.Provider()
-            ])
+        ConnectedPreviewContext {
+            ScrollSessionView()
+                .provideDeps([
+                    ScrollSessionViewController.Provider()
+                ])
+        }
     }
 }

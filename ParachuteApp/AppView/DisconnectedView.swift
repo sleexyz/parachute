@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftProtobuf
 import Common
 import Controllers
+import AppViews
 
 struct DisconnectedView: View {
     @EnvironmentObject var settingsStore: SettingsStore

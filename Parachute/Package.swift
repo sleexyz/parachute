@@ -131,6 +131,9 @@ let package = Package(
                 "Controllers",
                 "CommonLoaders",
                 .product(name: "ProxyService", package: "ProxyService"),
+            ],
+            resources: [
+                .copy("Resources/Assets.xcassets"),
             ]
         ),
         .target(

@@ -27,7 +27,7 @@ struct ConnectedView: View {
     var body: some View {
         
         if scrollSessionViewController.open {
-            ScrollSessionView(duration: 30)
+            ScrollSessionView(duration: 10)
         } else {
             MainView()
         }

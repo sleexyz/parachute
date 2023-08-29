@@ -26,8 +26,8 @@ public struct MainView: View {
 
             ZStack {
                 VStack {
-                    Spacer()
                     SlowdownWidgetView(settings: settingsStore.settings)
+                        .padding(.top, 80)
                         .padding()
                     Spacer()
                     SimpleSelector()

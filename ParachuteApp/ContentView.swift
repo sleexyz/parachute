@@ -11,6 +11,7 @@ import Foundation
 import OSLog
 import Controllers
 import CommonViews
+import AppViews
 
 struct ContentView: View {
     @EnvironmentObject var store: SettingsStore

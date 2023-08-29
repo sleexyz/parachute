@@ -6,7 +6,7 @@ public extension Color {
     }
 
     static var parachuteOrange: Color {
-        Color(UIColor(named: "parachuteOrange")!)
+        Color("parachuteOrange", bundle: Bundle.CommonViews)
     }
 
     static var parachuteLabel: Color {
@@ -14,11 +14,11 @@ public extension Color {
     }
 
     static var background: Color {
-        Color(UIColor(named: "Background")!)
+        Color("Background", bundle: Bundle.CommonViews)
     }
 
     static var darkBlueBg: Color {
-        Color(UIColor(named: "DarkBlueBg")!)
+        Color("DarkBlueBg", bundle: Bundle.CommonViews)
     }
     
     static var secondaryFill: Color {
