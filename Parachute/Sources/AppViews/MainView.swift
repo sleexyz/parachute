@@ -38,6 +38,8 @@ public struct MainView: View {
         self._isSettingsPresented = ConnectedViewController.shared.isSettingsPresented
         self._isScrollSessionPresented = ConnectedViewController.shared.isScrollSessionPresented
     }
+
+    var topPadding: CGFloat = 200
     
     public var body: some View {
         ZStack {
@@ -56,9 +58,8 @@ public struct MainView: View {
 
             ZStack {
                 VStack {
-                    Spacer()
                     SlowdownWidgetView(settings: settingsStore.settings)
-                        .padding(.vertical, 20)
+                        // .padding(.vertical, 20)
                         .padding(.horizontal, 20)
                         .rrGlow(color: .white, bg: .clear)
                         // .background {
@@ -69,6 +70,11 @@ public struct MainView: View {
                         //         .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                         // }
                         .padding()
+                        .padding(.top, topPadding / 2)
+                        .frame(maxWidth: .infinity, alignment: .top)
+                    Spacer()
+                }
+                VStack {
                     Spacer()
                     HStack {
                         Spacer()
@@ -113,6 +119,8 @@ public struct MainView: View {
                     SimpleSelector()
                     Spacer()
                 }
+                .padding(.top, topPadding)
+                // .frame(height: UIScreen.main.bounds.height / 2, alignment: .bottom)
                 .zIndex(0)
 
             }

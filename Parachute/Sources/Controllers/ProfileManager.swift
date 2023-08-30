@@ -53,6 +53,7 @@ public class ProfileManager: ObservableObject {
     @Published public var profileSelectorOpen: Bool = false
 
     public var overlayTimer: Timer? = nil
+    public var taskId: UIBackgroundTaskIdentifier? = nil
 
     // TODO: Convert to derived publisher. Right now all views need to also listen to settingsStore.$settings
     public var activePreset: Preset {
@@ -100,15 +101,22 @@ public class ProfileManager: ObservableObject {
         }
         try await settingsController.syncSettings()
         overlayTimer?.invalidate()
-         let taskId = UIApplication.shared.beginBackgroundTask(withName: "overlayExpiry") {
-             self.logger.info("We are about to kill your task")
-          }
+
+        if let taskId = self.taskId {
+            UIApplication.shared.endBackgroundTask(taskId)
+        }
+
+        taskId = UIApplication.shared.beginBackgroundTask(withName: "overlayExpiry") {
+            self.logger.info("We are about to kill your task")
+        }
         
         overlayTimer = Timer.scheduledTimer(withTimeInterval: overlay.overlayDurationSecs!, repeats: false) { _ in
             Task { @MainActor in
+                if let taskId = self.taskId {
+                    UIApplication.shared.endBackgroundTask(taskId)
+                }
                 defer {
                     self.overlayTimer?.invalidate()
-                    UIApplication.shared.endBackgroundTask(taskId)
                 }
                 self.settingsStore.settings.clearOverlay()
                 try await self.settingsController.syncSettings(reason: "Overlay expired")
@@ -118,6 +126,22 @@ public class ProfileManager: ObservableObject {
             }
         }
         return
+    }
+
+    @MainActor
+    public func endSession() async throws -> () {
+        if let taskId = self.taskId {
+            UIApplication.shared.endBackgroundTask(taskId)
+        }
+        if let overlayTimer = overlayTimer {
+            overlayTimer.invalidate()
+        } else {
+            settingsStore.settings.clearOverlay()
+            try await settingsController.syncSettings(reason: "Session ended")
+            if #available(iOS 16.2, *) {
+                await ActivitiesHelper.shared.update(settings: self.settingsStore.settings)
+            }
+        }
     }
 
     // Inclusive of loadOverlay

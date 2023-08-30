@@ -46,6 +46,23 @@ struct ConnectedView_Previews: PreviewProvider {
     }
 }
 
+struct ConnectedViewSession_Previews: PreviewProvider {
+    static var previews: some View {
+        ConnectedPreviewContext {
+            ConnectedView()
+                .consumeDep(ProfileManager.self) { profileManager in
+                    Task { @MainActor in
+                        try await profileManager.loadPreset(
+                            preset: .focus,
+                            overlay: .quickBreak
+                        )
+                    }
+                }
+        }
+    }
+}
+
+
 struct ConnectedViewScroll_Previews: PreviewProvider {
     static var previews: some View {
         ConnectedPreviewContext {
