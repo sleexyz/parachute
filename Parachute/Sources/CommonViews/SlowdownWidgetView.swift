@@ -72,7 +72,7 @@ public struct SlowdownWidgetView : View {
                     .monospacedDigit()
                     .foregroundColor(.primary.opacity(0.5))
                     // .matchedGeometryEffect(id: "status", in: animation)
-                    .frame(maxWidth: UIScreen.main.bounds.width / 4)
+                    .frame(maxWidth: 84)
                     // .foregroundColor(.parachuteOrange.opacity(0.8))
             } else {
                 Text("...")
