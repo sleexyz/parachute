@@ -244,7 +244,7 @@ struct SettingsView: View {
     @Binding var isPresented: Bool
 
     var body: some View {
-        Pane(isPresented: $isPresented) {
+        Pane(isPresented: $isPresented, bg: .background) {
             SettingsContent(isPresented: $isPresented)
         }
     }

@@ -27,6 +27,7 @@ struct SlowdownWidget: Widget {
     let kind: String = "industries.strange.slowdown.SlowdownWidget"
 
     init() {
+        Fonts.registerFonts()
         Task {
             await NEConfigurationService.shared.load()
         }

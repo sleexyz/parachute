@@ -5,11 +5,20 @@ public struct Pane<Content: View>: View {
     @GestureState private var dragAmount = CGSize.zero
     
     @ViewBuilder let content: () -> Content
+
+    var bg: Color
     
 
     public init(isPresented: Binding<Bool>, @ViewBuilder content: @escaping () -> Content) {
         self._isPresented = isPresented
         self.content = content
+        self.bg = .darkBlueBg
+    }
+
+    public init(isPresented: Binding<Bool>, bg: Color, @ViewBuilder content: @escaping () -> Content) {
+        self._isPresented = isPresented
+        self.content = content
+        self.bg = bg
     }
 
     var topOffset: CGFloat = 44
@@ -34,15 +43,15 @@ public struct Pane<Content: View>: View {
             RoundedRectangle(cornerRadius: 10)
             .stroke(Color.white.opacity(0.2), lineWidth: 1)
             .frame(width: UIScreen.main.bounds.width)
-            // .background(Material.ultraThinMaterial.opacity(0.9))
-            .background(Color.darkBlueBg.opacity(1))
+            .background(bg.opacity(1))
+            .background(Material.ultraThinMaterial.opacity(0.5))
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .contentShape(Rectangle())
             .zIndex(0)
         }
         .frame(minHeight: 0, maxHeight: UIScreen.main.bounds.height - topOffset, alignment: .bottom)
         // .offset(y: isPresented ? topOffset + dragAmount.height : geometry.size.height + 100) // Set the offset to 0 when isSettingsPresented is true
-        .offset(y: isPresented ? dragAmount.height + bottomPadding : UIScreen.main.bounds.height) // Set the offset to 0 when isSettingsPresented is true
+        .offset(y: isPresented ? max(dragAmount.height, 0) + bottomPadding : UIScreen.main.bounds.height) // Set the offset to 0 when isSettingsPresented is true
         .animation(Animation.easeOut(duration: 0.15), value: isPresented) .animation(Animation.easeInOut(duration: 0.2), value: dragAmount)
         .gesture(
             DragGesture()
@@ -57,6 +66,11 @@ public struct Pane<Content: View>: View {
                     }
                 }
         )
+        .onChange(of: isPresented) { newValue in
+            if newValue {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            }
+        }
         // .frame(minHeight: UIScreen.main.bounds.height, alignment: .bottom)
         // .background(Color.blue.opacity(0.5))
 

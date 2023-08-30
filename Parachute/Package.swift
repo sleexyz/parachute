@@ -134,6 +134,7 @@ let package = Package(
             ],
             resources: [
                 .copy("Resources/Assets.xcassets"),
+                .process("Resources/Fonts"),
             ]
         ),
         .target(

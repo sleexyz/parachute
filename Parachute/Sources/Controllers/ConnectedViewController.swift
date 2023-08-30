@@ -26,6 +26,8 @@ public class ConnectedViewController: ObservableObject  {
         public init() {}
     }
 
+    @Published public var state: ConnectedViewState = .main
+
     public var isSettingsPresented: Binding<Bool> {
         Binding<Bool> {
             self.state == .settings
@@ -51,7 +53,6 @@ public class ConnectedViewController: ObservableObject  {
     }
 
     private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ConnectedViewController")
-    @Published public var state: ConnectedViewState = .main
 
     @MainActor
     public func set(state: ConnectedViewState) {

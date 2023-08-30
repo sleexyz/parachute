@@ -13,10 +13,15 @@ import Controllers
 import CommonLoaders
 import AppHelpers
 import OSLog
+import CommonViews
 
 @main
 struct slowdownApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
+    init() {
+        Fonts.registerFonts()
+    }
     
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "slowdownApp")
     

@@ -2,15 +2,15 @@ import SwiftUI
 import DI
 import Controllers
 import AppHelpers
-import CommonViews
 import Models
 import OSLog
+import CommonViews
 
 struct ScrollSessionView: View {
     @Binding var isPresented: Bool
 
     var body: some View {
-        Pane(isPresented: $isPresented) {
+        Pane(isPresented: $isPresented, bg: .background) {
             ScrollSessionViewInner()
         }
     }
@@ -42,59 +42,112 @@ public struct ScrollSessionViewInner: View {
 
     var duration: UInt64 = 1
 
+    var longSessionMinutes: Int {
+        Int(settingsStore.settings.longSessionSecs / 60)
+    }
+
+    var quickSessionSecs: Int {
+        Int(settingsStore.settings.quickSessionSecs)
+    }
+
+    var quickSessionIcon: String {
+        if quickSessionSecs == 30 {
+            return "goforward.30"
+        } 
+        if quickSessionSecs == 45 {
+            return "goforward.45"
+        }
+        if quickSessionSecs == 60 {
+            return "goforward.60"
+        }
+        return "goforward"
+    }
+
     public var body: some View {
         VStack {
-            Button(action: {
-                Task { @MainActor in
-                    var overlay: Preset = .quickBreak
-                    overlay.overlayDurationSecs = Double(settingsStore.settings.quickSessionSecs)
-                    
-                    try await profileManager.loadPreset(
-                        preset: .focus,
-                        overlay: overlay
-                    )
-                    if #available(iOS 16.2, *) {
-                        await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings)
+                Text("Take a break?")
+                    .font(.system(size: 20, weight: .regular, design: .rounded))
+                    .foregroundColor(.secondary)
+                    .padding(.top, 24)
+                    .padding(.bottom, 48)
+                Button(action: {
+                    Task { @MainActor in
+                        ConnectedViewController.shared.set(state: .longSession)
                     }
-                    ConnectedViewController.shared.set(state: .main)
+                }) {
+                    HStack {
+                        Image(systemName: "forward.fill")
+                            .font(.system(size: 24))
+                        Spacer()
+                        Text("\(longSessionMinutes) MIN")
+                    }
+                    .foregroundColor(.parachuteOrange)
+                    .padding(.horizontal, 30)
+                    .padding(.vertical, 20)
+                    .contentShape(Rectangle())
                 }
-            }) {
-                Image(systemName: "goforward.30")
-                    .font(.system(size: 48))
-                    .padding()
-            }
-            .tint(.parachuteOrange)
-            .buttonBorderShape(.capsule)
-            .buttonStyle(.borderedProminent)
-            .opacity(state.shouldShowShortSession ? 1 : 0)
-            .padding(.vertical, 36)
+                .frame(width: UIScreen.main.bounds.width / 2)  
+                .tint(.parachuteOrange)
+                .buttonBorderShape(.roundedRectangle)
+                .font(.custom("SpaceMono-Regular", size: 16))
+                .buttonStyle(.dotted)
+                .rrGlow(color: .parachuteOrange, bg: .parachuteOrange.opacity(0.3))
+                // .background(
+                //     RoundedRectangle(cornerRadius: 20, style: .continuous)
+                //         .stroke(style: StrokeStyle(lineWidth: 1))
+                //         .foregroundColor(.parachuteOrange.opacity(0.2)))
+                // .glow(color: .parachuteOrange.opacity(0.3), radius: 54)
+                .opacity(state == .showLongSession ? 1 : 0)
+                // .padding(.top, UIScreen.main.bounds.height / 16)
 
-            Button(action: {
-                Task { @MainActor in
-                    ConnectedViewController.shared.set(state: .longSession)
+                Spacer()
+                Spacer()
+                Text("Just check something:")
+                    .font(.system(size: 20, weight: .regular, design: .rounded))
+                    .foregroundColor(.secondary)
+                    .padding(.bottom, 48)
+
+                Button(action: {
+                    Task { @MainActor in
+                        var overlay: Preset = .quickBreak
+                        overlay.overlayDurationSecs = Double(settingsStore.settings.quickSessionSecs)
+                        
+                        try await profileManager.loadPreset(
+                            preset: .focus,
+                            overlay: overlay
+                        )
+                        ConnectedViewController.shared.set(state: .main)
+                        if #available(iOS 16.2, *) {
+                            await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings)
+                        }
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: quickSessionIcon)
+                            .font(.system(size: 24))
+                        Spacer()
+                        Text("\(quickSessionSecs)s")
+                    }
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 30)
+                    .padding(.vertical, 20)
+                    .contentShape(Rectangle())
                 }
-            }) {
-                Text("5 min")
-                    .font(.title)
-                    .padding()
-            }
-            .tint(.parachuteOrange)
-            .buttonBorderShape(.capsule)
-            .buttonStyle(.bordered)
-            .opacity(state == .showLongSession ? 1 : 0)
-            .padding(.vertical, 36)
-
+                .frame(width: UIScreen.main.bounds.width / 2)  
+                .tint(.parachuteOrange)
+                .buttonBorderShape(.roundedRectangle)
+                .font(.custom("SpaceMono-Regular", size: 16))
+                .buttonStyle(.dotted)
+                .rrGlow(color: .parachuteOrange, bg: .parachuteOrange)
+                // .background(
+                //     RoundedRectangle(cornerRadius: 20, style: .continuous)
+                //         .stroke(style: StrokeStyle(lineWidth: 1))
+                //         .foregroundColor(.parachuteOrange.opacity(0.2)))
+                // .glow(color: .parachuteOrange.opacity(0.3), radius: 54)
+                .opacity(state.shouldShowShortSession ? 1 : 0)
+                Spacer()
 
         }
-        // .frame(minHeight: 0, maxHeight: UIScreen.main.bounds.height * 0.6, alignment: .center)
-        // .onAppear {
-        //     Task {@MainActor in
-        //         state = .showShortSession
-        //         try await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
-        //         state = .showLongSession
-        //     }
-        // }
-        // .animation(.easeInOut(duration: Double(duration)), value: state)
     }
 }
 
@@ -202,13 +255,14 @@ struct LongSessionScrollPrompt: View {
     }
 }
 
-struct ScrollSessionView_Previews: PreviewProvider {
+
+struct ScrollSession_Previews: PreviewProvider {
+    init() {
+        Fonts.registerFonts()
+    }
     static var previews: some View {
         ConnectedPreviewContext {
             ScrollSessionViewInner()
-                .provideDeps([
-                    ConnectedViewController.Provider()
-                ])
         }
     }
 }

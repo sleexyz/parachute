@@ -39,6 +39,16 @@ public struct MainView: View {
             ZStack {
                 VStack {
                     SlowdownWidgetView(settings: settingsStore.settings)
+                        .padding(.vertical, 20)
+                        .padding(.horizontal, 20)
+                        // .rrGlow(color: .white, bg: .darkBlueBg)
+                        .background {
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                .background(Color.background.opacity(0.8))
+                                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                                .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        }
                         .padding(.top, 80)
                         .padding()
                     Spacer()

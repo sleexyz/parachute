@@ -17,8 +17,18 @@ import OSLog
 
 struct Logo: View {
     var body: some View {
-        Text("parachute.")
+        Text("parachute")
+            .font(.system(.body, design: .rounded))
             .fontWeight(.bold)
+            .foregroundStyle(Color.parachuteOrange)
+    }
+}
+
+struct CapitalLogo: View {
+    var body: some View {
+        Text("parachute")
+            .font(.custom("SpaceMono-Regular", size: 16))
+            .textCase(.uppercase)
             .foregroundStyle(Color.parachuteOrange)
     }
 }

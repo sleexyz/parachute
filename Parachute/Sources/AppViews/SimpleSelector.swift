@@ -15,19 +15,36 @@ public struct SimpleSelector: View {
     public init() {}
 
     public var body: some View {
-        VStack {
-            Button(action: {
-                Task { @MainActor in
-                    connectedViewController.set(state: .scrollSession)
+        if !settingsStore.settings.isInScrollSession  {
+            VStack {
+                Button(action: {
+                    Task { @MainActor in
+                        connectedViewController.set(state: .scrollSession)
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "forward.fill")
+                            .font(.system(size: 20, weight: .bold))
+                        Spacer()
+                        Text("DISABLE")
+                    }
+                    .foregroundColor(.parachuteOrange)
+                    .padding(.horizontal, 30)
+                    .padding(.vertical, 20)
+                    .contentShape(Rectangle())
                 }
-            }) {
-                Text("Scroll")
-                    .font(.title)
-                    .padding()
-            } 
-            .tint(.parachuteOrange)
-            .buttonBorderShape(.capsule)
-            .buttonStyle(.borderedProminent)
+                .frame(width: UIScreen.main.bounds.width / 2)  
+                .tint(.parachuteOrange)
+                .buttonBorderShape(.roundedRectangle)
+                .font(.custom("SpaceMono-Regular", size: 16))
+                .background(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .stroke(style: StrokeStyle(lineWidth: 1))
+                        .foregroundColor(.parachuteOrange.opacity(0.2)))
+                .glow(color: .parachuteOrange.opacity(0.3), radius: 54)
+                // .buttonStyle(.dotted)
+                // .rrGlow(color: .parachuteOrange, bg: .clear)
+            }
         }
     }
 }
