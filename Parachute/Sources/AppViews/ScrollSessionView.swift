@@ -102,7 +102,7 @@ public struct ScrollSessionViewInner: View {
 
                 Spacer()
                 Spacer()
-                Text("Just check something:")
+                Text("...or just check something?")
                     .font(.system(size: 20, weight: .regular, design: .rounded))
                     .foregroundColor(.secondary)
                     .padding(.bottom, 48)

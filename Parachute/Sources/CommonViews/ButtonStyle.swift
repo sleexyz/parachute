@@ -38,6 +38,21 @@ extension View {
         .shadow(color: color, radius: radius / 3)
     }
 
+    public func rr(color: Color, bg: Color = .clear) -> some View {
+        self.background {
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(style: StrokeStyle(lineWidth: 1))
+                .foregroundColor(color.opacity(0.1))
+                .background {
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(bg)
+                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                }
+                .edgesIgnoringSafeArea(.all)
+        }
+    }
+
     public func rrGlow(color: Color, bg: Color = .clear, radius: CGFloat = 54) -> some View {
         self.background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)

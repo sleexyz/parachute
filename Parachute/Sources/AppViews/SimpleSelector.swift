@@ -24,9 +24,9 @@ public struct SimpleSelector: View {
                 }) {
                     HStack {
                         Image(systemName: "forward.fill")
-                            .font(.system(size: 20, weight: .bold))
+                            .font(.system(size: 24))
                         Spacer()
-                        Text("DISABLE")
+                        Text("SCROLL")
                     }
                     .foregroundColor(.parachuteOrange)
                     .padding(.horizontal, 30)

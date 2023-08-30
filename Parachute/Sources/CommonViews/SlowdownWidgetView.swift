@@ -17,19 +17,20 @@ import OSLog
 
 struct Logo: View {
     var body: some View {
-        Text("parachute")
-            .font(.system(.body, design: .rounded))
-            .fontWeight(.bold)
-            .foregroundStyle(Color.parachuteOrange)
-    }
-}
+        HStack {
+            Image(systemName: "drop.fill")
+                .font(.system(.body, design: .rounded))
+                .fontWeight(.bold)
+                .foregroundStyle(Color.parachuteOrange)
+                .padding(.trailing, 4)
 
-struct CapitalLogo: View {
-    var body: some View {
-        Text("parachute")
-            .font(.custom("SpaceMono-Regular", size: 16))
-            .textCase(.uppercase)
-            .foregroundStyle(Color.parachuteOrange)
+            Text("faucet")
+                .font(.system(.body, design: .rounded))
+                // .font(.custom("SpaceMono-Regular", size: 16))
+                // .textCase(.uppercase)
+                .fontWeight(.bold)
+                .foregroundStyle(Color.parachuteOrange)
+        }
     }
 }
 
@@ -46,7 +47,7 @@ public struct SlowdownWidgetView : View {
         if settings.changeMetadata.reason == "Overlay expired" && settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
             return "Session ended"
         }
-        return "Active"
+        return "Detox Active"
     }
 
     public var body: some View {
