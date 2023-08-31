@@ -95,8 +95,6 @@ struct ContentViewFamilyControls_Previews: PreviewProvider {
     }
 }
 
-
-
 struct ContentViewContentFilter_Previews: PreviewProvider {
     static var previews: some View {
         ContentView(testOnlyAuthorizationStatusOverride: .approved)
