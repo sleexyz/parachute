@@ -63,6 +63,18 @@ struct ConnectedViewSession_Previews: PreviewProvider {
     }
 }
 
+struct ConnectedViewSettings_Previews: PreviewProvider {
+    static var previews: some View {
+        ConnectedPreviewContext {
+            ConnectedView()
+                .consumeDep(ConnectedViewController.self) { connectedViewController in
+                    connectedViewController.set(state: .settings)
+                }
+        }
+    }
+}
+
+
 
 struct ConnectedViewScroll_Previews: PreviewProvider {
     static var previews: some View {

@@ -6,24 +6,29 @@ struct SettingsContent: View {
     @Binding var isPresented: Bool
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
 
+    @State private var isFeedbackOpen = false
+
     var body: some View {
         VStack(alignment: .leading) {
-            Button(action: {
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                vpnLifecycleManager.pauseConnection()
-                isPresented = false
-            }, label: {
-                Text("Disable Parachute")
-                    .foregroundColor(.white)
-                    .padding()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.white, lineWidth: 1)
-                            .background(Color.white.opacity(0.2))
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                    )
-            })
-            .padding()
+            // TODO: put sections behind rows.
+            HStack {
+                Button(action: {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    vpnLifecycleManager.pauseConnection()
+                    isPresented = false
+                }, label: {
+                    Text("Disable Parachute")
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .padding()
+                })
+                .tint(.white.opacity(0.5))
+                .buttonStyle(.bordered)
+                .padding()
+                Spacer()
+
+                FeedbackButton()
+            }
+                .padding(.bottom, 20)
 
             TimePicker()
                 .padding(.bottom, 20)

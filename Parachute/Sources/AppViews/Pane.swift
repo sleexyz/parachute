@@ -71,7 +71,7 @@ public struct Pane<Content: View>: View {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             }
         }
-        // .frame(minHeight: UIScreen.main.bounds.height, alignment: .bottom)
+        .frame(maxHeight: UIScreen.main.bounds.height - topOffset, alignment: .top)
         // .background(Color.blue.opacity(0.5))
 
     }
