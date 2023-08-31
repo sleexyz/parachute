@@ -34,7 +34,8 @@ struct ConnectedView: View {
                 LongSessionView()
                     .transition(.opacity)
             }
-        }.background(LinearGradient.bg)
+        }
+        .background(LinearGradient.bg)
     }
 }
 

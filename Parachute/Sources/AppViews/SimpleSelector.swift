@@ -25,14 +25,14 @@ public struct SimpleSelector: View {
                     Image(systemName: "forward.fill")
                         .font(.system(size: 24))
                     Spacer()
-                    Text("START SESSION")
+                    Text("SCROLL")
                 }
                 .foregroundColor(.parachuteOrange)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 20)
                 .contentShape(Rectangle())
             }
-            .frame(width: UIScreen.main.bounds.width / 1.5)  
+            .frame(width: UIScreen.main.bounds.width / 2)  
             .tint(.parachuteOrange)
             .buttonBorderShape(.roundedRectangle)
             .font(.custom("SpaceMono-Regular", size: 16))
