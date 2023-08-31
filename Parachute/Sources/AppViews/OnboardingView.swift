@@ -1,40 +1,27 @@
 import SwiftUI
 import DI
-
+import Controllers
 
 struct Logo: View {
     var body: some View {
         HStack {
-            Image(systemName: "drop.fill")
-                .font(.system(size: 48, design: .rounded))
-                .fontWeight(.bold)
-                .foregroundStyle(Color.parachuteOrange)
-                .padding(.trailing, 4)
+            // Image(systemName: "drop.fill")
+            //     .font(.system(size: 48, design: .rounded))
+            //     .fontWeight(.bold)
+            //     .foregroundStyle(Color.parachuteOrange)
+            //     .padding(.trailing, 4)
 
-            Text("faucet")
-                .font(.system(size: 42, design: .rounded))
+            Text("parachute.")
+                .font(.system(size: 54, design: .rounded))
                 .fontWeight(.bold)
                 .foregroundStyle(Color.parachuteOrange)
         }
     }
 }
 
-public class OnboardingViewController: ObservableObject {
-    public struct Provider : Dep {
-        public func create(r: Registry) -> OnboardingViewController {
-            return OnboardingViewController.shared
-        }
-        public init() {}
-    }
-
-    @AppStorage("isOnboardingCompleted") public var isOnboardingCompleted = true
-
-    @Published public var currentPage = 0
-    public static let shared = OnboardingViewController()  
-}
 
 public struct OnboardingView: View {
-    @StateObject var onboardingViewController: OnboardingViewController = OnboardingViewController.shared
+    @EnvironmentObject var onboardingViewController: OnboardingViewController
     public init() {}
     public var body: some View {
         Group {
@@ -57,10 +44,18 @@ struct Page0: View {
     var body: some View {
         VStack(alignment: .leading) {
             Logo()
+                .padding(.top, 24)
+            
+            Text("Freedom from scrolling")
+                .font(.system(size: 28, weight: .regular, design: .rounded))
+                .foregroundColor(.secondary)
+                .padding(.top, 24)
+            
+            
                 Text("Instant 2-week dopamine detox")
                     .font(.system(size: 28, weight: .regular, design: .rounded))
-                    .foregroundColor(.secondary)
-                    .padding(.top, 24)
+                    .foregroundColor(.parachuteOrange.opacity(0.7))
+                    .padding(.top, 48)
                     .padding(.bottom, 200)
 
             HStack {

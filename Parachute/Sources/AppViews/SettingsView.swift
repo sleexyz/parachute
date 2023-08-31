@@ -13,7 +13,7 @@ struct SettingsContent: View {
                 vpnLifecycleManager.pauseConnection()
                 isPresented = false
             }, label: {
-                Text("Disable Faucet")
+                Text("Disable Parachute")
                     .foregroundColor(.white)
                     .padding()
                     .overlay(

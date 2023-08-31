@@ -5,12 +5,12 @@ import CommonViews
 struct TextLogo: View {
     var body: some View {
         HStack {
-            Image(systemName: "drop.fill")
-                .font(.system(size: 28, design: .rounded))
-                .fontWeight(.bold)
-                .padding(.trailing, 4)
+            // Image(systemName: "drop.fill")
+            //     .font(.system(size: 28, design: .rounded))
+            //     .fontWeight(.bold)
+            //     .padding(.trailing, 4)
 
-            Text("faucet")
+            Text("parachute.")
                 .font(.system(.title, design: .rounded))
                 // .font(.custom("SpaceMono-Regular", size: 26))
                 // .textCase(.uppercase)

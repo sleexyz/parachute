@@ -17,7 +17,8 @@ public struct ControllersLoader<Inner: View>: View {
                 SettingsController.Provider(),
                 // VPNConfigurationService.Provider(),
                 FilterConfigurationService.Provider(),
-                SettingsStore.Provider()
+                SettingsStore.Provider(),
+                OnboardingViewController.Provider()
             ])
     }
 }

@@ -16,6 +16,7 @@ import AppViews
 struct ContentView: View {
     @EnvironmentObject var store: SettingsStore
     @EnvironmentObject var service: NEConfigurationService
+    @EnvironmentObject var onboardingViewController: OnboardingViewController
     @Environment(\.scenePhase) var scenePhase
     
     private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ContentView")
@@ -23,8 +24,7 @@ struct ContentView: View {
     @ViewBuilder
     var body: some View {
         Group {
-            // Check UserDefaults for first run
-            if !OnboardingViewController.shared.isOnboardingCompleted {
+            if !onboardingViewController.isOnboardingCompleted {
                 OnboardingView()
             } else if !store.loaded  {
                 SplashView(text: "Loading settings...")
@@ -59,6 +59,13 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .consumeDep(OnboardingViewController.self) { controller in
+                controller.isOnboardingCompleted = false
+            }
+            .provideDeps(previewDeps)
+        
+        
+        ContentView()
             .consumeDep(SettingsStore.self) { service in
                 service.loaded = true
             }
@@ -68,11 +75,7 @@ struct ContentView_Previews: PreviewProvider {
             .provideDeps(previewDeps)
         
         
-        ContentView()
-            .consumeDep(OnboardingViewController.self) { controller in
-                controller.currentPage = 1
-            }
-            .provideDeps(previewDeps)
+
 
         
         ContentView()

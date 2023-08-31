@@ -23,7 +23,7 @@ public struct SetupView: View {
     public var body: some View {
         VStack(alignment: .leading) {
             Text([
-                "Faucet protects your attention by delaying content from loading.",
+                "Parachute protects your attention by delaying content from loading.",
             ].joined(separator: "\n\n"))
                 .font(.system(size: 18, weight: .bold, design: .rounded))
                 .multilineTextAlignment(.leading)

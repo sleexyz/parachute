@@ -18,13 +18,13 @@ import OSLog
 struct Logo: View {
     var body: some View {
         HStack {
-            Image(systemName: "drop.fill")
-                .font(.system(.body, design: .rounded))
-                .fontWeight(.bold)
-                .foregroundStyle(Color.parachuteOrange)
-                .padding(.trailing, 4)
+            // Image(systemName: "drop.fill")
+            //     .font(.system(.body, design: .rounded))
+            //     .fontWeight(.bold)
+            //     .foregroundStyle(Color.parachuteOrange)
+            //     .padding(.trailing, 4)
 
-            Text("faucet")
+            Text("parachute.")
                 .font(.system(.body, design: .rounded))
                 // .font(.custom("SpaceMono-Regular", size: 16))
                 // .textCase(.uppercase)
