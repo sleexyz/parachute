@@ -14,7 +14,8 @@ public let previewDeps : [any Dep] = [
     VPNLifecycleManager.Provider(),
     SettingsController.Provider(),
     MockVPNConfigurationService.Provider(),
-    SettingsStore.Provider()
+    SettingsStore.Provider(),
+    OnboardingViewController.Provider()
 ]
 
 public let connectedPreviewDeps : [any Dep] = {

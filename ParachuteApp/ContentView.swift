@@ -23,7 +23,10 @@ struct ContentView: View {
     @ViewBuilder
     var body: some View {
         Group {
-            if !store.loaded  {
+            // Check UserDefaults for first run
+            if !OnboardingViewController.shared.isOnboardingCompleted {
+                OnboardingView()
+            } else if !store.loaded  {
                 SplashView(text: "Loading settings...")
             } else if !service.isLoaded {
                 SplashView(text: "Loading VPN state...")
@@ -63,6 +66,14 @@ struct ContentView_Previews: PreviewProvider {
                 service.isInstalledMockOverride =  false
             }
             .provideDeps(previewDeps)
+        
+        
+        ContentView()
+            .consumeDep(OnboardingViewController.self) { controller in
+                controller.currentPage = 1
+            }
+            .provideDeps(previewDeps)
+
         
         ContentView()
             .consumeDep(MockVPNConfigurationService.self) { service in

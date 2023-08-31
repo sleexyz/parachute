@@ -20,23 +20,23 @@ struct DisconnectedView: View {
     @EnvironmentObject var service: NEConfigurationService
     
     var buttonTitle: String {
-        return "Start VPN connection"
+        return "Enable Content Filter"
     }
     
     var body: some View {
         VStack {
             Spacer()
-            PrimaryButton(title: buttonTitle, action: vpnLifecycleManager.toggleConnection, isLoading: service.isTransitioning)
-            Spacer()
-            if Env.value == .dev {
-                Toggle(isOn: $settingsStore.settings.debug, label: { Text("Debug")})
-                    .disabled(service.isTransitioning)
-                    .onChange(of: settingsStore.settings.debug) { _ in
-                        Task.init(priority: .background) {
-                            try await  settingsController.syncSettings()
-                        }
-                    }
+            Button {
+                vpnLifecycleManager.startConnection()
+            } label: {
+                Text(buttonTitle)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .padding()
+                    .frame(maxWidth: .infinity)
             }
+            .tint(.parachuteOrange)
+            .buttonStyle(.bordered)
+            Spacer()
         }.padding()
     }
 }
