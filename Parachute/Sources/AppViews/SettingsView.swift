@@ -40,7 +40,7 @@ struct DisableButton: View {
         }, label: {
             Text("Disable\nParachute")
                 .font(.system(size: 18, weight: .semibold, design: .rounded))
-                .multilineTextAlignment(.leading)
+                // .multilineTextAlignment(.leading)
                 .padding()
         })
         .buttonStyle(.bordered)
