@@ -4,37 +4,50 @@ import CommonViews
 
 struct SettingsContent: View {
     @Binding var isPresented: Bool
-    @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
 
     @State private var isFeedbackOpen = false
 
     var body: some View {
-        VStack(alignment: .leading) {
-            // TODO: put sections behind rows.
-            HStack {
-                Button(action: {
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    vpnLifecycleManager.pauseConnection()
-                    isPresented = false
-                }, label: {
-                    Text("Disable Parachute")
-                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+        // TODO: put sections behind rows.
+        ScrollView() {
+            VStack (alignment: .leading) {
+                HStack {
+                    DisableButton(isSettingsPresented: $isPresented)
+                        Spacer()
+
+                    FeedbackButton()
                         .padding()
-                })
-                .tint(.white.opacity(0.5))
-                .buttonStyle(.bordered)
-                .padding()
-                Spacer()
+                }
+                .padding(.bottom, 20)
 
-                FeedbackButton()
+                TimePicker()
+                    .padding(.bottom, 20)
+                AppsPicker()
+                    .padding(.bottom, 20)
+
             }
-                .padding(.bottom, 20)
-
-            TimePicker()
-                .padding(.bottom, 20)
-            AppsPicker()
-                .padding(.bottom, 20)
         }
+    }
+}
+
+struct DisableButton: View {
+    @Binding var isSettingsPresented: Bool
+    @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
+
+    var body: some View {
+        Button(action: {
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            vpnLifecycleManager.pauseConnection()
+            isSettingsPresented = false
+        }, label: {
+            Text("Disable\nParachute")
+                .font(.system(size: 18, weight: .semibold, design: .rounded))
+                .multilineTextAlignment(.leading)
+                .padding()
+        })
+        .buttonStyle(.bordered)
+        .padding()
+        .tint(.white.opacity(0.5))
     }
 }
 

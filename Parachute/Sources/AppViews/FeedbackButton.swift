@@ -10,12 +10,17 @@ struct FeedbackButton: View {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             self.presentMessageCompose()
         }, label: {
-            Image(systemName: "bubble.right.fill")
-                .font(.system(size: 28))
-                .padding()
-                .padding()
+            HStack {
+                Text("Feedback?")
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    .padding(.trailing, 4)
+                Image(systemName: "bubble.right.fill")
+                    .font(.system(size: 28))
+            }
         })
-        .tint(.white.opacity(0.5))
+        .buttonStyle(.plain)
+        .tint(.parachuteOrange)
+        .foregroundColor(.parachuteOrange)
     }
 }
 
