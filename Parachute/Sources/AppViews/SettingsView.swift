@@ -9,23 +9,21 @@ struct SettingsContent: View {
 
     var body: some View {
         // TODO: put sections behind rows.
-        ScrollView() {
-            VStack (alignment: .leading) {
-                HStack {
-                    DisableButton(isSettingsPresented: $isPresented)
-                        Spacer()
+        VStack (alignment: .leading) {
+            HStack {
+                DisableButton(isSettingsPresented: $isPresented)
+                    Spacer()
 
-                    FeedbackButton()
-                        .padding()
-                }
+                FeedbackButton()
+                    .padding()
+            }
+            .padding(.bottom, 20)
+
+            TimePicker()
+                .padding(.bottom, 20)
+            AppsPicker()
                 .padding(.bottom, 20)
 
-                TimePicker()
-                    .padding(.bottom, 20)
-                AppsPicker()
-                    .padding(.bottom, 20)
-
-            }
         }
     }
 }
@@ -224,33 +222,32 @@ struct AppsPicker: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.white.opacity(0.6))
-                .padding(.horizontal)
                 .padding(.top, 10)
+                .padding(.horizontal)
 
             
-            Toggle(isOn: isInstagramEnabled) {
-                Text("Instagram")
-                    .foregroundColor(.white)
+            VStack {
+                Toggle(isOn: isInstagramEnabled) {
+                    Text("Instagram")
+                        .foregroundColor(.white)
+                }
+                .tint(.parachuteOrange)
+                Toggle(isOn: isTikTokEnabled) {
+                    Text("TikTok")
+                        .foregroundColor(.white)
+                }
+                .tint(.parachuteOrange)
+                Toggle(isOn: isTwitterEnabled) {
+                    Text("Twitter (X)")
+                        .foregroundColor(.white)
+                }
+                .tint(.parachuteOrange)
+                Toggle(isOn: isYoutubeEnabled) {
+                    Text("Youtube")
+                        .foregroundColor(.white)
+                }
+                .tint(.parachuteOrange)
             }
-            .tint(.parachuteOrange)
-            .padding()
-            Toggle(isOn: isTikTokEnabled) {
-                Text("TikTok")
-                    .foregroundColor(.white)
-            }
-            .tint(.parachuteOrange)
-            .padding()
-            Toggle(isOn: isTwitterEnabled) {
-                Text("Twitter (X)")
-                    .foregroundColor(.white)
-            }
-            .tint(.parachuteOrange)
-            .padding()
-            Toggle(isOn: isYoutubeEnabled) {
-                Text("Youtube")
-                    .foregroundColor(.white)
-            }
-            .tint(.parachuteOrange)
             .padding()
 
             Spacer()
