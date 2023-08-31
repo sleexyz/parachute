@@ -1,30 +1,27 @@
-//
-//  SetupView.swift
-//  slowdown
-//
-//  Created by Sean Lee on 12/27/22.
-//
-
-import Foundation
 import SwiftUI
-import Controllers
+import FamilyControls
 
-public struct SetupView: View {
-    @EnvironmentObject private var service: NEConfigurationService
-    @EnvironmentObject var settingsStore: SettingsStore
+public struct FamilyControlsView: View {
+    // @EnvironmentObject private var service: NEConfigurationService
+    // @EnvironmentObject var settingsStore: SettingsStore
+
+    let center = AuthorizationCenter.shared
 
     @State private var isLoading = false
     @State private var isShowingError = false
     @State private var errorMessage = ""
     
-    
     public init() {}
 
     public var body: some View {
         VStack(alignment: .leading) {
+            Text("Parachute protects your attention by **delaying social media feeds from loading.**")
+                .font(.system(size: 18, weight: .regular, design: .rounded))
+                .multilineTextAlignment(.leading)
+                .padding()
 
             Text([
-                "Parachute uses a Content Filter in order to delay your content feeds.",
+                "To this, Parachute needs to Screen Time access on your phone:",
             ].joined(separator: "\n\n"))
                 .font(.system(size: 18, weight: .regular, design: .rounded))
                 .multilineTextAlignment(.leading)
@@ -32,22 +29,15 @@ public struct SetupView: View {
 
             buttonInstall
                 .padding()
-                .padding(.vertical, 48)
-
-            Text([
-                "To protect your privacy, no data ever leaves the Content Filter.",
-            ].joined(separator: "\n\n"))
-                .font(.system(size: 18, weight: .regular, design: .rounded))
-                .multilineTextAlignment(.leading)
-                .padding()
+                .padding(.vertical, 36)
         }.padding()
     }
 
     private var buttonInstall: some View {
         Button(action: {
-            installProfile()
+            installFamilyControls()
         }, label: {
-            Text("Install Content Filter")
+            Text("Enable Screen Time Access")
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
                 .padding()
@@ -57,19 +47,20 @@ public struct SetupView: View {
         })
         .alert(isPresented: $isShowingError) {
             Alert(
-                title: Text("Failed to install content filter."),
+                title: Text("Failed to enable Screen Time access"),
                 message: Text(errorMessage),
                 dismissButton: .cancel()
             )
         }
     }
 
-    private func installProfile() {
+    private func installFamilyControls() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         self.isLoading = true
         Task { @MainActor in
             do {
-                try await service.install(settings: settingsStore.settings)
+                try await center.requestAuthorization(for: .individual)
+                // try await service.install(settings: settingsStore.settings)
             } catch let error {
                 self.errorMessage = error.localizedDescription
                 self.isShowingError = true

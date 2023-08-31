@@ -12,12 +12,20 @@ import OSLog
 import Controllers
 import CommonViews
 import AppViews
+import FamilyControls
 
 struct ContentView: View {
     @EnvironmentObject var store: SettingsStore
     @EnvironmentObject var service: NEConfigurationService
     @EnvironmentObject var onboardingViewController: OnboardingViewController
     @Environment(\.scenePhase) var scenePhase
+    @StateObject var familyControls = AuthorizationCenter.shared
+    
+    var testOnlyAuthorizationStatusOverride: AuthorizationStatus? = nil
+    var authorizationStatus: AuthorizationStatus {
+        testOnlyAuthorizationStatusOverride ?? familyControls.authorizationStatus
+    }
+    
     
     private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ContentView")
     
@@ -26,6 +34,8 @@ struct ContentView: View {
         Group {
             if !onboardingViewController.isOnboardingCompleted {
                 OnboardingView()
+            } else if authorizationStatus != .approved {
+                FamilyControlsView()
             } else if !store.loaded  {
                 SplashView(text: "Loading settings...")
             } else if !service.isLoaded {
@@ -56,7 +66,7 @@ struct ContentView: View {
     
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct ContentViewIntro_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
             .consumeDep(OnboardingViewController.self) { controller in
@@ -65,23 +75,41 @@ struct ContentView_Previews: PreviewProvider {
             .provideDeps(previewDeps)
         
         
+       
+    }
+}
+struct ContentViewFamilyControls_Previews: PreviewProvider {
+    static var previews: some View {
         ContentView()
             .consumeDep(SettingsStore.self) { service in
                 service.loaded = true
+            }
+            .consumeDep(OnboardingViewController.self) { controller in
+                controller.isOnboardingCompleted = true
             }
             .consumeDep(MockVPNConfigurationService.self) { service in
                 service.isInstalledMockOverride =  false
             }
             .provideDeps(previewDeps)
-        
-        
+    
+    }
+}
 
 
-        
-        ContentView()
+
+struct ContentViewContentFilter_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView(testOnlyAuthorizationStatusOverride: .approved)
+            .consumeDep(OnboardingViewController.self) { controller in
+                controller.isOnboardingCompleted = true
+            }
             .consumeDep(MockVPNConfigurationService.self) { service in
                 service.isInstalledMockOverride = true
             }
             .provideDeps(previewDeps)
+    
     }
 }
+
+
+
