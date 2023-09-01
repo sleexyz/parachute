@@ -14,7 +14,7 @@ struct FeedbackButton: View {
                 Text("Feedback?")
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .padding(.trailing, 4)
-                Image(systemName: "bubble.right.fill")
+                Image(systemName: "bubble.left.and.bubble.right.fill")
                     .font(.system(size: 28))
             }
         })

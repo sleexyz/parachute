@@ -46,7 +46,7 @@ struct Page0: View {
             Logo()
                 .padding(.top, 24)
             
-            Text("Freedom from scrolling")
+            Text("Delete your scrolling habit")
                 .font(.system(size: 28, weight: .regular, design: .rounded))
                 .foregroundColor(.secondary)
                 .padding(.top, 24)
