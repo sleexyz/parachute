@@ -34,6 +34,7 @@ enum ScrollSessionViewPhase {
 public struct ScrollSessionViewInner: View {
     @EnvironmentObject var connectedViewController: ConnectedViewController 
     @EnvironmentObject var profileManager: ProfileManager
+    @EnvironmentObject var neConfigurationService: NEConfigurationService
     @EnvironmentObject var settingsStore: SettingsStore
 
     @State var state: ScrollSessionViewPhase = .showLongSession
@@ -118,7 +119,7 @@ public struct ScrollSessionViewInner: View {
                         )
                         ConnectedViewController.shared.set(state: .main)
                         if #available(iOS 16.2, *) {
-                            await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings)
+                            await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings, isConnected: neConfigurationService.isConnected)
                         }
                     }
                 }) {
@@ -204,6 +205,8 @@ struct LongSessionScrollPrompt: View {
     
     @EnvironmentObject var scrollSessionViewController: ConnectedViewController
     @EnvironmentObject var profileManager: ProfileManager
+    @EnvironmentObject var neConfigurationService: NEConfigurationService
+
 
     private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LongSessionScrollPrompt")
     
@@ -215,7 +218,7 @@ struct LongSessionScrollPrompt: View {
                     overlay: .scrollSession
                 )
                 if #available(iOS 16.2, *) {
-                    await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings)
+                    await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings, isConnected: neConfigurationService.isConnected)
                 }
                 scrollSessionViewController.set(state: .main)
             } catch {

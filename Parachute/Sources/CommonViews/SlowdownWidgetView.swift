@@ -29,19 +29,21 @@ struct Logo: View {
                 // .font(.custom("SpaceMono-Regular", size: 16))
                 // .textCase(.uppercase)
                 .fontWeight(.bold)
-                .foregroundStyle(Color.parachuteOrange)
         }
     }
 }
 
 public struct SlowdownWidgetView : View {
     var settings: Proxyservice_Settings
+    var isConnected: Bool
+
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SlowdownWidgetView")
 
     @Namespace private var animation
 
-    public init(settings: Proxyservice_Settings) {
+    public init(settings: Proxyservice_Settings, isConnected: Bool) {
         self.settings = settings
+        self.isConnected = isConnected
     }
 
 
@@ -57,9 +59,14 @@ public struct SlowdownWidgetView : View {
     public var body: some View {
         HStack(alignment: .top) {
             Logo()
+                .foregroundStyle(isConnected ? Color.parachuteOrange : Color.secondary)
                 // .frame(width: 30, height: 30)
             Spacer()
-            if !settings.isInScrollSession {
+            if !isConnected {
+                Text("Disabled for 1 hour")
+                    .font(.subheadline.smallCaps())
+                    .foregroundColor(.secondary)
+            } else if !settings.isInScrollSession {
                 Text(statusMessage)
                     .font(.subheadline.smallCaps())
                     .foregroundColor(.secondary)

@@ -24,6 +24,7 @@ public struct MainView: View {
     @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     @EnvironmentObject var connectedViewController: ConnectedViewController
+    @EnvironmentObject var neConfigurationService: NEConfigurationService
 
     
     @Binding var isSettingsPresented: Bool
@@ -93,7 +94,7 @@ public struct MainView: View {
                 .zIndex(0)
                 
                 VStack {
-                    SlowdownWidgetView(settings: settingsStore.settings)
+                    SlowdownWidgetView(settings: settingsStore.settings, isConnected: neConfigurationService.isConnected)
                         // .padding(.vertical, 20)
                         .padding(.horizontal, 20)
                         .rrGlow(color: .white, bg: .clear)

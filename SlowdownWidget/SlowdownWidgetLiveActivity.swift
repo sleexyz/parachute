@@ -15,17 +15,6 @@ import ProxyService
 import CommonViews
 import SwiftProtobuf
 
-struct SlowdownWidgetLiveActivityView: View {
-    var isStale: Bool
-    var contentState: SlowdownWidgetAttributes.ContentState
-
-    var body: some View {
-        SlowdownWidgetView(
-            settings: contentState.settings
-        )
-    }
-}
-
 struct SlowdownWidgetLiveActivity: Widget {
     init() {
         try? SettingsStore.shared.load()
@@ -33,7 +22,7 @@ struct SlowdownWidgetLiveActivity: Widget {
     
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: SlowdownWidgetAttributes.self) { context in
-            SlowdownWidgetView(settings: context.state.settings)
+            SlowdownWidgetView(settings: context.state.settings, isConnected: context.state.isConnected)
                 .activityBackgroundTint(Color.background.opacity(0.5))
                 // .activityBackgroundTint(.ultraThinMaterial)
                 .padding([.leading, .trailing], 20)
@@ -61,9 +50,11 @@ struct SlowdownWidgetLiveActivity: Widget {
         DynamicIslandExpandedRegion(.leading) {
             Text("Leading")
         }
+
         DynamicIslandExpandedRegion(.trailing) {
             Text("Trailing")
         }
+
         DynamicIslandExpandedRegion(.bottom) {
             Text("Bottom ")
             // more content
@@ -78,15 +69,13 @@ extension SlowdownWidgetAttributes {
    }
 }
 
-
-
 extension SlowdownWidgetAttributes.ContentState {
    fileprivate static var focus: SlowdownWidgetAttributes.ContentState {
-       SlowdownWidgetAttributes.ContentState(settings: .focus)
+       SlowdownWidgetAttributes.ContentState(settings: .focus, isConnected: true)
     }
     
     fileprivate static var relax: SlowdownWidgetAttributes.ContentState {
-        SlowdownWidgetAttributes.ContentState(settings: .relax)
+        SlowdownWidgetAttributes.ContentState(settings: .relax, isConnected: true)
     }
 }
 

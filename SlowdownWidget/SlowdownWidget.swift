@@ -20,6 +20,7 @@ import CommonViews
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let settings: Proxyservice_Settings
+    let isConnected: Bool
 }
 
 
@@ -28,15 +29,15 @@ struct SlowdownWidget: Widget {
 
     init() {
         Fonts.registerFonts()
-        Task {
-            await NEConfigurationService.shared.load()
-        }
+        // Task {
+        //     await NEConfigurationService.shared.load()
+        // }
     }
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: SlowdownWidgetProvider()) { entry in
             ControllersLoader {
-                SlowdownWidgetView(settings: entry.settings)
+                SlowdownWidgetView(settings: entry.settings, isConnected: entry.isConnected)
                     .environmentObject(NEConfigurationService.shared)
                     //.containerBackground(Color.background, for: .widget)
             }
@@ -78,6 +79,7 @@ extension Proxyservice_Settings {
 #Preview(as: .systemLarge) {
     SlowdownWidget()
 } timeline: {
-    SimpleEntry(date: .now, settings: .focus)
-    SimpleEntry(date: .now, settings: .relax)
+    SimpleEntry(date: .now, settings: .focus, isConnected: true)
+    SimpleEntry(date: .now, settings: .relax, isConnected: true)
+    SimpleEntry(date: .now, settings: .relax, isConnected: false)
 }

@@ -4,60 +4,56 @@ import Activities
 import ProxyService
 import OSLog
 
+@available(iOS 16.2, *)
 public class ActivitiesHelper {
     public static let shared = ActivitiesHelper()
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ActivitiesHelper")
 
-    @available(iOS 16.2, *)
-    public func start(settings: Proxyservice_Settings) {
+    public func start(settings: Proxyservice_Settings, isConnected: Bool) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             logger.info("activities not enabled")
             return
         }
         if Activity<SlowdownWidgetAttributes>.activities.first == nil {
-            requestActivity(settings: settings)
+            requestActivity(settings: settings, isConnected: isConnected)
         }
     }
 
-    @available(iOS 16.2, *)
-    private func requestActivity(settings: Proxyservice_Settings) {
+    private func requestActivity(settings: Proxyservice_Settings, isConnected: Bool) {
         do {
-            let activity = try Activity.request(attributes: SlowdownWidgetAttributes(), content: self.makeActivityContent(settings))
+            let activity = try Activity.request(attributes: SlowdownWidgetAttributes(), content: self.makeActivityContent(settings, isConnected: isConnected))
             logger.info("requested activity: \(activity.id)")
         } catch (let error) {
             logger.error("error requesting activity: \(error.localizedDescription)")
         }
     }
 
-    @available(iOS 16.2, *)
-    func makeActivityContent(_ settings: Proxyservice_Settings) -> ActivityContent<SlowdownWidgetAttributes.ContentState> {
+    func makeActivityContent(_ settings: Proxyservice_Settings, isConnected: Bool) -> ActivityContent<SlowdownWidgetAttributes.ContentState> {
         if settings.hasOverlay && settings.activePreset.id == settings.overlay.preset.id {
             return ActivityContent(state:
-                SlowdownWidgetAttributes.ContentState(settings: settings),
+                SlowdownWidgetAttributes.ContentState(settings: settings, isConnected: isConnected),
                 staleDate: settings.overlay.expiry.date)
         }
         return ActivityContent(state:
-            SlowdownWidgetAttributes.ContentState(settings: settings),
+            SlowdownWidgetAttributes.ContentState(settings: settings, isConnected: isConnected),
             staleDate: nil)
             
     }
 
-    @available(iOS 16.2, *)
-    public func startOrUpdate(settings: Proxyservice_Settings) async -> () {
+    public func startOrUpdate(settings: Proxyservice_Settings, isConnected: Bool) async -> () {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             logger.info("activities not enabled")
             return
         }
         guard Activity<SlowdownWidgetAttributes>.activities.first != nil else {
-            start(settings: settings)
+            start(settings: settings, isConnected: isConnected)
             return
         }
-        await update(settings: settings)
+        await update(settings: settings, isConnected: isConnected)
     }
 
-    @available(iOS 16.2, *)
-    public func update(settings: Proxyservice_Settings) async -> () {
+    public func update(settings: Proxyservice_Settings, isConnected: Bool) async -> () {
         if !ActivityAuthorizationInfo().areActivitiesEnabled {
             logger.info("activities not enabled")
             return
@@ -67,7 +63,7 @@ public class ActivitiesHelper {
             return
         }
         await activity.update(
-            self.makeActivityContent(settings), 
+            self.makeActivityContent(settings, isConnected: isConnected),
             alertConfiguration: AlertConfiguration(title: "Delivery update", body: "Your pizza order will arrive in 25 minutes.", sound: .default)
         )
     }

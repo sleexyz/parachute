@@ -154,6 +154,7 @@ let package = Package(
                 .product(name: "ProxyService", package: "ProxyService"),
                 .product(name: "OrderedCollections", package: "swift-collections"),
                 .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
             ]
         ),
         .target(

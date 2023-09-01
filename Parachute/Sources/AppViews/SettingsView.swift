@@ -38,7 +38,7 @@ struct DisableButton: View {
             vpnLifecycleManager.pauseConnection()
             isSettingsPresented = false
         }, label: {
-            Text("Disable\nParachute")
+            Text("Disable for 1 hour")
                 .font(.system(size: 18, weight: .semibold, design: .rounded))
                 // .multilineTextAlignment(.leading)
                 .padding()

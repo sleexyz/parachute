@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ProxyService
-import Firebase
+import FirebaseCore
 import Common
 import Controllers
 import CommonLoaders
@@ -36,17 +36,18 @@ struct slowdownApp: App {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        if Env.value == .prod {
-            FirebaseApp.configure()
-        }
+        // if Env.value == .prod {
+        FirebaseApp.configure()
+        // }
         Task { @MainActor in
             await NEConfigurationService.shared.load()
             if #available(iOS 16.2, *) {
                 try SettingsStore.shared.load()
-                ActivitiesHelper.shared.start(settings: SettingsStore.shared.settings)
-            } 
+                // TODO: move to MainView
+                ActivitiesHelper.shared.start(settings: SettingsStore.shared.settings, isConnected: NEConfigurationService.shared.isConnected)
+            }
         }
-        // NEConfigurationService.shared.registerBackgroundTasks()
+        NEConfigurationService.shared.registerBackgroundTasks()
         return true
     }
 }
