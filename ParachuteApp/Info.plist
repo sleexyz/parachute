@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>OneSignal_app_groups_key</key>
+	<string>group.industries.strange.slowdown</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>industries.strange.slowdown.unpause</string>
@@ -14,6 +16,9 @@
 	<array>
 		<string>fetch</string>
 		<string>processing</string>
+		<string>remote-notification</string>
 	</array>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 </dict>
 </plist>
