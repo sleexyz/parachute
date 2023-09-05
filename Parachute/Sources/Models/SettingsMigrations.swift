@@ -32,7 +32,7 @@ public final class SettingsMigrations {
         },
         9: {
             settings in
-            settings.algorithm = .proportional
+            settings.algorithm = .drop
         }
     ]
 

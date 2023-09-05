@@ -110,28 +110,26 @@ extension Proxyservice_AppType: CaseIterable {
 
 public enum Proxyservice_Algorithm: SwiftProtobuf.Enum {
   public typealias RawValue = Int
-
-  /// The default algorithm.
-  case proportional // = 0
-  case drop // = 1
+  case drop // = 0
+  case proportional // = 1
   case UNRECOGNIZED(Int)
 
   public init() {
-    self = .proportional
+    self = .drop
   }
 
   public init?(rawValue: Int) {
     switch rawValue {
-    case 0: self = .proportional
-    case 1: self = .drop
+    case 0: self = .drop
+    case 1: self = .proportional
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
 
   public var rawValue: Int {
     switch self {
-    case .proportional: return 0
-    case .drop: return 1
+    case .drop: return 0
+    case .proportional: return 1
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -143,8 +141,8 @@ public enum Proxyservice_Algorithm: SwiftProtobuf.Enum {
 extension Proxyservice_Algorithm: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
   public static var allCases: [Proxyservice_Algorithm] = [
-    .proportional,
     .drop,
+    .proportional,
   ]
 }
 
@@ -599,8 +597,8 @@ extension Proxyservice_AppType: SwiftProtobuf._ProtoNameProviding {
 
 extension Proxyservice_Algorithm: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "proportional"),
-    1: .same(proto: "drop"),
+    0: .same(proto: "drop"),
+    1: .same(proto: "proportional"),
   ]
 }
 
@@ -787,7 +785,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _apps: Dictionary<Int32,Bool> = [:]
     var _quickSessionSecs: Int32 = 0
     var _longSessionSecs: Int32 = 0
-    var _algorithm: Proxyservice_Algorithm = .proportional
+    var _algorithm: Proxyservice_Algorithm = .drop
 
     static let defaultInstance = _StorageClass()
 
@@ -871,7 +869,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       if _storage._longSessionSecs != 0 {
         try visitor.visitSingularInt32Field(value: _storage._longSessionSecs, fieldNumber: 18)
       }
-      if _storage._algorithm != .proportional {
+      if _storage._algorithm != .drop {
         try visitor.visitSingularEnumField(value: _storage._algorithm, fieldNumber: 19)
       }
     }

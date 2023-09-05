@@ -42,6 +42,8 @@ struct SettingsSyncer<Content: View>: View {
     @EnvironmentObject var settingsController: SettingsController
     @EnvironmentObject var settingsStore: SettingsStore
 
+    @State private var isSyncing = false
+
     let content: () -> Content
 
     var body: some View {
@@ -54,16 +56,16 @@ struct SettingsSyncer<Content: View>: View {
     }
 
     func syncSettings() async {
-        // guard !isSyncing else {
-        //     return
-        // }
-        // isSyncing = true
+        guard !isSyncing else {
+            return
+        }
+        isSyncing = true
         do {
             try await settingsController.syncSettings(reason: "settings syncer")
         } catch {
             print("Error syncing settings: \(error)")
         }
-        // isSyncing = false
+        isSyncing = false
     }
 }
 
@@ -84,8 +86,8 @@ struct OtherSettings: View {
                     .foregroundColor(.white)
                 Spacer()
                 Picker(selection: $settingsStore.settings.algorithm, label: Text("Algorithm")) {
-                    Text("A").tag(Proxyservice_Algorithm.proportional)
-                    Text("B").tag(Proxyservice_Algorithm.drop)
+                    Text("A").tag(Proxyservice_Algorithm.drop)
+                    Text("B").tag(Proxyservice_Algorithm.proportional)
                 }
                 .tint(.parachuteOrange)
                 .pickerStyle(.menu)

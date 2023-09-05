@@ -55,9 +55,8 @@ message Preset {
 }
 
 enum Algorithm {
-    // The default algorithm.
-    proportional = 0;
-    drop = 1;
+    drop = 0;
+    proportional = 1;
 }
 
 // Rules for slowing down

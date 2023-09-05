@@ -39,6 +39,10 @@ public class DataFlowController {
 
         flowRegistry.register(flow: flow)
 
+        if settings.algorithm == .drop {
+            return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.allowedBytesBeforeDrop,  filterOutbound: false, peekOutboundBytes: 0)
+        }
+
         // Pass to handleInboundData
         return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.preSlowingBytes,  filterOutbound: false, peekOutboundBytes: 0)
     }
@@ -60,6 +64,10 @@ public class DataFlowController {
         // TODO: pause sampling as well
         if settings.isInScrollSession {
             return allowPeek
+        }
+
+        if settings.algorithm == .drop {
+            return DroppingAppFlowController.getController(app: app).handleInboundData(from: flow, offset: offset, readBytes: readBytes)
         }
 
         return flowRegistry.getFlowController(for: flow).handleInboundData(from: flow, offset: offset, readBytes: readBytes)
