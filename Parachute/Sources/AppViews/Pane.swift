@@ -3,16 +3,14 @@ import SwiftUI
 public struct Pane<Content: View>: View {
     @Binding var isPresented: Bool
     @GestureState private var dragAmount = CGSize.zero
-    
+
     @ViewBuilder let content: () -> Content
 
     var bg: Color
-    
+
 
     public init(isPresented: Binding<Bool>, @ViewBuilder content: @escaping () -> Content) {
-        self._isPresented = isPresented
-        self.content = content
-        self.bg = .darkBlueBg
+        self.init(isPresented: isPresented, bg: Color.darkBlueBg, content: content)
     }
 
     public init(isPresented: Binding<Bool>, bg: Color, @ViewBuilder content: @escaping () -> Content) {
@@ -33,7 +31,6 @@ public struct Pane<Content: View>: View {
                     .fill(Color.white.opacity(0.2))
                     .frame(width: 40, height: 5)
                     .padding(.top, 10)
-                    .padding(.bottom, 20)
                 Spacer()
             }
             content()

@@ -108,6 +108,48 @@ extension Proxyservice_AppType: CaseIterable {
 
 #endif  // swift(>=4.2)
 
+public enum Proxyservice_Algorithm: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+
+  /// The default algorithm.
+  case proportional // = 0
+  case drop // = 1
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .proportional
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .proportional
+    case 1: self = .drop
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .proportional: return 0
+    case .drop: return 1
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension Proxyservice_Algorithm: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [Proxyservice_Algorithm] = [
+    .proportional,
+    .drop,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
 public struct Proxyservice_Preset {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -282,6 +324,11 @@ public struct Proxyservice_Settings {
   public var longSessionSecs: Int32 {
     get {return _storage._longSessionSecs}
     set {_uniqueStorage()._longSessionSecs = newValue}
+  }
+
+  public var algorithm: Proxyservice_Algorithm {
+    get {return _storage._algorithm}
+    set {_uniqueStorage()._algorithm = newValue}
   }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -512,6 +559,7 @@ public struct Proxyservice_Sample {
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Proxyservice_Mode: @unchecked Sendable {}
 extension Proxyservice_AppType: @unchecked Sendable {}
+extension Proxyservice_Algorithm: @unchecked Sendable {}
 extension Proxyservice_Preset: @unchecked Sendable {}
 extension Proxyservice_TrafficRules: @unchecked Sendable {}
 extension Proxyservice_Overlay: @unchecked Sendable {}
@@ -546,6 +594,13 @@ extension Proxyservice_AppType: SwiftProtobuf._ProtoNameProviding {
     1: .same(proto: "tiktok"),
     2: .same(proto: "twitter"),
     3: .same(proto: "youtube"),
+  ]
+}
+
+extension Proxyservice_Algorithm: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "proportional"),
+    1: .same(proto: "drop"),
   ]
 }
 
@@ -719,6 +774,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     16: .same(proto: "apps"),
     17: .standard(proto: "quick_session_secs"),
     18: .standard(proto: "long_session_secs"),
+    19: .same(proto: "algorithm"),
   ]
 
   fileprivate class _StorageClass {
@@ -731,6 +787,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _apps: Dictionary<Int32,Bool> = [:]
     var _quickSessionSecs: Int32 = 0
     var _longSessionSecs: Int32 = 0
+    var _algorithm: Proxyservice_Algorithm = .proportional
 
     static let defaultInstance = _StorageClass()
 
@@ -746,6 +803,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _apps = source._apps
       _quickSessionSecs = source._quickSessionSecs
       _longSessionSecs = source._longSessionSecs
+      _algorithm = source._algorithm
     }
   }
 
@@ -773,6 +831,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 16: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufInt32,SwiftProtobuf.ProtobufBool>.self, value: &_storage._apps) }()
         case 17: try { try decoder.decodeSingularInt32Field(value: &_storage._quickSessionSecs) }()
         case 18: try { try decoder.decodeSingularInt32Field(value: &_storage._longSessionSecs) }()
+        case 19: try { try decoder.decodeSingularEnumField(value: &_storage._algorithm) }()
         default: break
         }
       }
@@ -812,6 +871,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       if _storage._longSessionSecs != 0 {
         try visitor.visitSingularInt32Field(value: _storage._longSessionSecs, fieldNumber: 18)
       }
+      if _storage._algorithm != .proportional {
+        try visitor.visitSingularEnumField(value: _storage._algorithm, fieldNumber: 19)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -830,6 +892,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._apps != rhs_storage._apps {return false}
         if _storage._quickSessionSecs != rhs_storage._quickSessionSecs {return false}
         if _storage._longSessionSecs != rhs_storage._longSessionSecs {return false}
+        if _storage._algorithm != rhs_storage._algorithm {return false}
         return true
       }
       if !storagesAreEqual {return false}

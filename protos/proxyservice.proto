@@ -54,6 +54,12 @@ message Preset {
     TrafficRules traffic_rules = 11;
 }
 
+enum Algorithm {
+    // The default algorithm.
+    proportional = 0;
+    drop = 1;
+}
+
 // Rules for slowing down
 message TrafficRules {
     bool match_all_traffic = 1;
@@ -100,6 +106,9 @@ message Settings {
     // TODO: move these to a preferences proto.
     int32 quick_session_secs = 17;
     int32 long_session_secs = 18;
+
+
+    Algorithm algorithm = 19;
 }
 
 message ChangeMetadata {

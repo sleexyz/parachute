@@ -1,28 +1,96 @@
 import SwiftUI
 import Controllers
 import CommonViews
+import ProxyService
 
 struct SettingsContent: View {
     @Binding var isPresented: Bool
 
     @State private var isFeedbackOpen = false
 
+
+
     var body: some View {
         // TODO: put sections behind rows.
-        VStack (alignment: .leading) {
-            HStack {
-                DisableButton(isSettingsPresented: $isPresented)
-                    Spacer()
+        SettingsSyncer {
+                VStack (alignment: .leading) {
+                    HStack {
+                        DisableButton(isSettingsPresented: $isPresented)
+                            Spacer()
 
-                FeedbackButton()
-                    .padding()
+                        FeedbackButton()
+                            .padding()
+                    }
+                    .padding(.bottom, 20)
+
+                    TimePicker()
+                        .padding(.bottom, 20)
+
+                    AppsPicker()
+                        .padding(.bottom, 20)
+
+                    OtherSettings()
+                        .padding(.bottom, 20)
+
+                }
+                .font(.system(size: 16, weight: .regular, design: .rounded))
             }
-            .padding(.bottom, 20)
+    }
+}
 
-            TimePicker()
-                .padding(.bottom, 20)
-            AppsPicker()
-                .padding(.bottom, 20)
+struct SettingsSyncer<Content: View>: View {
+    @EnvironmentObject var settingsController: SettingsController
+    @EnvironmentObject var settingsStore: SettingsStore
+
+    let content: () -> Content
+
+    var body: some View {
+        content()
+            .onChange(of: settingsStore.settings) { _ in
+                Task { @MainActor in
+                    await syncSettings()
+                }
+            }
+    }
+
+    func syncSettings() async {
+        // guard !isSyncing else {
+        //     return
+        // }
+        // isSyncing = true
+        do {
+            try await settingsController.syncSettings(reason: "settings syncer")
+        } catch {
+            print("Error syncing settings: \(error)")
+        }
+        // isSyncing = false
+    }
+}
+
+struct OtherSettings: View {
+    @EnvironmentObject var settingsController: SettingsController
+    @EnvironmentObject var settingsStore: SettingsStore 
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Advanced")
+                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .foregroundColor(.white.opacity(0.6))
+                .padding(.horizontal)
+                .padding(.top, 10)
+
+            HStack {
+                Text("Algorithm")
+                    .foregroundColor(.white)
+                Spacer()
+                Picker(selection: $settingsStore.settings.algorithm, label: Text("Algorithm")) {
+                    Text("A").tag(Proxyservice_Algorithm.proportional)
+                    Text("B").tag(Proxyservice_Algorithm.drop)
+                }
+                .tint(.parachuteOrange)
+                .pickerStyle(.menu)
+            }
+            .padding(.horizontal)
 
         }
     }
@@ -51,117 +119,44 @@ struct DisableButton: View {
 
 struct TimePicker: View {
     @EnvironmentObject var settingsController: SettingsController
-    @EnvironmentObject var settingsStore: SettingsStore
+    @EnvironmentObject var settingsStore: SettingsStore 
 
     var body: some View {
         VStack(alignment: .leading) {
             Text("Session Lengths")
-                .font(.title2)
-                .fontWeight(.bold)
+                .font(.system(size: 24, weight: .bold, design: .rounded))
                 .foregroundColor(.white.opacity(0.6))
                 .padding(.horizontal)
                 .padding(.top, 10)
 
             HStack {
-                Text("Quick")
+                Text("Break")
                     .foregroundColor(.white)
                 Spacer()
-                HStack {
-                    Button(action: {
-                        settingsStore.settings.quickSessionSecs = 30
-                        Task {
-                            try await settingsController.syncSettings(reason: "session length 30s")
-                        }
-                    }, label: {
-                        Text("30\"")
-                            .foregroundColor(settingsStore.settings.quickSessionSecs == 30 ? .white : .gray)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(settingsStore.settings.quickSessionSecs == 30 ? Color.white.opacity(0.2) : Color.clear)
-                            .cornerRadius(20)
-                    })
-                    
-                    Button(action: {
-                        settingsStore.settings.quickSessionSecs = 45
-                        Task {
-                            try await settingsController.syncSettings(reason: "session length 45s")
-                        }
-                    }, label: {
-                        Text("45\"")
-                            .foregroundColor(settingsStore.settings.quickSessionSecs == 45 ? .white : .gray)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(settingsStore.settings.quickSessionSecs == 45 ? Color.white.opacity(0.2) : Color.clear)
-                            .cornerRadius(20)
-                    })
-                    
-                    Button(action: {
-                        settingsStore.settings.quickSessionSecs = 60
-                        Task {
-                            try await settingsController.syncSettings(reason: "session length 60s")
-                        }
-                    }, label: {
-                        Text("60\"")
-                            .foregroundColor(settingsStore.settings.quickSessionSecs == 60 ? .white : .gray)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(settingsStore.settings.quickSessionSecs == 60 ? Color.white.opacity(0.2) : Color.clear)
-                            .cornerRadius(20)
-                    })
+                Picker(selection: $settingsStore.settings.longSessionSecs, label: Text("Long session")) {
+                    Text("3 minutes").tag(3 * 60 as Int32)
+                    Text("5 minutes").tag(5 * 60 as Int32)
+                    Text("8 minutes").tag(8 * 60 as Int32)
                 }
+                .tint(.parachuteOrange)
+                .pickerStyle(.menu)
             }
             .padding(.horizontal)
 
             HStack {
-                Text("Long")
+                Text("Check")
                     .foregroundColor(.white)
                 Spacer()
-                HStack {
-                    Button(action: {
-                        settingsStore.settings.longSessionSecs = 180
-                        Task {
-                            try await settingsController.syncSettings(reason: "session length 180s")
-                        }
-                    }, label: {
-                        Text("3'")
-                            .foregroundColor(settingsStore.settings.longSessionSecs == 180 ? .white : .gray)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(settingsStore.settings.longSessionSecs == 180 ? Color.white.opacity(0.2) : Color.clear)
-                            .cornerRadius(20)
-                    })
-                    
-                    Button(action: {
-                        settingsStore.settings.longSessionSecs = 300
-                        Task {
-                            try await settingsController.syncSettings(reason: "session length 300s")
-                        }
-                    }, label: {
-                        Text("5'")
-                            .foregroundColor(settingsStore.settings.longSessionSecs == 300 ? .white : .gray)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(settingsStore.settings.longSessionSecs == 300 ? Color.white.opacity(0.2) : Color.clear)
-                            .cornerRadius(20)
-                    })
-                    
-                    Button(action: {
-                        settingsStore.settings.longSessionSecs = 480
-                        Task {
-                            try await settingsController.syncSettings(reason: "session length 480s")
-                        }
-                    }, label: {
-                        Text("8'")
-                            .foregroundColor(settingsStore.settings.longSessionSecs == 480 ? .white : .gray)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(settingsStore.settings.longSessionSecs == 480 ? Color.white.opacity(0.2) : Color.clear)
-                            .cornerRadius(20)
-                    })
+
+                Picker(selection: $settingsStore.settings.quickSessionSecs, label: Text("Quick session")) {
+                    Text("30 seconds").tag(30 as Int32)
+                    Text("45 seconds").tag(45 as Int32)
+                    Text("60 seconds").tag(60 as Int32)
                 }
+                .tint(.parachuteOrange)
+                .pickerStyle(.menu)
             }
             .padding(.horizontal)
-            .padding(.bottom, 20)
         }
     }
 }
@@ -219,7 +214,7 @@ struct AppsPicker: View {
         VStack(alignment: .leading) {
             // Apps
             Text("Apps")
-                .font(.title2)
+                .font(.system(size: 24, weight: .bold, design: .rounded))
                 .fontWeight(.bold)
                 .foregroundColor(.white.opacity(0.6))
                 .padding(.top, 10)
@@ -231,16 +226,19 @@ struct AppsPicker: View {
                     Text("Instagram")
                         .foregroundColor(.white)
                 }
+                .padding(.bottom, 10)
                 .tint(.parachuteOrange)
                 Toggle(isOn: isTikTokEnabled) {
                     Text("TikTok")
                         .foregroundColor(.white)
                 }
+                .padding(.bottom, 10)
                 .tint(.parachuteOrange)
                 Toggle(isOn: isTwitterEnabled) {
-                    Text("Twitter (X)")
+                    Text("Twitter / X")
                         .foregroundColor(.white)
                 }
+                .padding(.bottom, 10)
                 .tint(.parachuteOrange)
                 Toggle(isOn: isYoutubeEnabled) {
                     Text("Youtube")
@@ -248,7 +246,7 @@ struct AppsPicker: View {
                 }
                 .tint(.parachuteOrange)
             }
-            .padding()
+            .padding(.horizontal)
 
             Spacer()
         }

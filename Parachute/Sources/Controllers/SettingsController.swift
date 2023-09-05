@@ -56,7 +56,8 @@ public class SettingsController: ObservableObject {
             $0.reason = reason
             $0.timestamp = Google_Protobuf_Timestamp(date: Date())
         }
-        try await service.SetSettings(settings: store.settings)
         try self.store.save()
+        try await service.SetSettings(settings: store.settings)
+        // try self.store.save()
     }
 }

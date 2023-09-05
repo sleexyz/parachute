@@ -21,8 +21,6 @@ public final class SettingsMigrations {
                 settings.defaultPreset.id = "casual"
             }
         },
-        6: { settings in
-        },
         7: { settings in
             settings.setAppEnabled(app: .instagram, value: true)
             settings.setAppEnabled(app: .tiktok, value: true)
@@ -30,7 +28,11 @@ public final class SettingsMigrations {
         },
         8: { settings in
             settings.quickSessionSecs = 30
-            settings.longSessionSecs = 300 // 5 minutes
+            settings.longSessionSecs = 60 * 5 // 5 minutes
+        },
+        9: {
+            settings in
+            settings.algorithm = .proportional
         }
     ]
 
