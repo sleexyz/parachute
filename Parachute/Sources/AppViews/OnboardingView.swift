@@ -55,7 +55,7 @@ struct Page0: View {
                 .foregroundColor(.secondary)
                 //.padding(.top, 24)
             
-            Text("Delete the **compulsive checking.**")
+            Text("Delete the **compulsive checking**")
                 .font(.system(size: 28, weight: .regular, design: .rounded))
                 .foregroundColor(.primary)
                 .padding(.top, 48)

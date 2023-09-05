@@ -34,8 +34,8 @@ struct ContentView: View {
         Group {
             if !onboardingViewController.isOnboardingCompleted {
                 OnboardingView()
-            } else if authorizationStatus != .approved {
-                FamilyControlsView()
+//            } else if authorizationStatus != .approved {
+//                FamilyControlsView()
             } else if !store.loaded  {
                 SplashView(text: "Loading settings...")
             } else if !service.isLoaded {
