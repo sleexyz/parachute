@@ -45,29 +45,49 @@ struct Page0: View {
         VStack(alignment: .leading) {
             Logo()
                 .padding(.top, 48)
-            Spacer()
-            Text("Delete the **binge scrolling**")
-                .font(.system(size: 28, weight: .regular, design: .rounded))
-                .foregroundColor(.primary)
-                .padding(.top, 24)
-            Text("without deleting your apps")
-                .font(.system(size: 28, weight: .regular, design: .rounded))
-                .foregroundColor(.secondary)
-                //.padding(.top, 24)
             
-            Text("Delete the **compulsive checking.**")
-                .font(.system(size: 28, weight: .regular, design: .rounded))
-                .foregroundColor(.primary)
-                .padding(.top, 48)
-            Text("Instant one week dopamine detox.")
-                .font(.system(size: 28, weight: .regular, design: .rounded))
-                .foregroundColor(.secondary)
-               // .padding(.top, 48)
+            
+            Spacer()
+            
             
             Text("**Unwire your mind.**")
                 .font(.system(size: 28, weight: .regular, design: .rounded))
-                .foregroundColor(.parachuteOrange)
+                .foregroundColor(.parachuteOrange.opacity(1))
+            
+            Text("Stop getting **sucked in**")
+                .font(.system(size: 22, weight: .regular, design: .rounded))
+                .foregroundColor(.primary)
+                .padding(.top, 12)
+            Text("every time you check a message.")
+                .font(.system(size: 22, weight: .regular, design: .rounded))
+                .foregroundColor(.secondary)
+            
+
+            
+            
+            Text("Stop the **compulsive checking**")
+                .font(.system(size: 22, weight: .regular, design: .rounded))
+                .foregroundColor(.primary)
+                .padding(.top, 12)
+            Text("that breaks your focus all the time.")
+                .font(.system(size: 22, weight: .regular, design: .rounded))
+                .foregroundColor(.secondary)
+            
+            
+            Text("Stop **deleting apps**")
+                .font(.system(size: 22, weight: .regular, design: .rounded))
+                .foregroundColor(.primary)
+                .padding(.top, 12)
+            Text("just to reinstall and binge again.")
+                .font(.system(size: 22, weight: .regular, design: .rounded))
+                .foregroundColor(.secondary)
+            
+
+            Text("Start your 1 week dopamine detox, **now.**")
+                .font(.system(size: 22, weight: .regular, design: .rounded))
+                .foregroundColor(.parachuteOrange.opacity(1))
                 .padding(.top, 60)
+
 
             Spacer()
 
@@ -85,7 +105,7 @@ struct Page0: View {
                 .buttonStyle(.bordered)
                 Spacer()
             }
-            .padding(.bottom, 48)
+            Spacer()
         }.padding(.horizontal)
     }
 }
