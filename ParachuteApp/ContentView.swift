@@ -73,11 +73,10 @@ struct ContentViewIntro_Previews: PreviewProvider {
                 controller.isOnboardingCompleted = false
             }
             .provideDeps(previewDeps)
-        
-        
-       
     }
 }
+
+
 struct ContentViewFamilyControls_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()

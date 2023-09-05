@@ -44,32 +44,48 @@ struct Page0: View {
     var body: some View {
         VStack(alignment: .leading) {
             Logo()
+                .padding(.top, 48)
+            Spacer()
+            Text("Delete the **binge scrolling**")
+                .font(.system(size: 28, weight: .regular, design: .rounded))
+                .foregroundColor(.primary)
                 .padding(.top, 24)
-            
-            Text("Delete your scrolling habit")
+            Text("without deleting your apps")
                 .font(.system(size: 28, weight: .regular, design: .rounded))
                 .foregroundColor(.secondary)
-                .padding(.top, 24)
+                //.padding(.top, 24)
             
+            Text("Delete the **compulsive checking.**")
+                .font(.system(size: 28, weight: .regular, design: .rounded))
+                .foregroundColor(.primary)
+                .padding(.top, 48)
+            Text("Instant one week dopamine detox.")
+                .font(.system(size: 28, weight: .regular, design: .rounded))
+                .foregroundColor(.secondary)
+               // .padding(.top, 48)
             
-                Text("Instant 2-week dopamine detox")
-                    .font(.system(size: 28, weight: .regular, design: .rounded))
-                    .foregroundColor(.parachuteOrange.opacity(0.7))
-                    .padding(.top, 48)
-                    .padding(.bottom, 200)
+            Text("**Unwire your mind.**")
+                .font(.system(size: 28, weight: .regular, design: .rounded))
+                .foregroundColor(.parachuteOrange)
+                .padding(.top, 60)
+
+            Spacer()
 
             HStack {
                 Spacer()
                 Button(action: {
                     onboardingViewController.isOnboardingCompleted = true
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+
                     // onboardingViewController.currentPage = 1
                 }) {
-                    Text("Continue")
-                }   
+                    Text("Start")
+                }
                 .tint(.parachuteOrange) 
                 .buttonStyle(.bordered)
                 Spacer()
             }
+            .padding(.bottom, 48)
         }.padding(.horizontal)
     }
 }
