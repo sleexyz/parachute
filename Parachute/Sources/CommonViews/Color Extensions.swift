@@ -8,6 +8,10 @@ public extension Color {
     static var parachuteOrange: Color {
         Color("parachuteOrange", bundle: Bundle.module)
     }
+    
+    static var parachuteOrangeLight: Color {
+        Color("parachuteOrangeLight", bundle: Bundle.module)
+    }
 
     static var parachuteLabel: Color {
         Color(UIColor.label)

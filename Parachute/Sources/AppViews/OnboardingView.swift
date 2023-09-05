@@ -12,7 +12,7 @@ struct Logo: View {
             //     .padding(.trailing, 4)
 
             Text("parachute.")
-                .font(.system(size: 54, design: .rounded))
+                .font(.system(size: 60, design: .rounded))
                 .fontWeight(.bold)
                 .foregroundStyle(Color.parachuteOrange)
         }
@@ -52,7 +52,7 @@ struct Page0: View {
             
             Text("**Unwire your mind.**")
                 .font(.system(size: 28, weight: .regular, design: .rounded))
-                .foregroundColor(.parachuteOrange.opacity(1))
+                .foregroundColor(.parachuteOrangeLight.opacity(1))
             
             Text("Stop getting **sucked in**")
                 .font(.system(size: 22, weight: .regular, design: .rounded))
@@ -69,7 +69,7 @@ struct Page0: View {
                 .font(.system(size: 22, weight: .regular, design: .rounded))
                 .foregroundColor(.primary)
                 .padding(.top, 12)
-            Text("that breaks your focus all the time.")
+            Text("from breaking your flow.")
                 .font(.system(size: 22, weight: .regular, design: .rounded))
                 .foregroundColor(.secondary)
             
@@ -85,7 +85,7 @@ struct Page0: View {
 
             Text("Start your 1 week dopamine detox, **now.**")
                 .font(.system(size: 22, weight: .regular, design: .rounded))
-                .foregroundColor(.parachuteOrange.opacity(1))
+                .foregroundColor(.parachuteOrangeLight.opacity(1))
                 .padding(.top, 60)
 
 
