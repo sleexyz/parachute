@@ -1,12 +1,19 @@
 import UserNotifications
 
 import OneSignalExtension
+import Controllers
 
 class NotificationService: UNNotificationServiceExtension {
     
     var contentHandler: ((UNNotificationContent) -> Void)?
     var receivedRequest: UNNotificationRequest!
     var bestAttemptContent: UNMutableNotificationContent?
+    
+    override init() {
+        Task {
+            await NEConfigurationService.shared.load()
+        }
+    }
     
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.receivedRequest = request
@@ -19,6 +26,10 @@ class NotificationService: UNNotificationServiceExtension {
                           Setting an attachment or action buttons automatically adds this */
             // print("Running NotificationServiceExtension")
             // bestAttemptContent.body = "[Modified] " + bestAttemptContent.body
+            
+            if bestAttemptContent.categoryIdentifier == "unpause" {
+                VPNLifecycleManager.shared.unpauseConnection()
+            }
             
             OneSignalExtension.didReceiveNotificationExtensionRequest(self.receivedRequest, with: bestAttemptContent, withContentHandler: self.contentHandler)
         }

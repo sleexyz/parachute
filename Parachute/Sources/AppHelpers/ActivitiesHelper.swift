@@ -20,6 +20,18 @@ public class ActivitiesHelper {
         }
     }
 
+    public func stop() {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
+            logger.info("activities not enabled")
+            return
+        }
+        if let activity = Activity<SlowdownWidgetAttributes>.activities.first {
+            Task {
+                await activity.end(ActivityContent(state: activity.content.state, staleDate: nil), dismissalPolicy: .immediate)
+            }
+        }
+    }
+
     private func requestActivity(settings: Proxyservice_Settings, isConnected: Bool) {
         do {
             let activity = try Activity.request(attributes: SlowdownWidgetAttributes(), content: makeActivityContent(settings, isConnected: isConnected))

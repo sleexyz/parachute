@@ -23,17 +23,17 @@ var OVERLAY_PRESET_OPACITY: Double = PRESET_OPACITY * 0.3
 public class ProfileManager: ObservableObject {
     public struct Provider: Dep {
         public func create(r: Registry) -> ProfileManager {
-            let instance = ProfileManager(
-                settingsStore: r.resolve(SettingsStore.self),
-                settingsController: r.resolve(SettingsController.self),
-                neConfigurationService: r.resolve(NEConfigurationService.self)
-            )
-            ProfileManager.shared = instance
-            return instance
+            .shared
         }
 
         public init() {}
     }
+
+    public static let shared: ProfileManager = ProfileManager(
+        settingsStore: SettingsStore.shared,
+        settingsController: SettingsController.shared,
+        neConfigurationService: NEConfigurationService.shared
+    )
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ProfileManager")
     var settingsStore: SettingsStore
@@ -51,8 +51,6 @@ public class ProfileManager: ObservableObject {
             }
             .store(in: &bag)
     }
-
-    public static var shared: ProfileManager? = nil
 
     @Published public var presetSelectorOpen: Bool = false
     @Published public var profileSelectorOpen: Bool = false

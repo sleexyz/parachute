@@ -22,6 +22,7 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
     @Published public var isConnected: Bool = false
     @Published public var isLoaded: Bool = false
     @Published public var isTransitioning: Bool = false
+
     public var isInstalled: Bool {
         NEFilterManager.shared().providerConfiguration != nil
     }
@@ -125,6 +126,7 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
             self.isTransitioning = false
         }
 
+        NEFilterManager.shared().providerConfiguration = nil
         try await NEFilterManager.shared().removeFromPreferences()
         isConnected = false
         logger.info("Successfully removed the filter configuration")

@@ -15,15 +15,13 @@ import SwiftUI
 public class SettingsController: ObservableObject {
     public struct Provider: Dep {
         public func create(r: Registry) -> SettingsController {
-            SettingsController(
-                store: r.resolve(SettingsStore.self),
-                service: r.resolve(NEConfigurationService.self)
-            )
+            return .shared
         }
 
         public init() {}
     }
-
+    public static let shared: SettingsController = SettingsController(store: SettingsStore.shared, service: NEConfigurationService.shared)
+ 
     private let store: SettingsStore
     private let service: any NEConfigurationServiceProtocol
 

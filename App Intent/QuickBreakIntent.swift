@@ -24,7 +24,7 @@ public struct QuickBreakIntent: AppIntent, LiveActivityIntent {
         var overlay: Preset = .quickBreak
         overlay.overlayDurationSecs = Double(SettingsStore.shared.settings.quickSessionSecs)
 
-        try await profileManager.loadPreset(
+        try await ProfileManager.shared.loadPreset(
             preset: .focus,
             overlay: overlay
         )

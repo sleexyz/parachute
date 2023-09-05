@@ -10,10 +10,10 @@
 		A00A09CC2A7DB76600011260 /* Animation Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00A09CB2A7DB76600011260 /* Animation Globals.swift */; };
 		A00A09CE2A7EDA7000011260 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A00A09CD2A7EDA7000011260 /* Controllers */; };
 		A00AF05129AD006200673B31 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = A00AF05029AD006200673B31 /* OrderedCollections */; };
-		A0119C6B2AA2674F00032F9D /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0119C6A2AA2674F00032F9D /* FirebaseAnalytics */; };
 		A0119C592AA24ABF00032F9D /* OneSignalFramework in Frameworks */ = {isa = PBXBuildFile; productRef = A0119C582AA24ABF00032F9D /* OneSignalFramework */; };
 		A0119C612AA24D5C00032F9D /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0119C602AA24D5C00032F9D /* NotificationService.swift */; };
 		A0119C652AA24D5C00032F9D /* OneSignalNotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A0119C5E2AA24D5C00032F9D /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A0119C6B2AA2674F00032F9D /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0119C6A2AA2674F00032F9D /* FirebaseAnalytics */; };
 		A01AB95C2A7D8015004E87B3 /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = A01AB95B2A7D8015004E87B3 /* Common */; };
 		A01AB95E2A7D8015004E87B3 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A01AB95D2A7D8015004E87B3 /* Controllers */; };
 		A024F15929A467D2007B572A /* HealSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024F15829A467D2007B572A /* HealSettings.swift */; };
@@ -44,6 +44,7 @@
 		A056C36A2A819E7F00E4ED9A /* CommonLoaders in Frameworks */ = {isa = PBXBuildFile; productRef = A056C3692A819E7F00E4ED9A /* CommonLoaders */; };
 		A056C36C2A819E8A00E4ED9A /* CommonLoaders in Frameworks */ = {isa = PBXBuildFile; productRef = A056C36B2A819E8A00E4ED9A /* CommonLoaders */; };
 		A056C36E2A819E8F00E4ED9A /* AppViews in Frameworks */ = {isa = PBXBuildFile; productRef = A056C36D2A819E8F00E4ED9A /* AppViews */; };
+		A058E6222AA2A5BE00C7D918 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A058E6212AA2A5BE00C7D918 /* Controllers */; };
 		A058E6232AA7CD7200C7D918 /* FilterControlProviderExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A0FE9A702A8C29EF00D891CE /* FilterControlProviderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A068DCF229A6FA4F0036E9A2 /* Cardable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A068DCF129A6FA4F0036E9A2 /* Cardable.swift */; };
 		A068DCF529A6FABC0036E9A2 /* Preset+Cardable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A068DCF429A6FABC0036E9A2 /* Preset+Cardable.swift */; };
@@ -245,6 +246,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A058E6222AA2A5BE00C7D918 /* Controllers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -545,6 +547,9 @@
 			dependencies = (
 			);
 			name = OneSignalNotificationServiceExtension;
+			packageProductDependencies = (
+				A058E6212AA2A5BE00C7D918 /* Controllers */,
+			);
 			productName = OneSignalNotificationServiceExtension;
 			productReference = A0119C5E2AA24D5C00032F9D /* OneSignalNotificationServiceExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -1751,6 +1756,10 @@
 		A056C36D2A819E8F00E4ED9A /* AppViews */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AppViews;
+		};
+		A058E6212AA2A5BE00C7D918 /* Controllers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Controllers;
 		};
 		A0717CCC294D260C00186AFE /* SwiftProtobufPluginLibrary */ = {
 			isa = XCSwiftPackageProductDependency;

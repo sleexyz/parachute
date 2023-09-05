@@ -36,7 +36,18 @@ struct DisconnectedView: View {
             }
             .tint(.parachuteOrange)
             .buttonStyle(.bordered)
+
             Spacer()
+
+            Button {
+                vpnLifecycleManager.stopConnection()
+            } label: {
+                Text("Uninstall Content Filter")
+                    .font(.system(size: 20, weight: .regular, design: .rounded))
+                    .padding()
+                    .frame(maxWidth: .infinity)
+            }
+            .tint(.secondary)
         }.padding()
     }
 }
