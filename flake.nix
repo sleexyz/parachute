@@ -19,6 +19,7 @@
           google-cloud-sdk
           go_1_19
           protobuf3_20
+          nodejs_20
         ];
         shellHook = ''
           export LD=/usr/bin/clang # https://stackoverflow.com/questions/65146106/xcodebuild-using-ld-rather-than-clang-for-linking
