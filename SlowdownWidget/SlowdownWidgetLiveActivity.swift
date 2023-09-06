@@ -33,14 +33,12 @@ struct SlowdownWidgetLiveActivity: Widget {
             DynamicIsland {
                 expandedContent()
             } compactLeading: {
-                Text("L")
+                EmptyView()
             } compactTrailing: {
-                Text("T \(context.state.settings.activePreset.id)")
+                EmptyView()
             } minimal: {
-                Text(context.state.settings.activePreset.id)
+                EmptyView()
             }
-            .widgetURL(URL(string: "http://www.apple.com"))
-            .keylineTint(Color.red)
         }
     }
     @DynamicIslandExpandedContentBuilder
@@ -48,16 +46,15 @@ struct SlowdownWidgetLiveActivity: Widget {
         // Expanded UI goes here.  Compose the expanded UI through
         // various regions, like leading/trailing/center/bottom
         DynamicIslandExpandedRegion(.leading) {
-            Text("Leading")
+            EmptyView()
         }
 
         DynamicIslandExpandedRegion(.trailing) {
-            Text("Trailing")
+            EmptyView()
         }
 
         DynamicIslandExpandedRegion(.bottom) {
-            Text("Bottom ")
-            // more content
+            EmptyView()
         }
 
     }
