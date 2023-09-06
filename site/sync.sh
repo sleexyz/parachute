@@ -18,9 +18,9 @@ else
 fi
 
 # Check if the directory is a Git repository and if it's dirty
-if [ -n "$(git -C . status --porcelain)" ]; then
-  echo "Git repository in $(pwd) is dirty. Aborting."
-  exit 1
-fi
+# if [ -n "$(git -C . status --porcelain)" ]; then
+#   echo "Git repository in $(pwd) is dirty. Aborting."
+#   exit 1
+# fi
 
 unzip -o "$file" -d .
