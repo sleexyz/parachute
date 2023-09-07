@@ -14,20 +14,18 @@ interface Props {
 export const Frame = ({ property1, className }: Props): JSX.Element => {
   return (
     <div
-      className={`w-[1200px] flex items-start p-[60px] rounded-[60px] justify-between relative ${
+      className={`w-[1200px] flex flex-col lg:flex-row gap-12 lg:gap-0 items-start py-8 px-8 lg:p-[60px] rounded-[24px] lg:rounded-[60px] justify-between relative ${
         property1 === "variant-3" ? "bg-[#d9d9d966]" : property1 === "variant-2" ? "bg-[#73665e]" : "bg-[#ffdebb66]"
       } ${className}`}
     >
-      <div className="flex self-stretch flex-col items-start grow flex-1 justify-between relative">
+      <div className="flex items-center lg:items-start gap-8 lg:gap-0 lg:self-stretch items-start flex-row lg:flex-col grow flex-1 justify-between relative">
         <img
-          className={`relative ${
-            property1 === "variant-3" ? "w-[87.62px]" : property1 === "variant-2" ? "w-[104.77px]" : "w-[51.5px]"
-          } ${property1 === "variant-3" ? "h-[104.68px]" : property1 === "variant-2" ? "h-[58.4px]" : "h-[80.82px]"}`}
+          className={`${property1 === "variant-2" ? "max-h-8" : "max-h-12"} lg:max-h-[unset] lg:max-w-[unset]`}
           alt="Img"
           src={property1 === "variant-3" ? "/img/2.svg" : property1 === "variant-2" ? "/img/image.svg" : "/img/4.svg"}
         />
         <div
-          className={`[font-family:'Space_Mono',_Helvetica] w-fit tracking-[0] text-[60px] relative font-normal leading-[normal] ${
+          className={`[font-family:'Space_Mono',_Helvetica] w-fit tracking-[0] text-[32px] lg:text-[60px] relative font-normal leading-[normal] ${
             property1 === "variant-2" ? "text-white" : "text-black"
           }`}
         >
@@ -38,7 +36,7 @@ export const Frame = ({ property1, className }: Props): JSX.Element => {
           {property1 === "variant-2" && <>DETOX</>}
         </div>
       </div>
-      <div className="[font-family:'Proxima_Soft-Regular',_Helvetica] mt-[-1.00px] tracking-[0] text-[32px] flex-1 text-transparent relative font-normal leading-[50px]">
+      <div className="[font-family:'Proxima_Soft-Regular',_Helvetica] mt-[-1.00px] tracking-[0] text-[22px] lg:text-[32px] flex-1 text-transparent relative font-normal leading-[36px] lg:leading-[50px]">
         <span className={`${property1 === "variant-2" ? "text-[#ffffffcc]" : "text-[#00000099]"}`}>
           {property1 === "variant-2" && <>We live in a world with </>}
 
@@ -80,7 +78,7 @@ export const Frame = ({ property1, className }: Props): JSX.Element => {
             </>
           )}
 
-          {property1 === "variant-2" && <> scroll yet we have </>}
+          {property1 === "variant-2" && <> scroll, yet we have </>}
         </span>
         <span
           className={`[font-family:'Proxima_Soft-Bold',_Helvetica] font-bold ${
