@@ -17,6 +17,11 @@ public enum ConnectedViewState {
     case longSession
 }
 
+public enum SettingsPage {
+    case main
+    case advanced
+}
+
 public class ConnectedViewController: ObservableObject {
     public static var shared: ConnectedViewController = .init()
     public struct Provider: Dep {
@@ -29,14 +34,28 @@ public class ConnectedViewController: ObservableObject {
 
     @Published public var state: ConnectedViewState = .main
 
+    @Published public var settingsPage: SettingsPage = .main
+
+    public var isAdvancedSettingsPresented: Binding<Bool> {
+        Binding<Bool> {
+            self.settingsPage == .advanced
+        } set: { value in
+            if value {
+                self._setSettingsPage(page: .advanced)
+            } else {
+                self._setSettingsPage(page: .main)
+            }
+        }
+    }
+
     public var isSettingsPresented: Binding<Bool> {
         Binding<Bool> {
             self.state == .settings
         } set: { value in
             if value {
-                self.state = .settings
+                self._set(state: .settings)
             } else {
-                self.state = .main
+                self._set(state: .main)
             }
         }
     }
@@ -46,9 +65,9 @@ public class ConnectedViewController: ObservableObject {
             self.state == .scrollSession
         } set: { value in
             if value {
-                self.state = .scrollSession
+                self._set(state: .scrollSession)
             } else {
-                self.state = .main
+                self._set(state: .main)
             }
         }
     }
@@ -57,6 +76,21 @@ public class ConnectedViewController: ObservableObject {
 
     @MainActor
     public func set(state: ConnectedViewState) {
+        self._set(state: state)
+    }
+    
+    private func _set(state: ConnectedViewState) {
         self.state = state
+        if state != .settings {
+            self.settingsPage = .main
+        }
+    }
+
+    @MainActor
+    public func setSettingsPage(page: SettingsPage) {
+        _setSettingsPage(page: page)
+    }
+    private func _setSettingsPage(page: SettingsPage) {
+        self.settingsPage = page
     }
 }

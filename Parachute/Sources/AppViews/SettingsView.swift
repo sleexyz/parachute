@@ -19,15 +19,21 @@ struct SettingsContent: View {
                     FeedbackButton()
                         .padding()
                 }
-                .padding(.bottom, 20)
+                // .padding(.bottom, 20)
+
+                Spacer()
 
                 TimePicker()
-                    .padding(.bottom, 20)
+                    // .padding(.bottom, 20)
+
+                Spacer()
 
                 AppsPicker()
-                    .padding(.bottom, 20)
+                    // .padding(.bottom, 20)
 
-                OtherSettings()
+                Spacer()
+
+                AdvancedSettingsHeader()
                     .padding(.bottom, 20)
             }
             .font(.system(size: 16, weight: .regular, design: .rounded))
@@ -66,30 +72,30 @@ struct SettingsSyncer<Content: View>: View {
     }
 }
 
-struct OtherSettings: View {
+struct AdvancedSettingsHeader: View {
     @EnvironmentObject var settingsController: SettingsController
     @EnvironmentObject var settingsStore: SettingsStore
+    @EnvironmentObject var connectedViewController: ConnectedViewController
+
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Advanced")
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundColor(.white.opacity(0.6))
-                .padding(.horizontal)
-                .padding(.top, 10)
-
-            HStack {
-                Text("Algorithm")
-                    .foregroundColor(.white)
+            HStack(alignment: .center) {
+                Text("Advanced")
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundColor(.white.opacity(0.6))
+                    .padding(.horizontal)
                 Spacer()
-                Picker(selection: $settingsStore.settings.algorithm, label: Text("Algorithm")) {
-                    Text("A").tag(Proxyservice_Algorithm.drop)
-                    Text("B").tag(Proxyservice_Algorithm.proportional)
-                }
-                .tint(.parachuteOrange)
-                .pickerStyle(.menu)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(.white.opacity(0.6))
+                    .padding(.trailing, 20)
             }
-            .padding(.horizontal)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            connectedViewController.setSettingsPage(page: .advanced)
         }
     }
 }
@@ -121,7 +127,7 @@ struct TimePicker: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Session Lengths")
+            Text("Session Durations")
                 .font(.system(size: 24, weight: .bold, design: .rounded))
                 .foregroundColor(.white.opacity(0.6))
                 .padding(.horizontal)
@@ -247,18 +253,55 @@ struct AppsPicker: View {
                 .tint(.parachuteOrange)
             }
             .padding(.horizontal)
-
-            Spacer()
         }
     }
 }
 
 struct SettingsView: View {
     @Binding var isPresented: Bool
+    @Binding var isAdvancedPresented: Bool
 
     var body: some View {
+        // Closing pane should switch to main view
         Pane(isPresented: $isPresented, bg: .background) {
             SettingsContent(isPresented: $isPresented)
+        }
+        .blur(radius: isAdvancedPresented ? 8 : 0)
+        .scaleEffect(isAdvancedPresented ? 0.98 : 1) // Add scale effect when settings page is open
+        .animation(.easeInOut(duration: 0.2), value: isAdvancedPresented) // Add animation to the blur effect
+
+        // Closing pane should switch to settings view
+        Pane(isPresented: $isAdvancedPresented, bg: .background) {
+            AdvancedSettingsContent()
+        }
+    }
+}
+
+struct AdvancedSettingsContent: View {
+    @EnvironmentObject var settingsStore: SettingsStore
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack(alignment: .center) {
+                Text("Advanced")
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundColor(.white.opacity(0.6))
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+            }
+            HStack {
+                Text("Algorithm")
+                    .foregroundColor(.white)
+                Spacer()
+                Picker(selection: $settingsStore.settings.algorithm, label: Text("Algorithm")) {
+                    Text("A").tag(Proxyservice_Algorithm.drop)
+                    Text("B").tag(Proxyservice_Algorithm.proportional)
+                }
+                .tint(.parachuteOrange)
+                .pickerStyle(.menu)
+            }
+            .padding(.horizontal)
+            Spacer()
         }
     }
 }

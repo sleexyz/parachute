@@ -42,7 +42,10 @@ public struct MainView: View {
 
     public var body: some View {
         ZStack {
-            SettingsView(isPresented: $isSettingsPresented)
+            SettingsView(
+                isPresented: $isSettingsPresented,
+                isAdvancedPresented: ConnectedViewController.shared.isAdvancedSettingsPresented
+            )
                 .zIndex(2)
 
             ScrollSessionView(isPresented: $isScrollSessionPresented)

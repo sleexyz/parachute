@@ -68,6 +68,5 @@ public struct Pane<Content: View>: View {
             }
         }
         .frame(maxHeight: UIScreen.main.bounds.height - topOffset, alignment: .top)
-        // .background(Color.blue.opacity(0.5))
     }
 }
