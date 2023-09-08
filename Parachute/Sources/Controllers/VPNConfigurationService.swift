@@ -30,15 +30,15 @@ public enum VPNStatus {
 
     var isConnected: Bool {
         switch self {
-        case .connected, .disconnecting: return true
-        default: return false
+        case .connected, .disconnecting: true
+        default: false
         }
     }
 
     var isTransitioning: Bool {
         switch self {
-        case .connecting, .disconnecting: return true
-        default: return false
+        case .connecting, .disconnecting: true
+        default: false
         }
     }
 }
@@ -83,7 +83,7 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
     public static let shared = VPNConfigurationService()
     public struct Provider: Dep {
         public func create(r _: Registry) -> NEConfigurationService {
-            return .shared
+            .shared
         }
 
         public init() {}
@@ -103,7 +103,7 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
     private var bag = Set<AnyCancellable>()
 
     open var isInstalled: Bool {
-        return manager != nil
+        manager != nil
     }
 
     public init() {
@@ -221,9 +221,9 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
     }
 
     private func saveManagerPreferences() async throws {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             self.manager?.saveToPreferences { error in
-                if let error = error {
+                if let error {
                     continuation.resume(throwing: error)
                 }
                 continuation.resume(returning: ())
@@ -235,7 +235,7 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
         try await Future<Void, Error> { promise in
             let tunnel = self.makeNewTunnel()
             tunnel.saveToPreferences { [weak self] error in
-                if let error = error {
+                if let error {
                     return promise(.failure(error))
                 }
 
@@ -279,7 +279,7 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
         return try await withCheckedThrowingContinuation { resume in
             do {
                 try session.sendProviderMessage(request.serializedData()) { data in
-                    guard let data = data else {
+                    guard let data else {
                         resume.resume(returning: Data())
                         return
                     }
@@ -296,7 +296,7 @@ public class MockVPNConfigurationService: NEConfigurationService {
     public struct Provider: MockDep {
         public typealias MockT = MockVPNConfigurationService
         public func create(r _: Registry) -> NEConfigurationService {
-            return MockVPNConfigurationService()
+            MockVPNConfigurationService()
         }
 
         public init() {}
@@ -309,7 +309,7 @@ public class MockVPNConfigurationService: NEConfigurationService {
     public var isInstalledMockOverride: Bool?
 
     override public var isInstalled: Bool {
-        return isInstalledMockOverride ?? super.isInstalled
+        isInstalledMockOverride ?? super.isInstalled
     }
 
     public func setIsConnected(value: Bool) {

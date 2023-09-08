@@ -20,22 +20,22 @@ struct PresetViewModel {
 
     var scrollTimeLimit: Binding<Double> {
         Binding {
-            self.presetData.usageMaxHp / 2
+            presetData.usageMaxHp / 2
         } set: {
-            self.presetData.usageMaxHp = $0 * 2
+            presetData.usageMaxHp = $0 * 2
         }
     }
 
     var restTime: Binding<Double> {
         Binding {
-            self.presetData.usageMaxHp / 2 / self.presetData.usageHealRate
+            presetData.usageMaxHp / 2 / presetData.usageHealRate
         } set: {
-            self.presetData.usageHealRate = self.presetData.usageMaxHp / 2 / $0
+            presetData.usageHealRate = presetData.usageMaxHp / 2 / $0
         }
     }
 
     var level: Double {
-        return scrollTimeLimit.wrappedValue
+        scrollTimeLimit.wrappedValue
             .applyMapping(Mapping(a: 10, b: 0, c: 0, d: 3, clip: true))
     }
 

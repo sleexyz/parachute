@@ -30,7 +30,7 @@ class FilterControlProvider: NEFilterControlProvider {
 
     /// Observe changes to the configuration.
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "filterConfiguration" && context == &observerContext {
+        if keyPath == "filterConfiguration", context == &observerContext {
             logger.info("configuration changed")
             guard let requestData = filterConfiguration.vendorConfiguration?[.vendorConfigurationKey] as? Data else {
                 return

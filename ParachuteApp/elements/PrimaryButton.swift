@@ -21,7 +21,7 @@ struct PrimaryButton: View {
     }
 
     var body: some View {
-        Button(action: self.action) {
+        Button(action: action) {
             ZStack {
                 Spinner(isAnimating: isLoading, color: .black, style: .medium)
                 Text(title)

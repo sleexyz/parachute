@@ -30,7 +30,7 @@ public class ActivitiesHelper {
     }
 
     func makeActivityContent(_ settings: Proxyservice_Settings, isConnected: Bool) -> ActivityContent<SlowdownWidgetAttributes.ContentState> {
-        if settings.hasOverlay && settings.activePreset.id == settings.overlay.preset.id {
+        if settings.hasOverlay, settings.activePreset.id == settings.overlay.preset.id {
             return ActivityContent(state:
                 SlowdownWidgetAttributes.ContentState(settings: settings, isConnected: isConnected),
                 staleDate: settings.overlay.expiry.date)

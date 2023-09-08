@@ -24,15 +24,15 @@ class DroppingAppFlowController {
     static func getController(app: App) -> DroppingAppFlowController {
         switch app.appType {
         case .instagram:
-            return instagram
+            instagram
         case .tiktok:
-            return tiktok
+            tiktok
         case .twitter:
-            return twitter
+            twitter
         case .youtube:
-            return youtube
+            youtube
         default:
-            return DroppingAppFlowController(app: app)
+            DroppingAppFlowController(app: app)
         }
     }
 }

@@ -62,10 +62,10 @@ public struct FamilyControlsView: View {
                 try await center.requestAuthorization(for: .individual)
                 // try await service.install(settings: settingsStore.settings)
             } catch {
-                self.errorMessage = error.localizedDescription
-                self.isShowingError = true
+                errorMessage = error.localizedDescription
+                isShowingError = true
             }
-            self.isLoading = false
+            isLoading = false
         }
     }
 }

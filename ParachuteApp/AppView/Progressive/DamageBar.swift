@@ -15,7 +15,7 @@ struct DamageBar: View {
     var ratio: Double
 
     var magnitude: Double {
-        return abs(ratio)
+        abs(ratio)
     }
 
     var alignment: Alignment {
@@ -81,11 +81,11 @@ struct StagedDamageBar: View {
     var height: Double = 20
 
     var ratioShown: Double {
-        return ratio.applyMapping(Mapping(a: 0, b: 1, c: -1, d: 1))
+        ratio.applyMapping(Mapping(a: 0, b: 1, c: -1, d: 1))
     }
 
     var body: some View {
-        return DamageBar(ratio: ratioShown, slowAmount: slowAmount, height: height)
+        DamageBar(ratio: ratioShown, slowAmount: slowAmount, height: height)
     }
 }
 

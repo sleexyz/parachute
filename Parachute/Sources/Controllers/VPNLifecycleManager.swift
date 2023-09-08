@@ -16,7 +16,7 @@ import SwiftProtobuf
 public class VPNLifecycleManager: ObservableObject {
     public struct Provider: Dep {
         public func create(r: Registry) -> VPNLifecycleManager {
-            return VPNLifecycleManager(
+            VPNLifecycleManager(
                 neConfigurationService: r.resolve(NEConfigurationService.self),
                 settingsController: r.resolve(SettingsController.self),
                 settingsStore: r.resolve(SettingsStore.self)

@@ -47,11 +47,10 @@ extension Color {
         var r, g, b, a: CGFloat
         (r, g, b, a) = (0, 0, 0, 0)
         UIColor(self).getRed(&r, green: &g, blue: &b, alpha: &a)
-        var mixedColor: UIColor
-        if colorScheme == .dark {
-            mixedColor = UIColor(Color(white: 0.2))
+        var mixedColor = if colorScheme == .dark {
+            UIColor(Color(white: 0.2))
         } else {
-            mixedColor = UIColor(Color(white: 0.8))
+            UIColor(Color(white: 0.8))
         }
         return Color(UIColor(Color(red: r, green: g, blue: b)).mix(with: mixedColor, amount: 1 - a))
     }

@@ -44,7 +44,7 @@ public class NotificationsHelper {
         }
         let granted: Bool = try await withCheckedThrowingContinuation { continuation in
             center.requestAuthorization(options: [.alert]) { granted, error in
-                if let error = error {
+                if let error {
                     continuation.resume(with: .failure(error))
                     return
                 } else {

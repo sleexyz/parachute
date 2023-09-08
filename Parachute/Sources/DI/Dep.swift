@@ -31,11 +31,11 @@ public protocol Dep {
 
 public extension Dep {
     func getServiceKeys() -> [ServiceKey] {
-        return [ServiceKey(serviceType: T.self)]
+        [ServiceKey(serviceType: T.self)]
     }
 
-    func _environmentObject<Content: View>(registry: Registry, content: Content) -> any View {
-        return content.environmentObject(registry.resolve(T.self))
+    func _environmentObject(registry: Registry, content: some View) -> any View {
+        content.environmentObject(registry.resolve(T.self))
     }
 }
 
@@ -47,14 +47,14 @@ public protocol MockDep: Dep {
 
 public extension MockDep {
     func getServiceKeys() -> [ServiceKey] {
-        return [
+        [
             ServiceKey(serviceType: MockT.self),
             ServiceKey(serviceType: T.self),
         ]
     }
 
-    func _environmentObject<Content: View>(registry: Registry, content: Content) -> any View {
-        return content
+    func _environmentObject(registry: Registry, content: some View) -> any View {
+        content
             .environmentObject(registry.resolve(MockT.self))
             .environmentObject(registry.resolve(T.self))
     }

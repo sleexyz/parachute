@@ -24,9 +24,9 @@ enum ScrollSessionViewPhase {
     var shouldShowShortSession: Bool {
         switch self {
         case .initial:
-            return false
+            false
         case .showShortSession, .showLongSession:
-            return true
+            true
         }
     }
 }

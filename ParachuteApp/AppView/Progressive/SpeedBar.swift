@@ -16,11 +16,11 @@ struct SpeedBar: View {
     var publish: () -> Void
 
     private var speedToSlider: Mapping {
-        return Mapping(a: 40e3, b: 10e6, c: 0, d: 100, inWarp: .exponential)
+        Mapping(a: 40e3, b: 10e6, c: 0, d: 100, inWarp: .exponential)
     }
 
     private var sliderToSpeed: Mapping {
-        return speedToSlider.inverse
+        speedToSlider.inverse
     }
 
     private var sliderVal: Binding<Double> {
@@ -69,7 +69,7 @@ struct SpeedBarPreviewContainer<Content: View>: View {
     @State var speed: Double = 50e3
     var render: (Binding<Double>) -> Content
     var body: some View {
-        return render($speed)
+        render($speed)
     }
 }
 

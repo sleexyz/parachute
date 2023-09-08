@@ -16,7 +16,7 @@ import SwiftUI
 class StateController: ObservableObject {
     struct Provider: Dep {
         func create(r: Registry) -> StateController {
-            return StateController(
+            StateController(
                 settings: r.resolve(SettingsStore.self),
                 service: r.resolve(NEConfigurationService.self)
             )
@@ -47,19 +47,19 @@ class StateController: ObservableObject {
     }
 
     var damageRatio: Double {
-        return state.usagePoints / settings.activePreset.usageMaxHp
+        state.usagePoints / settings.activePreset.usageMaxHp
     }
 
     var healTimeLeft: Double {
-        return state.usagePoints / settings.activePreset.usageHealRate
+        state.usagePoints / settings.activePreset.usageHealRate
     }
 
     var hpRatio: Double {
-        return 1 - damageRatio
+        1 - damageRatio
     }
 
     var scrollTimeLeft: Double {
-        return max(settings.activePreset.usageMaxHp / 2 - state.usagePoints, 0)
+        max(settings.activePreset.usageMaxHp / 2 - state.usagePoints, 0)
     }
 
     var hpColor: Color {

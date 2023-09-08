@@ -74,9 +74,9 @@ public extension View {
     }
 
     @inlinable
-    func reverseMask<Mask: View>(
+    func reverseMask(
         alignment: Alignment = .center,
-        @ViewBuilder _ mask: () -> Mask
+        @ViewBuilder _ mask: () -> some View
     ) -> some View {
         self.mask {
             Capsule()

@@ -15,7 +15,7 @@ import SwiftUI
 public class SettingsController: ObservableObject {
     public struct Provider: Dep {
         public func create(r: Registry) -> SettingsController {
-            return SettingsController(
+            SettingsController(
                 store: r.resolve(SettingsStore.self),
                 service: r.resolve(NEConfigurationService.self)
             )

@@ -17,8 +17,8 @@ public enum Env: CustomStringConvertible {
 
     public var description: String {
         switch self {
-        case .dev: return "dev"
-        case .prod: return "prod"
+        case .dev: "dev"
+        case .prod: "prod"
         }
     }
 }

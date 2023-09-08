@@ -83,7 +83,7 @@ public class SlowingAppFlowController {
     }
 
     private func getVerdict(from _: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        if allowPreSlowingBytes && offset < app.preSlowingBytes {
+        if allowPreSlowingBytes, offset < app.preSlowingBytes {
             return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: app.preSlowingBytes)
         }
         let targetLatency = latencyPerByte * Double(readBytes.count)

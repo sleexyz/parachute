@@ -13,7 +13,7 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
     public static let shared = FilterConfigurationService()
     public struct Provider: Dep {
         public func create(r _: Registry) -> NEConfigurationService {
-            return .shared
+            .shared
         }
 
         public init() {}

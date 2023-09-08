@@ -13,6 +13,6 @@ struct EnvironmentObjectProxy<T: ObservableObject, Content: View>: View {
     let content: (T) -> Content
     @EnvironmentObject private var obj: T
     var body: some View {
-        return content(obj)
+        content(obj)
     }
 }

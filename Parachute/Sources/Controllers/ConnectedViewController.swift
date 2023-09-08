@@ -21,7 +21,7 @@ public class ConnectedViewController: ObservableObject {
     public static var shared: ConnectedViewController = .init()
     public struct Provider: Dep {
         public func create(r _: Registry) -> ConnectedViewController {
-            return ConnectedViewController.shared
+            ConnectedViewController.shared
         }
 
         public init() {}

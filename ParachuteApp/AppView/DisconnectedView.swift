@@ -20,7 +20,7 @@ struct DisconnectedView: View {
     @EnvironmentObject var service: NEConfigurationService
 
     var buttonTitle: String {
-        return "Enable Content Filter"
+        "Enable Content Filter"
     }
 
     var body: some View {

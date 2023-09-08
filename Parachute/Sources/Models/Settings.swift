@@ -19,7 +19,7 @@ public extension Proxyservice_Settings {
     }
 
     var isInScrollSession: Bool {
-        return activePreset.baseRxSpeedTarget == .infinity
+        activePreset.baseRxSpeedTarget == .infinity
     }
 
     func isAppEnabled(app: Proxyservice_AppType) -> Bool {

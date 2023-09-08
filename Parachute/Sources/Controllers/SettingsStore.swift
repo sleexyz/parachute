@@ -22,7 +22,7 @@ struct HandlerWrapper {
 public class SettingsStore: ObservableObject {
     public struct Provider: Dep {
         public func create(r _: Registry) -> SettingsStore {
-            return .shared
+            .shared
         }
 
         public init() {}
@@ -52,11 +52,11 @@ public class SettingsStore: ObservableObject {
     }
 
     public var activePreset: Proxyservice_Preset {
-        return activePresetBinding.wrappedValue
+        activePresetBinding.wrappedValue
     }
 
     var defaultPreset: Proxyservice_Preset {
-        return defaultPresetBinding.wrappedValue
+        defaultPresetBinding.wrappedValue
     }
 
     public var isOverlayActive: Bool {

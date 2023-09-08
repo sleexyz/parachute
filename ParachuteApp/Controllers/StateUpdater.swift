@@ -18,7 +18,7 @@ let LOOP_FETCH_DELAY_SECS: Int = 5
 class StateUpdater: ObservableObject {
     struct Provider: Dep {
         func create(r: Registry) -> StateUpdater {
-            return StateUpdater(
+            StateUpdater(
                 stateController: r.resolve(StateController.self),
                 vpnConfigurationService: r.resolve(VPNConfigurationService.self)
             )
@@ -45,9 +45,9 @@ class StateUpdater: ObservableObject {
         .sink { [weak self] isVisibleTuple, status in
             let isVisiblePrevious = isVisibleTuple.0 ?? false
             let isVisible = isVisibleTuple.1
-            if isVisible && !isVisiblePrevious && status == .connected {
+            if isVisible, !isVisiblePrevious, status == .connected {
                 self?.startSubscription()
-            } else if !isVisible && isVisiblePrevious {
+            } else if !isVisible, isVisiblePrevious {
                 self?.cancelSubscription()
             }
         }.store(in: &bag)

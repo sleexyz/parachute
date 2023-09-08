@@ -7,7 +7,7 @@ struct FeedbackButton: View {
     var body: some View {
         Button(action: {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            self.presentMessageCompose()
+            presentMessageCompose()
         }, label: {
             HStack {
                 Text("Feedback?")
@@ -38,7 +38,7 @@ extension FeedbackButton {
         guard MFMessageComposeViewController.canSendText() else {
             return
         }
-        let vc = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.rootViewController
+        let vc = UIApplication.shared.windows.filter(\.isKeyWindow).first?.rootViewController
         let composeVC = MFMessageComposeViewController()
         composeVC.messageComposeDelegate = messageComposeDelegate
         composeVC.recipients = ["13472623016"]

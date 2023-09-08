@@ -7,18 +7,18 @@ let package = Package(
     name: "Parachute",
     platforms: [.iOS(.v16)],
     products: [
-       .library(
-           name: "FilterCommon",
-           targets: ["FilterCommon"]
-       ),
-       .library(
-           name: "FilterData",
-           targets: ["FilterData"]
-       ),
-       .library(
-           name: "FilterControl",
-           targets: ["FilterControl"]
-       ),
+        .library(
+            name: "FilterCommon",
+            targets: ["FilterCommon"]
+        ),
+        .library(
+            name: "FilterData",
+            targets: ["FilterData"]
+        ),
+        .library(
+            name: "FilterControl",
+            targets: ["FilterControl"]
+        ),
         .library(
             name: "AppViews",
             targets: ["AppViews"]
@@ -67,33 +67,33 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.0.0"),
     ],
     targets: [
-       .target(
-           name: "FilterCommon",
-           dependencies: [
+        .target(
+            name: "FilterCommon",
+            dependencies: [
                 .product(name: "ProxyService", package: "ProxyService"),
-           ]
-       ),
-       .target(
-           name: "FilterData",
-           dependencies: [
+            ]
+        ),
+        .target(
+            name: "FilterData",
+            dependencies: [
                 "Models",
                 "Common",
                 "FilterCommon",
                 .product(name: "ProxyService", package: "ProxyService"),
                 .product(name: "SwiftProtobuf", package: "swift-protobuf"),
                 // .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"), // FilterDataProvider may be too sandboxed to use this.
-           ]
-       ),
-       .target(
-           name: "FilterControl",
-           dependencies: [
+            ]
+        ),
+        .target(
+            name: "FilterControl",
+            dependencies: [
                 "Common",
                 "Models",
                 "FilterCommon",
-               .product(name: "ProxyService", package: "ProxyService"),
-               .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
-           ]
-       ),
+                .product(name: "ProxyService", package: "ProxyService"),
+                .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
+            ]
+        ),
         .target(
             name: "Models",
             dependencies: [

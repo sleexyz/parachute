@@ -57,7 +57,7 @@ struct WiredPresetCard<Content: View>: View {
 //        if !profileManager.presetSelectorOpen {
 //            return nil
 //        }
-        return preset.badgeText
+        preset.badgeText
     }
 
     @ViewBuilder

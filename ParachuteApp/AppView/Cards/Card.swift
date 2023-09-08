@@ -78,7 +78,7 @@ struct Card<Content: View, S: ShapeStyle>: View {
     var content: () -> Content
 
     var computedBackgroundColor: Color {
-        guard let backgroundColor = backgroundColor else {
+        guard let backgroundColor else {
             return .clear
         }
         if colorScheme == .dark {

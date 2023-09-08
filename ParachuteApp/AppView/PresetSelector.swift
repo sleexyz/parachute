@@ -17,7 +17,7 @@ struct PresetSelector: View {
     @Namespace var additionalPresetsStackID
 
     var shouldRenderSelector: Bool {
-        return profileManager.presetSelectorOpen
+        profileManager.presetSelectorOpen
     }
 
     var cards: OrderedDictionary<String, AnyCardable> {
@@ -59,7 +59,7 @@ struct PresetSelector: View {
     }
 
     var height: Double {
-        return UIScreen.main.bounds.height
+        UIScreen.main.bounds.height
     }
 
     var body: some View {

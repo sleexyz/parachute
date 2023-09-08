@@ -50,7 +50,7 @@ public struct Preset {
     }
 
     public var scrollTimeLimit: Double {
-        return presetData.usageMaxHp / 2
+        presetData.usageMaxHp / 2
     }
 
     public static var quickBreak: Preset {

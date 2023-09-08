@@ -69,10 +69,10 @@ public struct SetupView: View {
             do {
                 try await service.install(settings: settingsStore.settings)
             } catch {
-                self.errorMessage = error.localizedDescription
-                self.isShowingError = true
+                errorMessage = error.localizedDescription
+                isShowingError = true
             }
-            self.isLoading = false
+            isLoading = false
         }
     }
 }

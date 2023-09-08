@@ -30,5 +30,5 @@ extension ServiceKey: Hashable {
 }
 
 public func == (lhs: ServiceKey, rhs: ServiceKey) -> Bool {
-    return lhs.serviceType == rhs.serviceType
+    lhs.serviceType == rhs.serviceType
 }

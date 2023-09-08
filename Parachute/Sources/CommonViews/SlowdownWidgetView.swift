@@ -47,7 +47,7 @@ public struct SlowdownWidgetView: View {
     }
 
     var statusMessage: String {
-        if settings.changeMetadata.reason == "Overlay expired" && settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
+        if settings.changeMetadata.reason == "Overlay expired", settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
             return "Session ended"
         }
         return "Detox Active"

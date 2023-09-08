@@ -13,7 +13,7 @@ struct Consumer<T: ObservableObject>: ViewModifier {
     let effect: (_ value: T) -> Void
     @EnvironmentObject private var obj: T
     func body(content: Content) -> some View {
-        return content.onAppear {
+        content.onAppear {
             effect(obj)
         }
     }
@@ -27,7 +27,7 @@ private struct RegistryConsumer<T: ObservableObject>: ViewModifier {
     let effect: (_ value: T) -> Void
     @Environment(\.registry) private var registry: Registry
     func body(content: Content) -> some View {
-        return content.modifier(RegistryConsumerInner(type: type, effect: effect, value: registry.resolve(type)))
+        content.modifier(RegistryConsumerInner(type: type, effect: effect, value: registry.resolve(type)))
     }
 }
 
@@ -37,7 +37,7 @@ private struct RegistryConsumerInner<T: ObservableObject>: ViewModifier {
     let effect: (_ value: T) -> Void
     @ObservedObject var value: T
     func body(content: Content) -> some View {
-        return content.onAppear {
+        content.onAppear {
             effect(value)
         }
     }

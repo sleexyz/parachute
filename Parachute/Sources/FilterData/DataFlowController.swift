@@ -103,6 +103,6 @@ public class FlowRegistry {
     }
 
     public func getFlowController(for flow: NEFilterFlow) -> AFC {
-        return flowDelays[flow.identifier]!
+        flowDelays[flow.identifier]!
     }
 }

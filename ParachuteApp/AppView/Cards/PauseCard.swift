@@ -15,11 +15,11 @@ struct Pause {
 
 extension Pause: Cardable {
     func getExpandedBody() -> AnyView {
-        return AnyView(EmptyView())
+        AnyView(EmptyView())
     }
 
     func getID() -> String {
-        return Pause().id
+        Pause().id
     }
 
     func _makeCard(content: @escaping () -> AnyView) -> some View {

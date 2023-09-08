@@ -17,10 +17,10 @@ public protocol Cardable {
 
 extension Cardable {
     func eraseToAnyCardable() -> AnyCardable {
-        return AnyCardable(cardable: self)
+        AnyCardable(cardable: self)
     }
 
-    @ViewBuilder func makeCard<Content: View>(content: @escaping () -> Content) -> V {
+    @ViewBuilder func makeCard(content: @escaping () -> some View) -> V {
         _makeCard {
             AnyView(content())
         }
@@ -39,13 +39,13 @@ struct AnyCardable: Identifiable, Cardable {
     }
 
     func getExpandedBody() -> AnyView {
-        return cardable.getExpandedBody()
+        cardable.getExpandedBody()
     }
 
     typealias V = AnyView
 
     var cardable: any Cardable
-    init<T>(cardable: T) where T: Cardable {
+    init(cardable: some Cardable) {
         self.cardable = cardable
     }
 
@@ -56,7 +56,7 @@ struct AnyCardable: Identifiable, Cardable {
 
 extension AnyCardable: Hashable {
     static func == (lhs: AnyCardable, rhs: AnyCardable) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
     }
 
     func hash(into hasher: inout Hasher) {

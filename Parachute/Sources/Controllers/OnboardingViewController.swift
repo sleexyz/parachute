@@ -4,7 +4,7 @@ import SwiftUI
 public class OnboardingViewController: ObservableObject {
     public struct Provider: Dep {
         public func create(r _: Registry) -> OnboardingViewController {
-            return OnboardingViewController.shared
+            OnboardingViewController.shared
         }
 
         public init() {}

@@ -45,7 +45,7 @@ struct ParachutePresetItem: View {
     }
 
     var body: some View {
-        return Text("\(Int(hp)) min")
+        Text("\(Int(hp)) min")
             .padding()
 //            .frame(maxWidth: .infinity)
             .background(computedBackgroundColor)

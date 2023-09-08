@@ -73,7 +73,7 @@ public class ProfileManager: ObservableObject {
     }
 
     public var defaultPreset: Preset {
-        return allPresets[settingsStore.defaultPreset.id]!
+        allPresets[settingsStore.defaultPreset.id]!
     }
 
     public var presets: OrderedDictionary<String, Preset> {
@@ -90,7 +90,7 @@ public class ProfileManager: ObservableObject {
     public func loadPreset(preset: Preset, overlay: Preset? = nil) async throws {
         settingsStore.settings.defaultPreset = preset.presetData
 
-        guard let overlay = overlay else {
+        guard let overlay else {
             settingsStore.settings.clearOverlay()
             try await settingsController.syncSettings()
             return
@@ -106,7 +106,7 @@ public class ProfileManager: ObservableObject {
         try await settingsController.syncSettings()
         overlayTimer?.invalidate()
 
-        if let taskId = taskId {
+        if let taskId {
             UIApplication.shared.endBackgroundTask(taskId)
         }
 
@@ -133,10 +133,10 @@ public class ProfileManager: ObservableObject {
 
     @MainActor
     public func endSession() async throws {
-        if let taskId = taskId {
+        if let taskId {
             UIApplication.shared.endBackgroundTask(taskId)
         }
-        if let overlayTimer = overlayTimer {
+        if let overlayTimer {
             overlayTimer.invalidate()
         } else {
             settingsStore.settings.clearOverlay()
@@ -174,7 +174,7 @@ public class ProfileManager: ObservableObject {
     ]
 
     public static func makeParachutePresetData(hp: Double) -> Proxyservice_Preset {
-        return Proxyservice_Preset.with {
+        Proxyservice_Preset.with {
             $0.id = "casual"
             $0.usageMaxHp = hp
             $0.usageHealRate = 1
@@ -183,7 +183,7 @@ public class ProfileManager: ObservableObject {
     }
 
     public static func makeParachutePreset(_ presetData: Proxyservice_Preset) -> Preset {
-        return Preset(
+        Preset(
             name: "Parachute",
             icon: "🪂",
             type: .relax,

@@ -9,6 +9,6 @@ public extension NEFilterDataVerdict {
     }
 
     func passBytesIsZero() -> Bool {
-        return value(forKey: "_passBytes") as! Int == 0
+        value(forKey: "_passBytes") as! Int == 0
     }
 }

@@ -59,7 +59,7 @@ public struct Mapping {
 
 public extension Double {
     func applyMapping(_ mapping: Mapping) -> Double {
-        return mapping.map(self)
+        mapping.map(self)
     }
 }
 
