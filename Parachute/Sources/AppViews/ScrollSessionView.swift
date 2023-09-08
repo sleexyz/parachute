@@ -206,7 +206,11 @@ struct LongSessionScrollPrompt: View {
     @EnvironmentObject var scrollSessionViewController: ConnectedViewController
     @EnvironmentObject var profileManager: ProfileManager
     @EnvironmentObject var neConfigurationService: NEConfigurationService
+    @EnvironmentObject var settingsStore: SettingsStore
 
+    var longSessionMinutes: Int {
+        Int(settingsStore.settings.longSessionSecs / 60)
+    }
 
     private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LongSessionScrollPrompt")
     
@@ -240,7 +244,7 @@ struct LongSessionScrollPrompt: View {
                     startScrollSession()
                 }) {
                     Image(systemName: "play.fill")
-                    Text("Scroll for \(Int(Preset.scrollSession.overlayDurationSecs! / 60)) min")
+                    Text("Scroll for \(longSessionMinutes) min")
                 }
                 .buttonStyle(.bordered)
                 .tint(.parachuteOrange)
