@@ -221,14 +221,14 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
     }
 
     private func saveManagerPreferences() async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            self.manager?.saveToPreferences { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                }
-                continuation.resume(returning: ())
-            }
-        }
+//        try await withCheckedThrowingContinuation { continuation in
+//            self.manager?.saveToPreferences { error in
+//                if let error {
+//                    continuation.resume(throwing: error)
+//                }
+//                continuation.resume(returning: ())
+//            }
+//        }
     }
 
     public func install(settings _: Proxyservice_Settings) async throws {

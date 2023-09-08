@@ -140,31 +140,3 @@ message HealRequest {
 message HealResponse {
     double usagePoints = 1;
 }
-
-/** Debugging */
-
-message ServerState {
-    repeated AppState apps = 1;
-    double usagePoints = 2;
-    double ratio = 3;
-    double progressiveRxSpeedTarget = 4;
-}
-
-message AppState {
-    double txPoints = 1;
-    string name = 2;
-    double rxPoints = 3;
-    double txPointsMax = 4;
-}
-
-message Sample {
-    string ip = 1;
-    int64 rxBytes = 2;
-    google.protobuf.Timestamp startTime = 3;
-    int64 duration = 4; // how long the sample
-    double rxSpeed = 5;
-    double rxSpeedTarget = 6;
-    string appMatch = 7;
-    string slowReason = 8;
-    repeated string dnsMatchers = 9;
-}

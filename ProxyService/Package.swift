@@ -8,7 +8,8 @@ let package = Package(
     products: [
         .library(
             name: "ProxyService",
-            targets: ["ProxyService"]),
+            targets: ["ProxyService"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.20.3"),
@@ -18,6 +19,7 @@ let package = Package(
             name: "ProxyService",
             dependencies: [
                 .product(name: "SwiftProtobuf", package: "swift-protobuf"),
-            ]),
+            ]
+        ),
     ]
 )

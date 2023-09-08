@@ -34,6 +34,11 @@ public enum SettingsMigrations {
             settings in
             settings.algorithm = .drop
         },
+        // Default to propotional
+        10: {
+            settings in
+            settings.algorithm = .proportional
+        },
     ]
 
     public static var LATEST_VERSION: Int {
