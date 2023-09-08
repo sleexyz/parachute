@@ -136,9 +136,9 @@ struct TimePicker: View {
                     .foregroundColor(.white)
                 Spacer()
                 Picker(selection: $settingsStore.settings.longSessionSecs, label: Text("Long session")) {
-                    Text("3 minutes").tag(3 * 60 as Int32)
                     Text("5 minutes").tag(5 * 60 as Int32)
-                    Text("8 minutes").tag(8 * 60 as Int32)
+                    Text("10 minutes").tag(10 * 60 as Int32)
+                    Text("15 minutes").tag(15 * 60 as Int32)
                 }
                 .tint(.parachuteOrange)
                 .pickerStyle(.menu)
