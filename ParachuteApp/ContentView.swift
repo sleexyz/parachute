@@ -7,12 +7,12 @@
 
 import SwiftUI
 
+import AppViews
+import CommonViews
+import Controllers
+import FamilyControls
 import Foundation
 import OSLog
-import Controllers
-import CommonViews
-import AppViews
-import FamilyControls
 
 struct ContentView: View {
     @EnvironmentObject var store: SettingsStore
@@ -20,15 +20,14 @@ struct ContentView: View {
     @EnvironmentObject var onboardingViewController: OnboardingViewController
     @Environment(\.scenePhase) var scenePhase
     @StateObject var familyControls = AuthorizationCenter.shared
-    
+
     var testOnlyAuthorizationStatusOverride: AuthorizationStatus? = nil
     var authorizationStatus: AuthorizationStatus {
         testOnlyAuthorizationStatusOverride ?? familyControls.authorizationStatus
     }
-    
-    
-    private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ContentView")
-    
+
+    private let logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "ContentView")
+
     @ViewBuilder
     var body: some View {
         Group {
@@ -36,7 +35,7 @@ struct ContentView: View {
                 OnboardingView()
             } else if authorizationStatus != .approved {
                 FamilyControlsView()
-            } else if !store.loaded  {
+            } else if !store.loaded {
                 SplashView(text: "Loading settings...")
             } else if !service.isLoaded {
                 SplashView(text: "Loading VPN state...")
@@ -63,7 +62,6 @@ struct ContentView: View {
             }
         }
     }
-    
 }
 
 struct ContentViewIntro_Previews: PreviewProvider {
@@ -76,7 +74,6 @@ struct ContentViewIntro_Previews: PreviewProvider {
     }
 }
 
-
 struct ContentViewFamilyControls_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
@@ -87,10 +84,9 @@ struct ContentViewFamilyControls_Previews: PreviewProvider {
                 controller.isOnboardingCompleted = true
             }
             .consumeDep(MockVPNConfigurationService.self) { service in
-                service.isInstalledMockOverride =  false
+                service.isInstalledMockOverride = false
             }
             .provideDeps(previewDeps)
-    
     }
 }
 
@@ -104,9 +100,5 @@ struct ContentViewContentFilter_Previews: PreviewProvider {
                 service.isInstalledMockOverride = true
             }
             .provideDeps(previewDeps)
-    
     }
 }
-
-
-

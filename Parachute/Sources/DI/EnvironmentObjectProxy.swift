@@ -16,4 +16,3 @@ struct EnvironmentObjectProxy<T: ObservableObject, Content: View>: View {
         return content(obj)
     }
 }
-

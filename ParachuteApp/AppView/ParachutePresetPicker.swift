@@ -5,11 +5,11 @@
 //  Created by Sean Lee on 3/20/23.
 //
 
-import Foundation
-import SwiftUI
-import ProxyService
 import Controllers
+import Foundation
 import Models
+import ProxyService
+import SwiftUI
 
 struct ParachutePresetItem: View {
     @EnvironmentObject var settingsStore: SettingsStore
@@ -17,19 +17,20 @@ struct ParachutePresetItem: View {
     @EnvironmentObject var stateController: StateController
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     var hp: Double
-    
+
     var active: Bool {
         settingsStore.activePreset.usageMaxHp == hp
     }
-    
+
     var preset: Preset {
         ProfileManager.makeParachutePreset(ProfileManager.makeParachutePresetData(hp: hp))
     }
-    
+
     var background: Color {
         profileManager.activePreset.mainColor
             .opacity(active ? 1 : 0)
     }
+
     var computedBackgroundColor: Color {
         var color: Color
         if colorScheme == .dark {
@@ -38,11 +39,11 @@ struct ParachutePresetItem: View {
         color = background.bakeAlpha(colorScheme)
         return color
     }
-    
+
     var foregroundColor: Color {
         computedBackgroundColor.bakeAlpha(colorScheme).getForegroundColor()
     }
-    
+
     var body: some View {
         return Text("\(Int(hp)) min")
             .padding()

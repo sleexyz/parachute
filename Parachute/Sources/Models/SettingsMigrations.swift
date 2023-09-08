@@ -8,7 +8,7 @@
 import Foundation
 import ProxyService
 
-public final class SettingsMigrations {
+public enum SettingsMigrations {
     private static var migrations: [Int: (inout Proxyservice_Settings) -> Void] = [
         2: { settings in
             settings.defaultPreset = .focus
@@ -33,7 +33,7 @@ public final class SettingsMigrations {
         9: {
             settings in
             settings.algorithm = .drop
-        }
+        },
     ]
 
     public static var LATEST_VERSION: Int {
@@ -41,14 +41,14 @@ public final class SettingsMigrations {
     }
 
     public static func setDefaults(settings: inout Proxyservice_Settings, from: Int = 0) {
-        for i in from...SettingsMigrations.LATEST_VERSION {
+        for i in from ... SettingsMigrations.LATEST_VERSION {
             if let migration = migrations[i] {
                 migration(&settings)
                 settings.version = Int32(i)
             }
         }
     }
-    
+
     public static func upgradeToLatestVersion(settings: inout Proxyservice_Settings) {
         if settings.version == SettingsMigrations.LATEST_VERSION {
             return
@@ -56,4 +56,3 @@ public final class SettingsMigrations {
         setDefaults(settings: &settings, from: Int(settings.version) + 1)
     }
 }
-

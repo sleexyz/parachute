@@ -5,8 +5,8 @@
 //  Created by Sean Lee on 8/11/23.
 //
 
-import Foundation
 import DI
+import Foundation
 import OSLog
 import SwiftUI
 
@@ -17,12 +17,13 @@ public enum ConnectedViewState {
     case longSession
 }
 
-public class ConnectedViewController: ObservableObject  {
-    public static var shared: ConnectedViewController = ConnectedViewController()
+public class ConnectedViewController: ObservableObject {
+    public static var shared: ConnectedViewController = .init()
     public struct Provider: Dep {
-        public func create(r: Registry) -> ConnectedViewController  {
+        public func create(r _: Registry) -> ConnectedViewController {
             return ConnectedViewController.shared
         }
+
         public init() {}
     }
 
@@ -52,7 +53,7 @@ public class ConnectedViewController: ObservableObject  {
         }
     }
 
-    private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ConnectedViewController")
+    private let logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "ConnectedViewController")
 
     @MainActor
     public func set(state: ConnectedViewState) {

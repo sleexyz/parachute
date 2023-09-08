@@ -4,7 +4,6 @@ import SwiftUI
 struct FeedbackButton: View {
     private let messageComposeDelegate = MessageComposerDelegate()
 
-
     var body: some View {
         Button(action: {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -28,7 +27,7 @@ struct FeedbackButton: View {
 
 extension FeedbackButton {
     private class MessageComposerDelegate: NSObject, MFMessageComposeViewControllerDelegate {
-        func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
+        func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith _: MessageComposeResult) {
             // Customize here
             controller.dismiss(animated: true)
         }
@@ -39,7 +38,7 @@ extension FeedbackButton {
         guard MFMessageComposeViewController.canSendText() else {
             return
         }
-        let vc = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
+        let vc = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.rootViewController
         let composeVC = MFMessageComposeViewController()
         composeVC.messageComposeDelegate = messageComposeDelegate
         composeVC.recipients = ["13472623016"]

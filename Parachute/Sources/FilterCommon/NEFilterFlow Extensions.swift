@@ -2,14 +2,14 @@ import NetworkExtension
 
 public extension NEFilterFlow {
     func matchSocialMedia() -> App? {
-        if self.sourceAppIdentifier?.hasSuffix(".com.zhiliaoapp.musically") ?? false {
+        if sourceAppIdentifier?.hasSuffix(".com.zhiliaoapp.musically") ?? false {
             return .tiktok
         }
         // FOR SPEED TESTING
         // if self.sourceAppIdentifier?.hasSuffix(".com.google.chrome.ios") ?? false {
         //     return .instagram
         // }
-        if self.sourceAppIdentifier?.hasSuffix(".com.burbn.instagram") ?? false {
+        if sourceAppIdentifier?.hasSuffix(".com.burbn.instagram") ?? false {
             // Check if is NEFilterSocketFlow
             if let flow = self as? NEFilterSocketFlow {
                 if flow.remoteHostname?.hasPrefix("chat-e2ee") ?? false {
@@ -21,10 +21,10 @@ public extension NEFilterFlow {
             }
             return .instagram
         }
-        if self.sourceAppIdentifier?.hasSuffix(".com.atebits.Tweetie2") ?? false {
+        if sourceAppIdentifier?.hasSuffix(".com.atebits.Tweetie2") ?? false {
             return .twitter
         }
-        if self.sourceAppIdentifier?.hasSuffix(".com.google.ios.youtube") ?? false {
+        if sourceAppIdentifier?.hasSuffix(".com.google.ios.youtube") ?? false {
             return .youtube
         }
         return nil

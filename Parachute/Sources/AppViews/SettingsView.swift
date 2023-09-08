@@ -1,40 +1,37 @@
-import SwiftUI
-import Controllers
 import CommonViews
+import Controllers
 import ProxyService
+import SwiftUI
 
 struct SettingsContent: View {
     @Binding var isPresented: Bool
 
     @State private var isFeedbackOpen = false
 
-
-
     var body: some View {
         // TODO: put sections behind rows.
         SettingsSyncer {
-                VStack (alignment: .leading) {
-                    HStack {
-                        DisableButton(isSettingsPresented: $isPresented)
-                            Spacer()
+            VStack(alignment: .leading) {
+                HStack {
+                    DisableButton(isSettingsPresented: $isPresented)
+                    Spacer()
 
-                        FeedbackButton()
-                            .padding()
-                    }
+                    FeedbackButton()
+                        .padding()
+                }
+                .padding(.bottom, 20)
+
+                TimePicker()
                     .padding(.bottom, 20)
 
-                    TimePicker()
-                        .padding(.bottom, 20)
+                AppsPicker()
+                    .padding(.bottom, 20)
 
-                    AppsPicker()
-                        .padding(.bottom, 20)
-
-                    OtherSettings()
-                        .padding(.bottom, 20)
-
-                }
-                .font(.system(size: 16, weight: .regular, design: .rounded))
+                OtherSettings()
+                    .padding(.bottom, 20)
             }
+            .font(.system(size: 16, weight: .regular, design: .rounded))
+        }
     }
 }
 
@@ -71,7 +68,7 @@ struct SettingsSyncer<Content: View>: View {
 
 struct OtherSettings: View {
     @EnvironmentObject var settingsController: SettingsController
-    @EnvironmentObject var settingsStore: SettingsStore 
+    @EnvironmentObject var settingsStore: SettingsStore
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -93,7 +90,6 @@ struct OtherSettings: View {
                 .pickerStyle(.menu)
             }
             .padding(.horizontal)
-
         }
     }
 }
@@ -121,7 +117,7 @@ struct DisableButton: View {
 
 struct TimePicker: View {
     @EnvironmentObject var settingsController: SettingsController
-    @EnvironmentObject var settingsStore: SettingsStore 
+    @EnvironmentObject var settingsStore: SettingsStore
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -178,6 +174,7 @@ struct AppsPicker: View {
             }
         )
     }
+
     var isTikTokEnabled: Binding<Bool> {
         Binding<Bool>(
             get: { settingsStore.settings.isAppEnabled(app: .tiktok) },
@@ -189,6 +186,7 @@ struct AppsPicker: View {
             }
         )
     }
+
     var isTwitterEnabled: Binding<Bool> {
         Binding<Bool>(
             get: { settingsStore.settings.isAppEnabled(app: .twitter) },
@@ -200,6 +198,7 @@ struct AppsPicker: View {
             }
         )
     }
+
     var isYoutubeEnabled: Binding<Bool> {
         Binding<Bool>(
             get: { settingsStore.settings.isAppEnabled(app: .youtube) },
@@ -222,7 +221,6 @@ struct AppsPicker: View {
                 .padding(.top, 10)
                 .padding(.horizontal)
 
-            
             VStack {
                 Toggle(isOn: isInstagramEnabled) {
                     Text("Instagram")

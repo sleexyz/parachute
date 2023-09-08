@@ -5,9 +5,9 @@
 //  Created by Sean Lee on 1/22/23.
 //
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 struct NamespaceEnvironmentKey: EnvironmentKey {
     static var defaultValue: Namespace.ID = Namespace().wrappedValue
@@ -35,13 +35,13 @@ extension ShapeStyle {
 extension Color {
     // Returns the corresponding foreground color for a background color.
     func getForegroundColor() -> Color {
-        if self.getLuminance() < 0.6 {
+        if getLuminance() < 0.6 {
             return Color.white
         } else {
             return Color.black
         }
     }
-    
+
     // NOTE: Mixing in blacks is bad; prefer deepenByAlphaAndBake
     func bakeAlpha(_ colorScheme: ColorScheme) -> Color {
         var r, g, b, a: CGFloat
@@ -55,7 +55,7 @@ extension Color {
         }
         return Color(UIColor(Color(red: r, green: g, blue: b)).mix(with: mixedColor, amount: 1 - a))
     }
-    
+
     func deepen(_ amount: Double) -> Color {
         var h, s, b, a: CGFloat
         (h, s, b, a) = (0, 0, 0, 0)
@@ -67,7 +67,7 @@ extension Color {
             opacity: a
         )
     }
-    
+
     // Bakes in alpha
     func deepenByAlphaAndBake() -> Color {
         var h, s, b, a: CGFloat
@@ -80,7 +80,7 @@ extension Color {
             opacity: a
         ).bakeAlpha(ColorScheme.dark)
     }
-    
+
     func getLuminance() -> Double {
         var r, g, b, a: CGFloat
         (r, g, b, a) = (0, 0, 0, 0)
@@ -96,7 +96,6 @@ extension Color {
 }
 
 extension Publisher {
-
     /// Includes the current element as well as the previous element from the upstream publisher in a tuple where the previous element is optional.
     /// The first time the upstream publisher emits an element, the previous element will be `nil`.
     ///
@@ -108,7 +107,7 @@ extension Publisher {
     ///
     /// - Returns: A publisher of a tuple of the previous and current elements from the upstream publisher.
     func withPrevious() -> AnyPublisher<(previous: Output?, current: Output), Failure> {
-        scan(Optional<(Output?, Output)>.none) { ($0?.1, $1) }
+        scan((Output?, Output)?.none) { ($0?.1, $1) }
             .compactMap { $0 }
             .eraseToAnyPublisher()
     }
@@ -129,9 +128,9 @@ extension Publisher {
     }
 }
 
-extension Color {
-    public func lighter(by amount: CGFloat = 0.2) -> Self { Self(UIColor(self).lighter(by: amount)) }
-    public func darker(by amount: CGFloat = 0.2) -> Self { Self(UIColor(self).darker(by: amount)) }
+public extension Color {
+    func lighter(by amount: CGFloat = 0.2) -> Self { Self(UIColor(self).lighter(by: amount)) }
+    func darker(by amount: CGFloat = 0.2) -> Self { Self(UIColor(self).darker(by: amount)) }
 }
 
 extension UIColor {
@@ -161,10 +160,10 @@ extension UIColor {
     func darker(by amount: CGFloat = 0.2) -> Self { mix(with: .black, amount: amount) }
 }
 
-extension View {
-    public func removeFocusOnTap(enabled: Bool) -> some View {
-        self.onTapBackground(enabled: enabled) {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
+public extension View {
+    func removeFocusOnTap(enabled: Bool) -> some View {
+        onTapBackground(enabled: enabled) {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
     }
 }
@@ -186,4 +185,3 @@ extension View {
         )
     }
 }
-

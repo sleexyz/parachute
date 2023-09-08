@@ -23,7 +23,7 @@ public struct Mapping {
         self.outWarp = outWarp
         self.clip = clip
     }
-    
+
     public func map(_ x: Double) -> Double {
         var y = x
         // 1) normalize
@@ -33,7 +33,7 @@ public struct Mapping {
         case .exponential:
             y = (log(y) - log(a)) / (log(b) - log(a))
         }
-        
+
         // 2) scale
         switch outWarp {
         case .linear:
@@ -48,7 +48,7 @@ public struct Mapping {
         }
         return y
     }
-    
+
     public var inverse: Mapping {
         if clip {
             fatalError("cannot invert clipped mapping")
@@ -64,10 +64,10 @@ public extension Double {
 }
 
 public extension FloatingPoint {
-  @inlinable
-  func signum( ) -> Self {
-    if self < 0 { return -1 }
-    if self > 0 { return 1 }
-    return 0
-  }
+    @inlinable
+    func signum() -> Self {
+        if self < 0 { return -1 }
+        if self > 0 { return 1 }
+        return 0
+    }
 }

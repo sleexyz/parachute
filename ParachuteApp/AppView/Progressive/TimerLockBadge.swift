@@ -5,9 +5,9 @@
 //  Created by Sean Lee on 2/20/23.
 //
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 struct TimerLockBadge: View {
     var timeLeft: Int

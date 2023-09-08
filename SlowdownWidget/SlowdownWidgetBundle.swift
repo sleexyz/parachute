@@ -5,8 +5,8 @@
 //  Created by Sean Lee on 8/2/23.
 //
 
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
 @main
 struct SlowdownWidgetBundle: WidgetBundle {

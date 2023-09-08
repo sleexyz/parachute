@@ -1,16 +1,16 @@
-import NetworkExtension
 import FilterCommon
+import NetworkExtension
 import OSLog
 
 class DroppingAppFlowController {
     let app: App
 
-    public init (app: App) {
+    public init(app: App) {
         self.app = app
     }
 
-    func handleInboundData(from flow: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict{
-        if (offset < app.allowedBytesBeforeDrop) {
+    func handleInboundData(from _: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
+        if offset < app.allowedBytesBeforeDrop {
             return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: app.allowedBytesBeforeDrop)
         }
         return .needRulesBlocking()

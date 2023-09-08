@@ -5,35 +5,35 @@
 //  Created by Sean Lee on 4/28/22.
 //
 
-import SwiftUI
-import Controllers
 import AppViews
+import Controllers
+import SwiftUI
 
 struct AppView: View {
     @EnvironmentObject var store: SettingsStore
     @EnvironmentObject var service: NEConfigurationService
     @EnvironmentObject var controller: SettingsController
-    
+
     var showTransitioning: Bool {
         return service.isTransitioning
     }
-    
+
     var body: some View {
-        VStack{
+        VStack {
             if !service.isConnected {
                 DisconnectedView()
             } else {
                 WidgetUpdater {
                     ConnectedView()
                         .provideDeps([
-                            ConnectedViewController.Provider()
+                            ConnectedViewController.Provider(),
                         ])
                 }
             }
         }
         .disabled(showTransitioning)
         .navigationBarItems(trailing:
-                                Spinner(isAnimating: showTransitioning, color: .label, style: .medium)
+            Spinner(isAnimating: showTransitioning, color: .label, style: .medium)
         )
     }
 }

@@ -11,7 +11,7 @@ extension RpcError: LocalizedError {
         switch self {
         case .nilResponseError: return NSLocalizedString("Server returned nil response", comment: "")
         case .serverNotInitializedError: return NSLocalizedString("Server not initialized", comment: "")
-        case .downstreamError(let message): return NSLocalizedString("Downstream error: \(message)", comment: "")
+        case let .downstreamError(message): return NSLocalizedString("Downstream error: \(message)", comment: "")
         }
     }
 }

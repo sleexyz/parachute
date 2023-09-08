@@ -5,20 +5,20 @@
 //  Created by Sean Lee on 3/10/23.
 //
 
+import Controllers
 import Foundation
 import SwiftUI
-import Controllers
 
 let TOP_PADDING: Double = 40
 
 struct PresetContent: View {
     @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var profileManager: ProfileManager
-    
+
     var model: PresetViewModel {
         PresetViewModel(presetData: settingsStore.activePresetBinding, preset: profileManager.activePreset)
     }
-    
+
     var body: some View {
         VStack {
 //            PresetHeader()
@@ -27,13 +27,12 @@ struct PresetContent: View {
                     .padding()
             }
             Spacer()
-            
         }
         .padding(CARD_PADDING)
     }
 }
 
-//struct Background: View {
+// struct Background: View {
 //    var model: PresetViewModel
 //    @EnvironmentObject var settingsStore: SettingsStore
 //    @EnvironmentObject var profileManager: ProfileManager
@@ -55,8 +54,7 @@ struct PresetContent: View {
 //                .colorMultiply(model.mainColor)
 //                .animation(ANIMATION, value: model.mainColor)
 //    }
-//}
-
+// }
 
 struct PresetHeader: View {
     @EnvironmentObject var settingsStore: SettingsStore
@@ -84,7 +82,7 @@ struct SlowingStatus: View {
             Text("Slowing disabled")
         }
     }
-    
+
     var body: some View {
         VStack {
             HStack(alignment: .bottom) {
@@ -93,9 +91,8 @@ struct SlowingStatus: View {
                     .opacity(0.4)
                 Spacer()
             }
-                .padding(.bottom, 20)
+            .padding(.bottom, 20)
             WiredStagedDamageBar(height: 20)
         }
-        
     }
 }

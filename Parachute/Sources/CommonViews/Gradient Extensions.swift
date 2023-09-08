@@ -11,5 +11,4 @@ import SwiftUI
 public extension LinearGradient {
     static var bgRev = LinearGradient(gradient: Gradient(colors: [.background, .darkBlueBg]), startPoint: .top, endPoint: .bottom)
     static var bg = LinearGradient(gradient: Gradient(colors: [.background, .darkBlueBg]), startPoint: .bottom, endPoint: .top)
-
 }

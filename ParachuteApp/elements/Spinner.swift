@@ -13,14 +13,14 @@ struct Spinner: UIViewRepresentable {
     let color: UIColor
     let style: UIActivityIndicatorView.Style
 
-    func makeUIView(context: Context) -> UIActivityIndicatorView {
+    func makeUIView(context _: Context) -> UIActivityIndicatorView {
         let indicator = UIActivityIndicatorView(style: style)
         indicator.hidesWhenStopped = true
         indicator.color = color
         return indicator
     }
 
-    func updateUIView(_ uiView: UIActivityIndicatorView, context: Context) {
+    func updateUIView(_ uiView: UIActivityIndicatorView, context _: Context) {
         isAnimating ? uiView.startAnimating() : uiView.stopAnimating()
     }
 }

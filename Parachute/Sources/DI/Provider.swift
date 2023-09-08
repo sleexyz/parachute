@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-
 // A Simpler implementation of a Provider
 struct SimpleProvider: ViewModifier {
     let dep: any Dep
@@ -16,24 +15,22 @@ struct SimpleProvider: ViewModifier {
     func body(content: Content) -> some View {
         content.modifier(SimpleProviderInner(dep: dep, parent: parent))
     }
-    
+
     private struct SimpleProviderInner: ViewModifier {
         let dep: any Dep
         @StateObject private var registry: RegistryImpl
-        
+
         init(dep: any Dep, parent: Registry) {
-            self._registry = StateObject(wrappedValue: RegistryImpl(deps: [dep], parent: parent))
+            _registry = StateObject(wrappedValue: RegistryImpl(deps: [dep], parent: parent))
             self.dep = dep
         }
-        
+
         func body(content: Content) -> some View {
             AnyView(dep._environmentObject(registry: registry, content: content))
                 .environment(\.registry, registry)
         }
-        
     }
 }
-
 
 // A Provider provides
 // 1) services to views -- via EnvironmentObject
@@ -41,7 +38,7 @@ struct SimpleProvider: ViewModifier {
 struct Provider: ViewModifier {
     let deps: [any Dep]
     @Environment(\.registry) private var parent: Registry
-    
+
     func body(content: Content) -> some View {
         content.modifier(ProviderInner(deps: deps, parent: parent))
     }
@@ -51,12 +48,12 @@ struct Provider: ViewModifier {
 private struct ProviderInner: ViewModifier {
     @StateObject private var registry: RegistryImpl
     let deps: [any Dep]
-    
+
     init(deps: [any Dep], parent: Registry) {
-        self._registry = StateObject(wrappedValue: RegistryImpl(deps: deps, parent: parent))
+        _registry = StateObject(wrappedValue: RegistryImpl(deps: deps, parent: parent))
         self.deps = deps
     }
-    
+
     func body(content: Content) -> some View {
         content
             .modifier(ProviderViewer(deps: deps, registry: registry))
@@ -67,8 +64,8 @@ private struct ProviderInner: ViewModifier {
 internal struct ProviderViewer: ViewModifier {
     let deps: [any Dep]
     let registry: Registry
-    
-    func body (content: Content) -> some View {
+
+    func body(content: Content) -> some View {
         if deps.isEmpty {
             return AnyView(content)
         }

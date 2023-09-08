@@ -20,7 +20,7 @@ extension EnvironmentValues {
 }
 
 public struct ServiceKey {
-  let serviceType: Any.Type
+    let serviceType: Any.Type
 }
 
 extension ServiceKey: Hashable {

@@ -5,15 +5,15 @@
 //  Created by Sean Lee on 8/11/23.
 //
 
-import WidgetKit
-import SwiftUI
-import Controllers
-import CommonLoaders
 import Activities
+import CommonLoaders
+import Controllers
 import Models
+import OSLog
 import ProxyService
 import SwiftProtobuf
-import OSLog
+import SwiftUI
+import WidgetKit
 
 struct Logo: View {
     var body: some View {
@@ -33,7 +33,7 @@ struct Logo: View {
     }
 }
 
-public struct SlowdownWidgetView : View {
+public struct SlowdownWidgetView: View {
     var settings: Proxyservice_Settings
     var isConnected: Bool
 
@@ -46,7 +46,6 @@ public struct SlowdownWidgetView : View {
         self.isConnected = isConnected
     }
 
-
     var statusMessage: String {
         if settings.changeMetadata.reason == "Overlay expired" && settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
             return "Session ended"
@@ -54,13 +53,11 @@ public struct SlowdownWidgetView : View {
         return "Detox Active"
     }
 
-
-
     public var body: some View {
         HStack(alignment: .top) {
             Logo()
                 .foregroundStyle(isConnected ? Color.parachuteOrange : Color.secondary)
-                // .frame(width: 30, height: 30)
+            // .frame(width: 30, height: 30)
             Spacer()
             if !isConnected {
                 Text("Disabled for 1 hour")
@@ -70,7 +67,7 @@ public struct SlowdownWidgetView : View {
                 Text(statusMessage)
                     .font(.subheadline.smallCaps())
                     .foregroundColor(.secondary)
-                    // .matchedGeometryEffect(id: "status", in: animation)
+                // .matchedGeometryEffect(id: "status", in: animation)
             } else if settings.hasOverlay {
                 let components = DateComponents(second: 0)
                 let futureDate = Calendar.current.date(byAdding: components, to: settings.overlay.expiry.date)!
@@ -80,7 +77,7 @@ public struct SlowdownWidgetView : View {
                     .foregroundColor(.primary.opacity(0.5))
                     // .matchedGeometryEffect(id: "status", in: animation)
                     .frame(maxWidth: 84)
-                    // .foregroundColor(.parachuteOrange.opacity(0.8))
+                // .foregroundColor(.parachuteOrange.opacity(0.8))
             } else {
                 Text("...")
             }
@@ -91,6 +88,5 @@ public struct SlowdownWidgetView : View {
         .preferredColorScheme(.dark)
         .environment(\.colorScheme, .dark) // For some reason .preferredColorScheme doesn't work with widgets so we do both
         // .animation(.spring(duration: 0.2), value: settings)
-
     }
 }

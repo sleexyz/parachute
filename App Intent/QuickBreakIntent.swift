@@ -1,24 +1,23 @@
+import AppHelpers
 import AppIntents
 import Controllers
-import AppHelpers
-import OSLog
 import Models
+import OSLog
 
 public struct QuickBreakIntent: AppIntent, LiveActivityIntent {
     public static var title: LocalizedStringResource = "Start session"
     public static var description = IntentDescription("Start a 30 second social media session.")
-    
+
     // Not ideal UX wise, but this is necessary for consistent behavior.
     public static var openAppWhenRun: Bool = true
 
     let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "QuickBreakIntent")
 
-    public init() {
-    }
+    public init() {}
 
     public func perform() async throws -> some IntentResult {
         logger.info("QuickBreakIntent.perform")
-        guard let profileManager = ProfileManager.shared else  {
+        guard let profileManager = ProfileManager.shared else {
             throw MyIntentError.message("ProfileManager not initialized")
         }
 

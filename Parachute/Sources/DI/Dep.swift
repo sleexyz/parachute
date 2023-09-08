@@ -10,13 +10,15 @@ import SwiftUI
 
 public extension View {
     func provideDep(_ dep: any Dep) -> some View {
-        self.modifier(SimpleProvider(dep: dep))
+        modifier(SimpleProvider(dep: dep))
     }
+
     func provideDeps(_ deps: [any Dep]) -> some View {
-        self.modifier(Provider(deps: deps))
+        modifier(Provider(deps: deps))
     }
-    func consumeDep<T: ObservableObject>(_ type: T.Type, effect: @escaping (T) -> ()) -> some View {
-        self.modifier(Consumer(type: type, effect: effect))
+
+    func consumeDep<T: ObservableObject>(_ type: T.Type, effect: @escaping (T) -> Void) -> some View {
+        modifier(Consumer(type: type, effect: effect))
     }
 }
 
@@ -31,6 +33,7 @@ public extension Dep {
     func getServiceKeys() -> [ServiceKey] {
         return [ServiceKey(serviceType: T.self)]
     }
+
     func _environmentObject<Content: View>(registry: Registry, content: Content) -> any View {
         return content.environmentObject(registry.resolve(T.self))
     }
@@ -46,9 +49,10 @@ public extension MockDep {
     func getServiceKeys() -> [ServiceKey] {
         return [
             ServiceKey(serviceType: MockT.self),
-            ServiceKey(serviceType: T.self)
+            ServiceKey(serviceType: T.self),
         ]
     }
+
     func _environmentObject<Content: View>(registry: Registry, content: Content) -> any View {
         return content
             .environmentObject(registry.resolve(MockT.self))

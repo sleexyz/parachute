@@ -5,15 +5,15 @@
 //  Created by Sean Lee on 1/30/22.
 //
 
-import SwiftUI
-import ProxyService
-import FirebaseCore
-import Common
-import Controllers
-import CommonLoaders
 import AppHelpers
-import OSLog
+import Common
+import CommonLoaders
 import CommonViews
+import Controllers
+import FirebaseCore
+import OSLog
+import ProxyService
+import SwiftUI
 
 @main
 struct slowdownApp: App {
@@ -22,9 +22,9 @@ struct slowdownApp: App {
     init() {
         Fonts.registerFonts()
     }
-    
+
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "slowdownApp")
-    
+
     var body: some Scene {
         WindowGroup {
             ControllersLoader {
@@ -35,7 +35,7 @@ struct slowdownApp: App {
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // if Env.value == .prod {
         FirebaseApp.configure()
         // }
@@ -51,4 +51,3 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
 }
-

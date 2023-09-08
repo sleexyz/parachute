@@ -1,8 +1,8 @@
-import Foundation
-import ActivityKit
 import Activities
-import ProxyService
+import ActivityKit
+import Foundation
 import OSLog
+import ProxyService
 
 @available(iOS 16.2, *)
 public class ActivitiesHelper {
@@ -22,9 +22,9 @@ public class ActivitiesHelper {
 
     private func requestActivity(settings: Proxyservice_Settings, isConnected: Bool) {
         do {
-            let activity = try Activity.request(attributes: SlowdownWidgetAttributes(), content: self.makeActivityContent(settings, isConnected: isConnected))
+            let activity = try Activity.request(attributes: SlowdownWidgetAttributes(), content: makeActivityContent(settings, isConnected: isConnected))
             logger.info("requested activity: \(activity.id)")
-        } catch (let error) {
+        } catch {
             logger.error("error requesting activity: \(error.localizedDescription)")
         }
     }
@@ -38,10 +38,9 @@ public class ActivitiesHelper {
         return ActivityContent(state:
             SlowdownWidgetAttributes.ContentState(settings: settings, isConnected: isConnected),
             staleDate: nil)
-            
     }
 
-    public func startOrUpdate(settings: Proxyservice_Settings, isConnected: Bool) async -> () {
+    public func startOrUpdate(settings: Proxyservice_Settings, isConnected: Bool) async {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             logger.info("activities not enabled")
             return
@@ -53,7 +52,7 @@ public class ActivitiesHelper {
         await update(settings: settings, isConnected: isConnected)
     }
 
-    public func update(settings: Proxyservice_Settings, isConnected: Bool) async -> () {
+    public func update(settings: Proxyservice_Settings, isConnected: Bool) async {
         if !ActivityAuthorizationInfo().areActivitiesEnabled {
             logger.info("activities not enabled")
             return
@@ -63,7 +62,7 @@ public class ActivitiesHelper {
             return
         }
         await activity.update(
-            self.makeActivityContent(settings, isConnected: isConnected),
+            makeActivityContent(settings, isConnected: isConnected),
             alertConfiguration: AlertConfiguration(title: "Delivery update", body: "Your pizza order will arrive in 25 minutes.", sound: .default)
         )
     }

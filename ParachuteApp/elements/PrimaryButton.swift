@@ -5,16 +5,15 @@
 //  Created by Sean Lee on 4/28/22.
 //
 
-import SwiftUI
 import Foundation
+import SwiftUI
 import UIKit
-
 
 struct PrimaryButton: View {
     let title: String
     let action: () -> Void
     var isLoading: Bool
-    
+
     init(title: String, action: @escaping () -> Void, isLoading: Bool) {
         self.title = title
         self.action = action
@@ -30,12 +29,12 @@ struct PrimaryButton: View {
                     .frame(maxWidth: .infinity)
             }
         }
-            .disabled(isLoading)
-            .padding()
-            .frame(maxWidth: .infinity)
-            .foregroundColor(Color.white)
-            .background(Color.accentColor.grayscale(1))
-            .cornerRadius(8)
+        .disabled(isLoading)
+        .padding()
+        .frame(maxWidth: .infinity)
+        .foregroundColor(Color.white)
+        .background(Color.accentColor.grayscale(1))
+        .cornerRadius(8)
     }
 }
 

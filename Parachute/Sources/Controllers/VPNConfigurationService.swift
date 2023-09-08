@@ -5,15 +5,15 @@
 //  Created by Sean Lee on 4/28/22.
 //
 
-import NetworkExtension
-import Foundation
-import ProxyService
-import OSLog
-import Combine
 import BackgroundTasks
+import Combine
 import Common
-import Firebase
 import DI
+import Firebase
+import Foundation
+import NetworkExtension
+import OSLog
+import ProxyService
 
 enum UserError: Error {
     case message(message: String)
@@ -27,14 +27,14 @@ public enum VPNStatus {
     case connecting
     case disconnected
     case disconnecting
-    
+
     var isConnected: Bool {
         switch self {
         case .connected, .disconnecting: return true
         default: return false
         }
     }
-    
+
     var isTransitioning: Bool {
         switch self {
         case .connecting, .disconnecting: return true
@@ -60,55 +60,56 @@ public protocol VPNConfigurationServiceProtocol: NEConfigurationServiceProtocol 
     var status: VPNStatus { get }
     var connectedDate: Date? { get }
     var isLoaded: Bool { get }
-    
+
     func registerBackgroundTasks()
     func setOnDemand(_ value: Bool) async throws
-} 
+}
 
 public extension VPNConfigurationServiceProtocol {
     @MainActor
     func stopConnectionAndDisableOnDemand() async throws {
-        try await self.stop()
-        try await self.setOnDemand(false)
+        try await stop()
+        try await setOnDemand(false)
     }
 
     @MainActor
     func startConnectionAndEnableOnDemand(settingsOverride: Proxyservice_Settings) async throws {
-        try await self.start(settingsOverride: settingsOverride)
-        try await self.setOnDemand(true)
+        try await start(settingsOverride: settingsOverride)
+        try await setOnDemand(true)
     }
 }
 
-public class VPNConfigurationService: VPNConfigurationServiceProtocol { 
+public class VPNConfigurationService: VPNConfigurationServiceProtocol {
     public static let shared = VPNConfigurationService()
     public struct Provider: Dep {
-        public func create(r: Registry) -> NEConfigurationService {
+        public func create(r _: Registry) -> NEConfigurationService {
             return .shared
         }
+
         public init() {}
     }
-    
+
     @Published public var isConnected = false
     @Published public var isTransitioning = false
     @Published public var conn: NEVPNConnection? = nil
     @Published public var status: VPNStatus = .unknown
     @Published public var connectedDate: Date?
 
-    @Published private(set) public var isLoaded = false
+    @Published public private(set) var isLoaded = false
     @Published private var manager: NETunnelProviderManager?
 
     static let unpauseIdentifier = "industries.strange.slowdown.unpause"
-    private let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "VPNConfigurationService")
+    private let logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "VPNConfigurationService")
     private var bag = Set<AnyCancellable>()
-    
+
     open var isInstalled: Bool {
         return manager != nil
     }
-    
+
     public init() {
         $status
             .debounce(for: .seconds(10), scheduler: DispatchQueue.main)
-            .sink {value in
+            .sink { value in
                 if value == .connecting {
                     let msg = "Error connecting, stopping connection attempt"
                     self.logger.error("\(msg)")
@@ -122,10 +123,10 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
             }.store(in: &bag)
     }
 
-    public func load() async -> () {
-        self.logger.info("VPNConfigurationService initializing...")
+    public func load() async {
+        logger.info("VPNConfigurationService initializing...")
         if !isLoaded {
-            NETunnelProviderManager.loadAllFromPreferences { managers, error in
+            NETunnelProviderManager.loadAllFromPreferences { managers, _ in
                 self.manager = managers?.first
                 self.isLoaded = true
                 self.connectedDate = self.manager?.connection.connectedDate
@@ -144,10 +145,10 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
                             self.isConnected = true
                             self.isTransitioning = false
                         }
-                        if conn.status == NEVPNStatus.connecting{
+                        if conn.status == NEVPNStatus.connecting {
                             self.isTransitioning = true
                         }
-                        if conn.status == NEVPNStatus.disconnecting{
+                        if conn.status == NEVPNStatus.disconnecting {
                             self.isTransitioning = true
                         }
                         if conn.status == NEVPNStatus.disconnected {
@@ -161,13 +162,13 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
             }.value
         }
     }
-    
+
     public func registerBackgroundTasks() {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: VPNConfigurationService.unpauseIdentifier, using: nil) { task in
             self.handleAppRefresh(task: task as! BGAppRefreshTask)
         }
     }
-    
+
     private func handleAppRefresh(task: BGAppRefreshTask) {
         let updateTask = Task {
             do {
@@ -182,7 +183,7 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
             updateTask.cancel()
         }
     }
-    
+
     @MainActor
     private func updateStatus(connStatus: NEVPNStatus) {
         switch connStatus {
@@ -199,81 +200,80 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
             status = .unknown
         }
     }
-                
+
     @MainActor
-    public func setOnDemand(_ value: Bool) async throws {
-        self.manager?.isOnDemandEnabled = true
-        try await self.saveManagerPreferences()
+    public func setOnDemand(_: Bool) async throws {
+        manager?.isOnDemandEnabled = true
+        try await saveManagerPreferences()
     }
-    
+
     @MainActor
     public func start(settingsOverride: Proxyservice_Settings) async throws {
-            try self.manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: try settingsOverride.serializedData())])
+        try manager?.connection.startVPNTunnel(options: ["settingsOverride": NSData(data: settingsOverride.serializedData())])
 
-        self.isTransitioning = true
+        isTransitioning = true
     }
-    
+
     @MainActor
     public func stop() async throws {
-        self.manager?.connection.stopVPNTunnel()
-        self.isTransitioning = true
+        manager?.connection.stopVPNTunnel()
+        isTransitioning = true
     }
-    
-    private func saveManagerPreferences() async throws -> () {
-        return try await withCheckedThrowingContinuation{ continuation in
+
+    private func saveManagerPreferences() async throws {
+        return try await withCheckedThrowingContinuation { continuation in
             self.manager?.saveToPreferences { error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 }
-                continuation.resume(returning:())
+                continuation.resume(returning: ())
             }
         }
     }
-    
-    
-    public func install(settings: Proxyservice_Settings) async throws -> () {
-        try await Future<(), Error> { promise in
+
+    public func install(settings _: Proxyservice_Settings) async throws {
+        try await Future<Void, Error> { promise in
             let tunnel = self.makeNewTunnel()
             tunnel.saveToPreferences { [weak self] error in
                 if let error = error {
                     return promise(.failure(error))
                 }
-                
+
                 // See https://forums.developer.apple.com/thread/25928
-                tunnel.loadFromPreferences { [weak self] error in
+                tunnel.loadFromPreferences { [weak self] _ in
                     self?.manager = tunnel
                     promise(.success(()))
                 }
             }
         }.value
     }
-    
+
     private func makeNewTunnel() -> NETunnelProviderManager {
         let tunnel = NETunnelProviderManager()
         tunnel.localizedDescription = "Slowdown"
-        
+
         let proto = NETunnelProviderProtocol()
         proto.providerBundleIdentifier = "industries.strange.slowdown.tunnel"
         proto.serverAddress = "127.0.0.1:8080"
         proto.providerConfiguration = [:]
         proto.disconnectOnSleep = true
-        
+
         tunnel.protocolConfiguration = proto
         let rule = NEOnDemandRuleConnect()
         rule.interfaceTypeMatch = .any
         tunnel.onDemandRules = [rule]
-        
+
         // Don't autoconnect on app install -- wait for user to hit start.
         tunnel.isOnDemandEnabled = false
-        
+
         // Enable the tunnel by default
         tunnel.isEnabled = true
-        
+
         return tunnel
     }
-    
+
     public func Rpc(request: Proxyservice_Request) async throws -> Data {
-        guard let session = self.manager?.connection as? NETunnelProviderSession else {
+        guard let session = manager?.connection as? NETunnelProviderSession else {
             throw RpcError.serverNotInitializedError
         }
         return try await withCheckedThrowingContinuation { resume in
@@ -285,22 +285,23 @@ public class VPNConfigurationService: VPNConfigurationServiceProtocol {
                     }
                     resume.resume(returning: data)
                 }
-            } catch let error {
+            } catch {
                 resume.resume(throwing: error)
             }
         }
     }
 }
 
-
 public class MockVPNConfigurationService: NEConfigurationService {
     public struct Provider: MockDep {
         public typealias MockT = MockVPNConfigurationService
-        public func create(r: Registry) -> NEConfigurationService {
+        public func create(r _: Registry) -> NEConfigurationService {
             return MockVPNConfigurationService()
         }
+
         public init() {}
     }
+
     override public init() {
         super.init()
     }
@@ -310,7 +311,8 @@ public class MockVPNConfigurationService: NEConfigurationService {
     override public var isInstalled: Bool {
         return isInstalledMockOverride ?? super.isInstalled
     }
+
     public func setIsConnected(value: Bool) {
-        self.isConnected = value
+        isConnected = value
     }
 }

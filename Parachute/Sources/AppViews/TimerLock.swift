@@ -1,7 +1,7 @@
-import SwiftUI
 import Combine
+import SwiftUI
 
-public struct TimerLock<Content: View>: View{
+public struct TimerLock<Content: View>: View {
     var duration: Int = 10
 
     @ViewBuilder var content: (_ timeLeft: Int) -> Content
@@ -13,10 +13,9 @@ public struct TimerLock<Content: View>: View{
     public init(duration: Int, @ViewBuilder content: @escaping (_ timeLeft: Int) -> Content) {
         self.duration = duration
         self.content = content
-        self._timeLeft = State(initialValue: duration)
-        self._timer = State(initialValue: nil)
+        _timeLeft = State(initialValue: duration)
+        _timer = State(initialValue: nil)
     }
-    
 
     public var body: some View {
         content(timeLeft)
@@ -31,7 +30,7 @@ public struct TimerLock<Content: View>: View{
                 startSubscription()
             }
     }
-    
+
     func startSubscription() {
         timeLeft = duration
         timer?.cancel()

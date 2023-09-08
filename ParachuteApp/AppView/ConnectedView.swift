@@ -5,17 +5,17 @@
 //  Created by Sean Lee on 2/15/23.
 //
 
-import Foundation
-import SwiftUI
-import ProxyService
-import OrderedCollections
-import Controllers
 import AppViews
 import CommonViews
+import Controllers
+import Foundation
+import OrderedCollections
+import ProxyService
+import SwiftUI
 
 struct ProfileCardModifier: ViewModifier {
     @EnvironmentObject var profileManager: ProfileManager
-    
+
     func body(content: Content) -> some View {
         content
     }
@@ -23,7 +23,7 @@ struct ProfileCardModifier: ViewModifier {
 
 struct ConnectedView: View {
     @EnvironmentObject var connectedViewController: ConnectedViewController
-    
+
     var body: some View {
         Group {
             switch connectedViewController.state {
@@ -73,8 +73,6 @@ struct ConnectedViewSettings_Previews: PreviewProvider {
         }
     }
 }
-
-
 
 struct ConnectedViewScroll_Previews: PreviewProvider {
     static var previews: some View {

@@ -1,12 +1,12 @@
-import NetworkExtension
-import SwiftProtobuf
-import ProxyService
-import OSLog
 import FilterCommon
 import Models
+import NetworkExtension
+import OSLog
+import ProxyService
+import SwiftProtobuf
 
 public class DataFlowController {
-    let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DataFlowController")
+    let logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "DataFlowController")
 
     var settings: Proxyservice_Settings
 
@@ -33,18 +33,18 @@ public class DataFlowController {
             return .allow()
         }
 
-        // NOTE: we intentionally don't check the app type here and allow here, 
-        //      since .allow() will persist the entire flow and apps persist flows 
+        // NOTE: we intentionally don't check the app type here and allow here,
+        //      since .allow() will persist the entire flow and apps persist flows
         //      for a long time.
 
         flowRegistry.register(flow: flow)
 
         if settings.algorithm == .drop {
-            return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.allowedBytesBeforeDrop,  filterOutbound: false, peekOutboundBytes: 0)
+            return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.allowedBytesBeforeDrop, filterOutbound: false, peekOutboundBytes: 0)
         }
 
         // Pass to handleInboundData
-        return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.preSlowingBytes,  filterOutbound: false, peekOutboundBytes: 0)
+        return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.preSlowingBytes, filterOutbound: false, peekOutboundBytes: 0)
     }
 
     public func handleInboundData(from flow: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
@@ -90,8 +90,6 @@ public class FlowRegistry {
         logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FlowRegistry")
     }
 
-
-
     public func register(flow: NEFilterFlow) {
         guard let app = flow.matchSocialMedia() else {
             // Invariant error. We should only be registering social media flows.
@@ -108,4 +106,3 @@ public class FlowRegistry {
         return flowDelays[flow.identifier]!
     }
 }
-

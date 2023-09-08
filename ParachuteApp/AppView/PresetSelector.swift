@@ -5,21 +5,21 @@
 //  Created by Sean Lee on 3/20/23.
 //
 
+import Controllers
 import Foundation
+import Models
 import OrderedCollections
 import SwiftUI
-import Controllers
-import Models
 
 struct PresetSelector: View {
     @EnvironmentObject var profileManager: ProfileManager
-    
+
     @Namespace var additionalPresetsStackID
-    
+
     var shouldRenderSelector: Bool {
         return profileManager.presetSelectorOpen
     }
-    
+
     var cards: OrderedDictionary<String, AnyCardable> {
         var map = OrderedDictionary<String, AnyCardable>()
         for entry in profileManager.presets {
@@ -28,48 +28,49 @@ struct PresetSelector: View {
         map[Pause().id] = Pause().eraseToAnyCardable()
         return map
     }
-    
+
     var profileCards: [OrderedDictionary<PresetID, Preset>.Element] {
         profileManager.topLevelPresets.elements.filter { $0.value.id != profileManager.defaultPreset.id }
     }
-    
+
     func delay(preset: Preset) -> Double {
         if profileManager.activePreset.id == preset.id {
             return 2
         }
         return 2
     }
-    
+
     func isActive(_ cardable: AnyCardable) -> Bool {
         if cardable.id == profileManager.activePreset.id {
             return true
         }
         return false
     }
+
     func insertionTransition(cardable: AnyCardable) -> AnyTransition {
         if isActive(cardable) {
             return .identity
         }
         return .opacity.animation(ANIMATION)
     }
-    
+
     var material: some ShapeStyle {
         Material.ultraThickMaterial.opacity(profileManager.presetSelectorOpen ? 1 : 0)
     }
-    
+
     var height: Double {
         return UIScreen.main.bounds.height
     }
-    
+
     var body: some View {
         ScrollViewReader { scrollViewProxy in
             ScrollView {
                 VStack {
                     ForEach(cards.elements.reversed(), id: \.key) { entry in
-                        if (shouldRenderSelector) || isActive(entry.value) {
+                        if shouldRenderSelector || isActive(entry.value) {
                             Spacer()
-                            entry.value.makeCard { () ->  AnyView in
-                                return AnyView(
+                            entry.value.makeCard { () -> AnyView in
+                                AnyView(
                                     entry.value.getExpandedBody()
                                         .opacity(shouldRenderSelector ? 1 : 0)
                                 )
@@ -83,7 +84,7 @@ struct PresetSelector: View {
                             ))
                         }
                     }
-                    if shouldRenderSelector  {
+                    if shouldRenderSelector {
                         SeeMorePresetsButton()
                             .onTapGesture {
                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -110,7 +111,7 @@ struct PresetSelector: View {
                 if shouldRenderSelector {
                     VStack {
                         ForEach(profileCards, id: \.key) { entry in
-                            entry.value.makeCard { () ->  AnyView in
+                            entry.value.makeCard { () -> AnyView in
                                 AnyView(EmptyView())
                             }
                             .padding()

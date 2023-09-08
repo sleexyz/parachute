@@ -5,12 +5,12 @@
 //  Created by Sean Lee on 2/11/23.
 //
 
-import Foundation
 import Combine
+import Controllers
+import DI
+import Foundation
 import OSLog
 import SwiftUI
-import DI
-import Controllers
 
 let INITIAL_FETCH_DELAY_SECS: Int = 5
 let LOOP_FETCH_DELAY_SECS: Int = 5
@@ -24,16 +24,17 @@ class StateUpdater: ObservableObject {
             )
         }
     }
+
     private var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "StateUpdater")
     private var stateController: StateController
     private var vpnConfigurationService: VPNConfigurationService
-    
+
     // Whether a state-derived view is visible
     @Published var isVisible: Bool = false
-    
+
     private var bag = Set<AnyCancellable>()
     private var loopBag = Set<AnyCancellable>()
-    
+
     init(stateController: StateController, vpnConfigurationService: VPNConfigurationService) {
         self.stateController = stateController
         self.vpnConfigurationService = vpnConfigurationService
@@ -41,23 +42,22 @@ class StateUpdater: ObservableObject {
             $isVisible.withPrevious(),
             vpnConfigurationService.$status
         )
-        .sink { [weak self] (isVisibleTuple, status) in
+        .sink { [weak self] isVisibleTuple, status in
             let isVisiblePrevious = isVisibleTuple.0 ?? false
             let isVisible = isVisibleTuple.1
-            if isVisible  && !isVisiblePrevious && status == .connected {
+            if isVisible && !isVisiblePrevious && status == .connected {
                 self?.startSubscription()
-            }
-            else if !isVisible && isVisiblePrevious {
+            } else if !isVisible && isVisiblePrevious {
                 self?.cancelSubscription()
             }
         }.store(in: &bag)
     }
-    
+
     @MainActor
     public func setVisible(_ value: Bool) {
         isVisible = value
     }
-    
+
     private func startSubscription() {
         Task {
             cancelSubscription()
@@ -71,14 +71,14 @@ class StateUpdater: ObservableObject {
             self.startSubscriptionLoop()
         }
     }
-    
+
     private func startSubscriptionLoop() {
         CancellableLoop {
             self.stateController.fetchState()
             try! await Task.sleep(nanoseconds: UInt64(LOOP_FETCH_DELAY_SECS) * NSEC_PER_SEC)
         }.store(in: &loopBag)
     }
-    
+
     private func cancelSubscription() {
         for x in loopBag {
 //            logger.info("cancelling \(x)")
@@ -86,11 +86,11 @@ class StateUpdater: ObservableObject {
         }
         loopBag.removeAll()
     }
-    
+
     struct IsVisibleUpdater: ViewModifier {
         @Environment(\.scenePhase) var scenePhase
         @EnvironmentObject private var stateUpdater: StateUpdater
-        
+
         func body(content: Content) -> some View {
             content
                 .onChange(of: scenePhase) { newPhase in
@@ -112,13 +112,13 @@ class StateUpdater: ObservableObject {
 
 class CancellableLoop: Cancellable {
     var _cancel: Bool = false
-    let perform: () async -> ()
-    
-    init(_ perform: @escaping () async -> ()) {
+    let perform: () async -> Void
+
+    init(_ perform: @escaping () async -> Void) {
         self.perform = perform
         connect()
     }
-    
+
     func connect() {
         Task {
             while true {
@@ -129,9 +129,8 @@ class CancellableLoop: Cancellable {
             }
         }
     }
-    
+
     func cancel() {
         _cancel = true
     }
-    
 }

@@ -5,23 +5,23 @@
 //  Created by Sean Lee on 2/18/23.
 //
 
-import Foundation
-import ProxyService
-import SwiftUI
-import Combine
-import OrderedCollections
-import SwiftProtobuf
-import DI
-import Models
-import RangeMapping
 import AppHelpers
+import Combine
+import DI
+import Foundation
+import Models
+import OrderedCollections
 import OSLog
+import ProxyService
+import RangeMapping
+import SwiftProtobuf
+import SwiftUI
 
 var PRESET_OPACITY: Double = 0.8
 var OVERLAY_PRESET_OPACITY: Double = PRESET_OPACITY * 0.3
 
 public class ProfileManager: ObservableObject {
-    public struct Provider : Dep {
+    public struct Provider: Dep {
         public func create(r: Registry) -> ProfileManager {
             let instance = ProfileManager(
                 settingsStore: r.resolve(SettingsStore.self),
@@ -31,8 +31,10 @@ public class ProfileManager: ObservableObject {
             ProfileManager.shared = instance
             return instance
         }
+
         public init() {}
     }
+
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ProfileManager")
     var settingsStore: SettingsStore
     var settingsController: SettingsController
@@ -51,7 +53,7 @@ public class ProfileManager: ObservableObject {
     }
 
     public static var shared: ProfileManager? = nil
-    
+
     @Published public var presetSelectorOpen: Bool = false
     @Published public var profileSelectorOpen: Bool = false
 
@@ -62,18 +64,18 @@ public class ProfileManager: ObservableObject {
     public var activePreset: Preset {
         allPresets[settingsStore.activePreset.id]!
     }
-    
+
     var activeOverlayPreset: Preset? {
         if let presetId = settingsStore.activeOverlayPreset?.id {
             return allPresets[presetId]
         }
         return nil
     }
-    
+
     public var defaultPreset: Preset {
         return allPresets[settingsStore.defaultPreset.id]!
     }
-    
+
     public var presets: OrderedDictionary<String, Preset> {
         var map = OrderedDictionary<String, Preset>()
         map[defaultPreset.id] = defaultPreset
@@ -83,12 +85,11 @@ public class ProfileManager: ObservableObject {
         return map
     }
 
-    
     // NOTE: this does not support long overlays very well.
     @MainActor
-    public func loadPreset(preset: Preset, overlay: Preset? = nil) async throws -> () {
+    public func loadPreset(preset: Preset, overlay: Preset? = nil) async throws {
         settingsStore.settings.defaultPreset = preset.presetData
-        
+
         guard let overlay = overlay else {
             settingsStore.settings.clearOverlay()
             try await settingsController.syncSettings()
@@ -105,14 +106,14 @@ public class ProfileManager: ObservableObject {
         try await settingsController.syncSettings()
         overlayTimer?.invalidate()
 
-        if let taskId = self.taskId {
+        if let taskId = taskId {
             UIApplication.shared.endBackgroundTask(taskId)
         }
 
         taskId = UIApplication.shared.beginBackgroundTask(withName: "overlayExpiry") {
             self.logger.info("We are about to kill your task")
         }
-        
+
         overlayTimer = Timer.scheduledTimer(withTimeInterval: overlay.overlayDurationSecs!, repeats: false) { _ in
             Task { @MainActor in
                 if let taskId = self.taskId {
@@ -128,12 +129,11 @@ public class ProfileManager: ObservableObject {
                 }
             }
         }
-        return
     }
 
     @MainActor
-    public func endSession() async throws -> () {
-        if let taskId = self.taskId {
+    public func endSession() async throws {
+        if let taskId = taskId {
             UIApplication.shared.endBackgroundTask(taskId)
         }
         if let overlayTimer = overlayTimer {
@@ -148,7 +148,7 @@ public class ProfileManager: ObservableObject {
     }
 
     // Inclusive of loadOverlay
-    public func loadPresetLegacy(preset: Preset) async throws -> () {
+    public func loadPresetLegacy(preset: Preset) async throws {
         if preset.overlayDurationSecs != nil {
             if let parentPresetID = preset.parentPreset {
                 try await loadPreset(preset: ProfileManager.presetDefaults[parentPresetID]!, overlay: preset)
@@ -157,22 +157,22 @@ public class ProfileManager: ObservableObject {
         }
         try await loadPreset(preset: preset)
     }
-    
+
     // Writes through to parachute preset
     public func loadParachutePreset(preset: Preset) {
-        Task.init(priority: .background) {
+        Task(priority: .background) {
             try await loadPreset(preset: preset)
             settingsStore.settings.parachutePreset = preset.presetData
             try await settingsController.syncSettings()
         }
     }
-    
+
     public static var presetDefaults: OrderedDictionary<String, Preset> = [
         "focus": .focus,
         "relax": .quickBreak,
         "casual": makeParachutePreset(ProfileManager.makeParachutePresetData(hp: 5)),
     ]
-    
+
     public static func makeParachutePresetData(hp: Double) -> Proxyservice_Preset {
         return Proxyservice_Preset.with {
             $0.id = "casual"
@@ -181,7 +181,7 @@ public class ProfileManager: ObservableObject {
             $0.mode = .progressive
         }
     }
-    
+
     public static func makeParachutePreset(_ presetData: Proxyservice_Preset) -> Preset {
         return Preset(
             name: "Parachute",
@@ -193,15 +193,14 @@ public class ProfileManager: ObservableObject {
             mainColor: .blue
         )
     }
-    
+
     var parachutePresetData: Proxyservice_Preset {
         if settingsStore.settings.hasParachutePreset {
             return settingsStore.settings.parachutePreset
         }
         return ProfileManager.presetDefaults["casual"]!.presetData
     }
-    
-    
+
     var allPresets: OrderedDictionary<String, Preset> {
         var ret = OrderedDictionary<String, Preset>()
         for elem in topLevelPresets.elements {
@@ -212,7 +211,7 @@ public class ProfileManager: ObservableObject {
         }
         return ret
     }
-    
+
     public var topLevelPresets: OrderedDictionary<String, Preset> {
         [
             "casual": ProfileManager.makeParachutePreset(parachutePresetData),

@@ -1,20 +1,18 @@
-import ActivityKit 
+import ActivityKit
 import Foundation
-import ProxyService
 import Models
+import ProxyService
 
 public struct SlowdownWidgetAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-
         // Dynamic stateful properties about your activity go here!
         public var settings: Proxyservice_Settings
         public var isConnected: Bool
 
         public init(settings: Proxyservice_Settings, isConnected: Bool) {
             self.settings = settings
-            self.isConnected = isConnected 
+            self.isConnected = isConnected
         }
-
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -35,6 +33,5 @@ public struct SlowdownWidgetAttributes: ActivityAttributes {
     }
 
     // Fixed non-changing properties about your activity go here:
-    public init() {
-    }
+    public init() {}
 }

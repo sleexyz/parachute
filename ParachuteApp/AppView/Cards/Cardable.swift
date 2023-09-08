@@ -19,6 +19,7 @@ extension Cardable {
     func eraseToAnyCardable() -> AnyCardable {
         return AnyCardable(cardable: self)
     }
+
     @ViewBuilder func makeCard<Content: View>(content: @escaping () -> Content) -> V {
         _makeCard {
             AnyView(content())
@@ -28,27 +29,28 @@ extension Cardable {
 
 struct AnyCardable: Identifiable, Cardable {
     func _makeCard(content: @escaping () -> AnyView) -> AnyView {
-        AnyView(self.cardable._makeCard {
+        AnyView(cardable._makeCard {
             content()
         })
     }
-    
+
     func getID() -> String {
-        self.cardable.getID()
+        cardable.getID()
     }
+
     func getExpandedBody() -> AnyView {
-        return self.cardable.getExpandedBody()
+        return cardable.getExpandedBody()
     }
-    
+
     typealias V = AnyView
-    
+
     var cardable: any Cardable
     init<T>(cardable: T) where T: Cardable {
         self.cardable = cardable
     }
-    
+
     var id: String {
-        self.cardable.getID()
+        cardable.getID()
     }
 }
 
@@ -56,8 +58,8 @@ extension AnyCardable: Hashable {
     static func == (lhs: AnyCardable, rhs: AnyCardable) -> Bool {
         return lhs.id == rhs.id
     }
-    
+
     func hash(into hasher: inout Hasher) {
-        hasher.combine(self.id)
+        hasher.combine(id)
     }
 }

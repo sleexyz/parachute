@@ -5,42 +5,41 @@
 //  Created by Sean Lee on 8/15/23.
 //
 
-import NetworkExtension
 import Common
-import SwiftProtobuf
-import ProxyService
-import OSLog
-import Models
 import FilterCommon
+import Models
+import NetworkExtension
+import OSLog
+import ProxyService
+import SwiftProtobuf
 
 public class FilterDataProvider: NEFilterDataProvider {
-    let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FilterDataProvider")
-
+    let logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "FilterDataProvider")
 
     lazy var dataFlowController: DataFlowController = {
         // TODO: load settings from disk
         // return DataFlowController(settings: (try? SettingsHelper.loadSettings()) ?? .defaultSettings)
-        return DataFlowController(settings: .defaultSettings)
+        DataFlowController(settings: .defaultSettings)
     }()
 
     var observerContext = 0
-    public override init() {
+    override public init() {
         super.init()
         // FirebaseApp.configure()
-        self.addObserver(self, forKeyPath: "filterConfiguration", options: [.initial, .new], context: &observerContext)
+        addObserver(self, forKeyPath: "filterConfiguration", options: [.initial, .new], context: &observerContext)
     }
-    
+
     /// Observe changes to the configuration.
-    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "filterConfiguration" && context == &observerContext {
             logger.info("configuration changed")
-            guard let requestData = self.filterConfiguration.vendorConfiguration?[.vendorConfigurationKey] as? Data else {
+            guard let requestData = filterConfiguration.vendorConfiguration?[.vendorConfigurationKey] as? Data else {
                 return
             }
             guard let request = try? Proxyservice_Request(serializedData: requestData) else {
                 return
             }
-            if case(.setSettings(let setSettings)) = request.message {
+            if case let .setSettings(setSettings) = request.message {
                 dataFlowController.updateSettings(settings: setSettings)
             }
         } else {
@@ -48,19 +47,19 @@ public class FilterDataProvider: NEFilterDataProvider {
         }
     }
 
-    public override func startFilter(completionHandler: @escaping (Error?) -> Void) {
+    override public func startFilter(completionHandler: @escaping (Error?) -> Void) {
         logger.info("Starting FilterDataProvider")
         // Add code to initialize the filter.
         completionHandler(nil)
     }
-    
-    public override func stopFilter(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
+
+    override public func stopFilter(with _: NEProviderStopReason, completionHandler: @escaping () -> Void) {
         logger.info("Stopping FilterDataProvider")
         // Add code to clean up filter resources.
         completionHandler()
     }
 
-    public override func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
+    override public func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
         // logger.debug("Received new flow for \(flow.sourceAppIdentifier ?? "", privacy: .public)")
         let verdict = dataFlowController.handleNewFlow(flow)
         // if flow.matchSocialMedia() != nil {
@@ -70,8 +69,8 @@ public class FilterDataProvider: NEFilterDataProvider {
         // }
         return verdict
     }
-    
-    public override func handleInboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
+
+    override public func handleInboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
         let verdict = dataFlowController.handleInboundData(from: flow, offset: offset, readBytes: readBytes)
         // if flow.matchSocialMedia() != nil {
         //     if let flow = flow as? NEFilterSocketFlow {
@@ -81,7 +80,7 @@ public class FilterDataProvider: NEFilterDataProvider {
         return verdict
     }
 
-    public override func handleInboundDataComplete(for flow: NEFilterFlow) -> NEFilterDataVerdict {
+    override public func handleInboundDataComplete(for flow: NEFilterFlow) -> NEFilterDataVerdict {
         let verdict = dataFlowController.handleInboundDataComplete(for: flow)
         return verdict
     }

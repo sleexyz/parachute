@@ -1,5 +1,5 @@
 import Foundation
 
-extension Bundle {
-    public static var CommonViews: Bundle { Bundle.module }
+public extension Bundle {
+    static var CommonViews: Bundle { Bundle.module }
 }

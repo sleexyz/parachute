@@ -10,17 +10,16 @@ public extension ButtonStyle where Self == DottedButtonStyle {
 // public struct BorderedButtonStyle: ButtonStyle {
 //     public func makeBody(configuration: Configuration) -> some View {
 //         configuration.label
-//             .foregroundColor(.parachuteOrange) 
+//             .foregroundColor(.parachuteOrange)
 //             .padding(10)
 //             .background(
 //                 Capsule()
 //                     .stroke(style: StrokeStyle(lineWidth: 1))
 //                     .background(Capsule().fill(Color.parachuteOrange.opacity(0.25)))
-//                     .foregroundColor(.parachuteOrange.opacity(0.5)) 
+//                     .foregroundColor(.parachuteOrange.opacity(0.5))
 //             )
 //     }
-// } 
-
+// }
 
 public struct DottedButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
@@ -29,17 +28,15 @@ public struct DottedButtonStyle: ButtonStyle {
     }
 }
 
-extension View {
-
-    public func glow(color: Color, radius: CGFloat = 54) -> some View {
-        self
-        .shadow(color: color, radius: radius / 3)
-        .shadow(color: color, radius: radius / 3)
-        .shadow(color: color, radius: radius / 3)
+public extension View {
+    func glow(color: Color, radius: CGFloat = 54) -> some View {
+        shadow(color: color, radius: radius / 3)
+            .shadow(color: color, radius: radius / 3)
+            .shadow(color: color, radius: radius / 3)
     }
 
-    public func rr(color: Color, bg: Color = .clear) -> some View {
-        self.background {
+    func rr(color: Color, bg: Color = .clear) -> some View {
+        background {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(style: StrokeStyle(lineWidth: 1))
                 .foregroundColor(color.opacity(0.1))
@@ -53,13 +50,13 @@ extension View {
         }
     }
 
-    public func rrGlow(color: Color, bg: Color = .clear, radius: CGFloat = 54) -> some View {
-        self.background(
+    func rrGlow(color: Color, bg: Color = .clear, radius: CGFloat = 54) -> some View {
+        background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(style: StrokeStyle(lineWidth: 1))
                 // .overlay(self.blur(radius: radius / 6))
                 .foregroundColor(color.opacity(0.1))
-                .glow(color: color, radius:radius)
+                .glow(color: color, radius: radius)
                 // .shadow(color: color, radius: radius / 3)
                 // .shadow(color: color, radius: radius / 3)
                 // .shadow(color: color, radius: radius / 3)
@@ -76,9 +73,8 @@ extension View {
         )
     }
 
-
     @inlinable
-    public func reverseMask<Mask: View>(
+    func reverseMask<Mask: View>(
         alignment: Alignment = .center,
         @ViewBuilder _ mask: () -> Mask
     ) -> some View {
@@ -87,8 +83,8 @@ extension View {
                 .stroke(style: StrokeStyle(lineWidth: 200))
                 .foregroundColor(.white)
                 .overlay(alignment: alignment) {
-                mask()
-                    .blendMode(.destinationOut)
+                    mask()
+                        .blendMode(.destinationOut)
                 }
         }
     }

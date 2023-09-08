@@ -5,11 +5,11 @@
 //  Created by Sean Lee on 2/22/23.
 //
 
+import Controllers
 import Foundation
+import Models
 import ProxyService
 import SwiftUI
-import Models
-import Controllers
 
 extension Preset: Cardable {
     public func _makeCard(content: @escaping () -> AnyView) -> some View {
@@ -17,11 +17,13 @@ extension Preset: Cardable {
             content()
         }
     }
+
     public func getID() -> String {
-        self.id
+        id
     }
+
     public func getExpandedBody() -> AnyView {
-        if let body = self.expandedBody {
+        if let body = expandedBody {
             return AnyView(body)
         }
         return AnyView(EmptyView())
@@ -35,20 +37,19 @@ struct WiredPresetCard<Content: View>: View {
     @EnvironmentObject var stateController: StateController
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.namespace) var namespace: Namespace.ID
-    
-    
+
     var preset: Preset
-    
+
     var content: () -> Content
-    
+
     var isActive: Bool {
         preset.presetData.id == settingsStore.activePreset.id
     }
-    
+
     var expanded: Bool {
         isActive && !profileManager.presetSelectorOpen
     }
-    
+
     var badgeText: String? {
 //        if preset.badgeText == "∞" && !profileManager.presetSelectorOpen {
 //            return nil
@@ -58,8 +59,7 @@ struct WiredPresetCard<Content: View>: View {
 //        }
         return preset.badgeText
     }
-    
-    
+
     @ViewBuilder
     var card: some View {
         Card(
@@ -75,7 +75,6 @@ struct WiredPresetCard<Content: View>: View {
             content()
         }
     }
-    
 
     var body: some View {
         card

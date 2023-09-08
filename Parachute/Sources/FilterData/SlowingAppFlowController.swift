@@ -1,6 +1,6 @@
+import FilterCommon
 import NetworkExtension
 import OSLog
-import FilterCommon
 
 let SAMPLE_FREQUENCY = 1.0
 
@@ -12,39 +12,39 @@ public class SlowingAppFlowController {
 
     // var gain = 1 / 1e6 // microsecond
     var gain: Double = 1e-5
-    
+
     var logger: Logger
-    
-    required public init (app: App, allowPreSlowingBytes: Bool = false) {
+
+    public required init(app: App, allowPreSlowingBytes: Bool = false) {
         self.allowPreSlowingBytes = allowPreSlowingBytes
         self.app = app
         logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppFlowController.\(app.appType)")
-        let startingLatencyPerByte = (20_000 / app.targetRxSpeed) * 4e-2 / Double(app.peekBytes) // 40ms per peek. Sweet spot computed experimentally.
+        let startingLatencyPerByte = (20000 / app.targetRxSpeed) * 4e-2 / Double(app.peekBytes) // 40ms per peek. Sweet spot computed experimentally.
         latencyPerByte = startingLatencyPerByte
     }
 
-    var lastCleared: Date = Date()
+    var lastCleared: Date = .init()
 
     // Gets updated every handleInboundData call.
-    private var lastSampleTime: Date = Date()
+    private var lastSampleTime: Date = .init()
     private var rxBytes: Int = 0 // bytes received since last sample
 
     // Gets updated every sample.
-    private var latencyPerByte: Double 
+    private var latencyPerByte: Double
 
     // Samples if ready, and update latencyPerByte
     func sampleIfReady(_ flow: NEFilterFlow, _ readBytes: Data) {
         let dt = Date().timeIntervalSince(lastSampleTime)
         if dt > SAMPLE_FREQUENCY {
-            sample(flow, readBytes) 
+            sample(flow, readBytes)
         }
     }
 
-    func sample(_ flow: NEFilterFlow, _ readBytes: Data) {
+    func sample(_: NEFilterFlow, _: Data) {
         let now = Date()
         let dt = now.timeIntervalSince(lastSampleTime)
 
-        self.latencyPerByte = getUpdatedLatencyPerByte(dt: dt)
+        latencyPerByte = getUpdatedLatencyPerByte(dt: dt)
         // logger.info("latencyPerByte: \(self.latencyPerByte)s")
         // Reset sample data
         rxBytes = 0
@@ -82,7 +82,7 @@ public class SlowingAppFlowController {
         return verdict
     }
 
-    private func getVerdict(from flow: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
+    private func getVerdict(from _: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
         if allowPreSlowingBytes && offset < app.preSlowingBytes {
             return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: app.preSlowingBytes)
         }
@@ -92,4 +92,3 @@ public class SlowingAppFlowController {
         return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: app.peekBytes)
     }
 }
-

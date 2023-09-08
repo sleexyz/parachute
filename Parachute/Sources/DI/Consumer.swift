@@ -10,7 +10,7 @@ import SwiftUI
 
 struct Consumer<T: ObservableObject>: ViewModifier {
     let type: T.Type
-    let effect: (_ value: T) -> ()
+    let effect: (_ value: T) -> Void
     @EnvironmentObject private var obj: T
     func body(content: Content) -> some View {
         return content.onAppear {
@@ -24,7 +24,7 @@ struct Consumer<T: ObservableObject>: ViewModifier {
 // Load the registry
 private struct RegistryConsumer<T: ObservableObject>: ViewModifier {
     let type: T.Type
-    let effect: (_ value: T) -> ()
+    let effect: (_ value: T) -> Void
     @Environment(\.registry) private var registry: Registry
     func body(content: Content) -> some View {
         return content.modifier(RegistryConsumerInner(type: type, effect: effect, value: registry.resolve(type)))
@@ -34,7 +34,7 @@ private struct RegistryConsumer<T: ObservableObject>: ViewModifier {
 // Set up the Observed Object
 private struct RegistryConsumerInner<T: ObservableObject>: ViewModifier {
     let type: T.Type
-    let effect: (_ value: T) -> ()
+    let effect: (_ value: T) -> Void
     @ObservedObject var value: T
     func body(content: Content) -> some View {
         return content.onAppear {

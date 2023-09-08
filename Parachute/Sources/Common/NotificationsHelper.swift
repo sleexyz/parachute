@@ -10,14 +10,14 @@ import UserNotifications
 
 public class NotificationsHelper {
     public init() {}
-    
+
     // Clear all notifications
     public func clearNotifications() {
         let notificationCenter = UNUserNotificationCenter.current()
         notificationCenter.removeAllPendingNotificationRequests()
         notificationCenter.removeAllDeliveredNotifications()
     }
-    
+
     // Send a message. fromNow must be greater than 0.
     public func sendMessage(title: String, body: String, fromNow: TimeInterval) async throws {
         let content = UNMutableNotificationContent()
@@ -30,7 +30,7 @@ public class NotificationsHelper {
         let notificationCenter = UNUserNotificationCenter.current()
         return try await notificationCenter.add(request)
     }
-    
+
     // Show notification authorization screen, or return true if already authorized.
     public func enableNotifications() async throws -> Bool {
         let center = UNUserNotificationCenter.current()

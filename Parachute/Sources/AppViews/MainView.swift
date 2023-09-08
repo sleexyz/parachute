@@ -1,6 +1,6 @@
-import SwiftUI
-import Controllers
 import CommonViews
+import Controllers
+import SwiftUI
 
 struct TextLogo: View {
     var body: some View {
@@ -16,7 +16,7 @@ struct TextLogo: View {
                 // .textCase(.uppercase)
                 .fontWeight(.bold)
         }
-            .foregroundStyle(Color.parachuteOrange)
+        .foregroundStyle(Color.parachuteOrange)
     }
 }
 
@@ -26,29 +26,28 @@ public struct MainView: View {
     @EnvironmentObject var connectedViewController: ConnectedViewController
     @EnvironmentObject var neConfigurationService: NEConfigurationService
 
-    
     @Binding var isSettingsPresented: Bool
     @Binding var isScrollSessionPresented: Bool
 
     var isPanePresented: Bool {
         isSettingsPresented || isScrollSessionPresented
     }
-    
+
     public init() {
-        self._isSettingsPresented = ConnectedViewController.shared.isSettingsPresented
-        self._isScrollSessionPresented = ConnectedViewController.shared.isScrollSessionPresented
+        _isSettingsPresented = ConnectedViewController.shared.isSettingsPresented
+        _isScrollSessionPresented = ConnectedViewController.shared.isScrollSessionPresented
     }
 
     var topPadding: CGFloat = 200
-    
+
     public var body: some View {
         ZStack {
             SettingsView(isPresented: $isSettingsPresented)
-            .zIndex(2)
+                .zIndex(2)
 
             ScrollSessionView(isPresented: $isScrollSessionPresented)
-            .zIndex(2)
-            
+                .zIndex(2)
+
             Rectangle()
                 .foregroundColor(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
@@ -92,7 +91,7 @@ public struct MainView: View {
 //                .padding(.top, topPadding)
                 // .frame(height: UIScreen.main.bounds.height / 2, alignment: .bottom)
                 .zIndex(0)
-                
+
                 VStack {
                     SlowdownWidgetView(settings: settingsStore.settings, isConnected: neConfigurationService.isConnected)
                         // .padding(.vertical, 20)
@@ -110,7 +109,6 @@ public struct MainView: View {
                         .frame(maxWidth: .infinity, alignment: .top)
                     Spacer()
                 }
-
             }
             .blur(radius: isPanePresented ? 8 : 0)
             .scaleEffect(isPanePresented ? 0.98 : 1) // Add scale effect when settings page is open

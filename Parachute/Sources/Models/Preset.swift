@@ -14,9 +14,7 @@ public enum PresetType {
     case relax
 }
 
-extension PresetType: Hashable {
-    
-}
+extension PresetType: Hashable {}
 
 public typealias PresetID = String
 
@@ -32,7 +30,7 @@ public struct Preset {
     public var overlayDurationSecs: Double?
     public var expandedBody: AnyView?
     public var childPresets: [PresetID] = []
-    
+
     public init(name: String, icon: String? = nil, type: PresetType, description: String, badgeText: String? = nil, presetData: Proxyservice_Preset, mainColor: Color, parentPreset: PresetID? = nil, overlayDurationSecs: Double? = nil, expandedBody: AnyView? = nil, childPresets: [PresetID] = []) {
         self.name = name
         self.icon = icon
@@ -46,13 +44,13 @@ public struct Preset {
         self.expandedBody = expandedBody
         self.childPresets = childPresets
     }
-    
-    
+
     public var id: String {
         presetData.id
     }
+
     public var scrollTimeLimit: Double {
-        return self.presetData.usageMaxHp / 2
+        return presetData.usageMaxHp / 2
     }
 
     public static var quickBreak: Preset {
@@ -67,7 +65,7 @@ public struct Preset {
             overlayDurationSecs: 30
         )
     }
-    
+
     public static var scrollSession: Preset {
         Preset(
             name: "Scroll session",
@@ -92,7 +90,7 @@ public struct Preset {
             presetData: .focus,
             mainColor: .blue,
             childPresets: [
-                "relax"
+                "relax",
             ]
         )
     }
@@ -115,4 +113,3 @@ public extension Proxyservice_Preset {
         }
     }
 }
-

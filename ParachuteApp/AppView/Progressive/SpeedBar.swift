@@ -6,51 +6,53 @@
 //
 
 import Foundation
-import SwiftUI
 import RangeMapping
+import SwiftUI
 
 struct SpeedBar: View {
     @Binding var speed: Double
     var minSpeed: Double
     var maxSpeed: Double
-    var publish: () -> ()
-    
+    var publish: () -> Void
+
     private var speedToSlider: Mapping {
         return Mapping(a: 40e3, b: 10e6, c: 0, d: 100, inWarp: .exponential)
     }
+
     private var sliderToSpeed: Mapping {
         return speedToSlider.inverse
     }
+
     private var sliderVal: Binding<Double> {
         Binding {
-            return speed.applyMapping(speedToSlider)
+            speed.applyMapping(speedToSlider)
         } set: {
             speed = $0.applyMapping(sliderToSpeed)
         }
     }
-    
+
     private static func formatText(speed: Double) -> String {
         let numberFormatter = NumberFormatter()
         numberFormatter.usesSignificantDigits = true
         numberFormatter.roundingMode = .down
         numberFormatter.maximumSignificantDigits = 1
         if speed >= 1e9 {
-            return String(format: "%s gbps", numberFormatter.string(from: NSNumber(value: speed/1e9))!)
+            return String(format: "%s gbps", numberFormatter.string(from: NSNumber(value: speed / 1e9))!)
         }
         if speed >= 1e6 {
-            return "\(numberFormatter.string(from: NSNumber(value: speed/1e6))!) mbps"
+            return "\(numberFormatter.string(from: NSNumber(value: speed / 1e6))!) mbps"
         }
         if speed >= 1e3 {
-            return "\(numberFormatter.string(from: NSNumber(value: speed/1e3))!) kbps"
+            return "\(numberFormatter.string(from: NSNumber(value: speed / 1e3))!) kbps"
         }
         return "\(numberFormatter.string(from: NSNumber(value: speed))!) bps"
     }
-    
+
     var body: some View {
         VStack {
             Slider(
                 value: sliderVal,
-                in: (0...100),
+                in: 0 ... 100,
                 onEditingChanged: { editing in
                     if !editing {
                         publish()
@@ -69,7 +71,6 @@ struct SpeedBarPreviewContainer<Content: View>: View {
     var body: some View {
         return render($speed)
     }
-    
 }
 
 struct SpeedBar_Previews: PreviewProvider {
@@ -79,5 +80,3 @@ struct SpeedBar_Previews: PreviewProvider {
         }
     }
 }
-    
-

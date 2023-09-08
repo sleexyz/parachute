@@ -5,9 +5,9 @@
 //  Created by Sean Lee on 2/20/23.
 //
 
+import Controllers
 import Foundation
 import SwiftUI
-import Controllers
 
 private struct CardExpandedKey: EnvironmentKey {
     static let defaultValue = false
@@ -17,18 +17,17 @@ private struct CaptionShownKey: EnvironmentKey {
     static let defaultValue = false
 }
 
-
 extension EnvironmentValues {
     var cardExpanded: Bool {
         get { self[CardExpandedKey.self] }
         set { self[CardExpandedKey.self] = newValue }
     }
-    
+
     var captionShown: Bool {
         get { self[CaptionShownKey.self] }
         set { self[CaptionShownKey.self] = newValue }
     }
-    
+
 //    var closedStackPosition: StackPosition {
 //        get { self[ClosedStackPositionKey.self] }
 //        set { self[ClosedStackPositionKey.self] = newValue }
@@ -49,35 +48,35 @@ struct Card<Content: View, S: ShapeStyle>: View {
     @Environment(\.namespace) var namespace: Namespace.ID
     @Environment(\.cardExpanded) var cardExpanded: Bool
     @Environment(\.captionShown) var captionShown: Bool
-    
+
     @EnvironmentObject var profileManager: ProfileManager
-    
+
     @State var animationInitialized: Bool = false
-    
+
     var maxHeight: Double {
         if cardExpanded {
             return .infinity
         }
         return minHeight
     }
-    
+
     var maxHeightContent: Double {
         if cardExpanded {
             return .infinity
         }
         return 0
     }
-    
+
     var minHeight: Double {
         if !captionShown {
             return 120
         }
         return 120
     }
-    
+
     @ViewBuilder
     var content: () -> Content
-    
+
     var computedBackgroundColor: Color {
         guard let backgroundColor = backgroundColor else {
             return .clear
@@ -87,7 +86,7 @@ struct Card<Content: View, S: ShapeStyle>: View {
         }
         return backgroundColor.bakeAlpha(colorScheme)
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .top) {
@@ -100,7 +99,7 @@ struct Card<Content: View, S: ShapeStyle>: View {
                     Text(title)
                         .font(.headline)
                 }
-                    .padding(CARD_PADDING)
+                .padding(CARD_PADDING)
                 Spacer()
                 if badgeText != nil {
                     Text(badgeText!)
@@ -122,7 +121,7 @@ struct Card<Content: View, S: ShapeStyle>: View {
             .foregroundColor(computedBackgroundColor.bakeAlpha(colorScheme).getForegroundColor())
             .background(computedBackgroundColor)
             .animation(ANIMATION, value: cardExpanded)
-            
+
             content()
                 .frame(maxWidth: .infinity, maxHeight: maxHeightContent)
                 .opacity(cardExpanded ? 1 : 0)
@@ -132,7 +131,7 @@ struct Card<Content: View, S: ShapeStyle>: View {
 //                    removal: .opacity.animation(ANIMATION)
 //                ))
 //                .matchedGeometryEffect(id: "content_" + id, in: namespace)
-            
+
             ZStack {
                 Rectangle().frame(minHeight: 0).opacity(0)
 //                if caption != nil && computedCaptionShown {
@@ -162,8 +161,8 @@ struct Card<Content: View, S: ShapeStyle>: View {
             .stroke(.ultraThinMaterial)
         )
 //        .animation(ANIMATION.delay(ANIMATION_SECS/2), value: cardExpanded)
-        .onAppear() {
-                animationInitialized = true
+        .onAppear {
+            animationInitialized = true
         }
         .animation(ANIMATION_SHORT, value: caption) // Semi-hack to animate transitions within a card
         .matchedGeometryEffect(id: id, in: namespace)

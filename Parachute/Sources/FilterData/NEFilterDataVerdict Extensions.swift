@@ -1,5 +1,5 @@
-import NetworkExtension
 import FilterCommon
+import NetworkExtension
 
 public extension NEFilterDataVerdict {
     static func needRulesBlocking() -> NEFilterDataVerdict {
@@ -9,6 +9,6 @@ public extension NEFilterDataVerdict {
     }
 
     func passBytesIsZero() -> Bool {
-        return self.value(forKey: "_passBytes") as! Int == 0
+        return value(forKey: "_passBytes") as! Int == 0
     }
 }

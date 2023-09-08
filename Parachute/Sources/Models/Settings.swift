@@ -1,5 +1,5 @@
-import ProxyService
 import Foundation
+import ProxyService
 import SwiftUI
 
 public extension Proxyservice_Settings {
@@ -12,26 +12,23 @@ public extension Proxyservice_Settings {
 
 public extension Proxyservice_Settings {
     var activePreset: Proxyservice_Preset {
-        if Date.now < self.overlay.expiry.date {
-            return self.overlay.preset
+        if Date.now < overlay.expiry.date {
+            return overlay.preset
         }
-        return self.defaultPreset
+        return defaultPreset
     }
 
     var isInScrollSession: Bool {
-        return self.activePreset.baseRxSpeedTarget == .infinity
+        return activePreset.baseRxSpeedTarget == .infinity
     }
 
     func isAppEnabled(app: Proxyservice_AppType) -> Bool {
-        self.apps[Int32(app.rawValue)] ?? false
+        apps[Int32(app.rawValue)] ?? false
     }
-    
+
     mutating func setAppEnabled(app: Proxyservice_AppType, value: Bool) {
-        self.apps[Int32(app.rawValue)] = value
+        apps[Int32(app.rawValue)] = value
     }
 }
 
-
-extension Proxyservice_Settings: CodableMessage {
-
-}
+extension Proxyservice_Settings: CodableMessage {}

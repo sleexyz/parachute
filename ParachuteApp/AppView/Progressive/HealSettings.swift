@@ -5,21 +5,20 @@
 //  Created by Sean Lee on 2/20/23.
 //
 
+import Controllers
 import Foundation
 import SwiftUI
-import Controllers
 
 struct HealSettings: View {
     @EnvironmentObject var settingsController: SettingsController
     var model: PresetViewModel
-    
+
     @FocusState private var scrollTimeFocused: Bool
     @FocusState private var restTimeFocused: Bool
-    
-    
+
     private var baselineSpeedEnabled: Binding<Bool> {
         Binding {
-            return model.presetData.usageBaseRxSpeedTarget != 0.0
+            model.presetData.usageBaseRxSpeedTarget != 0.0
         } set: {
             if $0 {
                 model.presetData.usageBaseRxSpeedTarget = 1e6
@@ -28,7 +27,7 @@ struct HealSettings: View {
             }
         }
     }
-    
+
     var body: some View {
         VStack {
             HStack {
@@ -40,7 +39,7 @@ struct HealSettings: View {
                     .padding()
                     .removeFocusOnTap(enabled: scrollTimeFocused)
                     .onChange(of: model.scrollTimeLimit.wrappedValue) { _ in
-                        Task.init(priority: .background) {
+                        Task(priority: .background) {
                             try await settingsController.syncSettings()
                         }
                     }
@@ -54,7 +53,7 @@ struct HealSettings: View {
                     .padding()
                     .removeFocusOnTap(enabled: restTimeFocused)
                     .onChange(of: model.restTime.wrappedValue) { _ in
-                        Task.init(priority: .background) {
+                        Task(priority: .background) {
                             try await settingsController.syncSettings()
                         }
                     }
@@ -62,14 +61,14 @@ struct HealSettings: View {
             VStack {
                 Toggle("Set max speed", isOn: baselineSpeedEnabled)
                     .onChange(of: baselineSpeedEnabled.wrappedValue) { _ in
-                        Task.init(priority: .background) {
+                        Task(priority: .background) {
                             try await settingsController.syncSettings()
                         }
                     }
                     .tint(.purple)
                 if baselineSpeedEnabled.wrappedValue {
                     SpeedBar(speed: model.$presetData.usageBaseRxSpeedTarget, minSpeed: 40e3, maxSpeed: 10e6) {
-                        Task.init(priority: .background) {
+                        Task(priority: .background) {
                             try await settingsController.syncSettings()
                         }
                     }
@@ -79,4 +78,3 @@ struct HealSettings: View {
         }
     }
 }
-

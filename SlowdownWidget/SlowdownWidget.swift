@@ -5,24 +5,22 @@
 //  Created by Sean Lee on 8/2/23.
 //
 
-import WidgetKit
-import SwiftUI
-import Controllers
-import OSLog
-import CommonLoaders
 import Activities
+import CommonLoaders
+import CommonViews
+import Controllers
 import Models
+import OSLog
 import ProxyService
 import SwiftProtobuf
-import CommonViews
-
+import SwiftUI
+import WidgetKit
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let settings: Proxyservice_Settings
     let isConnected: Bool
 }
-
 
 struct SlowdownWidget: Widget {
     let kind: String = "industries.strange.slowdown.SlowdownWidget"
@@ -39,7 +37,7 @@ struct SlowdownWidget: Widget {
             ControllersLoader {
                 SlowdownWidgetView(settings: entry.settings, isConnected: entry.isConnected)
                     .environmentObject(NEConfigurationService.shared)
-                    //.containerBackground(Color.background, for: .widget)
+                // .containerBackground(Color.background, for: .widget)
             }
         }
 //        if #available(iOSApplicationExtension 17.0, *) {
@@ -63,7 +61,7 @@ extension Proxyservice_Settings {
             $0.defaultPreset = .focus
         }
     }
-    
+
     static var relax: Proxyservice_Settings {
         Proxyservice_Settings.with {
             $0.defaultPreset = .focus
@@ -74,7 +72,6 @@ extension Proxyservice_Settings {
         }
     }
 }
-
 
 #Preview(as: .systemLarge) {
     SlowdownWidget()

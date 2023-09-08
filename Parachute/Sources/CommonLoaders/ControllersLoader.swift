@@ -1,6 +1,6 @@
 
-import SwiftUI
 import Controllers
+import SwiftUI
 
 public struct ControllersLoader<Inner: View>: View {
     @ViewBuilder var content: () -> Inner
@@ -8,7 +8,7 @@ public struct ControllersLoader<Inner: View>: View {
     public init(@ViewBuilder content: @escaping () -> Inner) {
         self.content = content
     }
-    
+
     public var body: some View {
         content()
             .provideDeps([
@@ -18,8 +18,7 @@ public struct ControllersLoader<Inner: View>: View {
                 // VPNConfigurationService.Provider(),
                 FilterConfigurationService.Provider(),
                 SettingsStore.Provider(),
-                OnboardingViewController.Provider()
+                OnboardingViewController.Provider(),
             ])
     }
 }
-

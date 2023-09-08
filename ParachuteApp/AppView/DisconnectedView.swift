@@ -5,12 +5,12 @@
 //  Created by Sean Lee on 2/15/23.
 //
 
-import Foundation
-import SwiftUI
-import SwiftProtobuf
+import AppViews
 import Common
 import Controllers
-import AppViews
+import Foundation
+import SwiftProtobuf
+import SwiftUI
 
 struct DisconnectedView: View {
     @EnvironmentObject var settingsStore: SettingsStore
@@ -18,11 +18,11 @@ struct DisconnectedView: View {
 
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
     @EnvironmentObject var service: NEConfigurationService
-    
+
     var buttonTitle: String {
         return "Enable Content Filter"
     }
-    
+
     var body: some View {
         VStack {
             Spacer()

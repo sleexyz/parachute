@@ -5,9 +5,9 @@
 //  Created by Sean Lee on 12/27/22.
 //
 
+import Controllers
 import Foundation
 import SwiftUI
-import Controllers
 
 public struct SetupView: View {
     @EnvironmentObject private var service: NEConfigurationService
@@ -16,13 +16,11 @@ public struct SetupView: View {
     @State private var isLoading = false
     @State private var isShowingError = false
     @State private var errorMessage = ""
-    
-    
+
     public init() {}
 
     public var body: some View {
         VStack(alignment: .leading) {
-
             Text([
                 "Parachute uses a Content Filter in order to delay your content feeds.",
             ].joined(separator: "\n\n"))
@@ -66,11 +64,11 @@ public struct SetupView: View {
 
     private func installProfile() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        self.isLoading = true
+        isLoading = true
         Task { @MainActor in
             do {
                 try await service.install(settings: settingsStore.settings)
-            } catch let error {
+            } catch {
                 self.errorMessage = error.localizedDescription
                 self.isShowingError = true
             }
