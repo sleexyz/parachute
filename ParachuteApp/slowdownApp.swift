@@ -36,9 +36,9 @@ struct slowdownApp: App {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        // if Env.value == .prod {
-        FirebaseApp.configure()
-        // }
+        if Env.value == .prod {
+            FirebaseApp.configure()
+        }
         Task { @MainActor in
             await NEConfigurationService.shared.load()
             if #available(iOS 16.2, *) {
