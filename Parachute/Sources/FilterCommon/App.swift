@@ -6,6 +6,7 @@ public struct App {
     public let appType: Proxyservice_AppType
 
     // How much to allow through before slowing down
+    // NOTE: THIS CANNOT BE ZERO!
     public var preSlowingBytes1: Int
     public var preSlowingBytes2: Int
 
@@ -39,7 +40,7 @@ public extension App {
     static let tiktok = App(
         appType: .tiktok,
 
-        preSlowingBytes1: 0,
+        preSlowingBytes1: 32,
         preSlowingBytes2: 1024,
 
         // preSlowingBytes: 0,
@@ -54,7 +55,7 @@ public extension App {
     static let twitter = App(
         appType: .twitter,
 
-        preSlowingBytes1: 0,
+        preSlowingBytes1: 32,
         preSlowingBytes2: 1024,
 
         peekBytes: 64 * 1024,
@@ -68,7 +69,7 @@ public extension App {
     static let youtube = App(
         appType: .youtube,
 
-        preSlowingBytes1: 0,
+        preSlowingBytes1: 32,
         preSlowingBytes2: 32 * 1024,
 
         peekBytes: 32 * 1024, // Lowered from 64 to 32 to prevent buffering
