@@ -138,13 +138,13 @@ public class ProfileManager: ObservableObject {
         }
         if let overlayTimer {
             overlayTimer.invalidate()
-        } else {
-            settingsStore.settings.clearOverlay()
-            try await settingsController.syncSettings(reason: "Session ended")
-            if #available(iOS 16.2, *) {
-                await ActivitiesHelper.shared.update(settings: self.settingsStore.settings, isConnected: neConfigurationService.isConnected)
-            }
         }
+        settingsStore.settings.clearOverlay()
+        try await settingsController.syncSettings(reason: "Session ended")
+        if #available(iOS 16.2, *) {
+            await ActivitiesHelper.shared.update(settings: self.settingsStore.settings, isConnected: neConfigurationService.isConnected)
+        }
+    
     }
 
     // Inclusive of loadOverlay
