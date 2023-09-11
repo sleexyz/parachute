@@ -53,7 +53,7 @@ public class DataFlowController {
             return .allow()
         }
 
-        let allowPeek = NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: 128 * 1024 * 1024)
+        let allowPeek = NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: 128 * 1024 * 1024) // large number
 
         guard settings.isAppEnabled(app: app.appType) else {
             // #if DEBUG
