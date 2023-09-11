@@ -43,6 +43,9 @@ struct ConnectedView_Previews: PreviewProvider {
     static var previews: some View {
         ConnectedPreviewContext {
             ConnectedView()
+                .consumeDep(NEConfigurationService.self) { service in
+                    service.isConnected = true
+                }
         }
     }
 }
@@ -51,6 +54,9 @@ struct ConnectedViewSession_Previews: PreviewProvider {
     static var previews: some View {
         ConnectedPreviewContext {
             ConnectedView()
+                .consumeDep(NEConfigurationService.self) { service in
+                    service.isConnected = true
+                }
                 .consumeDep(ProfileManager.self) { profileManager in
                     Task { @MainActor in
                         try await profileManager.loadPreset(
