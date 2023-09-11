@@ -46,7 +46,7 @@ public struct MainView: View {
                 isPresented: $isSettingsPresented,
                 isAdvancedPresented: ConnectedViewController.shared.isAdvancedSettingsPresented
             )
-                .zIndex(2)
+            .zIndex(2)
 
             ScrollSessionView(isPresented: $isScrollSessionPresented)
                 .zIndex(2)
@@ -99,7 +99,7 @@ public struct MainView: View {
                     SlowdownWidgetView(settings: settingsStore.settings, isConnected: neConfigurationService.isConnected)
                         // .padding(.vertical, 20)
                         .padding(.horizontal, 20)
-                        .rrGlow(color: .white, bg: .clear)
+//                        .rrGlow(color: .white, bg: .clear)
                         // .background {
                         //     RoundedRectangle(cornerRadius: 20, style: .continuous)
                         //         .stroke(Color.white.opacity(0.1), lineWidth: 1)
