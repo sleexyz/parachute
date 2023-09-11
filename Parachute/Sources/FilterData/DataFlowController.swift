@@ -25,6 +25,7 @@ public class DataFlowController {
 
     public func updateSettings(settings: Proxyservice_Settings) {
         self.settings = settings
+        Proxyservice_Settings.shared = settings
         logger.info("updated settings: \(settings.debugDescription, privacy: .public)")
     }
 
@@ -40,11 +41,11 @@ public class DataFlowController {
         flowRegistry.register(flow: flow)
 
         if settings.algorithm == .drop {
-            return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.allowedBytesBeforeDrop, filterOutbound: false, peekOutboundBytes: 0)
+            return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: settings.dropAllowedBytes(app: app), filterOutbound: false, peekOutboundBytes: 0)
         }
 
         // Pass to handleInboundData
-        return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.preSlowingBytes, filterOutbound: false, peekOutboundBytes: 0)
+        return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.preSlowingBytes(.shared), filterOutbound: false, peekOutboundBytes: 0)
     }
 
     public func handleInboundData(from flow: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
@@ -67,7 +68,12 @@ public class DataFlowController {
         }
 
         if settings.algorithm == .drop {
-            return DroppingAppFlowController.getController(app: app).handleInboundData(from: flow, offset: offset, readBytes: readBytes)
+            return DroppingAppFlowController.getController(app: app).handleInboundData(
+                from: flow,
+                offset: offset,
+                readBytes: readBytes,
+                settings: settings
+            )
         }
 
         return flowRegistry.getFlowController(for: flow).handleInboundData(from: flow, offset: offset, readBytes: readBytes)
@@ -95,7 +101,7 @@ public class FlowRegistry {
             // Invariant error. We should only be registering social media flows.
             return
         }
-        flowDelays[flow.identifier] = AFC(app: app, allowPreSlowingBytes: true)
+        flowDelays[flow.identifier] = AFC(app: app)
     }
 
     public func deregister(for flow: NEFilterFlow) {

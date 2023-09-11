@@ -76,13 +76,13 @@ public class ConnectedViewController: ObservableObject {
 
     @MainActor
     public func set(state: ConnectedViewState) {
-        self._set(state: state)
+        _set(state: state)
     }
-    
+
     private func _set(state: ConnectedViewState) {
         self.state = state
         if state != .settings {
-            self.settingsPage = .main
+            settingsPage = .main
         }
     }
 
@@ -90,7 +90,8 @@ public class ConnectedViewController: ObservableObject {
     public func setSettingsPage(page: SettingsPage) {
         _setSettingsPage(page: page)
     }
+
     private func _setSettingsPage(page: SettingsPage) {
-        self.settingsPage = page
+        settingsPage = page
     }
 }

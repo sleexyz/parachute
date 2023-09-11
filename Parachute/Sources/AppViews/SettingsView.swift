@@ -24,12 +24,12 @@ struct SettingsContent: View {
                 Spacer()
 
                 TimePicker()
-                    // .padding(.bottom, 20)
+                // .padding(.bottom, 20)
 
                 Spacer()
 
                 AppsPicker()
-                    // .padding(.bottom, 20)
+                // .padding(.bottom, 20)
 
                 Spacer()
 
@@ -76,7 +76,6 @@ struct AdvancedSettingsHeader: View {
     @EnvironmentObject var settingsController: SettingsController
     @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var connectedViewController: ConnectedViewController
-
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -294,8 +293,20 @@ struct AdvancedSettingsContent: View {
                     .foregroundColor(.white)
                 Spacer()
                 Picker(selection: $settingsStore.settings.algorithm, label: Text("Algorithm")) {
+                    Text("B (recommended)").tag(Proxyservice_Algorithm.proportional)
                     Text("A").tag(Proxyservice_Algorithm.drop)
-                    Text("B").tag(Proxyservice_Algorithm.proportional)
+                }
+                .tint(.parachuteOrange)
+                .pickerStyle(.menu)
+            }
+            .padding(.horizontal)
+            HStack {
+                Text("Usability")
+                    .foregroundColor(.white)
+                Spacer()
+                Picker(selection: $settingsStore.settings.usability, label: Text("Usability")) {
+                    Text("Unusable").tag(Proxyservice_Usability.unusable)
+                    Text("Barely Usable").tag(Proxyservice_Usability.barely)
                 }
                 .tint(.parachuteOrange)
                 .pickerStyle(.menu)

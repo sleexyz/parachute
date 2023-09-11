@@ -7,7 +7,6 @@ let SAMPLE_FREQUENCY = 1.0
 // A proportional controller that throttles the download speed of a flow.
 public class SlowingAppFlowController {
     // Parameters
-    var allowPreSlowingBytes: Bool
     var app: App
 
     // var gain = 1 / 1e6 // microsecond
@@ -15,11 +14,10 @@ public class SlowingAppFlowController {
 
     var logger: Logger
 
-    public required init(app: App, allowPreSlowingBytes: Bool = false) {
-        self.allowPreSlowingBytes = allowPreSlowingBytes
+    public required init(app: App) {
         self.app = app
         logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppFlowController.\(app.appType)")
-        let startingLatencyPerByte = (20000 / app.targetRxSpeed) * 4e-2 / Double(app.peekBytes) // 40ms per peek. Sweet spot computed experimentally.
+        let startingLatencyPerByte = (20000 / app.targetRxSpeed(.shared)) * 4e-2 / Double(app.peekBytes) // 40ms per peek. Sweet spot computed experimentally.
         latencyPerByte = startingLatencyPerByte
     }
 
@@ -63,7 +61,7 @@ public class SlowingAppFlowController {
         // So we need to increase latencyPerByte.
         // Negative error means rxSpeed < targetRxSpeed, which means we're too slow
         // So we need to decrease latencyPerByte.
-        let inputError = (app.targetRxSpeed - rxSpeed) / app.targetRxSpeed
+        let inputError = (app.targetRxSpeed(.shared) - rxSpeed) / app.targetRxSpeed(.shared)
         let update = -1 * inputError * gain
 
         var newLatencyPerByte = latencyPerByte + update
@@ -83,8 +81,8 @@ public class SlowingAppFlowController {
     }
 
     private func getVerdict(from _: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        if allowPreSlowingBytes, offset < app.preSlowingBytes {
-            return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: app.preSlowingBytes)
+        if offset < app.preSlowingBytes(.shared) {
+            return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: app.preSlowingBytes(.shared))
         }
         let targetLatency = latencyPerByte * Double(readBytes.count)
         // logger.info("target latency: \(UInt32(targetLatency * 1e6)) microseconds")

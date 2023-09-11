@@ -1,6 +1,7 @@
 import FilterCommon
 import NetworkExtension
 import OSLog
+import ProxyService
 
 class DroppingAppFlowController {
     let app: App
@@ -9,11 +10,13 @@ class DroppingAppFlowController {
         self.app = app
     }
 
-    func handleInboundData(from _: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        if offset < app.allowedBytesBeforeDrop {
-            return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: app.allowedBytesBeforeDrop)
+    func handleInboundData(from _: NEFilterFlow, offset: Int, readBytes: Data, settings: Proxyservice_Settings) -> NEFilterDataVerdict {
+        let allowedBytesBeforeDrop = settings.dropAllowedBytes(app: app)
+
+        if offset < allowedBytesBeforeDrop {
+            return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: allowedBytesBeforeDrop)
         }
-        return .needRulesBlocking()
+        return .drop()
     }
 
     static var instagram = DroppingAppFlowController(app: .instagram)

@@ -5,6 +5,16 @@ option go_package = "pb/proxyservice";
 
 import "google/protobuf/timestamp.proto";
 
+enum Algorithm {
+    drop = 0;
+    proportional = 1;
+}
+
+enum Usability {
+    unusable = 0;
+    barely = 1;
+}
+
 enum Mode {
     PROGRESSIVE = 0;
     FOCUS = 1;
@@ -54,11 +64,6 @@ message Preset {
     TrafficRules traffic_rules = 11;
 }
 
-enum Algorithm {
-    drop = 0;
-    proportional = 1;
-}
-
 // Rules for slowing down
 message TrafficRules {
     bool match_all_traffic = 1;
@@ -102,12 +107,14 @@ message Settings {
     map<int32, bool> apps = 16;
 
     // NOT used by the backend:
-    // TODO: move these to a preferences proto.
+// TODO: move these to a preferences proto.
     int32 quick_session_secs = 17;
     int32 long_session_secs = 18;
 
 
     Algorithm algorithm = 19;
+
+    Usability usability = 20;
 }
 
 message ChangeMetadata {
