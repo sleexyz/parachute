@@ -3,9 +3,13 @@ import ActivityKit
 import Foundation
 import OSLog
 import ProxyService
+import OneSignalFramework
 
 @available(iOS 16.2, *)
 public class ActivitiesHelper {
+    // TODO: generate one of these for each activity
+    let activityId = "slowdown_status"
+
     public static let shared = ActivitiesHelper()
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ActivitiesHelper")
@@ -34,7 +38,25 @@ public class ActivitiesHelper {
 
     private func requestActivity(settings: Proxyservice_Settings, isConnected: Bool) {
         do {
-            let activity = try Activity.request(attributes: SlowdownWidgetAttributes(), content: makeActivityContent(settings, isConnected: isConnected))
+            let activity = try Activity.request(
+                attributes: SlowdownWidgetAttributes(), 
+                content: makeActivityContent(settings, isConnected: isConnected),
+                pushType: .token
+            )
+            
+            // if let data = activity.pushToken {
+            //     let myToken = data.map {String(format: "%02x", $0)}.joined()
+            //     OneSignal.LiveActivities.enter(activityId, withToken: myToken)
+            //     logger.info("push token: \(myToken)")
+            // }
+            
+            Task {
+                for await data in activity.pushTokenUpdates {
+                    let myToken = data.map {String(format: "%02x", $0)}.joined()
+                    OneSignal.LiveActivities.enter(activityId, withToken: myToken)
+                    logger.info("push token: \(myToken)")
+                }
+            }
             logger.info("requested activity: \(activity.id)")
         } catch {
             logger.error("error requesting activity: \(error.localizedDescription)")

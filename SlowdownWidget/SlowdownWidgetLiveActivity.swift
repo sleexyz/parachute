@@ -22,7 +22,8 @@ struct SlowdownWidgetLiveActivity: Widget {
 
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: SlowdownWidgetAttributes.self) { context in
-            SlowdownWidgetView(settings: context.state.settings, isConnected: context.state.isConnected)
+            let settings: Proxyservice_Settings = context.state.settings ?? (try? SettingsStore.shared.read()) ?? .defaultSettings
+            SlowdownWidgetView(settings: settings, isConnected: context.state.isConnected)
                 .activityBackgroundTint(Color.background.opacity(0.5))
                 // .activityBackgroundTint(.ultraThinMaterial)
                 .padding([.leading, .trailing], 20)

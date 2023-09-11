@@ -129,9 +129,7 @@ public class SettingsStore: ObservableObject {
     }
 
     private func loadFromFile() throws {
-        let fileUrl = try SettingsStore.fileUrl()
-        let file = try FileHandle(forReadingFrom: fileUrl)
-        var newSettings = try Proxyservice_Settings(serializedData: file.availableData)
+        var newSettings = try read()
         // run migrations
         SettingsMigrations.upgradeToLatestVersion(settings: &newSettings)
 
@@ -140,6 +138,12 @@ public class SettingsStore: ObservableObject {
             await self.setSettings(value: upgradedNewSettings)
             await self.setLoaded(value: true)
         }
+    }
+
+    public func read() throws -> Proxyservice_Settings {
+        let fileUrl = try SettingsStore.fileUrl()
+        let file = try FileHandle(forReadingFrom: fileUrl)
+        return try Proxyservice_Settings(serializedData: file.availableData)
     }
 
     @MainActor

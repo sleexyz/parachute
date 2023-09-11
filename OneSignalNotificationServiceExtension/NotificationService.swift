@@ -1,19 +1,17 @@
 import UserNotifications
 
 import OneSignalExtension
+import AppHelpers
 import Controllers
+import OSLog
 
 class NotificationService: UNNotificationServiceExtension {
+
+    var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "NotificationService")
     
     var contentHandler: ((UNNotificationContent) -> Void)?
     var receivedRequest: UNNotificationRequest!
     var bestAttemptContent: UNMutableNotificationContent?
-    
-    override init() {
-        Task {
-            await NEConfigurationService.shared.load()
-        }
-    }
     
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.receivedRequest = request
@@ -28,7 +26,16 @@ class NotificationService: UNNotificationServiceExtension {
             // bestAttemptContent.body = "[Modified] " + bestAttemptContent.body
             
             if bestAttemptContent.categoryIdentifier == "unpause" {
-                VPNLifecycleManager.shared.unpauseConnection()
+                logger.info("unpausing 1")
+                Task { @MainActor in
+                    logger.info("unpausing 2")
+                    try await SettingsStore.shared.load()
+                    if #available(iOS 16.2, *) {
+                        await ActivitiesHelper.shared.startOrUpdate(settings: SettingsStore.shared.settings, isConnected: true)
+                    }
+                    logger.info("unpausing 3")
+                    // VPNLifecycleManager.shared.unpauseConnection()
+                }
             }
             
             OneSignalExtension.didReceiveNotificationExtensionRequest(self.receivedRequest, with: bestAttemptContent, withContentHandler: self.contentHandler)

@@ -36,22 +36,9 @@ struct SlowdownWidget: Widget {
         StaticConfiguration(kind: kind, provider: SlowdownWidgetProvider()) { entry in
             ControllersLoader {
                 SlowdownWidgetView(settings: entry.settings, isConnected: entry.isConnected)
-                    .environmentObject(NEConfigurationService.shared)
                 // .containerBackground(Color.background, for: .widget)
             }
         }
-//        if #available(iOSApplicationExtension 17.0, *) {
-//             AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: SlowdownWidgetProvider()) { entry in
-//                ControllersLoader {
-//                    SlowdownWidgetView(settings: entry.settings)
-//                        .environmentObject(NEConfigurationService.shared)
-//                        .containerBackground(Color.background, for: .widget)
-//                }
-//            }
-//        } else {
-//            IntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: SiriKitIntentProvider()) { entry in
-//            }
-//        }
     }
 }
 
