@@ -8,7 +8,7 @@
 
 import Common
 import FilterCommon
-import Firebase
+// import Firebase
 import Models
 import NetworkExtension
 import OSLog
@@ -24,7 +24,7 @@ class FilterControlProvider: NEFilterControlProvider {
     var observerContext = 0
     override init() {
         super.init()
-        FirebaseApp.configure()
+        // FirebaseApp.configure()
         addObserver(self, forKeyPath: "filterConfiguration", options: [.initial, .new], context: &observerContext)
     }
 
