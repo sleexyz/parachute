@@ -60,11 +60,10 @@ public class VPNLifecycleManager: ObservableObject {
         Task {
             Analytics.logEvent("reenable", parameters: nil)
             self.neConfigurationService.cancelPause()
-            if #available(iOS 16.2, *) {
-                await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: NEConfigurationService.shared.isConnected)
-            }
-            // try await self.neConfigurationService.startConnectionAndEnableOnDemand(settingsOverride: settingsStore.settings)
             try await self.neConfigurationService.start(settingsOverride: settingsStore.settings)
+            if #available(iOS 16.2, *) {
+                await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: true)
+            }
         }
     }
 }
