@@ -214,10 +214,14 @@ struct LongSessionScrollPrompt: View {
     public func startScrollSession() {
         Task { @MainActor in
             do {
+                var overlay: Preset = .scrollSession
+                overlay.overlayDurationSecs = Double(settingsStore.settings.longSessionSecs)
+
                 try await profileManager.loadPreset(
                     preset: .focus,
-                    overlay: .scrollSession
+                    overlay: overlay
                 )
+
                 if #available(iOS 16.2, *) {
                     await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings, isConnected: neConfigurationService.isConnected)
                 }
