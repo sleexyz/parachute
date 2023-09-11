@@ -119,7 +119,7 @@ public struct ScrollSessionViewInner: View {
                     )
                     ConnectedViewController.shared.set(state: .main)
                     if #available(iOS 16.2, *) {
-                        await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings, isConnected: neConfigurationService.isConnected)
+                        await ActivitiesHelper.shared.startOrUpdate(settings: SettingsStore.shared.settings, isConnected: neConfigurationService.isConnected)
                     }
                 }
             }) {
@@ -223,7 +223,7 @@ struct LongSessionScrollPrompt: View {
                 )
 
                 if #available(iOS 16.2, *) {
-                    await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings, isConnected: neConfigurationService.isConnected)
+                    await ActivitiesHelper.shared.startOrUpdate(settings: SettingsStore.shared.settings, isConnected: neConfigurationService.isConnected)
                 }
                 scrollSessionViewController.set(state: .main)
             } catch {

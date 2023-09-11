@@ -167,7 +167,7 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
                 Analytics.logEvent("unpause", parameters: nil)
                 bgAppRefreshTask.setTaskCompleted(success: true)
                 if #available(iOS 16.2, *) {
-                    await ActivitiesHelper.shared.update(settings: SettingsStore.shared.settings, isConnected: isConnected)
+                    await ActivitiesHelper.shared.startOrUpdate(settings: SettingsStore.shared.settings, isConnected: isConnected)
                 }
                 // TODO: make sure UI is in sync on load
             } catch {

@@ -52,7 +52,7 @@ public class ActivitiesHelper {
         await update(settings: settings, isConnected: isConnected)
     }
 
-    public func update(settings: Proxyservice_Settings, isConnected: Bool) async {
+    private func update(settings: Proxyservice_Settings, isConnected: Bool) async {
         if !ActivityAuthorizationInfo().areActivitiesEnabled {
             logger.info("activities not enabled")
             return

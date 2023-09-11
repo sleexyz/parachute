@@ -125,7 +125,7 @@ public class ProfileManager: ObservableObject {
                 self.settingsStore.settings.clearOverlay()
                 try await self.settingsController.syncSettings(reason: "Overlay expired")
                 if #available(iOS 16.2, *) {
-                    await ActivitiesHelper.shared.update(settings: self.settingsStore.settings, isConnected: self.neConfigurationService.isConnected)
+                    await ActivitiesHelper.shared.startOrUpdate(settings: self.settingsStore.settings, isConnected: self.neConfigurationService.isConnected)
                 }
             }
         }
@@ -142,7 +142,7 @@ public class ProfileManager: ObservableObject {
         settingsStore.settings.clearOverlay()
         try await settingsController.syncSettings(reason: "Session ended")
         if #available(iOS 16.2, *) {
-            await ActivitiesHelper.shared.update(settings: self.settingsStore.settings, isConnected: neConfigurationService.isConnected)
+            await ActivitiesHelper.shared.startOrUpdate(settings: self.settingsStore.settings, isConnected: neConfigurationService.isConnected)
         }
     
     }
