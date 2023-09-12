@@ -61,7 +61,7 @@ public class VPNLifecycleManager: ObservableObject {
             }
             if let until = until {
                 if #available(iOS 16.2, *) {
-                    queueService.registerUnpauseTask(activityId: ActivitiesHelper.shared.activityId, sendDate: until)
+                    queueService.registerActivityRefresh(activityId: ActivitiesHelper.shared.activityId, refreshDate: until)
                 }
             }
             if #available(iOS 16.2, *) {
@@ -77,7 +77,7 @@ public class VPNLifecycleManager: ObservableObject {
             try await self.neConfigurationService.stop()
             if let until = until {
                 if #available(iOS 16.2, *) {
-                    queueService.registerUnpauseTask(activityId: ActivitiesHelper.shared.activityId, sendDate: until)
+                    queueService.registerActivityRefresh(activityId: ActivitiesHelper.shared.activityId, refreshDate: until)
                 }
             }
             if #available(iOS 16.2, *) {
@@ -89,7 +89,7 @@ public class VPNLifecycleManager: ObservableObject {
 
     private func cancelUnpauseTask() {
         if #available(iOS 16.2, *) {
-            queueService.cancelUnpauseTask(activityId: ActivitiesHelper.shared.activityId)
+            queueService.cancelActivityRefresh(activityId: ActivitiesHelper.shared.activityId)
         }
     }
 

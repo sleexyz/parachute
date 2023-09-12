@@ -2,12 +2,12 @@ import DI
 import OSLog
 
 
-public struct RegisterUnpauseRequest: Codable {
+public struct RegisterActivityRefreshRequest: Codable {
     let activityId: String
-    let sendDate: Date
+    let refreshDate: Date
 }
 
-public struct RegisterUnpauseResponse: Codable {
+public struct RegisterActivityRefreshResponse: Codable {
     let taskName: String
 }
 
@@ -24,9 +24,9 @@ public class QueueService: ObservableObject {
     private var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "QueueService") 
 
 
-    public func registerUnpauseTask(activityId: String, sendDate: Date) {
-        let url = "https://us-central1-slowdown-375014.cloudfunctions.net/register_unpause"
-        let body = RegisterUnpauseRequest(activityId: activityId, sendDate: sendDate)
+    public func registerActivityRefresh(activityId: String, refreshDate: Date) {
+        let url = "https://us-central1-slowdown-375014.cloudfunctions.net/register_activity_refresh"
+        let body = RegisterActivityRefreshRequest(activityId: activityId, refreshDate: refreshDate)
         let encoder = JSONEncoder()
         // milliseconds since epoch
         encoder.dateEncodingStrategy =  .millisecondsSince1970
@@ -44,13 +44,13 @@ public class QueueService: ObservableObject {
                 self.logger.error("no data")
                 return
             }
-            let response = try! JSONDecoder().decode(RegisterUnpauseResponse.self, from: data)
+            let response = try! JSONDecoder().decode(RegisterActivityRefreshResponse.self, from: data)
             self.logger.info("response: \(response.taskName)")
         }
         task.resume()
     }
 
     //TODO: implement
-    public func cancelUnpauseTask(activityId: String) {
+    public func cancelActivityRefresh(activityId: String) {
     }
 }
