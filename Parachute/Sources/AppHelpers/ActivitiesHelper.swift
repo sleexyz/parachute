@@ -7,8 +7,12 @@ import OneSignalFramework
 
 @available(iOS 16.2, *)
 public class ActivitiesHelper {
+    @AppStorage("userId") private var userId = UUID().uuidString
+
     // TODO: generate one of these for each activity
-    let activityId = "slowdown_status"
+    var activityId: String {
+        userId
+    } 
 
     public static let shared = ActivitiesHelper()
 

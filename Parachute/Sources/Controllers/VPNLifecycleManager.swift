@@ -15,7 +15,7 @@ import SwiftProtobuf
 
 public class VPNLifecycleManager: ObservableObject {
     public struct Provider: Dep {
-        public func create(r: Registry) -> VPNLifecycleManager {
+        public func create(r _: Registry) -> VPNLifecycleManager {
             return .shared
         }
 
@@ -25,40 +25,39 @@ public class VPNLifecycleManager: ObservableObject {
     public static let shared = VPNLifecycleManager(
         neConfigurationService: NEConfigurationService.shared,
         settingsController: SettingsController.shared,
-        settingsStore: SettingsStore.shared)
+        settingsStore: SettingsStore.shared,
+        queueService: QueueService.shared
+    )
 
     private var neConfigurationService: NEConfigurationService
     private var settingsController: SettingsController
     private var settingsStore: SettingsStore
+    private var queueService: QueueService
     private var logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "VPNLifecycleManager")
-    init(neConfigurationService: NEConfigurationService, settingsController: SettingsController, settingsStore: SettingsStore) {
+    init(neConfigurationService: NEConfigurationService, settingsController: SettingsController, settingsStore: SettingsStore, queueService: QueueService) {
         self.neConfigurationService = neConfigurationService
         self.settingsController = settingsController
         self.settingsStore = settingsStore
+        self.queueService = queueService
     }
-    
-    public func pauseConnection() {
+
+    public func pauseConnection(until: Date?) {
         Task {
-            // try await self.neConfigurationService.stopConnectionAndDisableOnDemand()
             try await self.neConfigurationService.stop()
-             let request = BGAppRefreshTaskRequest(identifier: NEConfigurationService.unpauseIdentifier)
-             request.earliestBeginDate = Date(timeIntervalSinceNow: 5*60)
-             Analytics.logEvent("pause", parameters: nil)
-            
-            //  do {
-            //      try BGTaskScheduler.shared.submit(request)
-            //     if #available(iOS 16.2, *) {
-            //         await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: NEConfigurationService.shared.isConnected)
-            //     }
-            //  } catch {
-            //      print("Could not schedule app refresh: \(error)")
-            //  }
+            Analytics.logEvent("pause", parameters: nil)
+            if let until = until {
+                queueService.registerUnpauseTask(activityId: ActivityHelper.shared.activityId, sendDate: until)
+            }
         }
+    }
+
+    private func cancelUnpauseTask() {
+        queueService.cancelUnpauseTask(activityId: ActivityHelper.shared.activityId)
     }
 
     public func stopConnection() {
         Task {
-            self.neConfigurationService.cancelPause()
+            cancelUnpauseTask()
             try await self.neConfigurationService.uninstall()
             if #available(iOS 16.2, *) {
                 await ActivitiesHelper.shared.stop()
@@ -69,7 +68,7 @@ public class VPNLifecycleManager: ObservableObject {
 
     public func startConnection() {
         Task {
-            self.neConfigurationService.cancelPause()
+            cancelUnpauseTask()
             try await self.neConfigurationService.start(settingsOverride: settingsStore.settings)
             if #available(iOS 16.2, *) {
                 await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: true)
@@ -80,7 +79,7 @@ public class VPNLifecycleManager: ObservableObject {
 
     public func unpauseConnection() {
         Task {
-            self.neConfigurationService.cancelPause()
+            cancelUnpauseTask()
             try await self.neConfigurationService.start(settingsOverride: settingsStore.settings)
             if #available(iOS 16.2, *) {
                 await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: true)

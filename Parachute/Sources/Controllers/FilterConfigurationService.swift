@@ -149,35 +149,4 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
         // TODO: implement when we actually need real data
         return Data()
     }
-
-    static let unpauseIdentifier = "industries.strange.slowdown.unpause"
-
-    public func registerBackgroundTasks() {
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: VPNConfigurationService.unpauseIdentifier, using: nil) { task in
-            self.handleUnpause(bgAppRefreshTask: task as! BGAppRefreshTask)
-        }
-    }
-
-    public func cancelPause() {
-        BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: VPNConfigurationService.unpauseIdentifier)
-    }
-
-    private func handleUnpause(bgAppRefreshTask: BGAppRefreshTask) {
-        let unpauseTask = Task {
-            do {
-                try await self.start(settingsOverride: SettingsStore.shared.settings)
-                Analytics.logEvent("unpause", parameters: nil)
-                bgAppRefreshTask.setTaskCompleted(success: true)
-                if #available(iOS 16.2, *) {
-                    await ActivitiesHelper.shared.startOrUpdate(settings: SettingsStore.shared.settings, isConnected: isConnected)
-                }
-                // TODO: make sure UI is in sync on load
-            } catch {
-                bgAppRefreshTask.setTaskCompleted(success: false)
-            }
-        }
-        bgAppRefreshTask.expirationHandler = {
-            unpauseTask.cancel()
-        }
-    }
 }

@@ -53,7 +53,7 @@ struct WiredPauseCard<Content: View>: View {
                 return
             }
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            vpnLifecycleManager.pauseConnection()
+            vpnLifecycleManager.pauseConnection(until: nil)
         }
     }
 }
