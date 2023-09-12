@@ -34,6 +34,7 @@ public class VPNLifecycleManager: ObservableObject {
     private var settingsStore: SettingsStore
     private var queueService: QueueService
     private var logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "VPNLifecycleManager")
+
     init(neConfigurationService: NEConfigurationService, settingsController: SettingsController, settingsStore: SettingsStore, queueService: QueueService) {
         self.neConfigurationService = neConfigurationService
         self.settingsController = settingsController
@@ -41,6 +42,36 @@ public class VPNLifecycleManager: ObservableObject {
         self.queueService = queueService
     }
 
+    public func reenable() {
+        Task {
+            try await self.settingsController.setSettings {
+                $0.disabledUntil = .init()
+            }
+            if #available(iOS 16.2, *) {
+                await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: true)
+            }
+            Analytics.logEvent("reenable", parameters: nil)
+        }
+    }
+
+    public func disable(until: Date?) {
+        Task {
+            try await self.settingsController.setSettings {
+                $0.disabledUntil = Google_Protobuf_Timestamp(date: until ?? .init())
+            }
+            if let until = until {
+                if #available(iOS 16.2, *) {
+                    queueService.registerUnpauseTask(activityId: ActivitiesHelper.shared.activityId, sendDate: until)
+                }
+            }
+            if #available(iOS 16.2, *) {
+                await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: false)
+            }
+            Analytics.logEvent("pause", parameters: nil)
+        }
+    }
+
+    // deprecated
     public func pauseConnection(until: Date?) {
         Task {
             try await self.neConfigurationService.stop()

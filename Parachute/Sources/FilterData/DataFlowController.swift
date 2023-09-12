@@ -55,6 +55,11 @@ public class DataFlowController {
 
         let allowPeek = NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: 128 * 1024 * 1024) // large number
 
+
+        guard !settings.isDisabled else {
+            return allowPeek
+        }
+
         guard settings.isAppEnabled(app: app.appType) else {
             // #if DEBUG
             // logger.info("App disabled: \(app.appType.rawValue)")
@@ -96,6 +101,7 @@ public class FlowRegistry {
         logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FlowRegistry")
     }
 
+    // TODO: ensure # of flows is bounded
     public func register(flow: NEFilterFlow) {
         guard let app = flow.matchSocialMedia() else {
             // Invariant error. We should only be registering social media flows.

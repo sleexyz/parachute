@@ -374,6 +374,16 @@ public struct Proxyservice_Settings {
     set {_uniqueStorage()._usability = newValue}
   }
 
+  /// Disable temporarily. Meant as a last resort option.
+  public var disabledUntil: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _storage._disabledUntil ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_uniqueStorage()._disabledUntil = newValue}
+  }
+  /// Returns true if `disabledUntil` has been explicitly set.
+  public var hasDisabledUntil: Bool {return _storage._disabledUntil != nil}
+  /// Clears the value of `disabledUntil`. Subsequent reads from it will return its default value.
+  public mutating func clearDisabledUntil() {_uniqueStorage()._disabledUntil = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -750,6 +760,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     18: .standard(proto: "long_session_secs"),
     19: .same(proto: "algorithm"),
     20: .same(proto: "usability"),
+    21: .standard(proto: "disabled_until"),
   ]
 
   fileprivate class _StorageClass {
@@ -764,6 +775,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _longSessionSecs: Int32 = 0
     var _algorithm: Proxyservice_Algorithm = .drop
     var _usability: Proxyservice_Usability = .unusable
+    var _disabledUntil: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -781,6 +793,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _longSessionSecs = source._longSessionSecs
       _algorithm = source._algorithm
       _usability = source._usability
+      _disabledUntil = source._disabledUntil
     }
   }
 
@@ -810,6 +823,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 18: try { try decoder.decodeSingularInt32Field(value: &_storage._longSessionSecs) }()
         case 19: try { try decoder.decodeSingularEnumField(value: &_storage._algorithm) }()
         case 20: try { try decoder.decodeSingularEnumField(value: &_storage._usability) }()
+        case 21: try { try decoder.decodeSingularMessageField(value: &_storage._disabledUntil) }()
         default: break
         }
       }
@@ -855,6 +869,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       if _storage._usability != .unusable {
         try visitor.visitSingularEnumField(value: _storage._usability, fieldNumber: 20)
       }
+      try { if let v = _storage._disabledUntil {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 21)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -875,6 +892,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._longSessionSecs != rhs_storage._longSessionSecs {return false}
         if _storage._algorithm != rhs_storage._algorithm {return false}
         if _storage._usability != rhs_storage._usability {return false}
+        if _storage._disabledUntil != rhs_storage._disabledUntil {return false}
         return true
       }
       if !storagesAreEqual {return false}

@@ -20,14 +20,41 @@ struct DisconnectedView: View {
     @EnvironmentObject var service: NEConfigurationService
 
     var buttonTitle: String {
-        "Enable Content Filter"
+        if !service.isConnected {
+            "Enable Parachute"
+        } else {
+            "Re-enable Parachute"
+        }
+    }
+
+    var caption: String {
+        if !service.isConnected {
+            return "Disabled."
+        } else {
+            // let dateFormatter = DateFormatter()
+            // dateFormatter.dateStyle = .none
+            // dateFormatter.timeStyle = .short
+
+            // let disabledUntil = settingsStore.settings.disabledUntil.date
+            // let formattedDate = dateFormatter.string(from: disabledUntil)
+            return "Disabled for 1 hour."
+        }
     }
 
     var body: some View {
         VStack {
             Spacer()
+            Text(caption)
+                .font(.system(size: 20, weight: .regular, design: .rounded))
+//                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity)
+            Spacer()
             Button {
-                vpnLifecycleManager.startConnection()
+                if !service.isConnected {
+                    vpnLifecycleManager.startConnection()
+                } else {
+                    vpnLifecycleManager.reenable()
+                }
             } label: {
                 Text(buttonTitle)
                     .font(.system(size: 20, weight: .bold, design: .rounded))
@@ -42,7 +69,7 @@ struct DisconnectedView: View {
             Button {
                 vpnLifecycleManager.stopConnection()
             } label: {
-                Text("Uninstall Content Filter")
+                Text("Disable indefinitely")
                     .font(.system(size: 20, weight: .regular, design: .rounded))
                     .padding()
                     .frame(maxWidth: .infinity)
