@@ -22,6 +22,8 @@ struct AppView: View {
         VStack {
             if !service.isConnected {
                 DisconnectedView()
+            } else if store.settings.isDisabled {
+                DisconnectedView()
             } else {
                 WidgetUpdater {
                     ConnectedView()

@@ -18,6 +18,10 @@ public extension Proxyservice_Settings {
         return defaultPreset
     }
 
+    var isDisabled: Bool {
+        return Date.now < self.disabledUntil.date
+    }
+
     var isInScrollSession: Bool {
         activePreset.baseRxSpeedTarget == .infinity
     }

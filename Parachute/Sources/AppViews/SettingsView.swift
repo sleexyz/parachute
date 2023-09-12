@@ -106,7 +106,8 @@ struct DisableButton: View {
     var body: some View {
         Button(action: {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            vpnLifecycleManager.pauseConnection()
+            vpnLifecycleManager.disable(until: Date(timeIntervalSinceNow: 60 * 60))
+            // vpnLifecycleManager.pauseConnection(until: Date(timeIntervalSinceNow: 60 * 60))
             isSettingsPresented = false
         }, label: {
             Text("Disable for 1 hour")

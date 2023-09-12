@@ -17,14 +17,10 @@ public struct QuickBreakIntent: AppIntent, LiveActivityIntent {
 
     public func perform() async throws -> some IntentResult {
         logger.info("QuickBreakIntent.perform")
-        guard let profileManager = ProfileManager.shared else {
-            throw MyIntentError.message("ProfileManager not initialized")
-        }
-
         var overlay: Preset = .quickBreak
         overlay.overlayDurationSecs = Double(SettingsStore.shared.settings.quickSessionSecs)
 
-        try await profileManager.loadPreset(
+        try await ProfileManager.shared.loadPreset(
             preset: .focus,
             overlay: overlay
         )

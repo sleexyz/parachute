@@ -1,0 +1,11 @@
+steps:
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - gcloud
+  - functions
+  - deploy
+  - register_unpause
+  - --region=us-central1
+  - --source=.
+  - --trigger-http
+  - --runtime=nodejs20

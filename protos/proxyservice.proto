@@ -115,6 +115,9 @@ message Settings {
     Algorithm algorithm = 19;
 
     Usability usability = 20;
+
+    // Disable temporarily. Meant as a last resort option.
+    google.protobuf.Timestamp disabled_until = 21;
 }
 
 message ChangeMetadata {

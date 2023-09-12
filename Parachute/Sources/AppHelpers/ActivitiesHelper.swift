@@ -3,9 +3,18 @@ import ActivityKit
 import Foundation
 import OSLog
 import ProxyService
+import OneSignalFramework
+import SwiftUI
 
 @available(iOS 16.2, *)
 public class ActivitiesHelper {
+    @AppStorage("userId") private var userId = UUID().uuidString
+
+    // TODO: generate one of these for each activity
+    public var activityId: String {
+        userId
+    } 
+
     public static let shared = ActivitiesHelper()
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ActivitiesHelper")
@@ -20,9 +29,39 @@ public class ActivitiesHelper {
         }
     }
 
+    public func stop() {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
+            logger.info("activities not enabled")
+            return
+        }
+        if let activity = Activity<SlowdownWidgetAttributes>.activities.first {
+            Task {
+                await activity.end(ActivityContent(state: activity.content.state, staleDate: nil), dismissalPolicy: .immediate)
+            }
+        }
+    }
+
     private func requestActivity(settings: Proxyservice_Settings, isConnected: Bool) {
         do {
-            let activity = try Activity.request(attributes: SlowdownWidgetAttributes(), content: makeActivityContent(settings, isConnected: isConnected))
+            let activity = try Activity.request(
+                attributes: SlowdownWidgetAttributes(), 
+                content: makeActivityContent(settings, isConnected: isConnected),
+                pushType: .token
+            )
+            
+            // if let data = activity.pushToken {
+            //     let myToken = data.map {String(format: "%02x", $0)}.joined()
+            //     OneSignal.LiveActivities.enter(activityId, withToken: myToken)
+            //     logger.info("push token: \(myToken)")
+            // }
+            
+            Task {
+                for await data in activity.pushTokenUpdates {
+                    let myToken = data.map {String(format: "%02x", $0)}.joined()
+                    OneSignal.LiveActivities.enter(activityId, withToken: myToken)
+                    logger.info("push token: \(myToken)")
+                }
+            }
             logger.info("requested activity: \(activity.id)")
         } catch {
             logger.error("error requesting activity: \(error.localizedDescription)")
