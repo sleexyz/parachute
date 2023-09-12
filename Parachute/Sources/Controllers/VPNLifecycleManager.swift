@@ -44,15 +44,22 @@ public class VPNLifecycleManager: ObservableObject {
     public func pauseConnection(until: Date?) {
         Task {
             try await self.neConfigurationService.stop()
-            Analytics.logEvent("pause", parameters: nil)
             if let until = until {
-                queueService.registerUnpauseTask(activityId: ActivityHelper.shared.activityId, sendDate: until)
+                if #available(iOS 16.2, *) {
+                    queueService.registerUnpauseTask(activityId: ActivitiesHelper.shared.activityId, sendDate: until)
+                }
             }
+            if #available(iOS 16.2, *) {
+                await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: false)
+            }
+            Analytics.logEvent("pause", parameters: nil)
         }
     }
 
     private func cancelUnpauseTask() {
-        queueService.cancelUnpauseTask(activityId: ActivityHelper.shared.activityId)
+        if #available(iOS 16.2, *) {
+            queueService.cancelUnpauseTask(activityId: ActivitiesHelper.shared.activityId)
+        }
     }
 
     public func stopConnection() {

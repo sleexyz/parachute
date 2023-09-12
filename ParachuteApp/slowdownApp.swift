@@ -50,9 +50,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                 ActivitiesHelper.shared.start(settings: SettingsStore.shared.settings, isConnected: NEConfigurationService.shared.isConnected)
             }
         }
-        NEConfigurationService.shared.registerBackgroundTasks()
-        // NEConfigurationService.shared.registerBackgroundTasks()
-
         // Remove this method to stop OneSignal Debugging
         OneSignal.Debug.setLogLevel(.LL_VERBOSE)
             

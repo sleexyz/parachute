@@ -4,13 +4,14 @@ import Foundation
 import OSLog
 import ProxyService
 import OneSignalFramework
+import SwiftUI
 
 @available(iOS 16.2, *)
 public class ActivitiesHelper {
     @AppStorage("userId") private var userId = UUID().uuidString
 
     // TODO: generate one of these for each activity
-    var activityId: String {
+    public var activityId: String {
         userId
     } 
 
