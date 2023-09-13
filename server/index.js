@@ -38,7 +38,7 @@ async function createHttpTask({ activityId, refreshDate }) {
                 sound: 'beep.wav',
                 stale_date: refreshDate + 1000 * 60 * 60 * 8,
                 dismissal_date: refreshDate + 1000 * 60 * 60 * 24 * 7,
-                priority: 5
+                priority: 10
             });
 
     const url = `https://onesignal.com/api/v1/apps/${APP_ID}/live_activities/${activityId}/notifications`;

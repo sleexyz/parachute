@@ -22,28 +22,32 @@ var OVERLAY_PRESET_OPACITY: Double = PRESET_OPACITY * 0.3
 
 public class ProfileManager: ObservableObject {
     public struct Provider: Dep {
-        public func create(r: Registry) -> ProfileManager {
+        public func create(r _: Registry) -> ProfileManager {
             .shared
         }
 
         public init() {}
     }
 
-    public static let shared: ProfileManager = ProfileManager(
+    public static let shared: ProfileManager = .init(
         settingsStore: SettingsStore.shared,
         settingsController: SettingsController.shared,
-        neConfigurationService: NEConfigurationService.shared
+        neConfigurationService: NEConfigurationService.shared,
+        queueService: QueueService.shared
     )
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ProfileManager")
     var settingsStore: SettingsStore
     var settingsController: SettingsController
     var neConfigurationService: NEConfigurationService
+    var queueService: QueueService
     var bag = Set<AnyCancellable>()
-    init(settingsStore: SettingsStore, settingsController: SettingsController, neConfigurationService: NEConfigurationService) {
+
+    init(settingsStore: SettingsStore, settingsController: SettingsController, neConfigurationService: NEConfigurationService, queueService: QueueService) {
         self.settingsStore = settingsStore
         self.settingsController = settingsController
         self.neConfigurationService = neConfigurationService
+        self.queueService = queueService
         settingsStore.$settings
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
@@ -102,30 +106,44 @@ public class ProfileManager: ObservableObject {
             $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!))
         }
         try await settingsController.syncSettings()
-        overlayTimer?.invalidate()
 
-        if let taskId {
-            UIApplication.shared.endBackgroundTask(taskId)
+        // overlayTimer?.invalidate()
+
+        // if let taskId {
+        //     UIApplication.shared.endBackgroundTask(taskId)
+        // }
+
+        // taskId = UIApplication.shared.beginBackgroundTask(withName: "overlayExpiry") {
+        //     self.logger.info("We are about to kill your task")
+        // }
+
+        // overlayTimer = Timer.scheduledTimer(withTimeInterval: overlay.overlayDurationSecs!, repeats: false) { _ in
+        //     Task { @MainActor in
+        //         if let taskId = self.taskId {
+        //             UIApplication.shared.endBackgroundTask(taskId)
+        //         }
+        //         defer {
+        //             self.overlayTimer?.invalidate()
+        //         }
+        //         if #available(iOS 16.2, *) {
+        //             await ActivitiesHelper.shared.startOrUpdate(settings: self.settingsStore.settings, isConnected: self.neConfigurationService.isConnected)
+        //         }
+        //     }
+        // }
+
+        if #available(iOS 16.2, *) {
+            queueService.registerActivityRefresh(
+                activityId: ActivitiesHelper.shared.activityId,
+                refreshDate: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!)
+            )
         }
+    }
 
-        taskId = UIApplication.shared.beginBackgroundTask(withName: "overlayExpiry") {
-            self.logger.info("We are about to kill your task")
-        }
-
-        overlayTimer = Timer.scheduledTimer(withTimeInterval: overlay.overlayDurationSecs!, repeats: false) { _ in
-            Task { @MainActor in
-                if let taskId = self.taskId {
-                    UIApplication.shared.endBackgroundTask(taskId)
-                }
-                defer {
-                    self.overlayTimer?.invalidate()
-                }
-                self.settingsStore.settings.clearOverlay()
-                try await self.settingsController.syncSettings(reason: "Overlay expired")
-                if #available(iOS 16.2, *) {
-                    await ActivitiesHelper.shared.startOrUpdate(settings: self.settingsStore.settings, isConnected: self.neConfigurationService.isConnected)
-                }
-            }
+    @MainActor
+    public func normalizeOverlay() async throws {
+        if settingsStore.settings.hasOverlay && settingsStore.settings.overlay.expiry.date.timeIntervalSinceNow < 0 {
+            settingsStore.settings.clearOverlay()
+            try await self.settingsController.syncSettings(reason: "Overlay expired")
         }
     }
 
@@ -142,7 +160,6 @@ public class ProfileManager: ObservableObject {
         if #available(iOS 16.2, *) {
             await ActivitiesHelper.shared.startOrUpdate(settings: self.settingsStore.settings, isConnected: neConfigurationService.isConnected)
         }
-    
     }
 
     // Inclusive of loadOverlay

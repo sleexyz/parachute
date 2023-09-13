@@ -20,8 +20,7 @@ public class ActivitiesHelper {
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ActivitiesHelper")
 
     public func start(settings: Proxyservice_Settings, isConnected: Bool) {
-        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
-            logger.info("activities not enabled")
+        guard ensureEnabled() else {
             return
         }
         if Activity<SlowdownWidgetAttributes>.activities.first == nil {
@@ -29,9 +28,20 @@ public class ActivitiesHelper {
         }
     }
 
-    public func stop() {
+    private func ensureEnabled() -> Bool {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             logger.info("activities not enabled")
+            return false
+        }
+        guard ActivityAuthorizationInfo().frequentPushesEnabled else {
+            logger.info("frequent pushes are not enabled")
+            return false
+        }
+        return true
+    }
+
+    public func stop() {
+        guard ensureEnabled() else {
             return
         }
         if let activity = Activity<SlowdownWidgetAttributes>.activities.first {
@@ -80,8 +90,7 @@ public class ActivitiesHelper {
     }
 
     public func startOrUpdate(settings: Proxyservice_Settings, isConnected: Bool) async {
-        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
-            logger.info("activities not enabled")
+        guard ensureEnabled() else {
             return
         }
         guard Activity<SlowdownWidgetAttributes>.activities.first != nil else {
@@ -92,8 +101,7 @@ public class ActivitiesHelper {
     }
 
     private func update(settings: Proxyservice_Settings, isConnected: Bool) async {
-        if !ActivityAuthorizationInfo().areActivitiesEnabled {
-            logger.info("activities not enabled")
+        guard ensureEnabled() else {
             return
         }
         guard let activity = Activity<SlowdownWidgetAttributes>.activities.first else {

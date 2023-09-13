@@ -4,7 +4,7 @@ steps:
   - gcloud
   - functions
   - deploy
-  - register_unpause
+  - register_activity_refresh
   - --region=us-central1
   - --source=.
   - --trigger-http

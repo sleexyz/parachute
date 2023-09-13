@@ -44,8 +44,12 @@ public class QueueService: ObservableObject {
                 self.logger.error("no data")
                 return
             }
-            let response = try! JSONDecoder().decode(RegisterActivityRefreshResponse.self, from: data)
-            self.logger.info("response: \(response.taskName)")
+            do {
+                let response = try JSONDecoder().decode(RegisterActivityRefreshResponse.self, from: data)
+                self.logger.info("response: \(response.taskName)")
+            } catch {
+                self.logger.error("error: \(error)")
+            }
         }
         task.resume()
     }
