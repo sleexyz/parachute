@@ -15,6 +15,8 @@ public class ActivitiesHelper {
         userId
     } 
 
+    public var activity: Activity<SlowdownWidgetAttributes>? = nil
+
     public static let shared = ActivitiesHelper()
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ActivitiesHelper")
@@ -23,8 +25,10 @@ public class ActivitiesHelper {
         guard ensureEnabled() else {
             return
         }
-        if Activity<SlowdownWidgetAttributes>.activities.first == nil {
+        if ensureActive() == nil {
             requestActivity(settings: settings, isConnected: isConnected)
+        } else {
+            logger.info("activity already active, exiting start")
         }
     }
 
@@ -40,24 +44,40 @@ public class ActivitiesHelper {
         return true
     }
 
+    private func ensureActive() -> Activity<SlowdownWidgetAttributes>? {
+        if let activity = activity {
+            if activity.activityState != .dismissed {
+                return activity
+            }
+        }
+        self.activity = Activity<SlowdownWidgetAttributes>.activities.first(where: { activity in
+            activity.activityState != .dismissed
+        })
+        return self.activity
+    }
+
     public func stop() {
         guard ensureEnabled() else {
             return
         }
-        if let activity = Activity<SlowdownWidgetAttributes>.activities.first {
+        if let activity = ensureActive() {
             Task {
                 await activity.end(ActivityContent(state: activity.content.state, staleDate: nil), dismissalPolicy: .immediate)
+                self.activity = nil
             }
+        } else {
+            logger.info("no active activity, nothing to stop")
         }
     }
 
     private func requestActivity(settings: Proxyservice_Settings, isConnected: Bool) {
         do {
             let activity = try Activity.request(
-                attributes: SlowdownWidgetAttributes(), 
+                attributes: SlowdownWidgetAttributes(),
                 content: makeActivityContent(settings, isConnected: isConnected),
                 pushType: .token
             )
+            self.activity = activity
             
             // if let data = activity.pushToken {
             //     let myToken = data.map {String(format: "%02x", $0)}.joined()
@@ -88,12 +108,22 @@ public class ActivitiesHelper {
             SlowdownWidgetAttributes.ContentState(settings: settings, isConnected: isConnected),
             staleDate: nil)
     }
+    
+    public func startOrRestart(settings: Proxyservice_Settings, isConnected: Bool) async {
+        guard ensureEnabled() else {
+            return
+        }
+        if ensureActive() != nil {
+            stop()
+        }
+        start(settings: settings, isConnected: isConnected)
+    }
 
     public func startOrUpdate(settings: Proxyservice_Settings, isConnected: Bool) async {
         guard ensureEnabled() else {
             return
         }
-        guard Activity<SlowdownWidgetAttributes>.activities.first != nil else {
+        guard ensureActive() != nil else {
             start(settings: settings, isConnected: isConnected)
             return
         }
@@ -104,11 +134,11 @@ public class ActivitiesHelper {
         guard ensureEnabled() else {
             return
         }
-        guard let activity = Activity<SlowdownWidgetAttributes>.activities.first else {
+        guard ensureActive() != nil else {
             logger.info("no activities found, exiting update")
             return
         }
-        await activity.update(
+        await activity?.update(
             makeActivityContent(settings, isConnected: isConnected),
             alertConfiguration: AlertConfiguration(title: "Delivery update", body: "Your pizza order will arrive in 25 minutes.", sound: .default)
         )

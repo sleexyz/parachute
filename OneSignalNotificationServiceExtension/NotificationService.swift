@@ -25,18 +25,18 @@ class NotificationService: UNNotificationServiceExtension {
             // print("Running NotificationServiceExtension")
             // bestAttemptContent.body = "[Modified] " + bestAttemptContent.body
             
-            if bestAttemptContent.categoryIdentifier == "unpause" {
-                logger.info("unpausing 1")
-                Task { @MainActor in
-                    logger.info("unpausing 2")
-                    try await SettingsStore.shared.load()
-                    if #available(iOS 16.2, *) {
-                        await ActivitiesHelper.shared.startOrUpdate(settings: SettingsStore.shared.settings, isConnected: true)
-                    }
-                    logger.info("unpausing 3")
-                    // VPNLifecycleManager.shared.unpauseConnection()
-                }
-            }
+//            if bestAttemptContent.categoryIdentifier == "unpause" {
+//                logger.info("unpausing 1")
+//                Task { @MainActor in
+//                    logger.info("unpausing 2")
+//                    try await SettingsStore.shared.load()
+//                    if #available(iOS 16.2, *) {
+//                        await ActivitiesHelper.shared.startOrUpdate(settings: SettingsStore.shared.settings, isConnected: true)
+//                    }
+//                    logger.info("unpausing 3")
+//                    // VPNLifecycleManager.shared.unpauseConnection()
+//                }
+//            }
             
             OneSignalExtension.didReceiveNotificationExtensionRequest(self.receivedRequest, with: bestAttemptContent, withContentHandler: self.contentHandler)
         }

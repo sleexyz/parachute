@@ -48,7 +48,7 @@ public class VPNLifecycleManager: ObservableObject {
                 $0.disabledUntil = .init()
             }
             if #available(iOS 16.2, *) {
-                await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: true)
+                await ActivitiesHelper.shared.startOrRestart(settings: settingsStore.settings, isConnected: true)
             }
             Analytics.logEvent("reenable", parameters: nil)
         }
@@ -65,7 +65,7 @@ public class VPNLifecycleManager: ObservableObject {
                 }
             }
             if #available(iOS 16.2, *) {
-                await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: false)
+                await ActivitiesHelper.shared.startOrRestart(settings: settingsStore.settings, isConnected: false)
             }
             Analytics.logEvent("pause", parameters: nil)
         }
@@ -81,7 +81,7 @@ public class VPNLifecycleManager: ObservableObject {
                 }
             }
             if #available(iOS 16.2, *) {
-                await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: false)
+                await ActivitiesHelper.shared.startOrRestart(settings: settingsStore.settings, isConnected: false)
             }
             Analytics.logEvent("pause", parameters: nil)
         }
@@ -98,7 +98,7 @@ public class VPNLifecycleManager: ObservableObject {
             cancelUnpauseTask()
             try await self.neConfigurationService.uninstall()
             if #available(iOS 16.2, *) {
-                await ActivitiesHelper.shared.stop()
+                ActivitiesHelper.shared.stop()
             }
             Analytics.logEvent("disable", parameters: nil)
         }
@@ -109,7 +109,7 @@ public class VPNLifecycleManager: ObservableObject {
             cancelUnpauseTask()
             try await self.neConfigurationService.start(settingsOverride: settingsStore.settings)
             if #available(iOS 16.2, *) {
-                await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: true)
+                await ActivitiesHelper.shared.startOrRestart(settings: settingsStore.settings, isConnected: true)
             }
             Analytics.logEvent("reenable", parameters: nil)
         }
@@ -120,7 +120,7 @@ public class VPNLifecycleManager: ObservableObject {
             cancelUnpauseTask()
             try await self.neConfigurationService.start(settingsOverride: settingsStore.settings)
             if #available(iOS 16.2, *) {
-                await ActivitiesHelper.shared.startOrUpdate(settings: settingsStore.settings, isConnected: true)
+                await ActivitiesHelper.shared.startOrRestart(settings: settingsStore.settings, isConnected: true)
             }
             // try await self.neConfigurationService.startConnectionAndEnableOnDemand(settingsOverride: settingsStore.settings)
             try await self.neConfigurationService.start(settingsOverride: settingsStore.settings)
