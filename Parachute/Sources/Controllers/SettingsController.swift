@@ -57,6 +57,11 @@ public class SettingsController: ObservableObject {
         }
         try store.save()
         try await service.SetSettings(settings: store.settings)
-        // try self.store.save()
+    }
+
+    public func forceRefresh() {
+        Task { @MainActor in
+            try await self.syncSettings(reason: "force refresh")
+        }
     }
 }

@@ -153,7 +153,6 @@ struct TimePicker: View {
                 Spacer()
 
                 Picker(selection: $settingsStore.settings.quickSessionSecs, label: Text("Quick session")) {
-                    Text("10 seconds").tag(10 as Int32)
                     Text("30 seconds").tag(30 as Int32)
                     Text("45 seconds").tag(45 as Int32)
                     Text("60 seconds").tag(60 as Int32)

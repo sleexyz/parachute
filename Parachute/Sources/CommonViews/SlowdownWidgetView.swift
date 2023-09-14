@@ -39,6 +39,7 @@ public struct SlowdownWidgetView: View {
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SlowdownWidgetView")
 
+    @Environment(\.widgetFamily) var family
     @Namespace private var animation
 
     public init(settings: Proxyservice_Settings, isConnected: Bool) {
@@ -47,14 +48,16 @@ public struct SlowdownWidgetView: View {
     }
 
     var statusMessage: String {
-        if settings.changeMetadata.reason == "Overlay expired", settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
+        if settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
             return "Session ended"
         }
         return "Detox Active"
     }
 
     public var body: some View {
-        HStack(alignment: .top) {
+        let layout = family == .systemSmall ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout(alignment: .top))
+
+        layout {
             Logo()
                 .foregroundStyle(isConnected ? Color.parachuteOrange : Color.secondary)
             // .frame(width: 30, height: 30)
@@ -75,7 +78,7 @@ public struct SlowdownWidgetView: View {
                     .font(.system(size: 36))
                     .monospacedDigit()
                     .foregroundColor(.primary.opacity(0.5))
-                    .multilineTextAlignment(.trailing) 
+                    .multilineTextAlignment(family == .systemSmall ? .leading : .trailing) 
                     // .matchedGeometryEffect(id: "status", in: animation)
                     //.frame(maxWidth: 108)
                 // .foregroundColor(.parachuteOrange.opacity(0.8))
