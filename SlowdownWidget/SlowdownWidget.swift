@@ -36,8 +36,20 @@ struct SlowdownWidget: Widget {
         StaticConfiguration(kind: kind, provider: SlowdownWidgetProvider()) { entry in
             ControllersLoader {
                 SlowdownWidgetView(settings: entry.settings, isConnected: entry.isConnected)
-                // .containerBackground(Color.background, for: .widget)
+                .widgetBackground(Color.background)
             }
+        }
+    }
+}
+
+extension View {
+    func widgetBackground(_ backgroundView: some View) -> some View {
+        if #available(iOSApplicationExtension 17.0, *) {
+            return containerBackground(for: .widget) {
+                backgroundView
+            }
+        } else {
+            return background(backgroundView)
         }
     }
 }
