@@ -14,14 +14,15 @@ import SwiftUI
 // Operations for changing settings
 public class SettingsController: ObservableObject {
     public struct Provider: Dep {
-        public func create(r: Registry) -> SettingsController {
-            return .shared
+        public func create(r _: Registry) -> SettingsController {
+            .shared
         }
 
         public init() {}
     }
-    public static let shared: SettingsController = SettingsController(store: SettingsStore.shared, service: NEConfigurationService.shared)
- 
+
+    public static let shared: SettingsController = .init(store: SettingsStore.shared, service: NEConfigurationService.shared)
+
     private let store: SettingsStore
     private let service: any NEConfigurationServiceProtocol
 

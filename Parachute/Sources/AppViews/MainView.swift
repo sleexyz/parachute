@@ -1,8 +1,8 @@
+import Combine
 import CommonViews
 import Controllers
-import SwiftUI
-import Combine
 import OSLog
+import SwiftUI
 
 struct TextLogo: View {
     var body: some View {
@@ -30,10 +30,10 @@ public struct MainView: View {
     @EnvironmentObject var profileManager: ProfileManager
     @EnvironmentObject var activitiesHelper: ActivitiesHelper
 
-    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainView") 
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainView")
 
     // @Environment(\.scenePhase) var scenePhase
-    
+
     @Binding var isSettingsPresented: Bool
     @Binding var isScrollSessionPresented: Bool
 
@@ -55,17 +55,17 @@ public struct MainView: View {
                 isAdvancedPresented: ConnectedViewController.shared.isAdvancedSettingsPresented
             )
             .zIndex(2)
-            
+
             ScrollSessionView(isPresented: $isScrollSessionPresented)
                 .zIndex(2)
-            
+
             Rectangle()
                 .foregroundColor(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
                 .opacity(isPanePresented ? 1 : 0)
                 .animation(.easeInOut(duration: 0.2), value: isPanePresented)
                 .zIndex(1)
-            
+
             ZStack {
                 VStack {
                     HStack {
@@ -80,7 +80,7 @@ public struct MainView: View {
                         .buttonStyle(.plain)
                         // .rr(color: .white, bg: .clear)
                         Spacer()
-                        
+
                         // .background {
                         //     RoundedRectangle(cornerRadius: 20, style: .continuous)
                         //         .stroke(Color.white.opacity(0.1), lineWidth: 1)
@@ -102,19 +102,19 @@ public struct MainView: View {
                 //                .padding(.top, topPadding)
                 // .frame(height: UIScreen.main.bounds.height / 2, alignment: .bottom)
                 .zIndex(0)
-                
+
                 VStack {
                     SlowdownWidgetView(settings: settingsStore.settings, isConnected: neConfigurationService.isConnected)
-                    // .padding(.vertical, 20)
+                        // .padding(.vertical, 20)
                         .padding(.horizontal, 20)
-                    //                        .rrGlow(color: .white, bg: .clear)
-                    // .background {
-                    //     RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    //         .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    //         .background(Color.background.opacity(0.8))
-                    //         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    //         .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    // }
+                        //                        .rrGlow(color: .white, bg: .clear)
+                        // .background {
+                        //     RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        //         .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        //         .background(Color.background.opacity(0.8))
+                        //         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        //         .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        // }
                         .padding()
                         .padding(.top, topPadding / 2)
                         .frame(maxWidth: .infinity, alignment: .top)

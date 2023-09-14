@@ -42,7 +42,7 @@ public class ProfileManager: ObservableObject {
     var neConfigurationService: NEConfigurationService
     var queueService: QueueService
     var activitiesHelper: ActivitiesHelper
-    
+
     var bag = Set<AnyCancellable>()
 
     init(settingsStore: SettingsStore, settingsController: SettingsController, neConfigurationService: NEConfigurationService, queueService: QueueService, activitiesHelper: ActivitiesHelper) {
@@ -57,7 +57,7 @@ public class ProfileManager: ObservableObject {
                 self?.objectWillChange.send()
             }
             .store(in: &bag)
-        
+
         // Necessary to update overlay when activity changes
         activitiesHelper.$random.receive(on: RunLoop.main).sink { [weak self] _ in
             self?.logger.info("PM: activity changed")
@@ -153,11 +153,12 @@ public class ProfileManager: ObservableObject {
             try await normalizeOverlay()
         }
     }
+
     @MainActor
     public func normalizeOverlay() async throws {
-        if settingsStore.settings.hasOverlay && settingsStore.settings.overlay.expiry.date.timeIntervalSinceNow < 0 {
+        if settingsStore.settings.hasOverlay, settingsStore.settings.overlay.expiry.date.timeIntervalSinceNow < 0 {
             settingsStore.settings.clearOverlay()
-            try await self.settingsController.syncSettings(reason: "Overlay expired")
+            try await settingsController.syncSettings(reason: "Overlay expired")
         }
     }
 

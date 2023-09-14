@@ -10,10 +10,10 @@ import CommonLoaders
 import CommonViews
 import Controllers
 import FirebaseCore
+import OneSignalFramework
 import OSLog
 import ProxyService
 import SwiftUI
-import OneSignalFramework
 
 let ONESIGNAL_APP_ID = "b1bee63a-1006-42bd-bd66-5a803c64f63c"
 
@@ -51,7 +51,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         }
         // Remove this method to stop OneSignal Debugging
         OneSignal.Debug.setLogLevel(.LL_VERBOSE)
-            
+
         // OneSignal initialization
         OneSignal.initialize(ONESIGNAL_APP_ID, withLaunchOptions: launchOptions)
 
@@ -63,7 +63,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         // Login your customer with externalId
         // OneSignal.login("EXTERNAL_ID")
-                
+
         return true
     }
 }

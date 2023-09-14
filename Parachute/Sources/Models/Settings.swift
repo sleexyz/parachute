@@ -19,7 +19,7 @@ public extension Proxyservice_Settings {
     }
 
     var isDisabled: Bool {
-        return Date.now < self.disabledUntil.date
+        Date.now < disabledUntil.date
     }
 
     var isInScrollSession: Bool {

@@ -15,7 +15,7 @@ import SwiftProtobuf
 public class VPNLifecycleManager: ObservableObject {
     public struct Provider: Dep {
         public func create(r _: Registry) -> VPNLifecycleManager {
-            return .shared
+            .shared
         }
 
         public init() {}
@@ -59,7 +59,7 @@ public class VPNLifecycleManager: ObservableObject {
             try await self.settingsController.setSettings {
                 $0.disabledUntil = Google_Protobuf_Timestamp(date: until ?? .init())
             }
-            if let until = until {
+            if let until {
                 if #available(iOS 16.2, *) {
                     queueService.registerActivityRefresh(activityId: settingsStore.settings.userID, refreshDate: until)
                 }
@@ -75,7 +75,7 @@ public class VPNLifecycleManager: ObservableObject {
     public func pauseConnection(until: Date?) {
         Task {
             try await self.neConfigurationService.stop()
-            if let until = until {
+            if let until {
                 if #available(iOS 16.2, *) {
                     queueService.registerActivityRefresh(activityId: settingsStore.settings.userID, refreshDate: until)
                 }

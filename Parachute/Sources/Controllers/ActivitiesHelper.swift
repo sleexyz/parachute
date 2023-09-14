@@ -1,12 +1,11 @@
 import Activities
 import ActivityKit
+import DI
 import Foundation
+import OneSignalFramework
 import OSLog
 import ProxyService
-import OneSignalFramework
 import SwiftUI
-import DI
-
 
 public class ActivitiesHelper: ObservableObject {
     public struct Provider: Dep {
@@ -16,11 +15,11 @@ public class ActivitiesHelper: ObservableObject {
 
         public init() {}
     }
+
     public static let shared = ActivitiesHelper()
 
     public var activity: Activity<SlowdownWidgetAttributes>? = nil
     @Published public var random: String = UUID().uuidString
-
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ActivitiesHelper")
 
@@ -48,19 +47,19 @@ public class ActivitiesHelper: ObservableObject {
     }
 
     private func ensureActive() -> Activity<SlowdownWidgetAttributes>? {
-        if let activity = activity {
+        if let activity {
             if activity.activityState != .dismissed {
                 return activity
             }
         }
-        self.activity = Activity<SlowdownWidgetAttributes>.activities.first(where: { activity in
+        activity = Activity<SlowdownWidgetAttributes>.activities.first(where: { activity in
             activity.activityState != .dismissed
         })
-        if let activity = activity {
+        if let activity {
             subscribeToActivityChanges(activity: activity)
             return activity
         }
-        return self.activity
+        return activity
     }
 
     public func stop() {
@@ -85,15 +84,15 @@ public class ActivitiesHelper: ObservableObject {
                 pushType: .token
             )
             self.activity = activity
-            
+
             // if let data = activity.pushToken {
             //     let myToken = data.map {String(format: "%02x", $0)}.joined()
             //     OneSignal.LiveActivities.enter(activityId, withToken: myToken)
             //     logger.info("push token: \(myToken)")
             // }
 
-            self.subscribeToActivityChanges(activity: activity)
-            
+            subscribeToActivityChanges(activity: activity)
+
             logger.info("requested activity: \(activity.id)")
         } catch {
             logger.error("error requesting activity: \(error.localizedDescription)")
@@ -103,7 +102,7 @@ public class ActivitiesHelper: ObservableObject {
     func subscribeToActivityChanges(activity: Activity<SlowdownWidgetAttributes>) {
         Task { @MainActor in
             for await data in activity.pushTokenUpdates {
-                let myToken = data.map {String(format: "%02x", $0)}.joined()
+                let myToken = data.map { String(format: "%02x", $0) }.joined()
                 OneSignal.LiveActivities.enter(SettingsStore.shared.settings.userID, withToken: myToken)
                 logger.info("push token: \(myToken)")
             }
@@ -128,9 +127,9 @@ public class ActivitiesHelper: ObservableObject {
             SlowdownWidgetAttributes.ContentState(settings: settings, isConnected: isConnected),
             staleDate: nil)
     }
-    
+
     public func startOrRestart(settings: Proxyservice_Settings, isConnected: Bool) async {
-        return await startOrUpdate(settings: settings, isConnected: isConnected)
+        await startOrUpdate(settings: settings, isConnected: isConnected)
         // guard ensureEnabled() else {
         //     return
         // }

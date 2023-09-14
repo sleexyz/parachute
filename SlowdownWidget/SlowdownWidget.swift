@@ -36,7 +36,7 @@ struct SlowdownWidget: Widget {
         StaticConfiguration(kind: kind, provider: SlowdownWidgetProvider()) { entry in
             ControllersLoader {
                 SlowdownWidgetView(settings: entry.settings, isConnected: entry.isConnected)
-                .widgetBackground(Color.background)
+                    .widgetBackground(Color.background)
             }
         }
     }

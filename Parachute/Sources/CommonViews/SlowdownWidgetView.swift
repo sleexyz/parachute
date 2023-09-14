@@ -78,9 +78,9 @@ public struct SlowdownWidgetView: View {
                     .font(.system(size: 36))
                     .monospacedDigit()
                     .foregroundColor(.primary.opacity(0.5))
-                    .multilineTextAlignment(family == .systemSmall ? .leading : .trailing) 
-                    // .matchedGeometryEffect(id: "status", in: animation)
-                    //.frame(maxWidth: 108)
+                    .multilineTextAlignment(family == .systemSmall ? .leading : .trailing)
+                // .matchedGeometryEffect(id: "status", in: animation)
+                // .frame(maxWidth: 108)
                 // .foregroundColor(.parachuteOrange.opacity(0.8))
             } else {
                 Text("...")

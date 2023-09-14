@@ -42,7 +42,7 @@ public enum SettingsMigrations {
         11: {
             settings in
             settings.userID = UUID().uuidString
-        }
+        },
     ]
 
     public static var LATEST_VERSION: Int {
