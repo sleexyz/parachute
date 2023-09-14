@@ -7,6 +7,7 @@ import WidgetKit
 public struct WidgetUpdater<Inner: View>: View {
     @ViewBuilder var content: () -> Inner
     @EnvironmentObject var store: SettingsStore
+    @EnvironmentObject var profileManager: ProfileManager
 
     @State var bag = Set<AnyCancellable>()
 
@@ -23,6 +24,8 @@ public struct WidgetUpdater<Inner: View>: View {
                     WidgetCenter.shared.reloadAllTimelines()
                     logger.info("reloaded widgets")
                 }.store(in: &bag)
+
+                profileManager.syncOverlayTimer()
             }
     }
 }

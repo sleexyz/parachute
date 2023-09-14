@@ -59,10 +59,10 @@ public class ProfileManager: ObservableObject {
             .store(in: &bag)
 
         // Necessary to update overlay when activity changes
-        activitiesHelper.$random.receive(on: RunLoop.main).sink { [weak self] _ in
-            self?.logger.info("PM: activity changed")
-            self?.fireNormalizeOverlay()
-        }.store(in: &bag)
+        // activitiesHelper.$random.receive(on: RunLoop.main).sink { [weak self] _ in
+        //     self?.logger.info("PM: activity changed")
+        //     self?.fireNormalizeOverlay()
+        // }.store(in: &bag)
     }
 
     @Published public var presetSelectorOpen: Bool = false
@@ -125,26 +125,38 @@ public class ProfileManager: ObservableObject {
         // taskId = UIApplication.shared.beginBackgroundTask(withName: "overlayExpiry") {
         //     self.logger.info("We are about to kill your task")
         // }
-
-        // overlayTimer = Timer.scheduledTimer(withTimeInterval: overlay.overlayDurationSecs!, repeats: false) { _ in
-        //     Task { @MainActor in
-        //         if let taskId = self.taskId {
-        //             UIApplication.shared.endBackgroundTask(taskId)
-        //         }
-        //         defer {
-        //             self.overlayTimer?.invalidate()
-        //         }
-        //         if #available(iOS 16.2, *) {
-        //             await ActivitiesHelper.shared.startOrUpdate(settings: self.settingsStore.settings, isConnected: self.neConfigurationService.isConnected)
-        //         }
-        //     }
-        // }
+        syncOverlayTimer()
 
         if #available(iOS 16.2, *) {
             queueService.registerActivityRefresh(
                 activityId: settingsStore.settings.userID,
                 refreshDate: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!)
             )
+        }
+    }
+
+    public func syncOverlayTimer() {
+        guard settingsStore.settings.hasOverlay else {
+            return
+        }
+        let overlay = settingsStore.settings.overlay
+
+        let interval = overlay.expiry.date.timeIntervalSinceNow
+        guard interval > 0 else {
+            self.overlayTimer?.invalidate()
+            return
+        }
+        self.overlayTimer?.invalidate()
+        overlayTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
+            Task { @MainActor in
+                // if let taskId = self.taskId {
+                //     UIApplication.shared.endBackgroundTask(taskId)
+                // }
+                self.settingsController.forceRefresh()
+                // if #available(iOS 16.2, *) {
+                //     await ActivitiesHelper.shared.startOrUpdate(settings: self.settingsStore.settings, isConnected: self.neConfigurationService.isConnected)
+                // }
+            }
         }
     }
 
@@ -172,6 +184,8 @@ public class ProfileManager: ObservableObject {
         }
         settingsStore.settings.clearOverlay()
         try await settingsController.syncSettings(reason: "Session ended")
+        syncOverlayTimer()
+
         if #available(iOS 16.2, *) {
             await ActivitiesHelper.shared.startOrUpdate(settings: self.settingsStore.settings, isConnected: neConfigurationService.isConnected)
             queueService.cancelActivityRefresh(activityId: settingsStore.settings.userID)
