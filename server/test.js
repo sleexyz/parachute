@@ -1,12 +1,12 @@
 async function main() {
-    const resp = await fetch("https://us-central1-slowdown-375014.cloudfunctions.net/register_activity_refresh", {
+    const activityId = "7992AA47-FD5C-4505-8E3E-39B1ED2F45AD";
+    const resp = await fetch("https://us-central1-slowdown-375014.cloudfunctions.net/cancel_activity_refresh", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            activityId: "slowdown_status",
-            refreshDate: Date.now(),
+            activityId,
         }),
     });
     const data = await resp.json();

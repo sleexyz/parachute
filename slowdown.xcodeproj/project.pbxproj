@@ -61,7 +61,6 @@
 		A096625529C8E93C00D2E0A9 /* PresetSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625429C8E93C00D2E0A9 /* PresetSelector.swift */; };
 		A096625729C93EFC00D2E0A9 /* ParachutePresetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */; };
 		A0975B452A83261D0079FCBD /* QuickBreakIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0975B432A8325870079FCBD /* QuickBreakIntent.swift */; };
-		A0975B492A832F380079FCBD /* AppHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A0975B482A832F380079FCBD /* AppHelpers */; };
 		A0975B4B2A8448DD0079FCBD /* QuickBreakIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0975B432A8325870079FCBD /* QuickBreakIntent.swift */; };
 		A09C5A0029BC26B70077A59B /* PresetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C59FF29BC26B70077A59B /* PresetContent.swift */; };
 		A0A7D9A32A9E7AF0006A78E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0A7D9A22A9E7AF0006A78E1 /* Assets.xcassets */; };
@@ -293,7 +292,6 @@
 				A056C36A2A819E7F00E4ED9A /* CommonLoaders in Frameworks */,
 				A0EE20AC2A82E84E00F34B98 /* Activities in Frameworks */,
 				A0F98CA02A86B1F500D5E88E /* CommonViews in Frameworks */,
-				A0975B492A832F380079FCBD /* AppHelpers in Frameworks */,
 				A00A09CE2A7EDA7000011260 /* Controllers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -647,7 +645,6 @@
 				A00A09CD2A7EDA7000011260 /* Controllers */,
 				A056C3692A819E7F00E4ED9A /* CommonLoaders */,
 				A0EE20AB2A82E84E00F34B98 /* Activities */,
-				A0975B482A832F380079FCBD /* AppHelpers */,
 				A0F98C9F2A86B1F500D5E88E /* CommonViews */,
 				A0119C6A2AA2674F00032F9D /* FirebaseAnalytics */,
 			);
@@ -1038,7 +1035,7 @@
 				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OneSignalNotificationServiceExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1072,7 +1069,7 @@
 				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OneSignalNotificationServiceExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1765,10 +1762,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobufPluginLibrary;
-		};
-		A0975B482A832F380079FCBD /* AppHelpers */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AppHelpers;
 		};
 		A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;

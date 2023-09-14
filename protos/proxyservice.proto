@@ -118,6 +118,8 @@ message Settings {
 
     // Disable temporarily. Meant as a last resort option.
     google.protobuf.Timestamp disabled_until = 21;
+
+    string user_id = 22;
 }
 
 message ChangeMetadata {

@@ -5,19 +5,22 @@ import OSLog
 import ProxyService
 import OneSignalFramework
 import SwiftUI
+import DI
 
-@available(iOS 16.2, *)
-public class ActivitiesHelper {
-    @AppStorage("userId") private var userId = UUID().uuidString
 
-    // TODO: generate one of these for each activity
-    public var activityId: String {
-        userId
-    } 
+public class ActivitiesHelper: ObservableObject {
+    public struct Provider: Dep {
+        public func create(r _: Registry) -> ActivitiesHelper {
+            .shared
+        }
+
+        public init() {}
+    }
+    public static let shared = ActivitiesHelper()
 
     public var activity: Activity<SlowdownWidgetAttributes>? = nil
+    @Published public var random: String = UUID().uuidString
 
-    public static let shared = ActivitiesHelper()
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ActivitiesHelper")
 
@@ -53,6 +56,10 @@ public class ActivitiesHelper {
         self.activity = Activity<SlowdownWidgetAttributes>.activities.first(where: { activity in
             activity.activityState != .dismissed
         })
+        if let activity = activity {
+            subscribeToActivityChanges(activity: activity)
+            return activity
+        }
         return self.activity
     }
 
@@ -84,17 +91,30 @@ public class ActivitiesHelper {
             //     OneSignal.LiveActivities.enter(activityId, withToken: myToken)
             //     logger.info("push token: \(myToken)")
             // }
+
+            self.subscribeToActivityChanges(activity: activity)
             
-            Task {
-                for await data in activity.pushTokenUpdates {
-                    let myToken = data.map {String(format: "%02x", $0)}.joined()
-                    OneSignal.LiveActivities.enter(activityId, withToken: myToken)
-                    logger.info("push token: \(myToken)")
-                }
-            }
             logger.info("requested activity: \(activity.id)")
         } catch {
             logger.error("error requesting activity: \(error.localizedDescription)")
+        }
+    }
+
+    func subscribeToActivityChanges(activity: Activity<SlowdownWidgetAttributes>) {
+        Task { @MainActor in
+            for await data in activity.pushTokenUpdates {
+                let myToken = data.map {String(format: "%02x", $0)}.joined()
+                OneSignal.LiveActivities.enter(SettingsStore.shared.settings.userID, withToken: myToken)
+                logger.info("push token: \(myToken)")
+            }
+        }
+
+        Task { @MainActor in
+            for await _ in activity.contentUpdates {
+                logger.info("activity update")
+                self.random = UUID().uuidString
+                // self.objectWillChange.send()
+            }
         }
     }
 
@@ -110,13 +130,14 @@ public class ActivitiesHelper {
     }
     
     public func startOrRestart(settings: Proxyservice_Settings, isConnected: Bool) async {
-        guard ensureEnabled() else {
-            return
-        }
-        if ensureActive() != nil {
-            stop()
-        }
-        start(settings: settings, isConnected: isConnected)
+        return await startOrUpdate(settings: settings, isConnected: isConnected)
+        // guard ensureEnabled() else {
+        //     return
+        // }
+        // if ensureActive() != nil {
+        //     stop()
+        // }
+        // start(settings: settings, isConnected: isConnected)
     }
 
     public func startOrUpdate(settings: Proxyservice_Settings, isConnected: Bool) async {

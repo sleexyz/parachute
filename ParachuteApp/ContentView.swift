@@ -18,7 +18,7 @@ struct ContentView: View {
     @EnvironmentObject var store: SettingsStore
     @EnvironmentObject var service: NEConfigurationService
     @EnvironmentObject var onboardingViewController: OnboardingViewController
-    @Environment(\.scenePhase) var scenePhase
+    // @Environment(\.scenePhase) var scenePhase
     @StateObject var familyControls = AuthorizationCenter.shared
 
     var testOnlyAuthorizationStatusOverride: AuthorizationStatus? = nil
@@ -48,19 +48,19 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.background)
         .preferredColorScheme(.dark)
-        .onChange(of: scenePhase) { phase in
-            // Reload settings when app becomes active
-            // in case they were changed in the widget
-            if phase == .active {
-                // logger.info("active")
-                do {
-                    try store.load()
-                    logger.info("loaded!")
-                } catch {
-                    logger.info("error loading settings: \(error)")
-                }
-            }
-        }
+        // .onChange(of: scenePhase) { phase in
+        //     // Reload settings when app becomes active
+        //     // in case they were changed in the widget
+        //     if phase == .active {
+        //         // logger.info("active")
+        //         do {
+        //             try store.load()
+        //             logger.info("loaded!")
+        //         } catch {
+        //             logger.info("error loading settings: \(error)")
+        //         }
+        //     }
+        // }
     }
 }
 

@@ -1,7 +1,6 @@
 import UserNotifications
 
 import OneSignalExtension
-import AppHelpers
 import Controllers
 import OSLog
 

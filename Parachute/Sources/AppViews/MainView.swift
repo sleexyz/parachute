@@ -1,6 +1,8 @@
 import CommonViews
 import Controllers
 import SwiftUI
+import Combine
+import OSLog
 
 struct TextLogo: View {
     var body: some View {
@@ -26,8 +28,11 @@ public struct MainView: View {
     @EnvironmentObject var connectedViewController: ConnectedViewController
     @EnvironmentObject var neConfigurationService: NEConfigurationService
     @EnvironmentObject var profileManager: ProfileManager
+    @EnvironmentObject var activitiesHelper: ActivitiesHelper
 
-    @Environment(\.scenePhase) var scenePhase
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainView") 
+
+    // @Environment(\.scenePhase) var scenePhase
     
     @Binding var isSettingsPresented: Bool
     @Binding var isScrollSessionPresented: Bool
@@ -120,16 +125,6 @@ public struct MainView: View {
             .scaleEffect(isPanePresented ? 0.98 : 1) // Add scale effect when settings page is open
             .animation(.easeInOut(duration: 0.2), value: isPanePresented) // Add animation to the blur effect
             .zIndex(0)
-            .onChange(of: scenePhase) { phase in
-                // Reload settings when app becomes active
-                // in case they were changed in the widget
-                if phase == .active {
-                    Task { @MainActor in
-                        // Also forces a reload of the widget
-                        try await profileManager.normalizeOverlay()
-                    }
-                }
-            }
         }
     }
 }

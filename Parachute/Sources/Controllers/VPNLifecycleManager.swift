@@ -5,7 +5,6 @@
 //  Created by Sean Lee on 2/15/23.
 //
 
-import AppHelpers
 import BackgroundTasks
 import DI
 import Firebase
@@ -51,6 +50,7 @@ public class VPNLifecycleManager: ObservableObject {
                 await ActivitiesHelper.shared.startOrRestart(settings: settingsStore.settings, isConnected: true)
             }
             Analytics.logEvent("reenable", parameters: nil)
+            cancelUnpauseTask()
         }
     }
 
@@ -61,7 +61,7 @@ public class VPNLifecycleManager: ObservableObject {
             }
             if let until = until {
                 if #available(iOS 16.2, *) {
-                    queueService.registerActivityRefresh(activityId: ActivitiesHelper.shared.activityId, refreshDate: until)
+                    queueService.registerActivityRefresh(activityId: settingsStore.settings.userID, refreshDate: until)
                 }
             }
             if #available(iOS 16.2, *) {
@@ -77,7 +77,7 @@ public class VPNLifecycleManager: ObservableObject {
             try await self.neConfigurationService.stop()
             if let until = until {
                 if #available(iOS 16.2, *) {
-                    queueService.registerActivityRefresh(activityId: ActivitiesHelper.shared.activityId, refreshDate: until)
+                    queueService.registerActivityRefresh(activityId: settingsStore.settings.userID, refreshDate: until)
                 }
             }
             if #available(iOS 16.2, *) {
@@ -89,7 +89,7 @@ public class VPNLifecycleManager: ObservableObject {
 
     private func cancelUnpauseTask() {
         if #available(iOS 16.2, *) {
-            queueService.cancelActivityRefresh(activityId: ActivitiesHelper.shared.activityId)
+            queueService.cancelActivityRefresh(activityId: settingsStore.settings.userID)
         }
     }
 

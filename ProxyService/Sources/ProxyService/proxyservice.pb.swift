@@ -384,6 +384,11 @@ public struct Proxyservice_Settings {
   /// Clears the value of `disabledUntil`. Subsequent reads from it will return its default value.
   public mutating func clearDisabledUntil() {_uniqueStorage()._disabledUntil = nil}
 
+  public var userID: String {
+    get {return _storage._userID}
+    set {_uniqueStorage()._userID = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -761,6 +766,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     19: .same(proto: "algorithm"),
     20: .same(proto: "usability"),
     21: .standard(proto: "disabled_until"),
+    22: .standard(proto: "user_id"),
   ]
 
   fileprivate class _StorageClass {
@@ -776,6 +782,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _algorithm: Proxyservice_Algorithm = .drop
     var _usability: Proxyservice_Usability = .unusable
     var _disabledUntil: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+    var _userID: String = String()
 
     static let defaultInstance = _StorageClass()
 
@@ -794,6 +801,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _algorithm = source._algorithm
       _usability = source._usability
       _disabledUntil = source._disabledUntil
+      _userID = source._userID
     }
   }
 
@@ -824,6 +832,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 19: try { try decoder.decodeSingularEnumField(value: &_storage._algorithm) }()
         case 20: try { try decoder.decodeSingularEnumField(value: &_storage._usability) }()
         case 21: try { try decoder.decodeSingularMessageField(value: &_storage._disabledUntil) }()
+        case 22: try { try decoder.decodeSingularStringField(value: &_storage._userID) }()
         default: break
         }
       }
@@ -872,6 +881,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       try { if let v = _storage._disabledUntil {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 21)
       } }()
+      if !_storage._userID.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._userID, fieldNumber: 22)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -893,6 +905,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._algorithm != rhs_storage._algorithm {return false}
         if _storage._usability != rhs_storage._usability {return false}
         if _storage._disabledUntil != rhs_storage._disabledUntil {return false}
+        if _storage._userID != rhs_storage._userID {return false}
         return true
       }
       if !storagesAreEqual {return false}

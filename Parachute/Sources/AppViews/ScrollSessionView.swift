@@ -1,4 +1,3 @@
-import AppHelpers
 import CommonViews
 import Controllers
 import DI

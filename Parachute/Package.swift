@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "Parachute",
-    platforms: [.iOS(.v16)],
+    platforms: [.iOS("16.2")],
     products: [
         .library(
             name: "FilterCommon",
@@ -30,10 +30,6 @@ let package = Package(
         .library(
             name: "Controllers",
             targets: ["Controllers"]
-        ),
-        .library(
-            name: "AppHelpers",
-            targets: ["AppHelpers"]
         ),
         .library(
             name: "Activities",
@@ -112,18 +108,9 @@ let package = Package(
             ]
         ),
         .target(
-            name: "AppHelpers",
-            dependencies: [
-                "Activities",
-                .product(name: "OneSignalFramework", package: "OneSignal-XCFramework"),
-                .product(name: "ProxyService", package: "ProxyService"),
-            ]
-        ),
-        .target(
             name: "AppViews",
             dependencies: [
                 "Controllers",
-                "AppHelpers",
                 "CommonViews",
             ]
         ),
@@ -152,11 +139,12 @@ let package = Package(
                 "Common",
                 "DI",
                 "Models",
-                "AppHelpers",
+                "Activities",
                 .product(name: "ProxyService", package: "ProxyService"),
                 .product(name: "OrderedCollections", package: "swift-collections"),
                 .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
+                .product(name: "OneSignalFramework", package: "OneSignal-XCFramework"),
             ]
         ),
         .target(

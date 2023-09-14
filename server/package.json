@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc index.ts"
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^3.3.0",
     "@google-cloud/tasks": "^4.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
   }
 }

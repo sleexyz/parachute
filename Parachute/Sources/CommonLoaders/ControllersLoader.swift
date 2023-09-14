@@ -19,6 +19,7 @@ public struct ControllersLoader<Inner: View>: View {
                 FilterConfigurationService.Provider(),
                 SettingsStore.Provider(),
                 OnboardingViewController.Provider(),
+                ActivitiesHelper.Provider(),
             ])
     }
 }

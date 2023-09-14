@@ -5,7 +5,6 @@
 //  Created by Sean Lee on 2/18/23.
 //
 
-import AppHelpers
 import Combine
 import DI
 import Foundation
@@ -33,7 +32,8 @@ public class ProfileManager: ObservableObject {
         settingsStore: SettingsStore.shared,
         settingsController: SettingsController.shared,
         neConfigurationService: NEConfigurationService.shared,
-        queueService: QueueService.shared
+        queueService: QueueService.shared,
+        activitiesHelper: ActivitiesHelper.shared
     )
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ProfileManager")
@@ -41,19 +41,28 @@ public class ProfileManager: ObservableObject {
     var settingsController: SettingsController
     var neConfigurationService: NEConfigurationService
     var queueService: QueueService
+    var activitiesHelper: ActivitiesHelper
+    
     var bag = Set<AnyCancellable>()
 
-    init(settingsStore: SettingsStore, settingsController: SettingsController, neConfigurationService: NEConfigurationService, queueService: QueueService) {
+    init(settingsStore: SettingsStore, settingsController: SettingsController, neConfigurationService: NEConfigurationService, queueService: QueueService, activitiesHelper: ActivitiesHelper) {
         self.settingsStore = settingsStore
         self.settingsController = settingsController
         self.neConfigurationService = neConfigurationService
         self.queueService = queueService
+        self.activitiesHelper = activitiesHelper
         settingsStore.$settings
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
             .store(in: &bag)
+        
+        // Necessary to update overlay when activity changes
+        activitiesHelper.$random.receive(on: RunLoop.main).sink { [weak self] _ in
+            self?.logger.info("PM: activity changed")
+            self?.fireNormalizeOverlay()
+        }.store(in: &bag)
     }
 
     @Published public var presetSelectorOpen: Bool = false
@@ -133,12 +142,17 @@ public class ProfileManager: ObservableObject {
 
         if #available(iOS 16.2, *) {
             queueService.registerActivityRefresh(
-                activityId: ActivitiesHelper.shared.activityId,
+                activityId: settingsStore.settings.userID,
                 refreshDate: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!)
             )
         }
     }
 
+    func fireNormalizeOverlay() {
+        Task {
+            try await normalizeOverlay()
+        }
+    }
     @MainActor
     public func normalizeOverlay() async throws {
         if settingsStore.settings.hasOverlay && settingsStore.settings.overlay.expiry.date.timeIntervalSinceNow < 0 {
@@ -159,6 +173,7 @@ public class ProfileManager: ObservableObject {
         try await settingsController.syncSettings(reason: "Session ended")
         if #available(iOS 16.2, *) {
             await ActivitiesHelper.shared.startOrUpdate(settings: self.settingsStore.settings, isConnected: neConfigurationService.isConnected)
+            queueService.cancelActivityRefresh(activityId: settingsStore.settings.userID)
         }
     }
 

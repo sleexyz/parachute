@@ -1,10 +1,26 @@
 steps:
+- name: 'node'
+  entrypoint: 'npm'
+  args: ['install']
+- name: 'node'
+  entrypoint: 'npm'
+  args: ['run', 'build']
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   args:
   - gcloud
   - functions
   - deploy
   - register_activity_refresh
+  - --region=us-central1
+  - --source=.
+  - --trigger-http
+  - --runtime=nodejs20
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - gcloud
+  - functions
+  - deploy
+  - cancel_activity_refresh
   - --region=us-central1
   - --source=.
   - --trigger-http

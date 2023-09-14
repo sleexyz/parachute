@@ -39,6 +39,10 @@ public enum SettingsMigrations {
             settings in
             settings.algorithm = .proportional
         },
+        11: {
+            settings in
+            settings.userID = UUID().uuidString
+        }
     ]
 
     public static var LATEST_VERSION: Int {
