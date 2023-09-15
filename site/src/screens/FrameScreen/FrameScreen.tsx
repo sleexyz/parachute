@@ -15,12 +15,12 @@ export const FrameScreen = (): JSX.Element => {
             </div>
           </div>
             <div className="relative w-fit [font-family:'Space_Grotesk',_Helvetica] font-normal text-[#000000cc] text-[48px] lg:text-[48px] tracking-[0] leading-[normal]">
-              Deprogram your mind.
+              Stop getting {" "} <span className="font-bold">sucked in.</span>
             </div>
-            <p className="relative leading-normal w-[233px] h-[61px] [font-family:'Space_Grotesk',_Helvetica] font-normal text-[#000000cc] text-[24px] lg:text-[36px] lg:w-[467px] lg:h-[122px] lg:text-[36px] lg:tracking-[0] lg:leading-[normal]"> <span className="[font-family:'Space_Grotesk',_Helvetica] font-normal text-[#000000cc] lg:tracking-[0]">
-              Start your 1-week dopamine detox{" "}
-            </span>
-              <span className="font-bold">now.</span>
+            <p className="relative leading-normal w-[233px] h-[61px] [font-family:'Space_Grotesk',_Helvetica] font-normal text-[#000000cc] text-[24px] lg:text-[36px] lg:w-[467px] lg:h-[122px] lg:text-[36px] lg:tracking-[0] lg:leading-[normal]">
+              <span className="[font-family:'Space_Grotesk',_Helvetica] font-normal text-[#000000cc] lg:tracking-[0]">
+                Delete the addictiveness, not your friends.
+              </span>
             </p>
             <GetEarlyAccess className="mt-12 mb-36 lg:mt-0 lg:mb-0" />
           </div>
@@ -40,9 +40,9 @@ export const FrameScreen = (): JSX.Element => {
           <img className="relative w-[89.63px] h-[89.62px] lg:w-[149.39px] lg:h-[149.35px]" alt="Group" src="/img/group-399.png" />
           <p className="relative w-[315px] [font-family:'Space_Grotesk',_Helvetica] font-normal text-white text-[24px] lg:text-[48px] lg:w-[630px] lg:text-[48px] lg:tracking-[0] lg:leading-[normal]">
             <span className="[font-family:'Space_Grotesk',_Helvetica] font-normal text-white lg:tracking-[0]">
-              Start your 1-week dopamine detox{" "}
+              Social media, without the addiction.
             </span>
-            <span className="font-bold">now.</span>
+            {/* <span className="font-bold">now.</span> */}
           </p>
           <GetEarlyAccess color="white" />
         </div>

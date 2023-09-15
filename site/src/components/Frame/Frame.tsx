@@ -111,7 +111,7 @@ export const Frame = ({ property1, className }: Props): JSX.Element => {
         {property1 === "variant-2" && (
           <p>
             <span className="[font-family:'Proxima_Soft-Bold',_Helvetica] font-bold text-white">
-              No more binging and purging apps.
+              No more binging and deleting apps.
             </span>
           </p>
         )}
