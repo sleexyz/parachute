@@ -2,7 +2,7 @@
 import Foundation
 import NetworkExtension
 import OSLog
-
+import ProxyService
 
 // Goal:
 // - lightweight way to get insight into what flows are for what
@@ -17,27 +17,26 @@ import OSLog
 // - Top flows per app
 class EndpointHistogram {
     var lastPrinted: Date = Date()
+    
+    let appType: Proxyservice_AppType
+    public init(appType: Proxyservice_AppType) {
+        self.appType = appType
+    }
 
     static var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "EndpointHistogram")
 
     private var flows: [NWEndpoint: EndpointHistogramEntry] = [:]
 
-    static let instagram = EndpointHistogram()
-    static let tiktok = EndpointHistogram()
-    static let twitter = EndpointHistogram()
-    static let youtube = EndpointHistogram()
-    static let facebook = EndpointHistogram()
+    static let instagram = EndpointHistogram(appType: .instagram)
+    static let tiktok = EndpointHistogram(appType: .tiktok)
+    static let twitter = EndpointHistogram(appType: .twitter)
+    static let youtube = EndpointHistogram(appType: .youtube)
+    static let facebook = EndpointHistogram(appType: .facebook)
 
     static func recordInboundBytes(flow: NEFilterSocketFlow, bytes: Int) {
         guard let histogram = getInstance(flow: flow) else {
             return
         }
-        guard let endpoint = flow.remoteEndpoint else {
-            logger.log("No endpoint found")
-            return
-        }
-        logger.log("inbound local: \(flow.localEndpoint.debugDescription)")
-        
         histogram.recordInboundBytes(flow: flow, bytes: bytes)
     }
 
@@ -45,8 +44,6 @@ class EndpointHistogram {
         guard let histogram = getInstance(flow: flow) else {
             return
         }
-
-        
         histogram.recordOutboundBytes(flow: flow, bytes: bytes)
     }
 
@@ -60,6 +57,8 @@ class EndpointHistogram {
             return twitter
         case .youtube:
             return youtube
+        case .facebook:
+            return facebook
         default:
             return nil
         }
@@ -88,7 +87,6 @@ class EndpointHistogram {
         updateFlow(direction: .inbound, sampleTime: sampleTime, endpoint: endpoint, bytes: bytes, hostname: flow.remoteHostname)
         if sampleTime.timeIntervalSince(lastPrinted) > 1 {
             printSummary()
-            //EndpointHistogram.logger.log("inbound local: \(flow.localEndpoint.debugDescription, privacy: .public)")
             lastPrinted = sampleTime
         }
     }
@@ -110,15 +108,19 @@ class EndpointHistogram {
             flow.rxBytes += bytes
         } else {
             flow.txBytes += bytes
+            // Only update on TX
+            flow.lastUpdated = sampleTime
         }
-        flow.lastUpdated = sampleTime
+        if hostname != nil {
+            flow.hostname = hostname
+        }
     }
     
     func printSummary() {
         // sort by most recent
         let sortedFlows = flows.values.sorted { $0.lastUpdated > $1.lastUpdated }
         // let sortedFlows = flows.values.sorted { $0.totalBytes > $1.totalBytes }
-        var str = ""
+        var str = "\(appType)\n"
         for flow in sortedFlows {
             str += "\(flow.endpoint) \(flow.hostname ?? "") \n rxBytes \(flow.rxBytes)\n txBytes \(flow.txBytes)\n"
         }

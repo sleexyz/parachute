@@ -55,6 +55,10 @@ public class DataFlowController {
 
         let allowPeek = NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: 128 * 1024 * 1024) // large number
 
+        guard flow.blockForApp(app: app) else {
+            return allowPeek
+        }
+
         guard !settings.isDisabled else {
             return allowPeek
         }

@@ -217,6 +217,18 @@ struct AppsPicker: View {
         )
     }
 
+    var isFacebookEnabled: Binding<Bool> {
+        Binding<Bool>(
+            get: { settingsStore.settings.isAppEnabled(app: .facebook) },
+            set: { newValue in
+                settingsStore.settings.setAppEnabled(app: .facebook, value: newValue)
+                Task { @MainActor in
+                    try await settingsController.syncSettings(reason: "facebook toggle")
+                }
+            }
+        )
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
             // Apps
@@ -248,6 +260,12 @@ struct AppsPicker: View {
                 .tint(.parachuteOrange)
                 Toggle(isOn: isYoutubeEnabled) {
                     Text("Youtube")
+                        .foregroundColor(.white)
+                }
+                .padding(.bottom, 10)
+                .tint(.parachuteOrange)
+                Toggle(isOn: isFacebookEnabled) {
+                    Text("Facebook")
                         .foregroundColor(.white)
                 }
                 .tint(.parachuteOrange)

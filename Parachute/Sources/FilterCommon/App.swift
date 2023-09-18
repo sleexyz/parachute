@@ -80,6 +80,20 @@ public extension App {
         dropAllowedBytesUnusable: 256 * 1024,
         dropAllowedBytesBarelyUsable: 256 * 1024
     )
+    static let facebook = App(
+        appType: .facebook,
+
+        preSlowingBytes1: 1024,
+        preSlowingBytes2: 16 * 1024,
+
+        peekBytes: 2 * 1024,
+
+        targetRxSpeed1: 4 * 1024,
+        targetRxSpeed2: 24 * 1024,
+
+        dropAllowedBytesUnusable: 16 * 1024,
+        dropAllowedBytesBarelyUsable: 64 * 1024
+    )
 
     func preSlowingBytes(_ settings: Proxyservice_Settings) -> Int {
         if settings.usability == .unusable {

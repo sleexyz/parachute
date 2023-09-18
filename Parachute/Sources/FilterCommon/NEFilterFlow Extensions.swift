@@ -10,15 +10,6 @@ public extension NEFilterFlow {
         //     return .instagram
         // }
         if sourceAppIdentifier?.hasSuffix(".com.burbn.instagram") ?? false {
-            // Check if is NEFilterSocketFlow
-            if let flow = self as? NEFilterSocketFlow {
-                if flow.remoteHostname?.hasPrefix("chat-e2ee") ?? false {
-                    return nil
-                }
-                if flow.remoteHostname?.hasPrefix("mqtt.") ?? false {
-                    return nil
-                }
-            }
             return .instagram
         }
         if sourceAppIdentifier?.hasSuffix(".com.atebits.Tweetie2") ?? false {
@@ -27,6 +18,33 @@ public extension NEFilterFlow {
         if sourceAppIdentifier?.hasSuffix(".com.google.ios.youtube") ?? false {
             return .youtube
         }
+        if sourceAppIdentifier?.hasSuffix(".com.facebook.Facebook") ?? false {
+            return .facebook
+        }
         return nil
+    }
+
+    func blockForApp(app: App) -> Bool {
+        // Allow all browser flows
+        guard let flow = self as? NEFilterSocketFlow else {
+            return false
+        }
+
+        if flow.remoteHostname?.hasPrefix("apple.com") ?? false {
+            return false
+        }
+
+        switch app.appType {
+        case .instagram:
+            if flow.remoteHostname?.hasPrefix("chat-e2ee.") ?? false {
+                return false
+            }
+            if flow.remoteHostname?.hasPrefix("mqtt.") ?? false {
+                return false
+            }
+            return true
+        default:
+            return true
+        }
     }
 }

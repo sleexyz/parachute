@@ -146,6 +146,7 @@ public enum Proxyservice_AppType: SwiftProtobuf.Enum {
   case tiktok // = 1
   case twitter // = 2
   case youtube // = 3
+  case facebook // = 4
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -158,6 +159,7 @@ public enum Proxyservice_AppType: SwiftProtobuf.Enum {
     case 1: self = .tiktok
     case 2: self = .twitter
     case 3: self = .youtube
+    case 4: self = .facebook
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -168,6 +170,7 @@ public enum Proxyservice_AppType: SwiftProtobuf.Enum {
     case .tiktok: return 1
     case .twitter: return 2
     case .youtube: return 3
+    case .facebook: return 4
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -183,6 +186,7 @@ extension Proxyservice_AppType: CaseIterable {
     .tiktok,
     .twitter,
     .youtube,
+    .facebook,
   ]
 }
 
@@ -590,6 +594,7 @@ extension Proxyservice_AppType: SwiftProtobuf._ProtoNameProviding {
     1: .same(proto: "tiktok"),
     2: .same(proto: "twitter"),
     3: .same(proto: "youtube"),
+    4: .same(proto: "facebook"),
   ]
 }
 
