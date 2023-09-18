@@ -27,6 +27,7 @@
 		A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
 		A0312E2C297D07D300EB0B8A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E2B297D07D300EB0B8A /* Extensions.swift */; };
 		A0312E2E297F16ED00EB0B8A /* linmapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E2D297F16ED00EB0B8A /* linmapTests.swift */; };
+		A03B48AF2AB4B78B0061BE9F /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = A03B48AE2AB4B78B0061BE9F /* Common */; };
 		A04332CC296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
 		A04ADFB02A7B5513008700C4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04ADFAF2A7B5513008700C4 /* WidgetKit.framework */; };
 		A04ADFB22A7B5513008700C4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04ADFB12A7B5513008700C4 /* SwiftUI.framework */; };
@@ -295,6 +296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A058E6222AA2A5BE00C7D918 /* Controllers in Frameworks */,
+				A03B48AF2AB4B78B0061BE9F /* Common in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -660,6 +662,7 @@
 			name = OneSignalNotificationServiceExtension;
 			packageProductDependencies = (
 				A058E6212AA2A5BE00C7D918 /* Controllers */,
+				A03B48AE2AB4B78B0061BE9F /* Common */,
 			);
 			productName = OneSignalNotificationServiceExtension;
 			productReference = A0119C5E2AA24D5C00032F9D /* OneSignalNotificationServiceExtension.appex */;
@@ -2195,6 +2198,10 @@
 		A01AB95D2A7D8015004E87B3 /* Controllers */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Controllers;
+		};
+		A03B48AE2AB4B78B0061BE9F /* Common */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Common;
 		};
 		A04D70982A8D48F9004E52E1 /* FilterControl */ = {
 			isa = XCSwiftPackageProductDependency;
