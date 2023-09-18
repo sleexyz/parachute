@@ -45,7 +45,7 @@ public class DataFlowController {
         }
 
         // Pass to handleInboundData
-        return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.preSlowingBytes(.shared), filterOutbound: false, peekOutboundBytes: 0)
+        return .filterDataVerdict(withFilterInbound: true, peekInboundBytes: app.preSlowingBytes(.shared), filterOutbound: true, peekOutboundBytes: 128 * 1024 * 1024)
     }
 
     public func handleInboundData(from flow: NEFilterFlow, offset: Int, readBytes: Data) -> NEFilterDataVerdict {

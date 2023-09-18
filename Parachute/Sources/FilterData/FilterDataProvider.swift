@@ -62,22 +62,33 @@ public class FilterDataProvider: NEFilterDataProvider {
     override public func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
         // logger.debug("Received new flow for \(flow.sourceAppIdentifier ?? "", privacy: .public)")
         let verdict = dataFlowController.handleNewFlow(flow)
-        // if flow.matchSocialMedia() != nil {
-        //     if let flow = flow as? NEFilterSocketFlow {
-        //         logger.debug("new flow verdict for \(flow, privacy: .public): \(verdict, privacy: .public)")
-        //     }
-        // }
         return verdict
     }
 
     override public func handleInboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
         let verdict = dataFlowController.handleInboundData(from: flow, offset: offset, readBytes: readBytes)
-        // if flow.matchSocialMedia() != nil {
-        //     if let flow = flow as? NEFilterSocketFlow {
-        //         logger.debug("inbound data flow verdict for \(flow.remoteHostname ?? "", privacy: .public): \(verdict, privacy: .public)")
-        //     }
-        // }
+#if DEBUG
+        if flow.matchSocialMedia() != nil {
+            if let flow = flow as? NEFilterSocketFlow {
+                EndpointHistogram.recordInboundBytes(flow: flow, bytes: readBytes.count)
+            }
+            if let flow = flow as? NEFilterBrowserFlow {
+                logger.debug("new browser flow: \(flow.parentURL?.absoluteString ?? "", privacy: .public): \(flow.request?.url?.absoluteString ?? "" , privacy: .public)")
+            }
+        }
+#endif
         return verdict
+    }
+
+    override public func handleOutboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
+#if DEBUG
+        if flow.matchSocialMedia() != nil {
+            if let flow = flow as? NEFilterSocketFlow {
+                EndpointHistogram.recordOutboundBytes(flow: flow, bytes: readBytes.count)
+            }
+        }
+#endif
+        return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: 128 * 1024 * 1024)
     }
 
     override public func handleInboundDataComplete(for flow: NEFilterFlow) -> NEFilterDataVerdict {
