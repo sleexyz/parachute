@@ -76,7 +76,7 @@ public struct MainView: View {
                     .foregroundColor(.white.opacity(0.5))
                     .zIndex(0)
                     Spacer()
-                    AppPicker()
+                    // AppPicker()
                     Spacer()
                     SimpleSelector()
                     Spacer()

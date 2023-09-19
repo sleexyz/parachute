@@ -9,7 +9,7 @@ import ProxyService
 
 public class AppController: ObservableObject {
     let name: Proxyservice_AppType
-    public lazy var store: ManagedSettingsStore = .init(named: ManagedSettingsStore.Name(rawValue: "\(name)"))
+    private lazy var store: ManagedSettingsStore = .init(named: ManagedSettingsStore.Name(rawValue: "\(name)"))
     var bag = Set<AnyCancellable>()
 
     @Published public var selection: FamilyActivitySelection
@@ -46,11 +46,17 @@ public class AppController: ObservableObject {
             } catch {}
         }.store(in: &bag)
     }
+
+    // TODO: convert to binding
+    public func setTokens(_ tokens: Set<ApplicationToken>) {
+        selection.applicationTokens = tokens
+    }
     
     public var shieldEnabled: Binding<Bool> {
         Binding(
             get: { !(self.store.shield.applications?.isEmpty ?? true) },
             set: {
+                // TODO: see if I have to manually trigger update
                 if $0 {
                     self.store.shield.applications = self.selection.applicationTokens
                 } else {
@@ -93,12 +99,40 @@ public class DeviceActivityController: ObservableObject {
     
     // TODO: unblock all the apps
     public func unblock() {
-        instagram.unblock()
+        for appController in self.appControlers {
+            appController.unblock()
+        }
     }
 
     // TODO: block all the apps
     public func block() {
-        instagram.block()
+        for appController in self.appControlers {
+            appController.block()
+        }
+    }
+
+    private var appControlers: [AppController] {
+        [instagram, tiktok, twitter, youtube, facebook]
+    }
+
+    public var shieldEnabled: Binding<Bool> {
+        Binding(
+            get: { 
+                for appController in self.appControlers {
+                    if appController.shieldEnabled.wrappedValue {
+                        return true
+                    }
+                }
+                return false
+            },
+            set: {
+                if $0 {
+                    self.block()
+                } else {
+                    self.unblock()
+                }
+            }
+        )
     }
 
     public func initiateMonitoring(timeInterval: TimeInterval) {
@@ -112,6 +146,8 @@ public class DeviceActivityController: ObservableObject {
         )
 
         let center = DeviceActivityCenter()
+
+        // TODO: support multiple events
         let event = DeviceActivityEvent(
             applications: instagram.selection.applicationTokens,
             threshold: DateComponents(second: Int(timeInterval))

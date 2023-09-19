@@ -21,13 +21,20 @@ public struct AppPicker: View {
 //            Text("Stop Monitoring")
 //        }
 //        
-        Toggle("enable", isOn: deviceActivityController.instagram.shieldEnabled)
+        Toggle("enable", isOn: deviceActivityController.shieldEnabled)
 
-        Button("Instagram") { isPresented = true }
+        Button("Pair Instagram") { isPresented = true }
             .familyActivityPicker(isPresented: $isPresented,
                                   selection: $deviceActivityController.instagram.selection)
             .onChange(of: deviceActivityController.instagram.selection) { selection in
-                deviceActivityController.instagram.store.shield.applications = selection.applicationTokens
+                deviceActivityController.instagram.setTokens(selection.applicationTokens)
+            }
+
+        Button("Pair Tiktok") { isPresented = true }
+            .familyActivityPicker(isPresented: $isPresented,
+                                  selection: $deviceActivityController.tiktok.selection)
+            .onChange(of: deviceActivityController.tiktok.selection) { selection in
+                deviceActivityController.tiktok.setTokens(selection.applicationTokens)
             }
     }
 }
