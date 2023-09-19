@@ -3,41 +3,67 @@ import Controllers
 import ProxyService
 import SwiftUI
 
-struct SettingsContent: View {
+struct SettingsView: View {
     @Binding var isPresented: Bool
-
+    @Binding var isAdvancedPresented: Bool
+    @Binding var isAppsPresented: Bool
     @State private var isFeedbackOpen = false
 
     var body: some View {
-        // TODO: put sections behind rows.
-        SettingsSyncer {
-            VStack(alignment: .leading) {
-                HStack {
-                    DisableButton(isSettingsPresented: $isPresented)
+        // Closing pane should switch to main view
+        Pane(isPresented: $isPresented, bg: .background) {
+            // TODO: put sections behind rows.
+            SettingsSyncer {
+                VStack(alignment: .leading) {
+                    HStack {
+                        DisableButton(isSettingsPresented: $isPresented)
+                        Spacer()
+
+                        FeedbackButton()
+                            .padding()
+                    }
+                    .padding(.vertical, 20)
+
+
+                    TimePicker()
+                    .padding(.vertical, 20)
+
+                    SettingsHeader(label: "Apps", page: .apps)
+                    .padding(.vertical, 20)
+
+                    SettingsHeader(label: "Advanced", page: .advanced)
+                        .padding(.vertical, 20)
+
                     Spacer()
-
-                    FeedbackButton()
-                        .padding()
                 }
-                // .padding(.bottom, 20)
-
-                Spacer()
-
-                TimePicker()
-                // .padding(.bottom, 20)
-
-                Spacer()
-
-                AppsPicker()
-                // .padding(.bottom, 20)
-
-                Spacer()
-
-                AdvancedSettingsHeader()
-                    .padding(.bottom, 20)
+                .font(.system(size: 16, weight: .regular, design: .rounded))
             }
-            .font(.system(size: 16, weight: .regular, design: .rounded))
         }
+        .blur(radius: isAdvancedPresented ? 8 : 0)
+        .scaleEffect(isAdvancedPresented ? 0.98 : 1) // Add scale effect when settings page is open
+        .animation(.easeInOut(duration: 0.2), value: isAdvancedPresented) // Add animation to the blur effect
+
+        Pane(isPresented: $isAppsPresented, bg: .background) {
+            AppsPicker()
+        }
+
+        // Closing pane should switch to settings view
+        Pane(isPresented: $isAdvancedPresented, bg: .background) {
+            AdvancedSettingsContent()
+        }
+    }
+}
+
+struct ConnectedSettingsView: View {
+    @Binding var isPresented: Bool
+    @EnvironmentObject var connectedViewController: ConnectedViewController
+
+    var body: some View {
+        SettingsView(
+            isPresented: $isPresented,
+            isAdvancedPresented: connectedViewController.isAdvancedSettingsPresented,
+            isAppsPresented: connectedViewController.isAppsSettingsPresented
+        )
     }
 }
 
@@ -72,15 +98,18 @@ struct SettingsSyncer<Content: View>: View {
     }
 }
 
-struct AdvancedSettingsHeader: View {
+struct SettingsHeader: View {
     @EnvironmentObject var settingsController: SettingsController
     @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var connectedViewController: ConnectedViewController
 
+    var label: String
+    var page: SettingsPage
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .center) {
-                Text("Advanced")
+                Text(label)
                     .font(.system(size: 24, weight: .bold, design: .rounded))
                     .foregroundColor(.white.opacity(0.6))
                     .padding(.horizontal)
@@ -94,7 +123,7 @@ struct AdvancedSettingsHeader: View {
         .contentShape(Rectangle())
         .onTapGesture {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            connectedViewController.setSettingsPage(page: .advanced)
+            connectedViewController.setSettingsPage(page: page)
         }
     }
 }
@@ -127,28 +156,14 @@ struct TimePicker: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Session Durations")
+            Text("Durations")
                 .font(.system(size: 24, weight: .bold, design: .rounded))
                 .foregroundColor(.white.opacity(0.6))
                 .padding(.horizontal)
                 .padding(.top, 10)
 
             HStack {
-                Text("Break")
-                    .foregroundColor(.white)
-                Spacer()
-                Picker(selection: $settingsStore.settings.longSessionSecs, label: Text("Long session")) {
-                    Text("5 minutes").tag(5 * 60 as Int32)
-                    Text("10 minutes").tag(10 * 60 as Int32)
-                    Text("15 minutes").tag(15 * 60 as Int32)
-                }
-                .tint(.parachuteOrange)
-                .pickerStyle(.menu)
-            }
-            .padding(.horizontal)
-
-            HStack {
-                Text("Check")
+                Text("Just checking something?")
                     .foregroundColor(.white)
                 Spacer()
 
@@ -156,6 +171,20 @@ struct TimePicker: View {
                     Text("30 seconds").tag(30 as Int32)
                     Text("45 seconds").tag(45 as Int32)
                     Text("60 seconds").tag(60 as Int32)
+                }
+                .tint(.parachuteOrange)
+                .pickerStyle(.menu)
+            }
+            .padding(.horizontal)
+
+            HStack {
+                Text("Take a break?")
+                    .foregroundColor(.white)
+                Spacer()
+                Picker(selection: $settingsStore.settings.longSessionSecs, label: Text("Long session")) {
+                    Text("5 minutes").tag(5 * 60 as Int32)
+                    Text("10 minutes").tag(10 * 60 as Int32)
+                    Text("15 minutes").tag(15 * 60 as Int32)
                 }
                 .tint(.parachuteOrange)
                 .pickerStyle(.menu)
@@ -271,26 +300,7 @@ struct AppsPicker: View {
                 .tint(.parachuteOrange)
             }
             .padding(.horizontal)
-        }
-    }
-}
-
-struct SettingsView: View {
-    @Binding var isPresented: Bool
-    @Binding var isAdvancedPresented: Bool
-
-    var body: some View {
-        // Closing pane should switch to main view
-        Pane(isPresented: $isPresented, bg: .background) {
-            SettingsContent(isPresented: $isPresented)
-        }
-        .blur(radius: isAdvancedPresented ? 8 : 0)
-        .scaleEffect(isAdvancedPresented ? 0.98 : 1) // Add scale effect when settings page is open
-        .animation(.easeInOut(duration: 0.2), value: isAdvancedPresented) // Add animation to the blur effect
-
-        // Closing pane should switch to settings view
-        Pane(isPresented: $isAdvancedPresented, bg: .background) {
-            AdvancedSettingsContent()
+            Spacer()
         }
     }
 }

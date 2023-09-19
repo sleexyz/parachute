@@ -27,6 +27,7 @@
 		A02F590C27B09A7A00D3330F /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F590B27B09A7A00D3330F /* NetworkExtension.framework */; };
 		A0312E2C297D07D300EB0B8A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E2B297D07D300EB0B8A /* Extensions.swift */; };
 		A0312E2E297F16ED00EB0B8A /* linmapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0312E2D297F16ED00EB0B8A /* linmapTests.swift */; };
+		A03B48AF2AB4B78B0061BE9F /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = A03B48AE2AB4B78B0061BE9F /* Common */; };
 		A04332CC296BA2A400D69210 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A04332CB296BA2A400D69210 /* GoogleService-Info.plist */; };
 		A04ADFB02A7B5513008700C4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04ADFAF2A7B5513008700C4 /* WidgetKit.framework */; };
 		A04ADFB22A7B5513008700C4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04ADFB12A7B5513008700C4 /* SwiftUI.framework */; };
@@ -46,6 +47,16 @@
 		A056C36E2A819E8F00E4ED9A /* AppViews in Frameworks */ = {isa = PBXBuildFile; productRef = A056C36D2A819E8F00E4ED9A /* AppViews */; };
 		A058E6222AA2A5BE00C7D918 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A058E6212AA2A5BE00C7D918 /* Controllers */; };
 		A058E6232AA7CD7200C7D918 /* FilterControlProviderExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A0FE9A702A8C29EF00D891CE /* FilterControlProviderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A05A09AE2AB37825000E5502 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A05A09AD2AB37824000E5502 /* ManagedSettings.framework */; };
+		A05A09B02AB37825000E5502 /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A05A09AF2AB37825000E5502 /* ManagedSettingsUI.framework */; };
+		A05A09B32AB37825000E5502 /* ShieldConfigurationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A05A09B22AB37825000E5502 /* ShieldConfigurationExtension.swift */; };
+		A05A09B82AB37825000E5502 /* ShieldConfiguration.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A05A09AC2AB37824000E5502 /* ShieldConfiguration.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A05A09C12AB37836000E5502 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A05A09AD2AB37824000E5502 /* ManagedSettings.framework */; };
+		A05A09C42AB37836000E5502 /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A05A09C32AB37836000E5502 /* ShieldActionExtension.swift */; };
+		A05A09C92AB37836000E5502 /* ShieldActionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A05A09C02AB37836000E5502 /* ShieldActionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A05A09D32AB38198000E5502 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A05A09D22AB38198000E5502 /* DeviceActivity.framework */; };
+		A05A09D62AB38198000E5502 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A05A09D52AB38198000E5502 /* DeviceActivityMonitorExtension.swift */; };
+		A05A09DB2AB38198000E5502 /* DeviceActivityMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A05A09D12AB38198000E5502 /* DeviceActivityMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A068DCF229A6FA4F0036E9A2 /* Cardable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A068DCF129A6FA4F0036E9A2 /* Cardable.swift */; };
 		A068DCF529A6FABC0036E9A2 /* Preset+Cardable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A068DCF429A6FABC0036E9A2 /* Preset+Cardable.swift */; };
 		A068DCF729A6FB260036E9A2 /* PauseCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A068DCF629A6FB260036E9A2 /* PauseCard.swift */; };
@@ -58,6 +69,8 @@
 		A08719D8281A4CE500113F3F /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D7281A4CE500113F3F /* SplashView.swift */; };
 		A08719DA281A4E1100113F3F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D9281A4E1100113F3F /* AppView.swift */; };
 		A08719DE281A54A900113F3F /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719DD281A54A900113F3F /* Spinner.swift */; };
+		A092B9882AB9F6B200D2FA35 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A092B9872AB9F6B200D2FA35 /* Controllers */; };
+		A092B98A2ABA374700D2FA35 /* CommonViews in Frameworks */ = {isa = PBXBuildFile; productRef = A092B9892ABA374700D2FA35 /* CommonViews */; };
 		A096625529C8E93C00D2E0A9 /* PresetSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625429C8E93C00D2E0A9 /* PresetSelector.swift */; };
 		A096625729C93EFC00D2E0A9 /* ParachutePresetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */; };
 		A0975B452A83261D0079FCBD /* QuickBreakIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0975B432A8325870079FCBD /* QuickBreakIntent.swift */; };
@@ -66,6 +79,8 @@
 		A0A7D9A32A9E7AF0006A78E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0A7D9A22A9E7AF0006A78E1 /* Assets.xcassets */; };
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
 		A0AC5DD62A9005FF00011CAD /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0AC5DD52A9005FF00011CAD /* Placeholder.swift */; };
+		A0C1BC592AB93240000CCFCA /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A0C1BC582AB93240000CCFCA /* Controllers */; };
+		A0C1BC5B2AB938EF000CCFCA /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = A0C1BC5A2AB938EF000CCFCA /* Common */; };
 		A0C1F7B02A8C400100934A8D /* FilterData in Frameworks */ = {isa = PBXBuildFile; productRef = A0C1F7AF2A8C400100934A8D /* FilterData */; };
 		A0D191DC2A99B04A00086F12 /* SlowdownWidgetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D191DB2A99B04A00086F12 /* SlowdownWidgetProvider.swift */; };
 		A0EE20AC2A82E84E00F34B98 /* Activities in Frameworks */ = {isa = PBXBuildFile; productRef = A0EE20AB2A82E84E00F34B98 /* Activities */; };
@@ -122,6 +137,27 @@
 			remoteGlobalIDString = A0FE9A6F2A8C29EF00D891CE;
 			remoteInfo = FilterControlProviderExtension;
 		};
+		A05A09B62AB37825000E5502 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A02F58D427A6F14500D3330F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A05A09AB2AB37824000E5502;
+			remoteInfo = ShieldConfiguration;
+		};
+		A05A09C72AB37836000E5502 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A02F58D427A6F14500D3330F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A05A09BF2AB37836000E5502;
+			remoteInfo = ShieldActionExtension;
+		};
+		A05A09D92AB38198000E5502 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A02F58D427A6F14500D3330F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A05A09D02AB38198000E5502;
+			remoteInfo = DeviceActivityMonitor;
+		};
 		A0FE9A662A8C299000D891CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A02F58D427A6F14500D3330F /* Project object */;
@@ -159,9 +195,12 @@
 			dstSubfolderSpec = 13;
 			files = (
 				A058E6232AA7CD7200C7D918 /* FilterControlProviderExtension.appex in Embed Foundation Extensions */,
+				A05A09DB2AB38198000E5502 /* DeviceActivityMonitor.appex in Embed Foundation Extensions */,
 				A0119C652AA24D5C00032F9D /* OneSignalNotificationServiceExtension.appex in Embed Foundation Extensions */,
 				A0FE9A682A8C299000D891CE /* FilterDataProviderExtension.appex in Embed Foundation Extensions */,
+				A05A09B82AB37825000E5502 /* ShieldConfiguration.appex in Embed Foundation Extensions */,
 				A04ADFC12A7B5515008700C4 /* SlowdownWidgetExtension.appex in Embed Foundation Extensions */,
+				A05A09C92AB37836000E5502 /* ShieldActionExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -203,6 +242,21 @@
 		A04ADFBE2A7B5515008700C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A052AE1D29977B3700AB43B7 /* StateUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateUpdater.swift; sourceTree = "<group>"; };
 		A052AE1F299A900100AB43B7 /* HealButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealButton.swift; sourceTree = "<group>"; };
+		A05A09AC2AB37824000E5502 /* ShieldConfiguration.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldConfiguration.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A05A09AD2AB37824000E5502 /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = SDKROOT; };
+		A05A09AF2AB37825000E5502 /* ManagedSettingsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettingsUI.framework; path = System/Library/Frameworks/ManagedSettingsUI.framework; sourceTree = SDKROOT; };
+		A05A09B22AB37825000E5502 /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldConfigurationExtension.swift; sourceTree = "<group>"; };
+		A05A09B42AB37825000E5502 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A05A09B52AB37825000E5502 /* ShieldConfiguration.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShieldConfiguration.entitlements; sourceTree = "<group>"; };
+		A05A09C02AB37836000E5502 /* ShieldActionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldActionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A05A09C32AB37836000E5502 /* ShieldActionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldActionExtension.swift; sourceTree = "<group>"; };
+		A05A09C52AB37836000E5502 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A05A09C62AB37836000E5502 /* ShieldActionExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShieldActionExtension.entitlements; sourceTree = "<group>"; };
+		A05A09D12AB38198000E5502 /* DeviceActivityMonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DeviceActivityMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A05A09D22AB38198000E5502 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
+		A05A09D52AB38198000E5502 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
+		A05A09D72AB38198000E5502 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A05A09D82AB38198000E5502 /* DeviceActivityMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DeviceActivityMonitor.entitlements; sourceTree = "<group>"; };
 		A068DCF129A6FA4F0036E9A2 /* Cardable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cardable.swift; sourceTree = "<group>"; };
 		A068DCF429A6FABC0036E9A2 /* Preset+Cardable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preset+Cardable.swift"; sourceTree = "<group>"; };
 		A068DCF629A6FB260036E9A2 /* PauseCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseCard.swift; sourceTree = "<group>"; };
@@ -246,6 +300,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A058E6222AA2A5BE00C7D918 /* Controllers in Frameworks */,
+				A03B48AF2AB4B78B0061BE9F /* Common in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,6 +348,35 @@
 				A0EE20AC2A82E84E00F34B98 /* Activities in Frameworks */,
 				A0F98CA02A86B1F500D5E88E /* CommonViews in Frameworks */,
 				A00A09CE2A7EDA7000011260 /* Controllers in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A05A09A92AB37824000E5502 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A092B98A2ABA374700D2FA35 /* CommonViews in Frameworks */,
+				A05A09AE2AB37825000E5502 /* ManagedSettings.framework in Frameworks */,
+				A05A09B02AB37825000E5502 /* ManagedSettingsUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A05A09BD2AB37836000E5502 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A092B9882AB9F6B200D2FA35 /* Controllers in Frameworks */,
+				A05A09C12AB37836000E5502 /* ManagedSettings.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A05A09CE2AB38198000E5502 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0C1BC592AB93240000CCFCA /* Controllers in Frameworks */,
+				A05A09D32AB38198000E5502 /* DeviceActivity.framework in Frameworks */,
+				A0C1BC5B2AB938EF000CCFCA /* Common in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +440,9 @@
 				A0FE9A612A8C299000D891CE /* FilterDataProviderExtension */,
 				A0FE9A722A8C29EF00D891CE /* FilterControlProviderExtension */,
 				A0119C5F2AA24D5C00032F9D /* OneSignalNotificationServiceExtension */,
+				A05A09B12AB37825000E5502 /* ShieldConfiguration */,
+				A05A09C22AB37836000E5502 /* ShieldActionExtension */,
+				A05A09D42AB38198000E5502 /* DeviceActivityMonitor */,
 				A02F58DD27A6F14500D3330F /* Products */,
 				A02F590A27B09A7A00D3330F /* Frameworks */,
 			);
@@ -371,6 +458,9 @@
 				A0FE9A5F2A8C299000D891CE /* FilterDataProviderExtension.appex */,
 				A0FE9A702A8C29EF00D891CE /* FilterControlProviderExtension.appex */,
 				A0119C5E2AA24D5C00032F9D /* OneSignalNotificationServiceExtension.appex */,
+				A05A09AC2AB37824000E5502 /* ShieldConfiguration.appex */,
+				A05A09C02AB37836000E5502 /* ShieldActionExtension.appex */,
+				A05A09D12AB38198000E5502 /* DeviceActivityMonitor.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -427,6 +517,9 @@
 				A04ADFAF2A7B5513008700C4 /* WidgetKit.framework */,
 				A04ADFB12A7B5513008700C4 /* SwiftUI.framework */,
 				A0D191E42A99B14B00086F12 /* Intents.framework */,
+				A05A09AD2AB37824000E5502 /* ManagedSettings.framework */,
+				A05A09AF2AB37825000E5502 /* ManagedSettingsUI.framework */,
+				A05A09D22AB38198000E5502 /* DeviceActivity.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -443,6 +536,36 @@
 				A0D191DB2A99B04A00086F12 /* SlowdownWidgetProvider.swift */,
 			);
 			path = SlowdownWidget;
+			sourceTree = "<group>";
+		};
+		A05A09B12AB37825000E5502 /* ShieldConfiguration */ = {
+			isa = PBXGroup;
+			children = (
+				A05A09B22AB37825000E5502 /* ShieldConfigurationExtension.swift */,
+				A05A09B42AB37825000E5502 /* Info.plist */,
+				A05A09B52AB37825000E5502 /* ShieldConfiguration.entitlements */,
+			);
+			path = ShieldConfiguration;
+			sourceTree = "<group>";
+		};
+		A05A09C22AB37836000E5502 /* ShieldActionExtension */ = {
+			isa = PBXGroup;
+			children = (
+				A05A09C32AB37836000E5502 /* ShieldActionExtension.swift */,
+				A05A09C52AB37836000E5502 /* Info.plist */,
+				A05A09C62AB37836000E5502 /* ShieldActionExtension.entitlements */,
+			);
+			path = ShieldActionExtension;
+			sourceTree = "<group>";
+		};
+		A05A09D42AB38198000E5502 /* DeviceActivityMonitor */ = {
+			isa = PBXGroup;
+			children = (
+				A05A09D52AB38198000E5502 /* DeviceActivityMonitorExtension.swift */,
+				A05A09D72AB38198000E5502 /* Info.plist */,
+				A05A09D82AB38198000E5502 /* DeviceActivityMonitor.entitlements */,
+			);
+			path = DeviceActivityMonitor;
 			sourceTree = "<group>";
 		};
 		A06516E52956A08F00227A95 /* elements */ = {
@@ -547,6 +670,7 @@
 			name = OneSignalNotificationServiceExtension;
 			packageProductDependencies = (
 				A058E6212AA2A5BE00C7D918 /* Controllers */,
+				A03B48AE2AB4B78B0061BE9F /* Common */,
 			);
 			productName = OneSignalNotificationServiceExtension;
 			productReference = A0119C5E2AA24D5C00032F9D /* OneSignalNotificationServiceExtension.appex */;
@@ -571,6 +695,9 @@
 				A0FE9A672A8C299000D891CE /* PBXTargetDependency */,
 				A058E6252AA7CD7200C7D918 /* PBXTargetDependency */,
 				A0119C642AA24D5C00032F9D /* PBXTargetDependency */,
+				A05A09B72AB37825000E5502 /* PBXTargetDependency */,
+				A05A09C82AB37836000E5502 /* PBXTargetDependency */,
+				A05A09DA2AB38198000E5502 /* PBXTargetDependency */,
 			);
 			name = slowdown;
 			packageProductDependencies = (
@@ -652,6 +779,67 @@
 			productReference = A04ADFAE2A7B5513008700C4 /* SlowdownWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		A05A09AB2AB37824000E5502 /* ShieldConfiguration */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A05A09B92AB37825000E5502 /* Build configuration list for PBXNativeTarget "ShieldConfiguration" */;
+			buildPhases = (
+				A05A09A82AB37824000E5502 /* Sources */,
+				A05A09A92AB37824000E5502 /* Frameworks */,
+				A05A09AA2AB37824000E5502 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShieldConfiguration;
+			packageProductDependencies = (
+				A092B9892ABA374700D2FA35 /* CommonViews */,
+			);
+			productName = ShieldConfiguration;
+			productReference = A05A09AC2AB37824000E5502 /* ShieldConfiguration.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		A05A09BF2AB37836000E5502 /* ShieldActionExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A05A09CA2AB37836000E5502 /* Build configuration list for PBXNativeTarget "ShieldActionExtension" */;
+			buildPhases = (
+				A05A09BC2AB37836000E5502 /* Sources */,
+				A05A09BD2AB37836000E5502 /* Frameworks */,
+				A05A09BE2AB37836000E5502 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShieldActionExtension;
+			packageProductDependencies = (
+				A092B9872AB9F6B200D2FA35 /* Controllers */,
+			);
+			productName = ShieldActionExtension;
+			productReference = A05A09C02AB37836000E5502 /* ShieldActionExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		A05A09D02AB38198000E5502 /* DeviceActivityMonitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A05A09DC2AB38198000E5502 /* Build configuration list for PBXNativeTarget "DeviceActivityMonitor" */;
+			buildPhases = (
+				A05A09CD2AB38198000E5502 /* Sources */,
+				A05A09CE2AB38198000E5502 /* Frameworks */,
+				A05A09CF2AB38198000E5502 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DeviceActivityMonitor;
+			packageProductDependencies = (
+				A0C1BC582AB93240000CCFCA /* Controllers */,
+				A0C1BC5A2AB938EF000CCFCA /* Common */,
+			);
+			productName = DeviceActivityMonitor;
+			productReference = A05A09D12AB38198000E5502 /* DeviceActivityMonitor.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		A0FE9A5E2A8C299000D891CE /* FilterDataProviderExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A0FE9A692A8C299000D891CE /* Build configuration list for PBXNativeTarget "FilterDataProviderExtension" */;
@@ -722,6 +910,15 @@
 					A04ADFAD2A7B5513008700C4 = {
 						CreatedOnToolsVersion = 15.0;
 					};
+					A05A09AB2AB37824000E5502 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					A05A09BF2AB37836000E5502 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					A05A09D02AB38198000E5502 = {
+						CreatedOnToolsVersion = 15.0;
+					};
 					A0FE9A5E2A8C299000D891CE = {
 						CreatedOnToolsVersion = 15.0;
 						LastSwiftMigration = 1500;
@@ -757,6 +954,9 @@
 				A0FE9A5E2A8C299000D891CE /* FilterDataProviderExtension */,
 				A0FE9A6F2A8C29EF00D891CE /* FilterControlProviderExtension */,
 				A0119C5D2AA24D5C00032F9D /* OneSignalNotificationServiceExtension */,
+				A05A09AB2AB37824000E5502 /* ShieldConfiguration */,
+				A05A09BF2AB37836000E5502 /* ShieldActionExtension */,
+				A05A09D02AB38198000E5502 /* DeviceActivityMonitor */,
 			);
 		};
 /* End PBXProject section */
@@ -798,6 +998,27 @@
 			buildActionMask = 2147483647;
 			files = (
 				A04ADFBD2A7B5515008700C4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A05A09AA2AB37824000E5502 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A05A09BE2AB37836000E5502 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A05A09CF2AB38198000E5502 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -967,6 +1188,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A05A09A82AB37824000E5502 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A05A09B32AB37825000E5502 /* ShieldConfigurationExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A05A09BC2AB37836000E5502 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A05A09C42AB37836000E5502 /* ShieldActionExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A05A09CD2AB38198000E5502 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A05A09D62AB38198000E5502 /* DeviceActivityMonitorExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0FE9A5B2A8C299000D891CE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1010,6 +1255,21 @@
 			isa = PBXTargetDependency;
 			target = A0FE9A6F2A8C29EF00D891CE /* FilterControlProviderExtension */;
 			targetProxy = A058E6242AA7CD7200C7D918 /* PBXContainerItemProxy */;
+		};
+		A05A09B72AB37825000E5502 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A05A09AB2AB37824000E5502 /* ShieldConfiguration */;
+			targetProxy = A05A09B62AB37825000E5502 /* PBXContainerItemProxy */;
+		};
+		A05A09C82AB37836000E5502 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A05A09BF2AB37836000E5502 /* ShieldActionExtension */;
+			targetProxy = A05A09C72AB37836000E5502 /* PBXContainerItemProxy */;
+		};
+		A05A09DA2AB38198000E5502 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A05A09D02AB38198000E5502 /* DeviceActivityMonitor */;
+			targetProxy = A05A09D92AB38198000E5502 /* PBXContainerItemProxy */;
 		};
 		A0FE9A672A8C299000D891CE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1452,6 +1712,207 @@
 			};
 			name = Release;
 		};
+		A05A09BA2AB37825000E5502 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = ShieldConfiguration/ShieldConfiguration.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShieldConfiguration/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShieldConfiguration;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.ShieldConfiguration;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A05A09BB2AB37825000E5502 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = ShieldConfiguration/ShieldConfiguration.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShieldConfiguration/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShieldConfiguration;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.ShieldConfiguration;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A05A09CB2AB37836000E5502 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = ShieldActionExtension/ShieldActionExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShieldActionExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShieldActionExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.ShieldActionExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A05A09CC2AB37836000E5502 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = ShieldActionExtension/ShieldActionExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShieldActionExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShieldActionExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.ShieldActionExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A05A09DD2AB38198000E5502 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DeviceActivityMonitor/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DeviceActivityMonitor;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.DeviceActivityMonitor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A05A09DE2AB38198000E5502 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H2M3Z7JR84;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DeviceActivityMonitor/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DeviceActivityMonitor;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = industries.strange.slowdown.DeviceActivityMonitor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		A0FE9A6A2A8C299000D891CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1646,6 +2107,33 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		A05A09B92AB37825000E5502 /* Build configuration list for PBXNativeTarget "ShieldConfiguration" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A05A09BA2AB37825000E5502 /* Debug */,
+				A05A09BB2AB37825000E5502 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A05A09CA2AB37836000E5502 /* Build configuration list for PBXNativeTarget "ShieldActionExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A05A09CB2AB37836000E5502 /* Debug */,
+				A05A09CC2AB37836000E5502 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A05A09DC2AB38198000E5502 /* Build configuration list for PBXNativeTarget "DeviceActivityMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A05A09DD2AB38198000E5502 /* Debug */,
+				A05A09DE2AB38198000E5502 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A0FE9A692A8C299000D891CE /* Build configuration list for PBXNativeTarget "FilterDataProviderExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1729,6 +2217,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Controllers;
 		};
+		A03B48AE2AB4B78B0061BE9F /* Common */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Common;
+		};
 		A04D70982A8D48F9004E52E1 /* FilterControl */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FilterControl;
@@ -1763,10 +2255,26 @@
 			package = A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobufPluginLibrary;
 		};
+		A092B9872AB9F6B200D2FA35 /* Controllers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Controllers;
+		};
+		A092B9892ABA374700D2FA35 /* CommonViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CommonViews;
+		};
 		A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A0A81D5A296B98D800B9E1DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
+		};
+		A0C1BC582AB93240000CCFCA /* Controllers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Controllers;
+		};
+		A0C1BC5A2AB938EF000CCFCA /* Common */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Common;
 		};
 		A0C1F7AF2A8C400100934A8D /* FilterData */ = {
 			isa = XCSwiftPackageProductDependency;

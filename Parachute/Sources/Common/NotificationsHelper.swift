@@ -9,7 +9,9 @@ import Foundation
 import UserNotifications
 
 public class NotificationsHelper {
-    public init() {}
+    private init() {}
+    
+    public static var shared: NotificationsHelper = NotificationsHelper()
 
     // Clear all notifications
     public func clearNotifications() {

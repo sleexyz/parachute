@@ -16,6 +16,9 @@ public let previewDeps: [any Dep] = [
     MockVPNConfigurationService.Provider(),
     SettingsStore.Provider(),
     OnboardingViewController.Provider(),
+    ActivitiesHelper.Provider(),
+    DeviceActivityController.Provider(),
+    ActionController.Provider(),
 ]
 
 public let connectedPreviewDeps: [any Dep] = {

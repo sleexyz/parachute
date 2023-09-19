@@ -20,6 +20,7 @@ public enum ConnectedViewState {
 public enum SettingsPage {
     case main
     case advanced
+    case apps
 }
 
 public class ConnectedViewController: ObservableObject {
@@ -47,6 +48,19 @@ public class ConnectedViewController: ObservableObject {
             }
         }
     }
+
+    public var isAppsSettingsPresented: Binding<Bool> {
+        Binding<Bool> {
+            self.settingsPage == .apps
+        } set: { value in
+            if value {
+                self._setSettingsPage(page: .apps)
+            } else {
+                self._setSettingsPage(page: .main)
+            }
+        }
+    }
+
 
     public var isSettingsPresented: Binding<Bool> {
         Binding<Bool> {

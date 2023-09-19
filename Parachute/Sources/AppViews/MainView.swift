@@ -4,24 +4,6 @@ import Controllers
 import OSLog
 import SwiftUI
 
-struct TextLogo: View {
-    var body: some View {
-        HStack {
-            // Image(systemName: "drop.fill")
-            //     .font(.system(size: 28, design: .rounded))
-            //     .fontWeight(.bold)
-            //     .padding(.trailing, 4)
-
-            Text("parachute.")
-                .font(.system(.title, design: .rounded))
-                // .font(.custom("SpaceMono-Regular", size: 26))
-                // .textCase(.uppercase)
-                .fontWeight(.bold)
-        }
-        .foregroundStyle(Color.parachuteOrange)
-    }
-}
-
 public struct MainView: View {
     @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
@@ -50,9 +32,8 @@ public struct MainView: View {
 
     public var body: some View {
         ZStack {
-            SettingsView(
-                isPresented: $isSettingsPresented,
-                isAdvancedPresented: ConnectedViewController.shared.isAdvancedSettingsPresented
+            ConnectedSettingsView(
+                isPresented: $isSettingsPresented
             )
             .zIndex(2)
 
@@ -95,6 +76,7 @@ public struct MainView: View {
                     .foregroundColor(.white.opacity(0.5))
                     .zIndex(0)
                     Spacer()
+                    // AppPicker()
                     Spacer()
                     SimpleSelector()
                     Spacer()
@@ -126,5 +108,24 @@ public struct MainView: View {
             .animation(.easeInOut(duration: 0.2), value: isPanePresented) // Add animation to the blur effect
             .zIndex(0)
         }
+    }
+}
+
+
+struct TextLogo: View {
+    var body: some View {
+        HStack {
+            // Image(systemName: "drop.fill")
+            //     .font(.system(size: 28, design: .rounded))
+            //     .fontWeight(.bold)
+            //     .padding(.trailing, 4)
+
+            Text("parachute.")
+                .font(.system(.title, design: .rounded))
+                // .font(.custom("SpaceMono-Regular", size: 26))
+                // .textCase(.uppercase)
+                .fontWeight(.bold)
+        }
+        .foregroundStyle(Color.parachuteOrange)
     }
 }

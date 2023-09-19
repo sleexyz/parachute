@@ -23,6 +23,11 @@ class NotificationService: UNNotificationServiceExtension {
             // print("Running NotificationServiceExtension")
             // bestAttemptContent.body = "[Modified] " + bestAttemptContent.body
 
+//            if bestAttemptContent.categoryIdentifier == "refresh" {
+//                logger.info("refreshing")
+//                // TODO: implement
+//                //DeviceActivityController.shared.refresh()
+//            }
 //            if bestAttemptContent.categoryIdentifier == "unpause" {
 //                logger.info("unpausing 1")
 //                Task { @MainActor in

@@ -20,6 +20,8 @@ public struct ControllersLoader<Inner: View>: View {
                 SettingsStore.Provider(),
                 OnboardingViewController.Provider(),
                 ActivitiesHelper.Provider(),
+                DeviceActivityController.Provider(),
+                ActionController.Provider(),
             ])
     }
 }
