@@ -69,6 +69,8 @@
 		A08719D8281A4CE500113F3F /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D7281A4CE500113F3F /* SplashView.swift */; };
 		A08719DA281A4E1100113F3F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719D9281A4E1100113F3F /* AppView.swift */; };
 		A08719DE281A54A900113F3F /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08719DD281A54A900113F3F /* Spinner.swift */; };
+		A092B9882AB9F6B200D2FA35 /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A092B9872AB9F6B200D2FA35 /* Controllers */; };
+		A092B98A2ABA374700D2FA35 /* CommonViews in Frameworks */ = {isa = PBXBuildFile; productRef = A092B9892ABA374700D2FA35 /* CommonViews */; };
 		A096625529C8E93C00D2E0A9 /* PresetSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625429C8E93C00D2E0A9 /* PresetSelector.swift */; };
 		A096625729C93EFC00D2E0A9 /* ParachutePresetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A096625629C93EFC00D2E0A9 /* ParachutePresetPicker.swift */; };
 		A0975B452A83261D0079FCBD /* QuickBreakIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0975B432A8325870079FCBD /* QuickBreakIntent.swift */; };
@@ -77,6 +79,8 @@
 		A0A7D9A32A9E7AF0006A78E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0A7D9A22A9E7AF0006A78E1 /* Assets.xcassets */; };
 		A0A81D5C296B98D800B9E1DD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */; };
 		A0AC5DD62A9005FF00011CAD /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0AC5DD52A9005FF00011CAD /* Placeholder.swift */; };
+		A0C1BC592AB93240000CCFCA /* Controllers in Frameworks */ = {isa = PBXBuildFile; productRef = A0C1BC582AB93240000CCFCA /* Controllers */; };
+		A0C1BC5B2AB938EF000CCFCA /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = A0C1BC5A2AB938EF000CCFCA /* Common */; };
 		A0C1F7B02A8C400100934A8D /* FilterData in Frameworks */ = {isa = PBXBuildFile; productRef = A0C1F7AF2A8C400100934A8D /* FilterData */; };
 		A0D191DC2A99B04A00086F12 /* SlowdownWidgetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D191DB2A99B04A00086F12 /* SlowdownWidgetProvider.swift */; };
 		A0EE20AC2A82E84E00F34B98 /* Activities in Frameworks */ = {isa = PBXBuildFile; productRef = A0EE20AB2A82E84E00F34B98 /* Activities */; };
@@ -351,6 +355,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A092B98A2ABA374700D2FA35 /* CommonViews in Frameworks */,
 				A05A09AE2AB37825000E5502 /* ManagedSettings.framework in Frameworks */,
 				A05A09B02AB37825000E5502 /* ManagedSettingsUI.framework in Frameworks */,
 			);
@@ -360,6 +365,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A092B9882AB9F6B200D2FA35 /* Controllers in Frameworks */,
 				A05A09C12AB37836000E5502 /* ManagedSettings.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -368,7 +374,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0C1BC592AB93240000CCFCA /* Controllers in Frameworks */,
 				A05A09D32AB38198000E5502 /* DeviceActivity.framework in Frameworks */,
+				A0C1BC5B2AB938EF000CCFCA /* Common in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,6 +792,9 @@
 			dependencies = (
 			);
 			name = ShieldConfiguration;
+			packageProductDependencies = (
+				A092B9892ABA374700D2FA35 /* CommonViews */,
+			);
 			productName = ShieldConfiguration;
 			productReference = A05A09AC2AB37824000E5502 /* ShieldConfiguration.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -801,6 +812,9 @@
 			dependencies = (
 			);
 			name = ShieldActionExtension;
+			packageProductDependencies = (
+				A092B9872AB9F6B200D2FA35 /* Controllers */,
+			);
 			productName = ShieldActionExtension;
 			productReference = A05A09C02AB37836000E5502 /* ShieldActionExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -818,6 +832,10 @@
 			dependencies = (
 			);
 			name = DeviceActivityMonitor;
+			packageProductDependencies = (
+				A0C1BC582AB93240000CCFCA /* Controllers */,
+				A0C1BC5A2AB938EF000CCFCA /* Common */,
+			);
 			productName = DeviceActivityMonitor;
 			productReference = A05A09D12AB38198000E5502 /* DeviceActivityMonitor.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -2237,10 +2255,26 @@
 			package = A0717CC9294D260C00186AFE /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobufPluginLibrary;
 		};
+		A092B9872AB9F6B200D2FA35 /* Controllers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Controllers;
+		};
+		A092B9892ABA374700D2FA35 /* CommonViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CommonViews;
+		};
 		A0A81D5B296B98D800B9E1DD /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A0A81D5A296B98D800B9E1DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
+		};
+		A0C1BC582AB93240000CCFCA /* Controllers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Controllers;
+		};
+		A0C1BC5A2AB938EF000CCFCA /* Common */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Common;
 		};
 		A0C1F7AF2A8C400100934A8D /* FilterData */ = {
 			isa = XCSwiftPackageProductDependency;

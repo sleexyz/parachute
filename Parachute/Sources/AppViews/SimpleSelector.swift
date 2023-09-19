@@ -4,9 +4,9 @@ import OSLog
 import SwiftUI
 
 public struct SimpleSelector: View {
-    @EnvironmentObject private var profileManager: ProfileManager
     @EnvironmentObject private var settingsStore: SettingsStore
     @EnvironmentObject private var connectedViewController: ConnectedViewController
+    @EnvironmentObject private var actionController: ActionController
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SimpleSelector")
 
@@ -45,9 +45,7 @@ public struct SimpleSelector: View {
 
         } else {
             Button(action: {
-                Task { @MainActor in
-                    try await profileManager.endSession()
-                }
+                actionController.endSession()
             }) {
                 HStack {
                     Image(systemName: "stop.fill")

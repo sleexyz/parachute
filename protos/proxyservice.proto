@@ -20,6 +20,8 @@ enum Mode {
     FOCUS = 1;
 }
 
+// NOTE: Do not change the names of the apps.
+// as their string values are used as keys in DeviceActivityController.
 enum AppType {
     instagram = 0;
     tiktok = 1;

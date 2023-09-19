@@ -10,18 +10,18 @@ public struct AppPicker: View {
     public init() {}
 
     public var body: some View {
-        // Button {
-        //     deviceActivityController.initiateMonitoring()
-        // } label: {
-        //     Text("Initiate Monitoring")
-        // }
-//         Button {
-//             deviceActivityController.stopMonitoring()
-//         } label: {
-//             Text("Stop Monitoring")
-//         }
-        
-        Toggle("enable", isOn: deviceActivityController.instagram.enabled)
+//        Button {
+//            deviceActivityController.initiateMonitoring()
+//        } label: {
+//            Text("Initiate Monitoring")
+//        }
+//        Button {
+//            deviceActivityController.stopMonitoring()
+//        } label: {
+//            Text("Stop Monitoring")
+//        }
+//        
+        Toggle("enable", isOn: deviceActivityController.instagram.shieldEnabled)
 
         Button("Instagram") { isPresented = true }
             .familyActivityPicker(isPresented: $isPresented,

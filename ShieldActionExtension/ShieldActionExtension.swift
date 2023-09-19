@@ -6,6 +6,7 @@
 //
 
 import ManagedSettings
+import Controllers
 
 // Override the functions below to customize the shield actions used in various situations.
 // The system provides a default response for any functions that your subclass doesn't override.
@@ -15,7 +16,9 @@ class ShieldActionExtension: ShieldActionDelegate {
         // Handle the action as needed.
         switch action {
         case .primaryButtonPressed:
-            ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "instagram")).shield.applications = []
+            // ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "instagram")).shield.applications = []
+            DeviceActivityController.shared.instagram.unblock()
+            // DeviceActivityController.shared.initiateMonitoring()
             completionHandler(.none)
         case .secondaryButtonPressed:
             completionHandler(.defer)

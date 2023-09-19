@@ -32,9 +32,8 @@ public struct MainView: View {
 
     public var body: some View {
         ZStack {
-            SettingsView(
-                isPresented: $isSettingsPresented,
-                isAdvancedPresented: ConnectedViewController.shared.isAdvancedSettingsPresented
+            ConnectedSettingsView(
+                isPresented: $isSettingsPresented
             )
             .zIndex(2)
 
