@@ -39,7 +39,7 @@ public extension View {
         background {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(style: StrokeStyle(lineWidth: 1))
-                .foregroundColor(color.opacity(0.1))
+                .foregroundColor(color.opacity(0.4))
                 .background {
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .fill(bg)
@@ -55,7 +55,7 @@ public extension View {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(style: StrokeStyle(lineWidth: 1))
                 // .overlay(self.blur(radius: radius / 6))
-                .foregroundColor(color.opacity(0.1))
+                .foregroundColor(color.opacity(0.4))
                 .glow(color: color, radius: radius)
                 // .shadow(color: color, radius: radius / 3)
                 // .shadow(color: color, radius: radius / 3)

@@ -96,6 +96,47 @@ public class SettingsStore: ObservableObject {
         }
     }
 
+    let quickSessionSecsOptions = [
+        30,
+        45,
+        60,
+    ]
+
+    let longSessionSecsOptions = [
+        3 * 60,
+        5 * 60,
+        10 * 60,
+        15 * 60,
+    ]
+
+    public var quickSessionSecsAdjacentOptions: (Int?, Int?) {
+        getAdjacentOptions(value: Int(settings.quickSessionSecs), options: quickSessionSecsOptions)
+    }
+
+    public var longSessionSecsAdjacentOptions: (Int?, Int?) {
+        getAdjacentOptions(value: Int(settings.longSessionSecs), options: longSessionSecsOptions)
+    }
+
+    private func getAdjacentOptions(value: Int, options: [Int]) -> (Int?, Int?) {
+        var before: Int? = nil
+        var after: Int? = nil
+
+        //  Get closest index
+        let diffs = options.map { abs($0 - value) }
+        var closestIndex = 0
+        for (i, diff) in diffs.enumerated() {
+            if diff < diffs[closestIndex] {
+                closestIndex = i
+            }
+        }
+
+        // get adjacent indexes
+        return (
+            closestIndex > 0 ? options[closestIndex - 1] : nil, 
+            closestIndex < options.count - 1 ? options[closestIndex + 1] : nil
+        )    
+    }
+
     private static func fileUrl() throws -> URL {
         guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.industries.strange.slowdown") else {
             fatalError("could not get shared app group directory.")

@@ -17,10 +17,14 @@ public enum ConnectedViewState {
     case longSession
 }
 
+public enum ScrollSessionPage {
+    case main
+    case sessionSettings
+}
+
 public enum SettingsPage {
     case main
     case advanced
-    case apps
 }
 
 public class ConnectedViewController: ObservableObject {
@@ -34,8 +38,8 @@ public class ConnectedViewController: ObservableObject {
     }
 
     @Published public var state: ConnectedViewState = .main
-
     @Published public var settingsPage: SettingsPage = .main
+    @Published public var scrollSessionPage: ScrollSessionPage = .main
 
     public var isAdvancedSettingsPresented: Binding<Bool> {
         Binding<Bool> {
@@ -48,19 +52,6 @@ public class ConnectedViewController: ObservableObject {
             }
         }
     }
-
-    public var isAppsSettingsPresented: Binding<Bool> {
-        Binding<Bool> {
-            self.settingsPage == .apps
-        } set: { value in
-            if value {
-                self._setSettingsPage(page: .apps)
-            } else {
-                self._setSettingsPage(page: .main)
-            }
-        }
-    }
-
 
     public var isSettingsPresented: Binding<Bool> {
         Binding<Bool> {
@@ -86,6 +77,18 @@ public class ConnectedViewController: ObservableObject {
         }
     }
 
+    public var isSessionSettingsPresented: Binding<Bool> {
+        Binding<Bool> {
+            self.scrollSessionPage == .sessionSettings
+        } set: { value in
+            if value {
+                self._setScrollSessionPage(page: .sessionSettings)
+            } else {
+                self._setScrollSessionPage(page: .main)
+            }
+        }
+    }
+
     private let logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "ConnectedViewController")
 
     @MainActor
@@ -107,5 +110,14 @@ public class ConnectedViewController: ObservableObject {
 
     private func _setSettingsPage(page: SettingsPage) {
         settingsPage = page
+    }
+
+    @MainActor
+    public func setScrollSessionPage(page: ScrollSessionPage) {
+        _setScrollSessionPage(page: page)
+    }
+
+    private func _setScrollSessionPage(page: ScrollSessionPage) {
+        scrollSessionPage = page
     }
 }

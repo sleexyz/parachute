@@ -4,10 +4,15 @@ import ProxyService
 import SwiftUI
 
 struct SettingsView: View {
+    @State private var isFeedbackOpen = false
+    
     @Binding var isPresented: Bool
     @Binding var isAdvancedPresented: Bool
-    @Binding var isAppsPresented: Bool
-    @State private var isFeedbackOpen = false
+
+    public init() {
+        self._isPresented = ConnectedViewController.shared.isSettingsPresented
+        self._isAdvancedPresented = ConnectedViewController.shared.isAdvancedSettingsPresented
+    }
 
     var body: some View {
         // Closing pane should switch to main view
@@ -22,14 +27,11 @@ struct SettingsView: View {
                         FeedbackButton()
                             .padding()
                     }
-                    .padding(.vertical, 20)
+                    .padding(.bottom, 20)
 
 
-                    TimePicker()
-                    .padding(.vertical, 20)
-
-                    SettingsHeader(label: "Apps", page: .apps)
-                    .padding(.vertical, 20)
+                    AppsPicker()
+                        .padding(.bottom, 40)
 
                     SettingsHeader(label: "Advanced", page: .advanced)
                         .padding(.vertical, 20)
@@ -43,27 +45,10 @@ struct SettingsView: View {
         .scaleEffect(isAdvancedPresented ? 0.98 : 1) // Add scale effect when settings page is open
         .animation(.easeInOut(duration: 0.2), value: isAdvancedPresented) // Add animation to the blur effect
 
-        Pane(isPresented: $isAppsPresented, bg: .background) {
-            AppsPicker()
-        }
-
         // Closing pane should switch to settings view
         Pane(isPresented: $isAdvancedPresented, bg: .background) {
             AdvancedSettingsContent()
         }
-    }
-}
-
-struct ConnectedSettingsView: View {
-    @Binding var isPresented: Bool
-    @EnvironmentObject var connectedViewController: ConnectedViewController
-
-    var body: some View {
-        SettingsView(
-            isPresented: $isPresented,
-            isAdvancedPresented: connectedViewController.isAdvancedSettingsPresented,
-            isAppsPresented: connectedViewController.isAppsSettingsPresented
-        )
     }
 }
 
@@ -150,49 +135,49 @@ struct DisableButton: View {
     }
 }
 
-struct TimePicker: View {
-    @EnvironmentObject var settingsController: SettingsController
-    @EnvironmentObject var settingsStore: SettingsStore
+// struct TimePicker: View {
+//     @EnvironmentObject var settingsController: SettingsController
+//     @EnvironmentObject var settingsStore: SettingsStore
 
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text("Durations")
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundColor(.white.opacity(0.6))
-                .padding(.horizontal)
-                .padding(.top, 10)
+//     var body: some View {
+//         VStack(alignment: .leading) {
+//             Text("Durations")
+//                 .font(.system(size: 24, weight: .bold, design: .rounded))
+//                 .foregroundColor(.white.opacity(0.6))
+//                 .padding(.horizontal)
+//                 .padding(.top, 10)
 
-            HStack {
-                Text("Just checking something?")
-                    .foregroundColor(.white)
-                Spacer()
+//             HStack {
+//                 Text("Just checking something?")
+//                     .foregroundColor(.white)
+//                 Spacer()
 
-                Picker(selection: $settingsStore.settings.quickSessionSecs, label: Text("Quick session")) {
-                    Text("30 seconds").tag(30 as Int32)
-                    Text("45 seconds").tag(45 as Int32)
-                    Text("60 seconds").tag(60 as Int32)
-                }
-                .tint(.parachuteOrange)
-                .pickerStyle(.menu)
-            }
-            .padding(.horizontal)
+//                 Picker(selection: $settingsStore.settings.quickSessionSecs, label: Text("Quick session")) {
+//                     Text("30 seconds").tag(30 as Int32)
+//                     Text("45 seconds").tag(45 as Int32)
+//                     Text("60 seconds").tag(60 as Int32)
+//                 }
+//                 .tint(.parachuteOrange)
+//                 .pickerStyle(.menu)
+//             }
+//             .padding(.horizontal)
 
-            HStack {
-                Text("Take a break?")
-                    .foregroundColor(.white)
-                Spacer()
-                Picker(selection: $settingsStore.settings.longSessionSecs, label: Text("Long session")) {
-                    Text("5 minutes").tag(5 * 60 as Int32)
-                    Text("10 minutes").tag(10 * 60 as Int32)
-                    Text("15 minutes").tag(15 * 60 as Int32)
-                }
-                .tint(.parachuteOrange)
-                .pickerStyle(.menu)
-            }
-            .padding(.horizontal)
-        }
-    }
-}
+//             HStack {
+//                 Text("Take a break?")
+//                     .foregroundColor(.white)
+//                 Spacer()
+//                 Picker(selection: $settingsStore.settings.longSessionSecs, label: Text("Long session")) {
+//                     Text("5 minutes").tag(5 * 60 as Int32)
+//                     Text("10 minutes").tag(10 * 60 as Int32)
+//                     Text("15 minutes").tag(15 * 60 as Int32)
+//                 }
+//                 .tint(.parachuteOrange)
+//                 .pickerStyle(.menu)
+//             }
+//             .padding(.horizontal)
+//         }
+//     }
+// }
 
 struct AppsPicker: View {
     @EnvironmentObject var settingsController: SettingsController
@@ -300,7 +285,7 @@ struct AppsPicker: View {
                 .tint(.parachuteOrange)
             }
             .padding(.horizontal)
-            Spacer()
+            //Spacer()
         }
     }
 }

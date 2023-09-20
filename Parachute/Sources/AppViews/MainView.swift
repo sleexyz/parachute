@@ -32,12 +32,10 @@ public struct MainView: View {
 
     public var body: some View {
         ZStack {
-            ConnectedSettingsView(
-                isPresented: $isSettingsPresented
-            )
+            SettingsView()
             .zIndex(2)
 
-            ScrollSessionView(isPresented: $isScrollSessionPresented)
+            ScrollSessionView()
                 .zIndex(2)
 
             Rectangle()

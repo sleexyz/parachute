@@ -6,10 +6,10 @@ import OSLog
 import SwiftUI
 
 struct ScrollSessionView: View {
-    @Binding var isPresented: Bool
+    @EnvironmentObject var connectedViewController: ConnectedViewController
 
     var body: some View {
-        Pane(isPresented: $isPresented, bg: .background) {
+        Pane(isPresented: connectedViewController.isScrollSessionPresented, bg: .background) {
             ScrollSessionViewInner()
         }
     }
@@ -30,9 +30,42 @@ enum ScrollSessionViewPhase {
     }
 }
 
+struct FullWidthCard<Content: View>: View {
+    var icon: String
+    @ViewBuilder var content: () -> Content
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            // RoundedRectangle(cornerRadius: 20, style: .continuous)
+            //     .fill(Color(UIColor(white: 0.1, alpha: 1)))
+            //     .frame(width: 80, height: 80 * 2)
+            //     .padding(.top, -40)
+            Spacer()
+
+            content()
+                .padding(.vertical, 20)
+
+            Spacer()
+
+            // Image(systemName: icon)
+            //     .font(.system(size: 24))
+            //     .frame(width: 80, height: 80, alignment: .center)
+            //     .foregroundColor(.parachuteOrange)
+            //     .padding(.top, -40)
+            //     .zIndex(1)
+        }
+        // .padding(.horizontal)
+        .frame(width: UIScreen.main.bounds.width)
+        // .rr(color: .parachuteOrange)
+        // .background(Material.ultraThinMaterial)
+        // .cornerRadius(20)
+    }
+}
+
 public struct ScrollSessionViewInner: View {
     @EnvironmentObject var connectedViewController: ConnectedViewController
     @EnvironmentObject var settingsStore: SettingsStore
+    @EnvironmentObject var settingsController: SettingsController
     @EnvironmentObject var actionController: ActionController
 
     @State var state: ScrollSessionViewPhase = .showLongSession
@@ -49,84 +82,130 @@ public struct ScrollSessionViewInner: View {
         Int(settingsStore.settings.quickSessionSecs)
     }
 
-    var quickSessionIcon: String {
-        if quickSessionSecs == 30 {
-            return "goforward.30"
-        }
-        if quickSessionSecs == 45 {
-            return "goforward.45"
-        }
-        if quickSessionSecs == 60 {
-            return "goforward.60"
-        }
-        return "goforward"
-    }
-
     public var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Spacer()
-
-            Text("Just checking something?")
-                .font(.system(size: 20, weight: .regular, design: .rounded))
-                .foregroundColor(.secondary)
-                .padding(.bottom, 48)
-
-            Button(action: {
-                actionController.startQuickSession()
-            }) {
-                HStack {
-                    Image(systemName: quickSessionIcon)
-                        .font(.system(size: 24))
-                    Spacer()
-                    Text("\(quickSessionSecs)s")
-                }
-                .foregroundColor(.black)
-                .padding(.horizontal, 30)
-                .padding(.vertical, 20)
-                .contentShape(Rectangle())
+            HStack {
+                Text("Let me...")
+                    .font(.custom("SpaceMono-Regular", size: 32))
+                    .foregroundColor(.parachuteLabel.opacity(0.8))
+                    .padding(24)
+                Spacer()
             }
-            .frame(width: UIScreen.main.bounds.width / 2)
-            .tint(.parachuteOrange)
-            .buttonBorderShape(.roundedRectangle)
-            .font(.custom("SpaceMono-Regular", size: 16))
-            .buttonStyle(.dotted)
-            .rrGlow(color: .parachuteOrange, bg: .parachuteOrange)
-            .opacity(state.shouldShowShortSession ? 1 : 0)
 
             Spacer()
-            Spacer()
 
-            Text("Take a break?")
-                .font(.system(size: 20, weight: .regular, design: .rounded))
-                .foregroundColor(.secondary)
-                .padding(.top, 24)
-                .padding(.bottom, 48)
-            Button(action: {
-                Task { @MainActor in
-                    ConnectedViewController.shared.set(state: .longSession)
+            FullWidthCard(icon: "goforward") {
+                VStack {
+                    // HStack {
+                    //     Text("check...")
+                    //         .font(.custom("SpaceMono-Regular", size: 32))
+                    //         .foregroundColor(.parachuteLabel)
+                    //         .padding(24)
+                    //     Spacer()
+                    // }
+                    Button(action: {
+                        actionController.startQuickSession()
+                    }) {
+                        Text(AttributedString(
+                            markdown: "...**check** something for\n**\(quickSessionSecs) seconds**.",
+                            boldFont: .custom("SpaceMono-Regular", size: 16).bold()
+                        )
+                        )
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 20)
+                        .contentShape(Rectangle())
+                    }
+                    .tint(.parachuteOrange)
+                    .buttonBorderShape(.roundedRectangle)
+                    .font(.custom("SpaceMono-Regular", size: 16))
+                    .buttonStyle(.dotted)
+                    .rrGlow(color: .parachuteOrange, bg: .parachuteOrange)
+                    .opacity(state.shouldShowShortSession ? 1 : 0)
                 }
-            }) {
-                HStack {
-                    Image(systemName: "forward.fill")
-                        .font(.system(size: 24))
-                    Spacer()
-                    Text("\(longSessionMinutes) MIN")
-                }
-                .foregroundColor(.parachuteOrange)
-                .padding(.horizontal, 30)
-                .padding(.vertical, 20)
-                .contentShape(Rectangle())
             }
-            .frame(width: UIScreen.main.bounds.width / 2)
-            .tint(.parachuteOrange)
-            .buttonBorderShape(.roundedRectangle)
-            .font(.custom("SpaceMono-Regular", size: 16))
-            .buttonStyle(.dotted)
-            .rrGlow(color: .parachuteOrange, bg: .parachuteOrange.opacity(0.3))
-            .opacity(state == .showLongSession ? 1 : 0)
+            Spacer()
+            FullWidthCard(icon: "arrow.up.arrow.down") {
+                VStack {
+                    // HStack {
+                    //     Text("scroll...")
+                    //         .font(.custom("SpaceMono-Regular", size: 32))
+                    //         .foregroundColor(.parachuteLabel)
+                    //         .padding(24)
+                    //     Spacer()
+                    // }
+                    HStack {
+                        let (before, after) = settingsStore.longSessionSecsAdjacentOptions
+
+                        Spacer()
+
+                        Button(action: {
+                            if let before = before {
+                                Task { @MainActor in
+                                    settingsStore.settings.longSessionSecs = Int32(before)
+                                    try await settingsController.syncSettings()
+                                }
+                            }
+                        }) {
+                            Image(systemName: "minus.circle.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.parachuteOrange)
+                                // .padding(.horizontal, 10)
+                                .padding(.vertical, 20)
+                                .contentShape(Rectangle())
+                        }
+                        .padding(.trailing, 4)
+                        .opacity(before != nil ? 1 : 0.2)
+
+                        Spacer()
+
+                        Button(action: {
+                            Task { @MainActor in
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                ConnectedViewController.shared.set(state: .longSession)
+                            }
+                        }) {
+                            Text(AttributedString(
+                                markdown: "...**scroll** and relax for\n**\(longSessionMinutes) minutes**.",
+                                boldFont: .custom("SpaceMono-Regular", size: 16).bold()
+                            )
+                            )
+                            .foregroundColor(.parachuteOrange)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 20)
+                            .contentShape(Rectangle())
+                        }
+                        .tint(.parachuteOrange)
+                        .buttonBorderShape(.roundedRectangle)
+                        .font(.custom("SpaceMono-Regular", size: 16))
+                        .buttonStyle(.dotted)
+                        .rrGlow(color: .parachuteOrange, bg: .parachuteOrange.opacity(0.3))
+                        .opacity(state == .showLongSession ? 1 : 0)
+
+                        Spacer()
+
+                        Button(action: {
+                            if let after = after {
+                                Task { @MainActor in
+                                    settingsStore.settings.longSessionSecs = Int32(after)
+                                    try await settingsController.syncSettings()
+                                }
+                            }
+                        }) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.parachuteOrange)
+                                .padding(.vertical, 20)
+                                .contentShape(Rectangle())
+                        }
+                        .opacity(after != nil ? 1 : 0.2)
+                        Spacer()
+                    }
+                }
+            }
 
             Spacer()
-
         }
     }
 }
@@ -189,7 +268,6 @@ struct LongSessionScrollPrompt: View {
     }
 
     private let logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "LongSessionScrollPrompt")
-
 
     var body: some View {
         VStack {
