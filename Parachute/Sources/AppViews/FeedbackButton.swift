@@ -10,16 +10,16 @@ struct FeedbackButton: View {
             presentMessageCompose()
         }, label: {
             HStack {
-                Text("Feedback?")
-                    .font(.system(size: 18, weight: .semibold, design: .rounded))
-                    .padding(.trailing, 4)
+                // Text("Feedback?")
+                //     .font(.system(size: 18, weight: .semibold, design: .rounded))
+                //     .padding(.trailing, 4)
                 Image(systemName: "bubble.left.and.bubble.right.fill")
                     .font(.system(size: 28))
             }
         })
         .buttonStyle(.plain)
-        .tint(.parachuteOrange)
-        .foregroundColor(.parachuteOrange)
+        // .tint(.parachuteOrange)
+        // .foregroundColor(.parachuteOrange)
     }
 }
 

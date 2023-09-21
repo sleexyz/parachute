@@ -30,3 +30,29 @@ public enum Fonts {
         CTFontManagerRegisterGraphicsFont(font, &error)
     }
 }
+
+
+extension Font {
+    public static func spaceMono(size: CGFloat, weight: Weight = .regular) -> Font {
+        switch weight {
+        case .regular:
+            return .custom(SpaceMono.regular.rawValue, size: size)
+        case .bold:
+            return .custom(SpaceMono.bold.rawValue, size: size)
+        default:
+            return .custom(SpaceMono.regular.rawValue, size: size)
+        }
+    }
+
+    public static func mainFont(size: CGFloat, weight: Weight = .regular) -> Font {
+        // return .system(size: size, weight: weight, design: .rounded)
+        switch weight {
+        case .regular:
+            return .custom(SpaceMono.regular.rawValue, size: size)
+        case .bold:
+            return .custom(SpaceMono.bold.rawValue, size: size)
+        default:
+            return .custom(SpaceMono.regular.rawValue, size: size)
+        }
+    }
+}

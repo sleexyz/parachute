@@ -80,12 +80,12 @@ struct ConnectedViewSettings_Previews: PreviewProvider {
     }
 }
 
-struct ConnectedViewScroll_Previews: PreviewProvider {
+struct ConnectedViewLong_Previews: PreviewProvider {
     static var previews: some View {
         ConnectedPreviewContext {
             ConnectedView()
                 .consumeDep(ConnectedViewController.self) { connectedViewController in
-                    connectedViewController.set(state: .scrollSession)
+                    connectedViewController.set(state: .longSession)
                 }
         }
     }

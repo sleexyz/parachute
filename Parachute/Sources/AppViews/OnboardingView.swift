@@ -3,6 +3,7 @@ import DI
 import SwiftUI
 
 struct Logo: View {
+    var fontSize: CGFloat = 60
     var body: some View {
         HStack {
             // Image(systemName: "drop.fill")
@@ -12,7 +13,7 @@ struct Logo: View {
             //     .padding(.trailing, 4)
 
             Text("parachute.")
-                .font(.system(size: 60, design: .rounded))
+                .font(.system(size: fontSize, design: .rounded))
                 .fontWeight(.bold)
                 .foregroundStyle(Color.parachuteOrange)
         }

@@ -20,22 +20,32 @@ struct SettingsView: View {
             // TODO: put sections behind rows.
             SettingsSyncer {
                 VStack(alignment: .leading) {
+
                     HStack {
-                        DisableButton(isSettingsPresented: $isPresented)
+                        DisableButton()
+                        .padding()
+
                         Spacer()
 
                         FeedbackButton()
-                            .padding()
+                        .padding()
+                        .foregroundColor(.parachuteOrange)
                     }
-                    .padding(.bottom, 20)
+                    Spacer()
+
+
+                    TimePicker()
+                        .padding(.vertical, 20)
 
 
                     AppsPicker()
-                        .padding(.bottom, 40)
+                        .padding(.vertical)
+                        .padding(.bottom, 20)
+                        .background(Material.ultraThinMaterial)
+                        .cornerRadius(20)
 
                     SettingsHeader(label: "Advanced", page: .advanced)
                         .padding(.vertical, 20)
-
                     Spacer()
                 }
                 .font(.system(size: 16, weight: .regular, design: .rounded))
@@ -114,7 +124,7 @@ struct SettingsHeader: View {
 }
 
 struct DisableButton: View {
-    @Binding var isSettingsPresented: Bool
+    @EnvironmentObject var connectedViewController: ConnectedViewController
     @EnvironmentObject var vpnLifecycleManager: VPNLifecycleManager
 
     var body: some View {
@@ -122,62 +132,47 @@ struct DisableButton: View {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             vpnLifecycleManager.disable(until: Date(timeIntervalSinceNow: 60 * 60))
             // vpnLifecycleManager.pauseConnection(until: Date(timeIntervalSinceNow: 60 * 60))
-            isSettingsPresented = false
+            connectedViewController.isSettingsPresented.wrappedValue = false
         }, label: {
-            Text("Disable for 1 hour")
-                .font(.system(size: 18, weight: .semibold, design: .rounded))
+            Text("Disable Parachute for 1 hour")
+                .font(.system(size: 18, design: .rounded))
                 // .multilineTextAlignment(.leading)
-                .padding()
         })
-        .buttonStyle(.bordered)
         .padding()
-        .tint(.white.opacity(0.5))
+        .tint(.parachuteOrange)
+        .rr(color: .parachuteOrange)
     }
 }
 
-// struct TimePicker: View {
-//     @EnvironmentObject var settingsController: SettingsController
-//     @EnvironmentObject var settingsStore: SettingsStore
+struct TimePicker: View {
+    @EnvironmentObject var settingsController: SettingsController
+    @EnvironmentObject var settingsStore: SettingsStore
 
-//     var body: some View {
-//         VStack(alignment: .leading) {
-//             Text("Durations")
-//                 .font(.system(size: 24, weight: .bold, design: .rounded))
-//                 .foregroundColor(.white.opacity(0.6))
-//                 .padding(.horizontal)
-//                 .padding(.top, 10)
+    var body: some View {
+        VStack(alignment: .leading) {
+            // Text("Durations")
+            //     .font(.system(size: 24, weight: .bold, design: .rounded))
+            //     .foregroundColor(.white.opacity(0.6))
+            //     .padding(.horizontal)
+            //     .padding(.top, 10)
 
-//             HStack {
-//                 Text("Just checking something?")
-//                     .foregroundColor(.white)
-//                 Spacer()
+            HStack {
+                Text("Check duration")
+                    .foregroundColor(.white)
+                Spacer()
 
-//                 Picker(selection: $settingsStore.settings.quickSessionSecs, label: Text("Quick session")) {
-//                     Text("30 seconds").tag(30 as Int32)
-//                     Text("45 seconds").tag(45 as Int32)
-//                     Text("60 seconds").tag(60 as Int32)
-//                 }
-//                 .tint(.parachuteOrange)
-//                 .pickerStyle(.menu)
-//             }
-//             .padding(.horizontal)
-
-//             HStack {
-//                 Text("Take a break?")
-//                     .foregroundColor(.white)
-//                 Spacer()
-//                 Picker(selection: $settingsStore.settings.longSessionSecs, label: Text("Long session")) {
-//                     Text("5 minutes").tag(5 * 60 as Int32)
-//                     Text("10 minutes").tag(10 * 60 as Int32)
-//                     Text("15 minutes").tag(15 * 60 as Int32)
-//                 }
-//                 .tint(.parachuteOrange)
-//                 .pickerStyle(.menu)
-//             }
-//             .padding(.horizontal)
-//         }
-//     }
-// }
+                Picker(selection: $settingsStore.settings.quickSessionSecs, label: Text("Quick session")) {
+                    Text("30 seconds").tag(30 as Int32)
+                    Text("45 seconds").tag(45 as Int32)
+                    Text("60 seconds").tag(60 as Int32)
+                }
+                .tint(.parachuteOrange)
+                .pickerStyle(.menu)
+            }
+            .padding(.horizontal)
+        }
+    }
+}
 
 struct AppsPicker: View {
     @EnvironmentObject var settingsController: SettingsController

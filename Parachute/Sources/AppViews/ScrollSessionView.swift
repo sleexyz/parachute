@@ -35,30 +35,9 @@ struct FullWidthCard<Content: View>: View {
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        VStack(alignment: .leading) {
-            // RoundedRectangle(cornerRadius: 20, style: .continuous)
-            //     .fill(Color(UIColor(white: 0.1, alpha: 1)))
-            //     .frame(width: 80, height: 80 * 2)
-            //     .padding(.top, -40)
-            Spacer()
-
-            content()
-                .padding(.vertical, 20)
-
-            Spacer()
-
-            // Image(systemName: icon)
-            //     .font(.system(size: 24))
-            //     .frame(width: 80, height: 80, alignment: .center)
-            //     .foregroundColor(.parachuteOrange)
-            //     .padding(.top, -40)
-            //     .zIndex(1)
-        }
-        // .padding(.horizontal)
-        .frame(width: UIScreen.main.bounds.width)
-        // .rr(color: .parachuteOrange)
-        // .background(Material.ultraThinMaterial)
-        // .cornerRadius(20)
+        content()
+            // .padding(.vertical)
+            .frame(width: UIScreen.main.bounds.width)
     }
 }
 
@@ -83,20 +62,44 @@ public struct ScrollSessionViewInner: View {
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
+        VStack {
             Spacer()
             HStack {
-                Text("Let me...")
-                    .font(.custom("SpaceMono-Regular", size: 32))
-                    .foregroundColor(.parachuteLabel.opacity(0.8))
-                    .padding(24)
                 Spacer()
+                Text("Let me...")
+                    .font(.mainFont(size: 24))
+                    .foregroundColor(.parachuteLabel.opacity(0.8))
+                    .padding(.vertical)
             }
 
-            Spacer()
+            FullWidthCard(icon: "arrow.up.arrow.down") {
+                HStack {
 
+                    Spacer()
+
+                    Button(action: {
+                        Task { @MainActor in
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            ConnectedViewController.shared.set(state: .longSession)
+                        }
+                    }) {
+                        Text(try! AttributedString(
+                            markdown: "**Scroll** and relax for a bit."
+                            // boldFont: .custom("SpaceMono-Regular", size: 16).bold()
+                        )
+                        )
+                        .foregroundColor(.parachuteOrange)
+                        .padding()
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.parachuteOrange)
+                    // .rrGlow(color: .parachuteOrange, bg: .parachuteOrange.opacity(0.3))
+                    .opacity(state == .showLongSession ? 1 : 0)
+                }
+            }
             FullWidthCard(icon: "goforward") {
-                VStack {
+                HStack {
+                    Spacer()
                     // HStack {
                     //     Text("check...")
                     //         .font(.custom("SpaceMono-Regular", size: 32))
@@ -107,110 +110,27 @@ public struct ScrollSessionViewInner: View {
                     Button(action: {
                         actionController.startQuickSession()
                     }) {
-                        Text(AttributedString(
-                            markdown: "...**check** something for\n**\(quickSessionSecs) seconds**.",
-                            boldFont: .custom("SpaceMono-Regular", size: 16).bold()
+                        Text(try! AttributedString(
+                            markdown: "**Check** something really quick."
+                            // boldFont: .custom("SpaceMono-Regular", size: 16).bold()
                         )
                         )
                         .foregroundColor(.black)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 20)
-                        .contentShape(Rectangle())
+                        .padding()
                     }
                     .tint(.parachuteOrange)
-                    .buttonBorderShape(.roundedRectangle)
-                    .font(.custom("SpaceMono-Regular", size: 16))
-                    .buttonStyle(.dotted)
-                    .rrGlow(color: .parachuteOrange, bg: .parachuteOrange)
+                    .buttonStyle(.borderedProminent)
+                    // .rrGlow(color: .parachuteOrange, bg: .parachuteOrange)
                     .opacity(state.shouldShowShortSession ? 1 : 0)
                 }
             }
-            Spacer()
-            FullWidthCard(icon: "arrow.up.arrow.down") {
-                VStack {
-                    // HStack {
-                    //     Text("scroll...")
-                    //         .font(.custom("SpaceMono-Regular", size: 32))
-                    //         .foregroundColor(.parachuteLabel)
-                    //         .padding(24)
-                    //     Spacer()
-                    // }
-                    HStack {
-                        let (before, after) = settingsStore.longSessionSecsAdjacentOptions
-
-                        Spacer()
-
-                        Button(action: {
-                            if let before = before {
-                                Task { @MainActor in
-                                    settingsStore.settings.longSessionSecs = Int32(before)
-                                    try await settingsController.syncSettings()
-                                }
-                            }
-                        }) {
-                            Image(systemName: "minus.circle.fill")
-                                .font(.system(size: 24))
-                                .foregroundColor(.parachuteOrange)
-                                // .padding(.horizontal, 10)
-                                .padding(.vertical, 20)
-                                .contentShape(Rectangle())
-                        }
-                        .padding(.trailing, 4)
-                        .opacity(before != nil ? 1 : 0.2)
-
-                        Spacer()
-
-                        Button(action: {
-                            Task { @MainActor in
-                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                ConnectedViewController.shared.set(state: .longSession)
-                            }
-                        }) {
-                            Text(AttributedString(
-                                markdown: "...**scroll** and relax for\n**\(longSessionMinutes) minutes**.",
-                                boldFont: .custom("SpaceMono-Regular", size: 16).bold()
-                            )
-                            )
-                            .foregroundColor(.parachuteOrange)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 20)
-                            .contentShape(Rectangle())
-                        }
-                        .tint(.parachuteOrange)
-                        .buttonBorderShape(.roundedRectangle)
-                        .font(.custom("SpaceMono-Regular", size: 16))
-                        .buttonStyle(.dotted)
-                        .rrGlow(color: .parachuteOrange, bg: .parachuteOrange.opacity(0.3))
-                        .opacity(state == .showLongSession ? 1 : 0)
-
-                        Spacer()
-
-                        Button(action: {
-                            if let after = after {
-                                Task { @MainActor in
-                                    settingsStore.settings.longSessionSecs = Int32(after)
-                                    try await settingsController.syncSettings()
-                                }
-                            }
-                        }) {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.system(size: 24))
-                                .foregroundColor(.parachuteOrange)
-                                .padding(.vertical, 20)
-                                .contentShape(Rectangle())
-                        }
-                        .opacity(after != nil ? 1 : 0.2)
-                        Spacer()
-                    }
-                }
-            }
-
-            Spacer()
         }
+        .buttonBorderShape(.roundedRectangle(radius: 20))
+        .font(.mainFont(size: 16))
     }
 }
 
-enum LongSessionViewPhase {
+enum LongSessionViewPhase: Comparable {
     case initial
     case promptBreathe
     case promptBreatheEnd
@@ -226,20 +146,20 @@ public struct LongSessionView: View {
 
     public init() {}
     public var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             Spacer()
             Text("Take a deep breath...")
-                .font(.system(size: 24, weight: .bold))
-                .padding([.leading, .trailing, .bottom], 24)
-                .foregroundStyle(Color.parachuteLabel)
+                .font(.mainFont(size: 24))
+                .foregroundStyle(Color.parachuteLabel.opacity(0.8)) 
                 .opacity(state == .promptBreathe ? 1 : 0)
                 .animation(.easeInOut(duration: LongSessionView.inhaleDuration), value: state)
+
+            Spacer()
 
             LongSessionScrollPrompt()
                 .opacity(state == .promptScroll ? 1 : 0)
                 .animation(.easeInOut(duration: 1), value: state)
-
-            Spacer()
+                .frame(width: UIScreen.main.bounds.width)
         }
         .onAppear {
             Task { @MainActor in
@@ -250,8 +170,9 @@ public struct LongSessionView: View {
                 state = .promptScroll
             }
         }
-        .frame(height: UIApplication.shared.connectedScenes.first?.inputView?.frame.height)
-        .buttonBorderShape(.capsule)
+        .frame(width: UIScreen.main.bounds.width, height: UIApplication.shared.connectedScenes.first?.inputView?.frame.height)
+        .buttonBorderShape(.roundedRectangle(radius: 20))
+        .font(.mainFont(size: 16))
     }
 }
 
@@ -260,6 +181,7 @@ struct LongSessionScrollPrompt: View {
     @State var showCaption: Bool = false
 
     @EnvironmentObject var connectedViewController: ConnectedViewController
+    @EnvironmentObject var settingsController: SettingsController
     @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var actionController: ActionController
 
@@ -270,32 +192,75 @@ struct LongSessionScrollPrompt: View {
     private let logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "LongSessionScrollPrompt")
 
     var body: some View {
-        VStack {
-            Text("Still want to scroll?")
-                .font(.system(size: 18, weight: .regular))
-                .foregroundColor(.secondary)
-                .padding(.bottom, 96)
-                .foregroundStyle(Color.parachuteLabel)
+        VStack (alignment: .trailing){
+            // HStack {
+            //     Text("Still want to scroll?")
+            //         .font(.mainFont(size: 24))
+            //     // .font(.system(size: 18, weight: .regular, design: .rounded))
+            //         .foregroundColor(.parachuteLabel.opacity(0.8))
+            //         .padding(.vertical)
+            //         .foregroundStyle(Color.parachuteLabel)
+            //     Spacer()
+            // }
+
             HStack {
+                let (before, after) = settingsStore.longSessionSecsAdjacentOptions
+
                 Spacer()
+
+                VStack {
+                    Button(action: {
+                        if let after = after {
+                            Task { @MainActor in
+                                settingsStore.settings.longSessionSecs = Int32(after)
+                                try await settingsController.syncSettings()
+                            }
+                        }
+                    }) {
+                        Image(systemName: "chevron.up")
+                            .font(.system(size: 18))
+                            .foregroundColor(.parachuteOrange)
+                            .padding(4)
+                            .contentShape(Rectangle())
+                    }
+                    .opacity(after != nil ? 1 : 0.2)
+
+                    Button(action: {
+                        if let before = before {
+                            Task { @MainActor in
+                                settingsStore.settings.longSessionSecs = Int32(before)
+                                try await settingsController.syncSettings()
+                            }
+                        }
+                    }) {
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 18))
+                            .foregroundColor(.parachuteOrange)
+                            .padding(4)
+                            .contentShape(Rectangle())
+                    }
+                    .opacity(before != nil ? 1 : 0.2)
+                }
+
                 Button(action: {
                     actionController.startLongSession()
                 }) {
-                    Image(systemName: "play.fill")
                     Text("Scroll for \(longSessionMinutes) min")
+                        .frame(width: UIScreen.main.bounds.width / 2)
+                    .padding()
                 }
                 .buttonStyle(.bordered)
                 .tint(.parachuteOrange)
-                Spacer()
-                Button(action: {
-                    connectedViewController.set(state: .main)
-                }) {
-                    Text("Never mind")
-                }
-                .buttonStyle(.bordered)
-                .tint(.secondaryFill)
-                Spacer()
             }
+
+            Button(action: {
+                connectedViewController.set(state: .main)
+            }) {
+                Text("Never mind")
+                    .padding()
+            }
+            .buttonStyle(.bordered)
+            .tint(.secondaryFill)
         }
     }
 }
