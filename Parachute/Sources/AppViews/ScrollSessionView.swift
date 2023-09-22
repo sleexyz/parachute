@@ -127,6 +127,9 @@ public struct ScrollSessionViewInner: View {
         }
         .buttonBorderShape(.roundedRectangle(radius: 20))
         .font(.mainFont(size: 16))
+        Rectangle()
+            .fill(.clear)
+            .frame(height: 200)
     }
 }
 
@@ -138,7 +141,7 @@ enum LongSessionViewPhase: Comparable {
 }
 
 public struct LongSessionView: View {
-    static var inhaleDuration: Double = 4
+    static var inhaleDuration: Double = 5
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LongSessionView")
 
@@ -152,6 +155,7 @@ public struct LongSessionView: View {
                 .font(.mainFont(size: 24))
                 .foregroundStyle(Color.parachuteLabel.opacity(0.8)) 
                 .opacity(state == .promptBreathe ? 1 : 0)
+                .padding()
                 .animation(.easeInOut(duration: LongSessionView.inhaleDuration), value: state)
 
             Spacer()
@@ -262,6 +266,9 @@ struct LongSessionScrollPrompt: View {
             .buttonStyle(.bordered)
             .tint(.secondaryFill)
         }
+        Rectangle()
+            .fill(.clear)
+            .frame(height: 200)
     }
 }
 
