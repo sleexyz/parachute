@@ -69,8 +69,8 @@ public class AppController: ObservableObject {
     }
 
     public func block() {
-        logger.info("blocking \(selection.applicationTokens, privacy: .public)")
-        logger.info("blocked: \(store.shield.applications?.debugDescription ?? "", privacy: .public)")
+        logger.info("blocking \(self.selection.applicationTokens, privacy: .public)")
+        logger.info("blocked: \(self.store.shield.applications?.debugDescription ?? "", privacy: .public)")
         store.shield.applications = selection.applicationTokens
     }
 }
