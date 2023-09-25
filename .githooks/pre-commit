@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Run the formatting and linting script
+./format.sh --lint
+
+# Check the exit code
+EXIT_CODE=$?
+
+if [[ $EXIT_CODE -ne 0 ]]; then
+  echo "Error: Code linting failed. Please fix the issues before committing."
+  exit 1
+fi
+
+exit 0
