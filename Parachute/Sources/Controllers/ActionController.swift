@@ -62,7 +62,6 @@ public class ActionController: ObservableObject {
             deviceActivityController.unblock()
             deviceActivityController.initiateMonitoring(timeInterval: timeInterval)
 
-
             ConnectedViewController.shared.set(state: .main)
             if #available(iOS 16.2, *) {
                 await ActivitiesHelper.shared.startOrRestart(settings: SettingsStore.shared.settings, isConnected: neConfigurationService.isConnected)

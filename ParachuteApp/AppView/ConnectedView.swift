@@ -25,17 +25,11 @@ struct ConnectedView: View {
     @EnvironmentObject var connectedViewController: ConnectedViewController
 
     var body: some View {
-        Group {
-            switch connectedViewController.state {
-            case .settings, .main, .scrollSession:
-                MainView()
-                    .transition(.opacity)
-            case .longSession:
+        MainView()
+            .sheet(isPresented: connectedViewController.isLongSessionPresented) {
                 LongSessionView()
-                    .transition(.opacity)
             }
-        }
-        .background(LinearGradient.bg)
+            .background(LinearGradient.bg)
     }
 }
 

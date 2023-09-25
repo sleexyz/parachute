@@ -10,8 +10,8 @@ import UserNotifications
 
 public class NotificationsHelper {
     private init() {}
-    
-    public static var shared: NotificationsHelper = NotificationsHelper()
+
+    public static var shared: NotificationsHelper = .init()
 
     // Clear all notifications
     public func clearNotifications() {

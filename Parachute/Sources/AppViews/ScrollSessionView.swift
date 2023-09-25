@@ -5,16 +5,6 @@ import Models
 import OSLog
 import SwiftUI
 
-struct ScrollSessionView: View {
-    @EnvironmentObject var connectedViewController: ConnectedViewController
-
-    var body: some View {
-        Pane(isPresented: connectedViewController.isScrollSessionPresented, bg: .background) {
-            ScrollSessionViewInner()
-        }
-    }
-}
-
 enum ScrollSessionViewPhase {
     case initial
     case showShortSession
@@ -74,7 +64,6 @@ public struct ScrollSessionViewInner: View {
 
             FullWidthCard(icon: "arrow.up.arrow.down") {
                 HStack {
-
                     Spacer()
 
                     Button(action: {
@@ -84,7 +73,7 @@ public struct ScrollSessionViewInner: View {
                         }
                     }) {
                         Text(try! AttributedString(
-                            markdown: "**Scroll** and relax for a bit."
+                            markdown: "**Scroll** for a bit."
                             // boldFont: .custom("SpaceMono-Regular", size: 16).bold()
                         )
                         )
@@ -111,7 +100,7 @@ public struct ScrollSessionViewInner: View {
                         actionController.startQuickSession()
                     }) {
                         Text(try! AttributedString(
-                            markdown: "**Check** something really quick."
+                            markdown: "**Check** something."
                             // boldFont: .custom("SpaceMono-Regular", size: 16).bold()
                         )
                         )
@@ -124,12 +113,10 @@ public struct ScrollSessionViewInner: View {
                     .opacity(state.shouldShowShortSession ? 1 : 0)
                 }
             }
+            Spacer()
         }
         .buttonBorderShape(.roundedRectangle(radius: 20))
         .font(.mainFont(size: 16))
-        Rectangle()
-            .fill(.clear)
-            .frame(height: 200)
     }
 }
 
@@ -141,7 +128,7 @@ enum LongSessionViewPhase: Comparable {
 }
 
 public struct LongSessionView: View {
-    static var inhaleDuration: Double = 5
+    static var inhaleDuration: Double = 4
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LongSessionView")
 
@@ -153,7 +140,7 @@ public struct LongSessionView: View {
             Spacer()
             Text("Take a deep breath...")
                 .font(.mainFont(size: 24))
-                .foregroundStyle(Color.parachuteLabel.opacity(0.8)) 
+                .foregroundStyle(Color.parachuteLabel.opacity(0.8))
                 .opacity(state == .promptBreathe ? 1 : 0)
                 .padding()
                 .animation(.easeInOut(duration: LongSessionView.inhaleDuration), value: state)
@@ -164,6 +151,7 @@ public struct LongSessionView: View {
                 .opacity(state == .promptScroll ? 1 : 0)
                 .animation(.easeInOut(duration: 1), value: state)
                 .frame(width: UIScreen.main.bounds.width)
+            Spacer()
         }
         .onAppear {
             Task { @MainActor in
@@ -196,7 +184,7 @@ struct LongSessionScrollPrompt: View {
     private let logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "LongSessionScrollPrompt")
 
     var body: some View {
-        VStack (alignment: .trailing){
+        VStack(alignment: .trailing) {
             // HStack {
             //     Text("Still want to scroll?")
             //         .font(.mainFont(size: 24))
@@ -214,7 +202,7 @@ struct LongSessionScrollPrompt: View {
 
                 VStack {
                     Button(action: {
-                        if let after = after {
+                        if let after {
                             Task { @MainActor in
                                 settingsStore.settings.longSessionSecs = Int32(after)
                                 try await settingsController.syncSettings()
@@ -230,7 +218,7 @@ struct LongSessionScrollPrompt: View {
                     .opacity(after != nil ? 1 : 0.2)
 
                     Button(action: {
-                        if let before = before {
+                        if let before {
                             Task { @MainActor in
                                 settingsStore.settings.longSessionSecs = Int32(before)
                                 try await settingsController.syncSettings()
@@ -251,7 +239,7 @@ struct LongSessionScrollPrompt: View {
                 }) {
                     Text("Scroll for \(longSessionMinutes) min")
                         .frame(width: UIScreen.main.bounds.width / 2)
-                    .padding()
+                        .padding()
                 }
                 .buttonStyle(.bordered)
                 .tint(.parachuteOrange)
@@ -266,9 +254,6 @@ struct LongSessionScrollPrompt: View {
             .buttonStyle(.bordered)
             .tint(.secondaryFill)
         }
-        Rectangle()
-            .fill(.clear)
-            .frame(height: 200)
     }
 }
 

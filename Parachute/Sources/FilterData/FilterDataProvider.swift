@@ -67,27 +67,27 @@ public class FilterDataProvider: NEFilterDataProvider {
 
     override public func handleInboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
         let verdict = dataFlowController.handleInboundData(from: flow, offset: offset, readBytes: readBytes)
-#if DEBUG
-        if flow.matchSocialMedia() != nil {
-            if let flow = flow as? NEFilterSocketFlow {
-                EndpointHistogram.recordInboundBytes(flow: flow, bytes: readBytes.count)
+        #if DEBUG
+            if flow.matchSocialMedia() != nil {
+                if let flow = flow as? NEFilterSocketFlow {
+                    EndpointHistogram.recordInboundBytes(flow: flow, bytes: readBytes.count)
+                }
+                if let flow = flow as? NEFilterBrowserFlow {
+                    logger.debug("new browser flow: \(flow.parentURL?.absoluteString ?? "", privacy: .public): \(flow.request?.url?.absoluteString ?? "", privacy: .public)")
+                }
             }
-            if let flow = flow as? NEFilterBrowserFlow {
-                logger.debug("new browser flow: \(flow.parentURL?.absoluteString ?? "", privacy: .public): \(flow.request?.url?.absoluteString ?? "" , privacy: .public)")
-            }
-        }
-#endif
+        #endif
         return verdict
     }
 
-    override public func handleOutboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-#if DEBUG
-        if flow.matchSocialMedia() != nil {
-            if let flow = flow as? NEFilterSocketFlow {
-                EndpointHistogram.recordOutboundBytes(flow: flow, bytes: readBytes.count)
+    override public func handleOutboundData(from flow: NEFilterFlow, readBytesStartOffset _: Int, readBytes: Data) -> NEFilterDataVerdict {
+        #if DEBUG
+            if flow.matchSocialMedia() != nil {
+                if let flow = flow as? NEFilterSocketFlow {
+                    EndpointHistogram.recordOutboundBytes(flow: flow, bytes: readBytes.count)
+                }
             }
-        }
-#endif
+        #endif
         return NEFilterDataVerdict(passBytes: readBytes.count, peekBytes: 128 * 1024 * 1024)
     }
 

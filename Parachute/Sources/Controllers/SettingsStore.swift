@@ -132,9 +132,9 @@ public class SettingsStore: ObservableObject {
 
         // get adjacent indexes
         return (
-            closestIndex > 0 ? options[closestIndex - 1] : nil, 
+            closestIndex > 0 ? options[closestIndex - 1] : nil,
             closestIndex < options.count - 1 ? options[closestIndex + 1] : nil
-        )    
+        )
     }
 
     private static func fileUrl() throws -> URL {

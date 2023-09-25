@@ -1,16 +1,15 @@
 import SwiftUI
 
-extension AttributedString {
-    
-    public init(markdown: String, boldFont: Font) {
+public extension AttributedString {
+    init(markdown: String, boldFont: Font) {
         try! self.init(
             markdown: markdown,
             options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         )
-        self.customBoldStyle(boldFont: boldFont)
+        customBoldStyle(boldFont: boldFont)
     }
 
-    public mutating func customBoldStyle(boldFont: Font) {
+    mutating func customBoldStyle(boldFont: Font) {
         var sourceContainer = AttributeContainer()
         sourceContainer.inlinePresentationIntent = .stronglyEmphasized
 
@@ -18,7 +17,6 @@ extension AttributedString {
 
         targetContainer.font = boldFont
 
-        self.replaceAttributes(sourceContainer, with: targetContainer) // return self.transformingAttributes(InlinePresentationIntent.stronglyEmphasized) { t in
+        replaceAttributes(sourceContainer, with: targetContainer) // return self.transformingAttributes(InlinePresentationIntent.stronglyEmphasized) { t in
     }
-
 }

@@ -143,10 +143,10 @@ public class ProfileManager: ObservableObject {
 
         let interval = overlay.expiry.date.timeIntervalSinceNow
         guard interval > 0 else {
-            self.overlayTimer?.invalidate()
+            overlayTimer?.invalidate()
             return
         }
-        self.overlayTimer?.invalidate()
+        overlayTimer?.invalidate()
         overlayTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
             Task { @MainActor in
                 // if let taskId = self.taskId {

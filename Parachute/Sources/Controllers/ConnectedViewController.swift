@@ -89,6 +89,18 @@ public class ConnectedViewController: ObservableObject {
         }
     }
 
+    public var isLongSessionPresented: Binding<Bool> {
+        Binding<Bool> {
+            self.state == .longSession
+        } set: { value in
+            if value {
+                self._set(state: .longSession)
+            } else {
+                self._set(state: .main)
+            }
+        }
+    }
+
     private let logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier!, category: "ConnectedViewController")
 
     @MainActor

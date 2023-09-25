@@ -16,8 +16,8 @@ import ProxyService
 // Data surfaced
 // - Top flows per app
 class EndpointHistogram {
-    var lastPrinted: Date = Date()
-    
+    var lastPrinted: Date = .init()
+
     let appType: Proxyservice_AppType
     public init(appType: Proxyservice_AppType) {
         self.appType = appType
@@ -50,20 +50,20 @@ class EndpointHistogram {
     static func getInstance(flow: NEFilterFlow) -> EndpointHistogram? {
         switch flow.matchSocialMedia()?.appType {
         case .instagram:
-            return instagram
+            instagram
         case .tiktok:
-            return tiktok
+            tiktok
         case .twitter:
-            return twitter
+            twitter
         case .youtube:
-            return youtube
+            youtube
         case .facebook:
-            return facebook
+            facebook
         default:
-            return nil
+            nil
         }
     }
-    
+
     public func recordOutboundBytes(flow: NEFilterSocketFlow, bytes: Int) {
         guard let endpoint = flow.remoteEndpoint else {
             EndpointHistogram.logger.log("No endpoint found")
@@ -95,7 +95,7 @@ class EndpointHistogram {
         if flows[endpoint] == nil {
             flows[endpoint] = EndpointHistogramEntry(endpoint: endpoint, hostname: hostname)
         }
-        
+
         guard var flow = flows[endpoint] else {
             // Unexpected error
             return
@@ -103,7 +103,7 @@ class EndpointHistogram {
         defer {
             flows[endpoint] = flow
         }
-        
+
         if direction == .inbound {
             flow.rxBytes += bytes
         } else {
@@ -115,7 +115,7 @@ class EndpointHistogram {
             flow.hostname = hostname
         }
     }
-    
+
     func printSummary() {
         // sort by most recent
         let sortedFlows = flows.values.sorted { $0.lastUpdated > $1.lastUpdated }
@@ -126,7 +126,6 @@ class EndpointHistogram {
         }
         EndpointHistogram.logger.info("\(str, privacy: .public)")
     }
-
 }
 
 enum Direction {
@@ -136,9 +135,8 @@ enum Direction {
 
 struct EndpointHistogramEntry {
     var endpoint: NWEndpoint
-    var hostname: String? = nil
+    var hostname: String?
     var rxBytes: Int = 0
     var txBytes: Int = 0
-    var lastUpdated: Date = Date()
-
+    var lastUpdated: Date = .init()
 }

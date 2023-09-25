@@ -5,58 +5,46 @@ import SwiftUI
 
 struct SettingsView: View {
     @State private var isFeedbackOpen = false
-    
+
     @Binding var isPresented: Bool
     @Binding var isAdvancedPresented: Bool
 
     public init() {
-        self._isPresented = ConnectedViewController.shared.isSettingsPresented
-        self._isAdvancedPresented = ConnectedViewController.shared.isAdvancedSettingsPresented
+        _isPresented = ConnectedViewController.shared.isSettingsPresented
+        _isAdvancedPresented = ConnectedViewController.shared.isAdvancedSettingsPresented
     }
 
     var body: some View {
-        // Closing pane should switch to main view
-        Pane(isPresented: $isPresented, bg: .background) {
-            // TODO: put sections behind rows.
-            SettingsSyncer {
-                VStack(alignment: .leading) {
-
-                    HStack {
-                        DisableButton()
+        SettingsSyncer {
+            VStack(alignment: .leading) {
+                HStack {
+                    DisableButton()
                         .padding()
 
-                        Spacer()
+                    Spacer()
 
-                        FeedbackButton()
+                    FeedbackButton()
                         .padding()
                         .foregroundColor(.parachuteOrange)
-                    }
-                    Spacer()
-
-
-                    TimePicker()
-                        .padding(.vertical, 20)
-
-
-                    AppsPicker()
-                        .padding(.vertical)
-                        .padding(.bottom, 20)
-                        .background(Material.ultraThinMaterial)
-                        .cornerRadius(20)
-
-                    SettingsHeader(label: "Advanced", page: .advanced)
-                        .padding(.vertical, 20)
-                    Spacer()
                 }
-                .font(.system(size: 16, weight: .regular, design: .rounded))
-            }
-        }
-        .blur(radius: isAdvancedPresented ? 8 : 0)
-        .scaleEffect(isAdvancedPresented ? 0.98 : 1) // Add scale effect when settings page is open
-        .animation(.easeInOut(duration: 0.2), value: isAdvancedPresented) // Add animation to the blur effect
+                Spacer()
 
-        // Closing pane should switch to settings view
-        Pane(isPresented: $isAdvancedPresented, bg: .background) {
+                TimePicker()
+                    .padding(.vertical, 20)
+
+                AppsPicker()
+                    .padding(.vertical)
+                    .padding(.bottom, 20)
+                    .background(Material.ultraThinMaterial)
+                    .cornerRadius(20)
+
+                SettingsHeader(label: "Advanced", page: .advanced)
+                    .padding(.vertical, 20)
+                Spacer()
+            }
+            .font(.system(size: 16, weight: .regular, design: .rounded))
+        }
+        .sheet(isPresented: $isAdvancedPresented) {
             AdvancedSettingsContent()
         }
     }
@@ -136,7 +124,7 @@ struct DisableButton: View {
         }, label: {
             Text("Disable Parachute for 1 hour")
                 .font(.system(size: 18, design: .rounded))
-                // .multilineTextAlignment(.leading)
+            // .multilineTextAlignment(.leading)
         })
         .padding()
         .tint(.parachuteOrange)
@@ -280,7 +268,7 @@ struct AppsPicker: View {
                 .tint(.parachuteOrange)
             }
             .padding(.horizontal)
-            //Spacer()
+            // Spacer()
         }
     }
 }

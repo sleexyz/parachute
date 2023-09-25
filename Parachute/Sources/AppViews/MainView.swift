@@ -32,19 +32,6 @@ public struct MainView: View {
 
     public var body: some View {
         ZStack {
-            SettingsView()
-                .zIndex(2)
-
-            // ScrollSessionView()
-            //     .zIndex(2)
-
-            // Rectangle()
-            //     .foregroundColor(Color.black.opacity(0.4))
-            //     .edgesIgnoringSafeArea(.all)
-            //     .opacity(isPanePresented ? 1 : 0)
-            //     .animation(.easeInOut(duration: 0.2), value: isPanePresented)
-            //     .zIndex(1)
-
             VStack {
                 HStack {
                     Button(action: {
@@ -56,20 +43,7 @@ public struct MainView: View {
                             .padding()
                     })
                     .buttonStyle(.plain)
-                    // .rr(color: .white, bg: .clear)
                     Spacer()
-                    // FeedbackButton()
-                    //     .padding()
-
-                    // .background {
-                    //     RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    //         .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    //         .background(Color.background.opacity(0.8))
-                    //         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    //         .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    // }
-                    // TextLogo()
-                    // Spacer()
                 }
                 .padding(.horizontal)
                 .foregroundColor(.white.opacity(0.5))
@@ -79,20 +53,11 @@ public struct MainView: View {
 
                 if settingsStore.settings.isInScrollSession {
                     VStack {
-                    SlowdownWidgetView(settings: settingsStore.settings, isConnected: neConfigurationService.isConnected)
-                        // .padding(.vertical, 20)
-                        .padding(.horizontal, 20)
-                        //                        .rrGlow(color: .white, bg: .clear)
-                        // .background {
-                        //     RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        //         .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        //         .background(Color.background.opacity(0.8))
-                        //         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                        //         .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                        // }
-                        .padding()
-                        .padding(.top, topPadding / 2)
-                        .frame(maxWidth: .infinity, alignment: .top)
+                        SlowdownWidgetView(settings: settingsStore.settings, isConnected: neConfigurationService.isConnected)
+                            .padding(.horizontal, 20)
+                            .padding()
+                            .padding(.top, topPadding / 2)
+                            .frame(maxWidth: .infinity, alignment: .top)
                         Spacer()
                         SimpleSelector()
                         Spacer()
@@ -102,10 +67,13 @@ public struct MainView: View {
                 }
                 Spacer()
             }
-            .blur(radius: isPanePresented ? 8 : 0)
-            .scaleEffect(isPanePresented ? 0.98 : 1) // Add scale effect when settings page is open
-            .animation(.easeInOut(duration: 0.2), value: isPanePresented) // Add animation to the blur effect
             .zIndex(0)
+            .sheet(isPresented: ConnectedViewController.shared.isSettingsPresented) {
+                SettingsView()
+            }
+            .sheet(isPresented: ConnectedViewController.shared.isSettingsPresented) {
+                SettingsView()
+            }
         }
     }
 }

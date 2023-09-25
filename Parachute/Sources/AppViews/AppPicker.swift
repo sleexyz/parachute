@@ -20,7 +20,7 @@ public struct AppPicker: View {
 //        } label: {
 //            Text("Stop Monitoring")
 //        }
-//        
+//
         Toggle("enable", isOn: deviceActivityController.shieldEnabled)
 
         Button("Pair Instagram") { isPresented = true }

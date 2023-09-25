@@ -4,8 +4,8 @@ import DI
 import FamilyControls
 import ManagedSettings
 import OSLog
-import SwiftUI
 import ProxyService
+import SwiftUI
 
 public class AppController: ObservableObject {
     let name: Proxyservice_AppType
@@ -16,7 +16,7 @@ public class AppController: ObservableObject {
 
     var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppController")
 
-    static var userDefaults: UserDefaults = UserDefaults(suiteName: "group.industries.strange.slowdown")!
+    static var userDefaults: UserDefaults = .init(suiteName: "group.industries.strange.slowdown")!
 
     static func getInitialSelection(name: String) -> FamilyActivitySelection {
         let key = "\(name)Selection"
@@ -24,19 +24,17 @@ public class AppController: ObservableObject {
         if let data = data as? Data {
             do {
                 return try PropertyListDecoder().decode(FamilyActivitySelection.self, from: data)
-            } catch {
-            
-            }
+            } catch {}
         }
         return FamilyActivitySelection()
     }
-    
+
     init(appType: Proxyservice_AppType) {
-        self.name = appType
-        
+        name = appType
+
         let key = "\(appType)Selection"
-        
-        self._selection = .init(initialValue: AppController.getInitialSelection(name: "\(appType)"))
+
+        _selection = .init(initialValue: AppController.getInitialSelection(name: "\(appType)"))
         $selection.dropFirst().sink { value in
             do {
                 let data = try PropertyListEncoder().encode(value)
@@ -51,7 +49,7 @@ public class AppController: ObservableObject {
     public func setTokens(_ tokens: Set<ApplicationToken>) {
         selection.applicationTokens = tokens
     }
-    
+
     public var shieldEnabled: Binding<Bool> {
         Binding(
             get: { !(self.store.shield.applications?.isEmpty ?? true) },
@@ -65,13 +63,14 @@ public class AppController: ObservableObject {
             }
         )
     }
-    
+
     public func unblock() {
         store.shield.applications = []
     }
+
     public func block() {
-        logger.info("blocking \(self.selection.applicationTokens, privacy: .public)")
-        logger.info("blocked: \(self.store.shield.applications?.debugDescription ?? "", privacy: .public)")
+        logger.info("blocking \(selection.applicationTokens, privacy: .public)")
+        logger.info("blocked: \(store.shield.applications?.debugDescription ?? "", privacy: .public)")
         store.shield.applications = selection.applicationTokens
     }
 }
@@ -96,17 +95,17 @@ public class DeviceActivityController: ObservableObject {
     let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DeviceActivityController")
 
     init() {}
-    
+
     // TODO: unblock all the apps
     public func unblock() {
-        for appController in self.appControlers {
+        for appController in appControlers {
             appController.unblock()
         }
     }
 
     // TODO: block all the apps
     public func block() {
-        for appController in self.appControlers {
+        for appController in appControlers {
             appController.block()
         }
     }
@@ -117,7 +116,7 @@ public class DeviceActivityController: ObservableObject {
 
     public var shieldEnabled: Binding<Bool> {
         Binding(
-            get: { 
+            get: {
                 for appController in self.appControlers {
                     if appController.shieldEnabled.wrappedValue {
                         return true
@@ -152,16 +151,16 @@ public class DeviceActivityController: ObservableObject {
             applications: instagram.selection.applicationTokens,
             threshold: DateComponents(second: Int(timeInterval))
         )
-        
+
         let eventName = DeviceActivityEvent.Name("foo")
 
         do {
             try center.startMonitoring(
-                .init("daily"), 
+                .init("daily"),
                 during: schedule,
-                 events: [
-                     eventName: event
-                 ]
+                events: [
+                    eventName: event,
+                ]
             )
             logger.info("Monitoring started for the day")
         } catch {

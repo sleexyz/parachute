@@ -45,7 +45,6 @@ public class ActivitiesHelper: ObservableObject {
         }
         return true
     }
-    
 
     private func ensureActive() -> Activity<SlowdownWidgetAttributes>? {
         if let activity {

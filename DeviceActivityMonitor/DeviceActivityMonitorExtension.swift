@@ -5,11 +5,11 @@
 //  Created by Sean Lee on 9/14/23.
 //
 
+import Common
+import Controllers
 import DeviceActivity
 import ManagedSettings
-import Controllers
 import OSLog
-import Common
 
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DeviceActivityMonitorExtension")
