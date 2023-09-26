@@ -9,12 +9,15 @@ struct ScheduleView: View {
     var body: some View {
         List {
             Section {
+                // TODO: this should be a selection
+                // [ Detox mode always on ]
+                // [ Schedule social media breaks ]
                 Toggle(isOn: $settingsStore.settings.schedule.enabled) {
-                    Text("Enable")
+                    Text("Enabled")
                 }
                 .tint(.parachuteOrange)
             } footer: {
-                Text("Set aside dedicated time windows to allow for social media use without Detox Mode.")
+                Text("Set a time window to allow for social media use without Detox Mode.")
                     .font(.system(size: 12, weight: .regular, design: .rounded))
                     .foregroundColor(.white)
                     .opacity(0.6)
@@ -37,7 +40,7 @@ struct ScheduleView: View {
                         keyPath: \Proxyservice_Settings.schedule.everyDay.to
                     )
 
-                    Section(header: Text("Allow social media")) {
+                    Section(header: Text("Allow Social Media")) {
                         DatePicker(
                             "From",
                             selection: fromBinding,
@@ -50,7 +53,7 @@ struct ScheduleView: View {
                         )
                     }
                 } else {
-                    Section(header: Text("Allow social media")) {
+                    Section(header: Text("Allow Social Media")) {
                         ForEach(0 ..< 7) { i in
                             dayItem(i)
                         }

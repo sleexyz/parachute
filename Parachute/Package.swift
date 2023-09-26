@@ -97,6 +97,12 @@ let package = Package(
                 .product(name: "ProxyService", package: "ProxyService"),
             ]
         ),
+        .testTarget(
+            name: "ModelsTests",
+            dependencies: [
+                "Models",
+            ]
+        ),
         .target(
             name: "RangeMapping"
         ),
@@ -154,7 +160,5 @@ let package = Package(
             ]
         ),
         .target(name: "DI"),
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
     ]
 )
