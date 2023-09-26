@@ -4,6 +4,7 @@ import ProxyService
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject var connectedViewController: ConnectedViewController
     @State private var isFeedbackOpen = false
 
     @Binding var isPresented: Bool
@@ -16,7 +17,7 @@ struct SettingsView: View {
 
     var body: some View {
         SettingsSyncer {
-            VStack(alignment: .leading) {
+            NavigationStack {
                 HStack {
                     DisableButton()
                         .padding()
@@ -27,26 +28,42 @@ struct SettingsView: View {
                         .padding()
                         .foregroundColor(.parachuteOrange)
                 }
-                Spacer()
+                .padding(.top, 20)
+                List {
+                    TimePicker()
 
-                TimePicker()
-                    .padding(.vertical, 20)
+                    Section {
+                        NavigationLink {
+                            ScheduleView()
+                        } label: {
+                            Text("Schedule")
+                            // .font(.system(size: 16, weight: .regular, design: .rounded))
+                            // .foregroundColor(.white.opacity(0.6))
+                            // .padding()
+                            // .background(Material.ultraThinMaterial)
+                            // .cornerRadius(20)
+                        }
+                    }
 
-                AppsPicker()
-                    .padding(.vertical)
-                    .padding(.bottom, 20)
-                    .background(Material.ultraThinMaterial)
-                    .cornerRadius(20)
+                    AppsPicker()
 
-                SettingsHeader(label: "Advanced", page: .advanced)
-                    .padding(.vertical, 20)
-                Spacer()
+                    Section {
+                        NavigationLink {
+                            AdvancedSettingsContent()
+                        } label: {
+                            Text("Advanced")
+                            // .font(.system(size: 16, weight: .regular, design: .rounded))
+                            // .foregroundColor(.white.opacity(0.6))
+                            // .padding()
+                            // .background(Material.ultraThinMaterial)
+                            // .cornerRadius(20)
+                        }
+                    }
+                }
             }
-            .font(.system(size: 16, weight: .regular, design: .rounded))
         }
-        .sheet(isPresented: $isAdvancedPresented) {
-            AdvancedSettingsContent()
-        }
+        .tint(.parachuteOrange)
+        .font(.system(size: 16, weight: .regular, design: .rounded))
     }
 }
 
@@ -82,12 +99,7 @@ struct SettingsSyncer<Content: View>: View {
 }
 
 struct SettingsHeader: View {
-    @EnvironmentObject var settingsController: SettingsController
-    @EnvironmentObject var settingsStore: SettingsStore
-    @EnvironmentObject var connectedViewController: ConnectedViewController
-
     var label: String
-    var page: SettingsPage
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -95,7 +107,6 @@ struct SettingsHeader: View {
                 Text(label)
                     .font(.system(size: 24, weight: .bold, design: .rounded))
                     .foregroundColor(.white.opacity(0.6))
-                    .padding(.horizontal)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
@@ -104,10 +115,6 @@ struct SettingsHeader: View {
             }
         }
         .contentShape(Rectangle())
-        .onTapGesture {
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            connectedViewController.setSettingsPage(page: page)
-        }
     }
 }
 
@@ -137,27 +144,14 @@ struct TimePicker: View {
     @EnvironmentObject var settingsStore: SettingsStore
 
     var body: some View {
-        VStack(alignment: .leading) {
-            // Text("Durations")
-            //     .font(.system(size: 24, weight: .bold, design: .rounded))
-            //     .foregroundColor(.white.opacity(0.6))
-            //     .padding(.horizontal)
-            //     .padding(.top, 10)
-
-            HStack {
-                Text("Check duration")
-                    .foregroundColor(.white)
-                Spacer()
-
-                Picker(selection: $settingsStore.settings.quickSessionSecs, label: Text("Quick session")) {
-                    Text("30 seconds").tag(30 as Int32)
-                    Text("45 seconds").tag(45 as Int32)
-                    Text("60 seconds").tag(60 as Int32)
-                }
-                .tint(.parachuteOrange)
-                .pickerStyle(.menu)
+        Section {
+            Picker(selection: $settingsStore.settings.quickSessionSecs, label: Text("Check duration")) {
+                Text("30 seconds").tag(30 as Int32)
+                Text("45 seconds").tag(45 as Int32)
+                Text("60 seconds").tag(60 as Int32)
             }
-            .padding(.horizontal)
+            .tint(.parachuteOrange)
+            .pickerStyle(.menu)
         }
     }
 }
@@ -227,49 +221,29 @@ struct AppsPicker: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            // Apps
-            Text("Apps")
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .fontWeight(.bold)
-                .foregroundColor(.white.opacity(0.6))
-                .padding(.top, 10)
-                .padding(.horizontal)
-
-            VStack {
-                Toggle(isOn: isInstagramEnabled) {
-                    Text("Instagram")
-                        .foregroundColor(.white)
-                }
-                .padding(.bottom, 10)
-                .tint(.parachuteOrange)
-                Toggle(isOn: isTikTokEnabled) {
-                    Text("TikTok")
-                        .foregroundColor(.white)
-                }
-                .padding(.bottom, 10)
-                .tint(.parachuteOrange)
-                Toggle(isOn: isTwitterEnabled) {
-                    Text("Twitter / X")
-                        .foregroundColor(.white)
-                }
-                .padding(.bottom, 10)
-                .tint(.parachuteOrange)
-                Toggle(isOn: isYoutubeEnabled) {
-                    Text("Youtube")
-                        .foregroundColor(.white)
-                }
-                .padding(.bottom, 10)
-                .tint(.parachuteOrange)
-                Toggle(isOn: isFacebookEnabled) {
-                    Text("Facebook")
-                        .foregroundColor(.white)
-                }
-                .tint(.parachuteOrange)
+        Section(header: Text("Apps")) {
+            Toggle(isOn: isInstagramEnabled) {
+                Text("Instagram")
+                    .foregroundColor(.white)
             }
-            .padding(.horizontal)
-            // Spacer()
+            Toggle(isOn: isTikTokEnabled) {
+                Text("TikTok")
+                    .foregroundColor(.white)
+            }
+            Toggle(isOn: isTwitterEnabled) {
+                Text("Twitter / X")
+                    .foregroundColor(.white)
+            }
+            Toggle(isOn: isYoutubeEnabled) {
+                Text("Youtube")
+                    .foregroundColor(.white)
+            }
+            Toggle(isOn: isFacebookEnabled) {
+                Text("Facebook")
+                    .foregroundColor(.white)
+            }
         }
+        .tint(.parachuteOrange)
     }
 }
 
@@ -277,39 +251,21 @@ struct AdvancedSettingsContent: View {
     @EnvironmentObject var settingsStore: SettingsStore
 
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack(alignment: .center) {
-                Text("Advanced")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                    .foregroundColor(.white.opacity(0.6))
-                    .padding(.horizontal)
-                    .padding(.top, 10)
-            }
-            HStack {
-                Text("Algorithm")
-                    .foregroundColor(.white)
-                Spacer()
+        List {
+            Section {
                 Picker(selection: $settingsStore.settings.algorithm, label: Text("Algorithm")) {
                     Text("B (recommended)").tag(Proxyservice_Algorithm.proportional)
                     Text("A").tag(Proxyservice_Algorithm.drop)
                 }
-                .tint(.parachuteOrange)
                 .pickerStyle(.menu)
-            }
-            .padding(.horizontal)
-            HStack {
-                Text("Usability")
-                    .foregroundColor(.white)
-                Spacer()
                 Picker(selection: $settingsStore.settings.usability, label: Text("Usability")) {
                     Text("Unusable").tag(Proxyservice_Usability.unusable)
                     Text("Barely Usable").tag(Proxyservice_Usability.barely)
                 }
-                .tint(.parachuteOrange)
                 .pickerStyle(.menu)
             }
-            .padding(.horizontal)
-            Spacer()
         }
+        .navigationTitle("Advanced")
+        .tint(.parachuteOrange)
     }
 }

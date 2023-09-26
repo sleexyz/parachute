@@ -123,6 +123,8 @@ message Settings {
     google.protobuf.Timestamp disabled_until = 21;
 
     string user_id = 22;
+
+    ScheduleSettings schedule = 23;
 }
 
 message ChangeMetadata {
@@ -154,4 +156,35 @@ message HealRequest {
 
 message HealResponse {
     double usagePoints = 1;
+}
+
+enum ScheduleType {
+    every_day = 0;
+    custom_days = 1;
+}
+
+message ScheduleSettings {
+    bool enabled = 1;
+    ScheduleType schedule_type = 2;
+
+    // Every
+    ScheduleDay every_day = 3;
+
+    // Custom days
+    map<int32, ScheduleDay> days = 4;
+}
+
+// Specifies an interval for when the app should be on.
+message ScheduleDay {
+    bool enabled = 1;
+
+    reserved 2, 3, 4, 5;
+    ScheduleTime from = 6;
+    ScheduleTime to = 7;
+}
+
+message ScheduleTime {
+    // 24 hour time
+    int32 hour = 1;
+    int32 minute = 2;
 }

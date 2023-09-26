@@ -25,6 +25,7 @@ public enum ScrollSessionPage {
 public enum SettingsPage {
     case main
     case advanced
+    case schedule
 }
 
 public class ConnectedViewController: ObservableObject {
@@ -47,6 +48,18 @@ public class ConnectedViewController: ObservableObject {
         } set: { value in
             if value {
                 self._setSettingsPage(page: .advanced)
+            } else {
+                self._setSettingsPage(page: .main)
+            }
+        }
+    }
+
+    public var isSchedulePresented: Binding<Bool> {
+        Binding<Bool> {
+            self.settingsPage == .schedule
+        } set: { value in
+            if value {
+                self._setSettingsPage(page: .schedule)
             } else {
                 self._setSettingsPage(page: .main)
             }

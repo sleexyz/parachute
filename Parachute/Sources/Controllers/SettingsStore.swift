@@ -51,6 +51,38 @@ public class SettingsStore: ObservableObject {
         }.store(in: &bag)
     }
 
+    public func makeBinding<T>(keyPath: WritableKeyPath<Proxyservice_Settings, T>) -> Binding<T> {
+        Binding {
+            self.settings[keyPath: keyPath]
+        } set: { value in
+            Task { @MainActor in
+                var newSettings = self.settings
+                newSettings[keyPath: keyPath] = value
+                self.setSettings(value: newSettings)
+            }
+        }
+    }
+
+    public func makeBoolBinding(keyPath: WritableKeyPath<Proxyservice_Settings, Bool>) -> Binding<Bool> {
+        makeBinding(keyPath: keyPath)
+    }
+
+    public func makeScheduleTimeBinding(keyPath: WritableKeyPath<Proxyservice_Settings, Proxyservice_ScheduleTime>) -> Binding<Date> {
+        let hourBinding = makeBinding(keyPath: keyPath.appending(path: \.hour))
+        let minuteBinding = makeBinding(keyPath: keyPath.appending(path: \.minute))
+
+        return Binding {
+            var dateComponents = DateComponents()
+            dateComponents.hour = Int(hourBinding.wrappedValue)
+            dateComponents.minute = Int(minuteBinding.wrappedValue)
+            return Calendar.current.date(from: dateComponents)!
+        } set: { value in
+            let dateComponents = Calendar.current.dateComponents([.hour, .minute], from: value)
+            hourBinding.wrappedValue = Int32(dateComponents.hour!)
+            minuteBinding.wrappedValue = Int32(dateComponents.minute!)
+        }
+    }
+
     public var activePreset: Proxyservice_Preset {
         activePresetBinding.wrappedValue
     }

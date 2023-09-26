@@ -28,6 +28,9 @@ struct ConnectedView: View {
         MainView()
             .sheet(isPresented: connectedViewController.isLongSessionPresented) {
                 LongSessionView()
+                    .padding(.top, 20)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
             }
             .background(LinearGradient.bg)
     }
@@ -69,6 +72,18 @@ struct ConnectedViewSettings_Previews: PreviewProvider {
             ConnectedView()
                 .consumeDep(ConnectedViewController.self) { connectedViewController in
                     connectedViewController.set(state: .settings)
+                }
+        }
+    }
+}
+
+struct ConnectedViewSchedule_Previews: PreviewProvider {
+    static var previews: some View {
+        ConnectedPreviewContext {
+            ConnectedView()
+                .consumeDep(ConnectedViewController.self) { connectedViewController in
+                    connectedViewController.set(state: .settings)
+                    connectedViewController.setSettingsPage(page: .schedule)
                 }
         }
     }

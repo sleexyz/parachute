@@ -70,9 +70,8 @@ public struct MainView: View {
             .zIndex(0)
             .sheet(isPresented: ConnectedViewController.shared.isSettingsPresented) {
                 SettingsView()
-            }
-            .sheet(isPresented: ConnectedViewController.shared.isSettingsPresented) {
-                SettingsView()
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
             }
         }
     }

@@ -43,6 +43,18 @@ public enum SettingsMigrations {
             settings in
             settings.userID = UUID().uuidString
         },
+        13: {
+            settings in
+            settings.schedule.everyDay.from.hour = 20
+            settings.schedule.everyDay.to.hour = 22
+            for i in 0 ..< 7 {
+                var day = Proxyservice_ScheduleDay()
+                day.from.hour = 20
+                day.to.hour = 22
+                day.enabled = true
+                settings.schedule.days[Int32(i)] = day
+            }
+        },
     ]
 
     public static var LATEST_VERSION: Int {

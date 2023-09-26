@@ -140,6 +140,8 @@ extension Proxyservice_Mode: CaseIterable {
 
 #endif  // swift(>=4.2)
 
+/// NOTE: Do not change the names of the apps.
+/// as their string values are used as keys in DeviceActivityController.
 public enum Proxyservice_AppType: SwiftProtobuf.Enum {
   public typealias RawValue = Int
   case instagram // = 0
@@ -187,6 +189,46 @@ extension Proxyservice_AppType: CaseIterable {
     .twitter,
     .youtube,
     .facebook,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
+public enum Proxyservice_ScheduleType: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+  case everyDay // = 0
+  case customDays // = 1
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .everyDay
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .everyDay
+    case 1: self = .customDays
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .everyDay: return 0
+    case .customDays: return 1
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension Proxyservice_ScheduleType: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [Proxyservice_ScheduleType] = [
+    .everyDay,
+    .customDays,
   ]
 }
 
@@ -393,6 +435,15 @@ public struct Proxyservice_Settings {
     set {_uniqueStorage()._userID = newValue}
   }
 
+  public var schedule: Proxyservice_ScheduleSettings {
+    get {return _storage._schedule ?? Proxyservice_ScheduleSettings()}
+    set {_uniqueStorage()._schedule = newValue}
+  }
+  /// Returns true if `schedule` has been explicitly set.
+  public var hasSchedule: Bool {return _storage._schedule != nil}
+  /// Clears the value of `schedule`. Subsequent reads from it will return its default value.
+  public mutating func clearSchedule() {_uniqueStorage()._schedule = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -544,11 +595,90 @@ public struct Proxyservice_HealResponse {
   public init() {}
 }
 
+public struct Proxyservice_ScheduleSettings {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var enabled: Bool = false
+
+  public var scheduleType: Proxyservice_ScheduleType = .everyDay
+
+  /// Every
+  public var everyDay: Proxyservice_ScheduleDay {
+    get {return _everyDay ?? Proxyservice_ScheduleDay()}
+    set {_everyDay = newValue}
+  }
+  /// Returns true if `everyDay` has been explicitly set.
+  public var hasEveryDay: Bool {return self._everyDay != nil}
+  /// Clears the value of `everyDay`. Subsequent reads from it will return its default value.
+  public mutating func clearEveryDay() {self._everyDay = nil}
+
+  /// Custom days
+  public var days: Dictionary<Int32,Proxyservice_ScheduleDay> = [:]
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _everyDay: Proxyservice_ScheduleDay? = nil
+}
+
+/// Specifies an interval for when the app should be on.
+public struct Proxyservice_ScheduleDay {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var enabled: Bool = false
+
+  public var from: Proxyservice_ScheduleTime {
+    get {return _from ?? Proxyservice_ScheduleTime()}
+    set {_from = newValue}
+  }
+  /// Returns true if `from` has been explicitly set.
+  public var hasFrom: Bool {return self._from != nil}
+  /// Clears the value of `from`. Subsequent reads from it will return its default value.
+  public mutating func clearFrom() {self._from = nil}
+
+  public var to: Proxyservice_ScheduleTime {
+    get {return _to ?? Proxyservice_ScheduleTime()}
+    set {_to = newValue}
+  }
+  /// Returns true if `to` has been explicitly set.
+  public var hasTo: Bool {return self._to != nil}
+  /// Clears the value of `to`. Subsequent reads from it will return its default value.
+  public mutating func clearTo() {self._to = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _from: Proxyservice_ScheduleTime? = nil
+  fileprivate var _to: Proxyservice_ScheduleTime? = nil
+}
+
+public struct Proxyservice_ScheduleTime {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// 24 hour time
+  public var hour: Int32 = 0
+
+  public var minute: Int32 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Proxyservice_Algorithm: @unchecked Sendable {}
 extension Proxyservice_Usability: @unchecked Sendable {}
 extension Proxyservice_Mode: @unchecked Sendable {}
 extension Proxyservice_AppType: @unchecked Sendable {}
+extension Proxyservice_ScheduleType: @unchecked Sendable {}
 extension Proxyservice_Preset: @unchecked Sendable {}
 extension Proxyservice_TrafficRules: @unchecked Sendable {}
 extension Proxyservice_Overlay: @unchecked Sendable {}
@@ -561,6 +691,9 @@ extension Proxyservice_GetStateRequest: @unchecked Sendable {}
 extension Proxyservice_GetStateResponse: @unchecked Sendable {}
 extension Proxyservice_HealRequest: @unchecked Sendable {}
 extension Proxyservice_HealResponse: @unchecked Sendable {}
+extension Proxyservice_ScheduleSettings: @unchecked Sendable {}
+extension Proxyservice_ScheduleDay: @unchecked Sendable {}
+extension Proxyservice_ScheduleTime: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -595,6 +728,13 @@ extension Proxyservice_AppType: SwiftProtobuf._ProtoNameProviding {
     2: .same(proto: "twitter"),
     3: .same(proto: "youtube"),
     4: .same(proto: "facebook"),
+  ]
+}
+
+extension Proxyservice_ScheduleType: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "every_day"),
+    1: .same(proto: "custom_days"),
   ]
 }
 
@@ -772,6 +912,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     20: .same(proto: "usability"),
     21: .standard(proto: "disabled_until"),
     22: .standard(proto: "user_id"),
+    23: .same(proto: "schedule"),
   ]
 
   fileprivate class _StorageClass {
@@ -788,6 +929,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _usability: Proxyservice_Usability = .unusable
     var _disabledUntil: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
     var _userID: String = String()
+    var _schedule: Proxyservice_ScheduleSettings? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -807,6 +949,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _usability = source._usability
       _disabledUntil = source._disabledUntil
       _userID = source._userID
+      _schedule = source._schedule
     }
   }
 
@@ -838,6 +981,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 20: try { try decoder.decodeSingularEnumField(value: &_storage._usability) }()
         case 21: try { try decoder.decodeSingularMessageField(value: &_storage._disabledUntil) }()
         case 22: try { try decoder.decodeSingularStringField(value: &_storage._userID) }()
+        case 23: try { try decoder.decodeSingularMessageField(value: &_storage._schedule) }()
         default: break
         }
       }
@@ -889,6 +1033,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       if !_storage._userID.isEmpty {
         try visitor.visitSingularStringField(value: _storage._userID, fieldNumber: 22)
       }
+      try { if let v = _storage._schedule {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 23)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -911,6 +1058,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._usability != rhs_storage._usability {return false}
         if _storage._disabledUntil != rhs_storage._disabledUntil {return false}
         if _storage._userID != rhs_storage._userID {return false}
+        if _storage._schedule != rhs_storage._schedule {return false}
         return true
       }
       if !storagesAreEqual {return false}
@@ -1172,6 +1320,146 @@ extension Proxyservice_HealResponse: SwiftProtobuf.Message, SwiftProtobuf._Messa
 
   public static func ==(lhs: Proxyservice_HealResponse, rhs: Proxyservice_HealResponse) -> Bool {
     if lhs.usagePoints != rhs.usagePoints {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_ScheduleSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ScheduleSettings"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "enabled"),
+    2: .standard(proto: "schedule_type"),
+    3: .standard(proto: "every_day"),
+    4: .same(proto: "days"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.enabled) }()
+      case 2: try { try decoder.decodeSingularEnumField(value: &self.scheduleType) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._everyDay) }()
+      case 4: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,Proxyservice_ScheduleDay>.self, value: &self.days) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if self.enabled != false {
+      try visitor.visitSingularBoolField(value: self.enabled, fieldNumber: 1)
+    }
+    if self.scheduleType != .everyDay {
+      try visitor.visitSingularEnumField(value: self.scheduleType, fieldNumber: 2)
+    }
+    try { if let v = self._everyDay {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    } }()
+    if !self.days.isEmpty {
+      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,Proxyservice_ScheduleDay>.self, value: self.days, fieldNumber: 4)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_ScheduleSettings, rhs: Proxyservice_ScheduleSettings) -> Bool {
+    if lhs.enabled != rhs.enabled {return false}
+    if lhs.scheduleType != rhs.scheduleType {return false}
+    if lhs._everyDay != rhs._everyDay {return false}
+    if lhs.days != rhs.days {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_ScheduleDay: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ScheduleDay"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "enabled"),
+    6: .same(proto: "from"),
+    7: .same(proto: "to"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.enabled) }()
+      case 6: try { try decoder.decodeSingularMessageField(value: &self._from) }()
+      case 7: try { try decoder.decodeSingularMessageField(value: &self._to) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if self.enabled != false {
+      try visitor.visitSingularBoolField(value: self.enabled, fieldNumber: 1)
+    }
+    try { if let v = self._from {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+    } }()
+    try { if let v = self._to {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_ScheduleDay, rhs: Proxyservice_ScheduleDay) -> Bool {
+    if lhs.enabled != rhs.enabled {return false}
+    if lhs._from != rhs._from {return false}
+    if lhs._to != rhs._to {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proxyservice_ScheduleTime: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ScheduleTime"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "hour"),
+    2: .same(proto: "minute"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularInt32Field(value: &self.hour) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self.minute) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.hour != 0 {
+      try visitor.visitSingularInt32Field(value: self.hour, fieldNumber: 1)
+    }
+    if self.minute != 0 {
+      try visitor.visitSingularInt32Field(value: self.minute, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proxyservice_ScheduleTime, rhs: Proxyservice_ScheduleTime) -> Bool {
+    if lhs.hour != rhs.hour {return false}
+    if lhs.minute != rhs.minute {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
