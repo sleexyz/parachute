@@ -63,6 +63,12 @@ public class DataFlowController {
             return allowPeek
         }
 
+        let rules = RuleSet(schedule: settings.schedule)
+        let context = RuleContext(now: Date())
+        guard RuleEvaluator.shared.determineMode(rules: rules, context: context) == .quiet else {
+            return allowPeek
+        }
+
         guard settings.isAppEnabled(app: app.appType) else {
             // #if DEBUG
             // logger.info("App disabled: \(app.appType.rawValue)")

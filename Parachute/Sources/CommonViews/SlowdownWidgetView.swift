@@ -48,29 +48,32 @@ public struct SlowdownWidgetView: View {
     }
 
     var statusMessage: String {
-        if settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
-            return "Session ended"
-        }
-        return "Detox Active"
+        // if settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
+        //     return "Session ended"
+        // }
+        "Quiet time on."
     }
 
     public var body: some View {
         let layout = family == .systemSmall ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout(alignment: .top))
 
         layout {
-            Logo()
-                .foregroundStyle(isConnected ? Color.parachuteOrange : Color.secondary)
-            // .frame(width: 30, height: 30)
-            Spacer()
+            // Logo()
+            //     .foregroundStyle(isConnected ? Color.parachuteOrange : Color.secondary)
+            // // .frame(width: 30, height: 30)
+            // Spacer()
             if !isConnected {
-                Text("Disabled for 1 hour")
+                Text("Disabled for 1 hour.")
+                    .font(.subheadline.smallCaps())
+                    .foregroundColor(.secondary)
+            } else if case let .free(reason: reason) = settings.filterModeDecision {
+                Text("Quiet time off.")
                     .font(.subheadline.smallCaps())
                     .foregroundColor(.secondary)
             } else if !settings.isInScrollSession {
                 Text(statusMessage)
                     .font(.subheadline.smallCaps())
                     .foregroundColor(.secondary)
-                // .matchedGeometryEffect(id: "status", in: animation)
             } else if settings.hasOverlay {
                 let components = DateComponents(second: 0)
                 let futureDate = Calendar.current.date(byAdding: components, to: settings.overlay.expiry.date)!
@@ -79,9 +82,6 @@ public struct SlowdownWidgetView: View {
                     .monospacedDigit()
                     .foregroundColor(.primary.opacity(0.5))
                     .multilineTextAlignment(family == .systemSmall ? .leading : .trailing)
-                // .matchedGeometryEffect(id: "status", in: animation)
-                // .frame(maxWidth: 108)
-                // .foregroundColor(.parachuteOrange.opacity(0.8))
             } else {
                 Text("...")
             }

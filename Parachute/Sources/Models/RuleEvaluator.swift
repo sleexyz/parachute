@@ -6,20 +6,28 @@ public enum Mode {
     case free
 }
 
-struct RuleSet {
-    let schedule: Proxyservice_ScheduleSettings
+public struct RuleSet {
+    public let schedule: Proxyservice_ScheduleSettings
+
+    public init(schedule: Proxyservice_ScheduleSettings) {
+        self.schedule = schedule
+    }
 }
 
-struct RuleContext {
-    let now: Date
+public struct RuleContext {
+    public let now: Date
+
+    public init(now: Date) {
+        self.now = now
+    }
 }
 
-class RuleEvaluator {
-    static let shared = RuleEvaluator()
+public class RuleEvaluator {
+    public static let shared = RuleEvaluator()
 
     private init() {}
 
-    func determineMode(rules: RuleSet, context: RuleContext) -> Mode {
+    public func determineMode(rules: RuleSet, context: RuleContext) -> Mode {
         switch rules.schedule.scheduleType {
         case .everyDay:
             let everyDay = rules.schedule.everyDay
@@ -46,7 +54,7 @@ class RuleEvaluator {
         }
     }
 
-    func matchesDayReversed(day: Proxyservice_ScheduleDay, date: Date) -> Bool {
+    private func matchesDayReversed(day: Proxyservice_ScheduleDay, date: Date) -> Bool {
         // e.g. 10pm - 2am tomorrow
         let (from, to, _) = day.forToday(now: date)
 
@@ -61,7 +69,7 @@ class RuleEvaluator {
         return false
     }
 
-    func matchesDay(day: Proxyservice_ScheduleDay, date: Date) -> Bool {
+    private func matchesDay(day: Proxyservice_ScheduleDay, date: Date) -> Bool {
         if day.isAllDay {
             return false
         }

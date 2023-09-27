@@ -149,6 +149,19 @@ public extension Proxyservice_Settings {
     mutating func setAppEnabled(app: Proxyservice_AppType, value: Bool) {
         apps[Int32(app.rawValue)] = value
     }
+
+    var filterModeDecision: FilterModeDecision {
+        let rules = RuleSet(schedule: schedule)
+        let context = RuleContext(now: Date())
+        let mode = RuleEvaluator.shared.determineMode(rules: rules, context: context)
+
+        switch mode {
+        case .quiet:
+            return .quiet
+        case .free:
+            return .free(reason: .schedule)
+        }
+    }
 }
 
 extension Proxyservice_Settings: CodableMessage {}

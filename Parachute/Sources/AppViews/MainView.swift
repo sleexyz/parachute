@@ -31,48 +31,41 @@ public struct MainView: View {
     var topPadding: CGFloat = 200
 
     public var body: some View {
-        ZStack {
-            VStack {
-                HStack {
-                    Button(action: {
-                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                        isSettingsPresented = true
-                    }, label: {
-                        Image(systemName: "gearshape.fill")
-                            .font(.system(size: 28))
-                            .padding()
-                    })
-                    .buttonStyle(.plain)
-                    Spacer()
-                }
-                .padding(.horizontal)
-                .foregroundColor(.white.opacity(0.5))
-                .zIndex(0)
-
-                Spacer()
-
-                if settingsStore.settings.isInScrollSession {
-                    VStack {
-                        SlowdownWidgetView(settings: settingsStore.settings, isConnected: neConfigurationService.isConnected)
-                            .padding(.horizontal, 20)
-                            .padding()
-                            .padding(.top, topPadding / 2)
-                            .frame(maxWidth: .infinity, alignment: .top)
-                        Spacer()
-                        SimpleSelector()
-                        Spacer()
-                    }
-                } else {
-                    ScrollSessionViewInner()
-                }
+        VStack {
+            HStack {
+                Button(action: {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    isSettingsPresented = true
+                }, label: {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 28))
+                        .padding()
+                })
+                .buttonStyle(.plain)
                 Spacer()
             }
+            .padding(.horizontal)
+            .foregroundColor(.white.opacity(0.5))
             .zIndex(0)
-            .sheet(isPresented: ConnectedViewController.shared.isSettingsPresented) {
-                SettingsView()
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.visible)
-            }
+
+            SlowdownWidgetView(settings: settingsStore.settings, isConnected: neConfigurationService.isConnected)
+                .padding(.horizontal, 20)
+                .padding(.top)
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .top)
+
+            Spacer()
+
+            SimpleSelector()
+                .padding()
+
+            Spacer()
+        }
+        .zIndex(0)
+        .sheet(isPresented: ConnectedViewController.shared.isSettingsPresented) {
+            SettingsView()
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
         }
     }
 }

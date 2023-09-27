@@ -53,67 +53,53 @@ public struct ScrollSessionViewInner: View {
 
     public var body: some View {
         VStack {
-            Spacer()
             HStack {
-                Spacer()
-                Text("Let me...")
-                    .font(.mainFont(size: 24))
-                    .foregroundColor(.parachuteLabel.opacity(0.8))
-                    .padding(.vertical)
-            }
-
-            FullWidthCard(icon: "arrow.up.arrow.down") {
-                HStack {
-                    Spacer()
-
-                    Button(action: {
-                        Task { @MainActor in
-                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                            ConnectedViewController.shared.set(state: .longSession)
-                        }
-                    }) {
+                Button(action: {
+                    Task { @MainActor in
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        ConnectedViewController.shared.set(state: .longSession)
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.up.arrow.down")
+                            .font(.system(size: 24))
+                        Spacer()
                         Text(try! AttributedString(
-                            markdown: "**Scroll** for a bit."
+                            markdown: "Scroll for a bit."
                             // boldFont: .custom("SpaceMono-Regular", size: 16).bold()
                         )
                         )
-                        .foregroundColor(.parachuteOrange)
-                        .padding()
                     }
-                    .buttonStyle(.bordered)
-                    .tint(.parachuteOrange)
-                    // .rrGlow(color: .parachuteOrange, bg: .parachuteOrange.opacity(0.3))
-                    .opacity(state == .showLongSession ? 1 : 0)
+                    .foregroundColor(.parachuteOrange)
+                    .padding()
                 }
+                .buttonStyle(.bordered)
+                .tint(.parachuteOrange)
+                // .rrGlow(color: .parachuteOrange, bg: .parachuteOrange.opacity(0.3))
+                .opacity(state == .showLongSession ? 1 : 0)
             }
-            FullWidthCard(icon: "goforward") {
-                HStack {
-                    Spacer()
-                    // HStack {
-                    //     Text("check...")
-                    //         .font(.custom("SpaceMono-Regular", size: 32))
-                    //         .foregroundColor(.parachuteLabel)
-                    //         .padding(24)
-                    //     Spacer()
-                    // }
-                    Button(action: {
-                        actionController.startQuickSession()
-                    }) {
+            HStack {
+                Button(action: {
+                    actionController.startQuickSession()
+                }) {
+                    HStack {
+                        Image(systemName: "goforward")
+                            .font(.system(size: 24))
+                        Spacer()
                         Text(try! AttributedString(
-                            markdown: "**Check** something."
+                            markdown: "Check something."
                             // boldFont: .custom("SpaceMono-Regular", size: 16).bold()
                         )
                         )
-                        .foregroundColor(.black)
-                        .padding()
                     }
-                    .tint(.parachuteOrange)
-                    .buttonStyle(.borderedProminent)
-                    // .rrGlow(color: .parachuteOrange, bg: .parachuteOrange)
-                    .opacity(state.shouldShowShortSession ? 1 : 0)
+                    .foregroundColor(.parachuteOrange)
+                    .padding()
                 }
+                .tint(.parachuteOrange)
+                .buttonStyle(.bordered)
+                // .rrGlow(color: .parachuteOrange, bg: .parachuteOrange)
+                .opacity(state.shouldShowShortSession ? 1 : 0)
             }
-            Spacer()
         }
         .buttonBorderShape(.roundedRectangle(radius: 20))
         .font(.mainFont(size: 16))
