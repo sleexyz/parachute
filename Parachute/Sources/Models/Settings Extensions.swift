@@ -16,34 +16,32 @@ extension Proxyservice_Preset: Identifiable {
     public typealias ID = String
 }
 
-public extension Proxyservice_ScheduleSettings {
-    // TODO: surface below Settings menu entry in a footer
-    var summary: String {
-        // "Detox mode on all the time."
-        // "Scheduled
-        ""
-    }
-}
-
 public extension Proxyservice_ScheduleDay {
-    var summary: String {
-        if !enabled {
-            return "—"
+    var summary: AttributedString {
+        if isAllDay {
+            return try! AttributedString(markdown: "**\(defaultVerb.verb)**")
         }
-        if from.hour == to.hour, from.minute == to.minute {
-            return "Allowed all day"
-        }
-        return "\(from.summary) - \(to.summary)"
+
+        return try! AttributedString(
+            markdown: "**\(defaultVerb.verb)**\n**\(defaultVerb.opposite.verb)** \(from.summary)-\(to.summary)",
+            options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        )
     }
 
-    var detailSummary: AttributedString {
-        if !enabled {
-            return try! AttributedString(markdown: "Detox mode on **all day**.")
+    static func partialSummary(verb: Proxyservice_RuleVerb) -> String {
+        "\(verb.verb)ing social media\(verb == .allow ? " usage" : "")"
+    }
+
+    var detailSummary: String {
+        if isAllDay {
+            return """
+            \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb)) all day.
+            """
         }
-        if from.hour == to.hour, from.minute == to.minute {
-            return try! AttributedString(markdown: "Social media **allowed all day**.")
-        }
-        return try! AttributedString(markdown: "Social media **allowed from \(from.summary) - \(to.summary)**.")
+        return """
+        \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb)) for most of the day.
+        \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb.opposite)) from \(from.summary)-\(to.summary).
+        """
     }
 
     func forToday(now _: Date) -> (Date, Date, Bool) {
@@ -112,3 +110,23 @@ public extension Proxyservice_Settings {
 }
 
 extension Proxyservice_Settings: CodableMessage {}
+
+public extension Proxyservice_RuleVerb {
+    var verb: String {
+        switch self {
+        case .block:
+            "Quiet"
+        default:
+            "Free"
+        }
+    }
+
+    var opposite: Proxyservice_RuleVerb {
+        switch self {
+        case .block:
+            .allow
+        default:
+            .block
+        }
+    }
+}

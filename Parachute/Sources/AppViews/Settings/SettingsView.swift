@@ -5,6 +5,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var connectedViewController: ConnectedViewController
+    @EnvironmentObject var settingsStore: SettingsStore
     @State private var isFeedbackOpen = false
 
     @Binding var isPresented: Bool
@@ -30,20 +31,27 @@ struct SettingsView: View {
                 }
                 .padding(.top, 20)
                 List {
-                    TimePicker()
-
                     Section {
                         NavigationLink {
                             ScheduleView()
                         } label: {
-                            Text("Schedule")
-                            // .font(.system(size: 16, weight: .regular, design: .rounded))
-                            // .foregroundColor(.white.opacity(0.6))
-                            // .padding()
-                            // .background(Material.ultraThinMaterial)
-                            // .cornerRadius(20)
+                            HStack {
+                                Text("Schedule")
+                                Spacer()
+                                // Text(
+                                //     settingsStore.settings.schedule.summary
+                                // )
+                                // .opacity(0.6)
+                            }
                         }
+                        // } footer: {
+                        //     Text("Parachute will automatically enable and disable itself based on your schedule.")
+                        //         .font(.system(size: 12, weight: .regular, design: .rounded))
+                        //         .foregroundColor(.white.opacity(0.6))
+                        //         .padding(.top, 10)
                     }
+
+                    TimePicker()
 
                     AppsPicker()
 

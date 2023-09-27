@@ -8,55 +8,41 @@ struct ScheduleView: View {
 
     var body: some View {
         List {
+            // Section {
+            //     // TODO: this should be a selection
+            //     Toggle(isOn: $settingsStore.settings.schedule.enabled) {
+            //         Text("Enabled")
+            //     }
+            //     .tint(.parachuteOrange)
+
+            // } footer: {
+            //     Text("Set a time window to allow for social media use without interruption.")
+            //         .font(.system(size: 12, weight: .regular, design: .rounded))
+            //         .foregroundColor(.white)
+            //         .opacity(0.6)
+            // }
+
             Section {
-                // TODO: this should be a selection
-                // [ Detox mode always on ]
-                // [ Schedule social media breaks ]
-                Toggle(isOn: $settingsStore.settings.schedule.enabled) {
-                    Text("Enabled")
+                SelectionCell(choice: .everyDay, activeSelection: $settingsStore.settings.schedule.scheduleType) {
+                    Text("Every day")
                 }
-                .tint(.parachuteOrange)
-            } footer: {
-                Text("Set a time window to allow for social media use without Detox Mode.")
-                    .font(.system(size: 12, weight: .regular, design: .rounded))
-                    .foregroundColor(.white)
-                    .opacity(0.6)
+                SelectionCell(choice: .customDays, activeSelection: $settingsStore.settings.schedule.scheduleType) {
+                    Text("Customize days")
+                }
             }
+            if settingsStore.settings.schedule.scheduleType == .everyDay {
+                let fromBinding = settingsStore.makeScheduleTimeBinding(
+                    keyPath: \Proxyservice_Settings.schedule.everyDay.from
+                )
+                let toBinding = settingsStore.makeScheduleTimeBinding(
+                    keyPath: \Proxyservice_Settings.schedule.everyDay.to
+                )
 
-            if settingsStore.settings.schedule.enabled {
+                everyDayItem()
+            } else {
                 Section {
-                    SelectionCell(choice: .everyDay, activeSelection: $settingsStore.settings.schedule.scheduleType) {
-                        Text("Every day")
-                    }
-                    SelectionCell(choice: .customDays, activeSelection: $settingsStore.settings.schedule.scheduleType) {
-                        Text("Customize days")
-                    }
-                }
-                if settingsStore.settings.schedule.scheduleType == .everyDay {
-                    let fromBinding = settingsStore.makeScheduleTimeBinding(
-                        keyPath: \Proxyservice_Settings.schedule.everyDay.from
-                    )
-                    let toBinding = settingsStore.makeScheduleTimeBinding(
-                        keyPath: \Proxyservice_Settings.schedule.everyDay.to
-                    )
-
-                    Section(header: Text("Allow Social Media")) {
-                        DatePicker(
-                            "From",
-                            selection: fromBinding,
-                            displayedComponents: .hourAndMinute
-                        )
-                        DatePicker(
-                            "To",
-                            selection: toBinding,
-                            displayedComponents: .hourAndMinute
-                        )
-                    }
-                } else {
-                    Section(header: Text("Allow Social Media")) {
-                        ForEach(0 ..< 7) { i in
-                            dayItem(i)
-                        }
+                    ForEach(0 ..< 7) { i in
+                        dayItem(i)
                     }
                 }
             }
@@ -67,14 +53,38 @@ struct ScheduleView: View {
     }
 
     @ViewBuilder
-    func dayItem(_ i: Int) -> some View {
-        let day: WritableKeyPath<Proxyservice_Settings, Proxyservice_ScheduleDay?> = \Proxyservice_Settings.schedule.days[Int32(i)]
-        let enabledBinding = settingsStore.makeBinding(keyPath: day.appending(path: \.!.enabled))
+    func everyDayItem() -> some View {
+        let day: WritableKeyPath<Proxyservice_Settings, Proxyservice_ScheduleDay> = \Proxyservice_Settings.schedule.everyDay
+        let defaultVerbBinding = settingsStore.makeBinding(keyPath: day.appending(path: \.defaultVerb))
+        let isAllDayBinding = settingsStore.makeBinding(keyPath: day.appending(path: \.isAllDay))
         let fromBinding = settingsStore.makeScheduleTimeBinding(
-            keyPath: day.appending(path: \.!.from)
+            keyPath: day.appending(path: \.from)
         )
         let toBinding = settingsStore.makeScheduleTimeBinding(
-            keyPath: day.appending(path: \.!.to)
+            keyPath: day.appending(path: \.to)
+        )
+
+        ScheduleDayView(
+            defaultVerb: defaultVerbBinding,
+            isAllDay: isAllDayBinding,
+            from: fromBinding,
+            to: toBinding,
+            summary: settingsStore.settings[keyPath: day].detailSummary,
+            disallowFreeDefault: true
+        )
+    }
+
+    @ViewBuilder
+    func dayItem(_ i: Int) -> some View {
+        let maybeDay: WritableKeyPath<Proxyservice_Settings, Proxyservice_ScheduleDay?> = \Proxyservice_Settings.schedule.days[Int32(i)]
+        let day = maybeDay.appending(path: \.!)
+        let defaultVerbBinding = settingsStore.makeBinding(keyPath: day.appending(path: \.defaultVerb))
+        let isAllDayBinding = settingsStore.makeBinding(keyPath: day.appending(path: \.isAllDay))
+        let fromBinding = settingsStore.makeScheduleTimeBinding(
+            keyPath: day.appending(path: \.from)
+        )
+        let toBinding = settingsStore.makeScheduleTimeBinding(
+            keyPath: day.appending(path: \.to)
         )
         let names = [
             "Sunday",
@@ -87,21 +97,25 @@ struct ScheduleView: View {
         ]
 
         NavigationLink {
-            ScheduleDayView(
-                name: names[i],
-                enabled: enabledBinding,
-                from: fromBinding,
-                to: toBinding,
-                summary: settingsStore.settings.schedule.days[Int32(i)]!.detailSummary
-            )
-            .navigationTitle(names[i])
+            List {
+                ScheduleDayView(
+                    defaultVerb: defaultVerbBinding,
+                    isAllDay: isAllDayBinding,
+                    from: fromBinding,
+                    to: toBinding,
+                    summary: settingsStore.settings[keyPath: day].detailSummary
+                )
+                .navigationTitle(names[i])
+            }
         } label: {
             HStack {
                 Text(names[i])
                 Spacer()
                 Text(
-                    settingsStore.settings.schedule.days[Int32(i)]!.summary
+                    settingsStore.settings[keyPath: day].summary
                 )
+                .multilineTextAlignment(.trailing)
+                .font(.system(size: 12, weight: .regular, design: .rounded))
                 .opacity(0.6)
             }
         }
@@ -109,50 +123,59 @@ struct ScheduleView: View {
 }
 
 struct ScheduleDayView: View {
-    var name: String
-
-    @Binding var enabled: Bool
+    @Binding var defaultVerb: Proxyservice_RuleVerb
+    @Binding var isAllDay: Bool
     @Binding var from: Date
     @Binding var to: Date
 
-    var summary: AttributedString
+    var scheduleExceptions: Binding<Bool> {
+        Binding<Bool>(
+            get: {
+                !isAllDay
+            },
+            set: {
+                isAllDay = !$0
+            }
+        )
+    }
+
+    var summary: String
+
+    // TODO: make sure we also modify the selection cells if this is true
+    var disallowFreeDefault: Bool = false
 
     var body: some View {
-        List {
+        if !disallowFreeDefault {
             Section {
-                Toggle(isOn: $enabled) {
-                    Text(name)
+                Picker(selection: $defaultVerb, label: Text("Default mode")) {
+                    Text("Quiet").tag(Proxyservice_RuleVerb.block)
+                    Text("Free").tag(Proxyservice_RuleVerb.allow)
                 }
-            } footer: {
-                if !enabled {
-                    Text(summary)
-                }
+                .pickerStyle(.menu)
             }
-            if enabled {
-                Section {
-                    DatePicker(
-                        "From",
-                        selection: $from,
-                        displayedComponents: .hourAndMinute
-                    )
-                    DatePicker(
-                        "To",
-                        selection: $to,
-                        displayedComponents: .hourAndMinute
-                    )
+        }
 
-                    Button {
-                        from = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
-                        to = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
-                    } label: {
-                        Text("Allow all day")
-                    }
-                } header: {
-                    Text("Allow social media")
-                } footer: {
-                    Text(summary)
-                }
+        Section {
+            let text = defaultVerb == .allow ? "Schedule Quiet time" : "Schedule Free time"
+            Toggle(text, isOn: scheduleExceptions)
+
+            if !isAllDay {
+                DatePicker(
+                    "From",
+                    selection: $from,
+                    displayedComponents: .hourAndMinute
+                )
+                DatePicker(
+                    "To",
+                    selection: $to,
+                    displayedComponents: .hourAndMinute
+                )
             }
+        } footer: {
+            Text(summary)
+                .font(.system(size: 12, weight: .regular, design: .rounded))
+
+                .padding(.top, 20)
         }
     }
 }

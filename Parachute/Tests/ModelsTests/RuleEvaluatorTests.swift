@@ -27,8 +27,8 @@ final class RuleEvaluatorTests: XCTestCase {
                     now: Calendar.current.date(bySettingHour: 20, minute: 0, second: 0, of: Date())!
                 )
             ),
-            Mode.detox,
-            "Should default settings to detox mode"
+            Mode.quiet,
+            "Should default settings to quiet mode"
         )
     }
 
@@ -62,8 +62,8 @@ final class RuleEvaluatorTests: XCTestCase {
                     now: Calendar.current.date(bySettingHour: 19, minute: 0, second: 0, of: Date())!
                 )
             ),
-            Mode.detox,
-            "Should still be in detox mode outside of schedule for every day schedules"
+            Mode.quiet,
+            "Should still be in quiet mode outside of schedule for every day schedules"
         )
 
         XCTAssertEqual(
@@ -73,8 +73,8 @@ final class RuleEvaluatorTests: XCTestCase {
                     now: Calendar.current.date(bySettingHour: 22, minute: 0, second: 0, of: Date())!
                 )
             ),
-            Mode.detox,
-            "Should go back to detox mode right when at the end of the scheduled period"
+            Mode.quiet,
+            "Should go back to quiet mode right when at the end of the scheduled period"
         )
     }
 
@@ -98,8 +98,8 @@ final class RuleEvaluatorTests: XCTestCase {
                     now: Calendar.current.date(bySettingHour: 20, minute: 0, second: 0, of: Date())!
                 )
             ),
-            Mode.detox,
-            "Should be in detox mode outside of a reversed schedule for every day schedules"
+            Mode.quiet,
+            "Should be in quiet mode outside of a reversed schedule for every day schedules"
         )
 
         XCTAssertEqual(

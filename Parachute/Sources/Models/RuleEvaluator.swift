@@ -2,7 +2,7 @@ import Foundation
 import ProxyService
 
 public enum Mode {
-    case detox
+    case quiet
     case free
 }
 
@@ -20,25 +20,21 @@ class RuleEvaluator {
     private init() {}
 
     func determineMode(rules: RuleSet, context: RuleContext) -> Mode {
-        if rules.schedule.enabled {
-            if rules.schedule.scheduleType == .everyDay {
-                // Evaluate
+        if rules.schedule.scheduleType == .everyDay {
+            // Evaluate
 
-                var everyDay = rules.schedule.everyDay
-                // Force enable it
-                everyDay.enabled = true
-                if matchesDay(day: everyDay, date: context.now) {
-                    return .free
-                }
-
-                return .detox
+            let everyDay = rules.schedule.everyDay
+            if matchesDay(day: everyDay, date: context.now) {
+                return .free
             }
+
+            return .quiet
         }
-        return .detox
+        return .quiet
     }
 
     func matchesDay(day: Proxyservice_ScheduleDay, date: Date) -> Bool {
-        guard day.enabled else {
+        if day.defaultVerb == .block, day.isAllDay {
             return false
         }
 
