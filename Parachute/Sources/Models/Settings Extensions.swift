@@ -22,8 +22,12 @@ public extension Proxyservice_ScheduleDay {
             return try! AttributedString(markdown: "**\(defaultVerb.verb)**")
         }
 
+        let superscript = toDate < fromDate ? "⁺¹" : ""
+
         return try! AttributedString(
-            markdown: "**\(defaultVerb.verb)**\n**\(defaultVerb.opposite.verb)** \(from.summary)-\(to.summary)",
+            markdown: """
+            **\(defaultVerb.opposite.verb)** \(from.summary)-\(to.summary)\(superscript)
+            """,
             options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         )
     }
@@ -32,25 +36,61 @@ public extension Proxyservice_ScheduleDay {
         "\(verb.verb)ing social media\(verb == .allow ? " usage" : "")"
     }
 
-    var detailSummary: String {
+    func detailSummary(day: Int?) -> String {
         if isAllDay {
             return """
-            \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb)) all day.
+            \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb)) all day
             """
         }
+        // return """
+        // \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb)) for most of the day.
+        // \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb.opposite)) from \(from.summary)-\(to.summary).
+        // """
+
+        var fromDayString = ""
+        var toDayString = ""
+        if let day {
+            var toDay = day
+            if fromDate >= toDate {
+                toDay = (day + 1) % 7
+            }
+            fromDayString = " \(Proxyservice_ScheduleDay.getName(day: day))"
+            toDayString = " \(Proxyservice_ScheduleDay.getName(day: toDay))"
+        }
+
         return """
-        \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb)) for most of the day.
-        \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb.opposite)) from \(from.summary)-\(to.summary).
+        \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb.opposite)) from\(fromDayString) \(from.summary) to\(toDayString) \(to.summary)
         """
     }
 
-    func forToday(now _: Date) -> (Date, Date, Bool) {
-        let fromDate = Calendar.current.date(bySettingHour: Int(from.hour), minute: Int(from.minute), second: 0, of: Date())!
-        var toDate = Calendar.current.date(bySettingHour: Int(to.hour), minute: Int(to.minute), second: 0, of: Date())!
+    static func getName(day: Int) -> String {
+        let names = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+        ]
 
+        return names[day]
+    }
+
+    var fromDate: Date {
+        Calendar.current.date(bySettingHour: Int(from.hour), minute: Int(from.minute), second: 0, of: Date())!
+    }
+
+    var toDate: Date {
+        Calendar.current.date(bySettingHour: Int(to.hour), minute: Int(to.minute), second: 0, of: Date())!
+    }
+
+    func forToday(now _: Date) -> (Date, Date, Bool) {
+        var toDate = toDate
         var reversed = false
 
-        if toDate < fromDate {
+        // TODO: test equal case
+        if fromDate >= toDate {
             toDate = Calendar.current.date(byAdding: .day, value: 1, to: toDate)!
             reversed = true
         }

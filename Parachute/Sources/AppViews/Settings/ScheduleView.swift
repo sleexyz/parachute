@@ -69,7 +69,7 @@ struct ScheduleView: View {
             isAllDay: isAllDayBinding,
             from: fromBinding,
             to: toBinding,
-            summary: settingsStore.settings[keyPath: day].detailSummary,
+            detailSummary: settingsStore.settings[keyPath: day].detailSummary(day: nil),
             disallowFreeDefault: true
         )
     }
@@ -86,15 +86,8 @@ struct ScheduleView: View {
         let toBinding = settingsStore.makeScheduleTimeBinding(
             keyPath: day.appending(path: \.to)
         )
-        let names = [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-        ]
+
+        let name = Proxyservice_ScheduleDay.getName(day: i)
 
         NavigationLink {
             List {
@@ -103,13 +96,14 @@ struct ScheduleView: View {
                     isAllDay: isAllDayBinding,
                     from: fromBinding,
                     to: toBinding,
-                    summary: settingsStore.settings[keyPath: day].detailSummary
+                    detailSummary: settingsStore.settings[keyPath: day].detailSummary(day: i),
+                    disallowFreeDefault: true
                 )
-                .navigationTitle(names[i])
+                .navigationTitle(name)
             }
         } label: {
             HStack {
-                Text(names[i])
+                Text(name)
                 Spacer()
                 Text(
                     settingsStore.settings[keyPath: day].summary
@@ -139,7 +133,7 @@ struct ScheduleDayView: View {
         )
     }
 
-    var summary: String
+    var detailSummary: String
 
     // TODO: make sure we also modify the selection cells if this is true
     var disallowFreeDefault: Bool = false
@@ -158,8 +152,10 @@ struct ScheduleDayView: View {
         Section {
             let text = defaultVerb == .allow ? "Schedule Quiet time" : "Schedule Free time"
             Toggle(text, isOn: scheduleExceptions)
+        }
 
-            if !isAllDay {
+        if !isAllDay {
+            Section {
                 DatePicker(
                     "From",
                     selection: $from,
@@ -170,12 +166,28 @@ struct ScheduleDayView: View {
                     selection: $to,
                     displayedComponents: .hourAndMinute
                 )
+                .overlay {
+                    if from >= to {
+                        HStack {
+                            Spacer()
+                            Text("+1")
+                                .font(.system(size: 10, weight: .bold, design: .rounded))
+                                .padding(4)
+                                .foregroundColor(.white)
+                                .background(Color.parachuteOrange.opacity(0.8))
+                                .cornerRadius(4)
+                                .padding(.top, -20)
+                                .padding(.trailing, -20)
+                        }
+                    }
+                }
             }
-        } footer: {
-            Text(summary)
-                .font(.system(size: 12, weight: .regular, design: .rounded))
+        }
 
-                .padding(.top, 20)
+        Section {} footer: {
+            Text(detailSummary)
+                .font(.system(size: 12, weight: .regular, design: .rounded))
+                .padding(.top, -20)
         }
     }
 }
