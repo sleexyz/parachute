@@ -236,26 +236,26 @@ extension Proxyservice_ScheduleType: CaseIterable {
 
 public enum Proxyservice_RuleVerb: SwiftProtobuf.Enum {
   public typealias RawValue = Int
-  case allow // = 0
-  case block // = 1
+  case block // = 0
+  case allow // = 1
   case UNRECOGNIZED(Int)
 
   public init() {
-    self = .allow
+    self = .block
   }
 
   public init?(rawValue: Int) {
     switch rawValue {
-    case 0: self = .allow
-    case 1: self = .block
+    case 0: self = .block
+    case 1: self = .allow
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
 
   public var rawValue: Int {
     switch self {
-    case .allow: return 0
-    case .block: return 1
+    case .block: return 0
+    case .allow: return 1
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -267,8 +267,8 @@ public enum Proxyservice_RuleVerb: SwiftProtobuf.Enum {
 extension Proxyservice_RuleVerb: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
   public static var allCases: [Proxyservice_RuleVerb] = [
-    .allow,
     .block,
+    .allow,
   ]
 }
 
@@ -686,7 +686,7 @@ public struct Proxyservice_ScheduleDay {
 
   public var isAllDay: Bool = false
 
-  public var defaultVerb: Proxyservice_RuleVerb = .allow
+  public var defaultVerb: Proxyservice_RuleVerb = .block
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -779,8 +779,8 @@ extension Proxyservice_ScheduleType: SwiftProtobuf._ProtoNameProviding {
 
 extension Proxyservice_RuleVerb: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "allow"),
-    1: .same(proto: "block"),
+    0: .same(proto: "block"),
+    1: .same(proto: "allow"),
   ]
 }
 
@@ -1425,7 +1425,7 @@ extension Proxyservice_ScheduleDay: SwiftProtobuf.Message, SwiftProtobuf._Messag
     6: .same(proto: "from"),
     7: .same(proto: "to"),
     9: .standard(proto: "is_all_day"),
-    10: .standard(proto: "default_verb"),
+    11: .standard(proto: "default_verb"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1437,7 +1437,7 @@ extension Proxyservice_ScheduleDay: SwiftProtobuf.Message, SwiftProtobuf._Messag
       case 6: try { try decoder.decodeSingularMessageField(value: &self._from) }()
       case 7: try { try decoder.decodeSingularMessageField(value: &self._to) }()
       case 9: try { try decoder.decodeSingularBoolField(value: &self.isAllDay) }()
-      case 10: try { try decoder.decodeSingularEnumField(value: &self.defaultVerb) }()
+      case 11: try { try decoder.decodeSingularEnumField(value: &self.defaultVerb) }()
       default: break
       }
     }
@@ -1457,8 +1457,8 @@ extension Proxyservice_ScheduleDay: SwiftProtobuf.Message, SwiftProtobuf._Messag
     if self.isAllDay != false {
       try visitor.visitSingularBoolField(value: self.isAllDay, fieldNumber: 9)
     }
-    if self.defaultVerb != .allow {
-      try visitor.visitSingularEnumField(value: self.defaultVerb, fieldNumber: 10)
+    if self.defaultVerb != .block {
+      try visitor.visitSingularEnumField(value: self.defaultVerb, fieldNumber: 11)
     }
     try unknownFields.traverse(visitor: &visitor)
   }

@@ -21,8 +21,8 @@ public extension Proxyservice_ScheduleDay {
         if isAllDay {
             return try! AttributedString(markdown: "**\(defaultVerb.verb)**")
         }
-
-        let superscript = toDate < fromDate ? "⁺¹" : ""
+        let now = Date()
+        let superscript = toDate(now: now) < fromDate(now: now) ? "⁺¹" : ""
 
         return try! AttributedString(
             markdown: """
@@ -51,7 +51,8 @@ public extension Proxyservice_ScheduleDay {
         var toDayString = ""
         if let day {
             var toDay = day
-            if fromDate >= toDate {
+            let now = Date()
+            if fromDate(now: now) >= toDate(now: now) {
                 toDay = (day + 1) % 7
             }
             fromDayString = " \(Proxyservice_ScheduleDay.getName(day: day))"
@@ -77,16 +78,17 @@ public extension Proxyservice_ScheduleDay {
         return names[day]
     }
 
-    var fromDate: Date {
-        Calendar.current.date(bySettingHour: Int(from.hour), minute: Int(from.minute), second: 0, of: Date())!
+    func fromDate(now: Date) -> Date {
+        Calendar.current.date(bySettingHour: Int(from.hour), minute: Int(from.minute), second: 0, of: now)!
     }
 
-    var toDate: Date {
-        Calendar.current.date(bySettingHour: Int(to.hour), minute: Int(to.minute), second: 0, of: Date())!
+    func toDate(now: Date) -> Date {
+        Calendar.current.date(bySettingHour: Int(to.hour), minute: Int(to.minute), second: 0, of: now)!
     }
 
-    func forToday(now _: Date) -> (Date, Date, Bool) {
-        var toDate = toDate
+    func forToday(now: Date) -> (Date, Date, Bool) {
+        let fromDate = fromDate(now: now)
+        var toDate = toDate(now: now)
         var reversed = false
 
         // TODO: test equal case

@@ -172,20 +172,20 @@ message ScheduleSettings {
 }
 
 enum RuleVerb {
-    allow = 0;
-    block = 1;
+    block = 0;
+    allow = 1;
 }
 
 // Specifies an interval for when the app should be on.
 message ScheduleDay {
-    reserved 1, 2, 3, 4, 5, 8;
+    reserved 1, 2, 3, 4, 5, 8, 10;
 
     ScheduleTime from = 6;
     ScheduleTime to = 7;
 
     bool is_all_day = 9;
 
-    RuleVerb default_verb = 10;
+    RuleVerb default_verb = 11;
 }
 
 message ScheduleTime {
