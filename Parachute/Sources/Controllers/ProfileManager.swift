@@ -33,7 +33,8 @@ public class ProfileManager: ObservableObject {
         settingsController: SettingsController.shared,
         neConfigurationService: NEConfigurationService.shared,
         queueService: QueueService.shared,
-        activitiesHelper: ActivitiesHelper.shared
+        activitiesHelper: ActivitiesHelper.shared,
+        deviceActivityController: DeviceActivityController.shared
     )
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ProfileManager")
@@ -42,15 +43,17 @@ public class ProfileManager: ObservableObject {
     var neConfigurationService: NEConfigurationService
     var queueService: QueueService
     var activitiesHelper: ActivitiesHelper
+    var deviceActivityController: DeviceActivityController
 
     var bag = Set<AnyCancellable>()
 
-    init(settingsStore: SettingsStore, settingsController: SettingsController, neConfigurationService: NEConfigurationService, queueService: QueueService, activitiesHelper: ActivitiesHelper) {
+    init(settingsStore: SettingsStore, settingsController: SettingsController, neConfigurationService: NEConfigurationService, queueService: QueueService, activitiesHelper: ActivitiesHelper, deviceActivityController: DeviceActivityController) {
         self.settingsStore = settingsStore
         self.settingsController = settingsController
         self.neConfigurationService = neConfigurationService
         self.queueService = queueService
         self.activitiesHelper = activitiesHelper
+        self.deviceActivityController = deviceActivityController
         settingsStore.$settings
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
@@ -71,67 +74,36 @@ public class ProfileManager: ObservableObject {
     public var overlayTimer: Timer? = nil
     public var taskId: UIBackgroundTaskIdentifier? = nil
 
-    // TODO: Convert to derived publisher. Right now all views need to also listen to settingsStore.$settings
-    public var activePreset: Preset {
-        allPresets[settingsStore.activePreset.id]!
-    }
-
-    var activeOverlayPreset: Preset? {
-        if let presetId = settingsStore.activeOverlayPreset?.id {
-            return allPresets[presetId]
-        }
-        return nil
-    }
-
-    public var defaultPreset: Preset {
-        allPresets[settingsStore.defaultPreset.id]!
-    }
-
-    public var presets: OrderedDictionary<String, Preset> {
-        var map = OrderedDictionary<String, Preset>()
-        map[defaultPreset.id] = defaultPreset
-        for presetID in defaultPreset.childPresets {
-            map[presetID] = allPresets[presetID]
-        }
-        return map
-    }
-
     // NOTE: this does not support long overlays very well.
     @MainActor
     public func loadPreset(preset: Preset, overlay: Preset? = nil) async throws {
         settingsStore.settings.defaultPreset = preset.presetData
 
-        guard let overlay else {
+        if let overlay {
+            guard overlay.overlayDurationSecs != nil else {
+                throw UnexpectedError.unexpectedError
+            }
+            settingsStore.settings.overlay = Proxyservice_Overlay.with {
+                $0.preset = overlay.presetData
+                $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!))
+            }
+
+        } else {
             settingsStore.settings.clearOverlay()
-            try await settingsController.syncSettings()
-            return
         }
 
-        guard overlay.overlayDurationSecs != nil else {
-            throw UnexpectedError.unexpectedError
-        }
-        settingsStore.settings.overlay = Proxyservice_Overlay.with {
-            $0.preset = overlay.presetData
-            $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!))
-        }
         try await settingsController.syncSettings()
+        deviceActivityController.syncSettings(settings: settingsStore.settings)
 
-        // overlayTimer?.invalidate()
+        if let overlay {
+            syncOverlayTimer()
 
-        // if let taskId {
-        //     UIApplication.shared.endBackgroundTask(taskId)
-        // }
-
-        // taskId = UIApplication.shared.beginBackgroundTask(withName: "overlayExpiry") {
-        //     self.logger.info("We are about to kill your task")
-        // }
-        syncOverlayTimer()
-
-        if #available(iOS 16.2, *) {
-            queueService.registerActivityRefresh(
-                activityId: settingsStore.settings.userID,
-                refreshDate: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!)
-            )
+            if #available(iOS 16.2, *) {
+                queueService.registerActivityRefresh(
+                    activityId: settingsStore.settings.userID,
+                    refreshDate: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!)
+                )
+            }
         }
     }
 
@@ -192,17 +164,6 @@ public class ProfileManager: ObservableObject {
         }
     }
 
-    // Inclusive of loadOverlay
-    public func loadPresetLegacy(preset: Preset) async throws {
-        if preset.overlayDurationSecs != nil {
-            if let parentPresetID = preset.parentPreset {
-                try await loadPreset(preset: ProfileManager.presetDefaults[parentPresetID]!, overlay: preset)
-                return
-            }
-        }
-        try await loadPreset(preset: preset)
-    }
-
     // Writes through to parachute preset
     public func loadParachutePreset(preset: Preset) {
         Task(priority: .background) {
@@ -210,58 +171,6 @@ public class ProfileManager: ObservableObject {
             settingsStore.settings.parachutePreset = preset.presetData
             try await settingsController.syncSettings()
         }
-    }
-
-    public static var presetDefaults: OrderedDictionary<String, Preset> = [
-        "focus": .focus,
-        "relax": .quickBreak,
-        "casual": makeParachutePreset(ProfileManager.makeParachutePresetData(hp: 5)),
-    ]
-
-    public static func makeParachutePresetData(hp: Double) -> Proxyservice_Preset {
-        Proxyservice_Preset.with {
-            $0.id = "casual"
-            $0.usageMaxHp = hp
-            $0.usageHealRate = 1
-            $0.mode = .progressive
-        }
-    }
-
-    public static func makeParachutePreset(_ presetData: Proxyservice_Preset) -> Preset {
-        Preset(
-            name: "Parachute",
-            icon: "🪂",
-            type: .relax,
-            description: "Slow down content after \(Int(presetData.usageMaxHp)) minutes of usage",
-            badgeText: "∞",
-            presetData: presetData,
-            mainColor: .blue
-        )
-    }
-
-    var parachutePresetData: Proxyservice_Preset {
-        if settingsStore.settings.hasParachutePreset {
-            return settingsStore.settings.parachutePreset
-        }
-        return ProfileManager.presetDefaults["casual"]!.presetData
-    }
-
-    var allPresets: OrderedDictionary<String, Preset> {
-        var ret = OrderedDictionary<String, Preset>()
-        for elem in topLevelPresets.elements {
-            ret[elem.key] = elem.value
-            for child in elem.value.childPresets {
-                ret[child] = ProfileManager.presetDefaults[child]
-            }
-        }
-        return ret
-    }
-
-    public var topLevelPresets: OrderedDictionary<String, Preset> {
-        [
-            "casual": ProfileManager.makeParachutePreset(parachutePresetData),
-            "focus": ProfileManager.presetDefaults["focus"]!,
-        ]
     }
 }
 

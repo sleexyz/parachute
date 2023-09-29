@@ -31,15 +31,6 @@ public class SettingsController: ObservableObject {
         self.service = service
     }
 
-    public func switchMode(mode: Proxyservice_Mode) {
-        if mode != store.activePreset.mode {
-            store.activePresetBinding.wrappedValue.mode = mode
-            Task(priority: .background) {
-                try await syncSettings()
-            }
-        }
-    }
-
     @MainActor
     func setSettings(_ op: (_ settings: inout Proxyservice_Settings) -> Void) async throws {
         op(&store.settings)

@@ -38,17 +38,12 @@ struct SettingsView: View {
                             HStack {
                                 Text("Schedule")
                                 Spacer()
-                                // Text(
-                                //     settingsStore.settings.schedule.summary
-                                // )
-                                // .opacity(0.6)
                             }
                         }
-                        // } footer: {
-                        //     Text("Parachute will automatically enable and disable itself based on your schedule.")
-                        //         .font(.system(size: 12, weight: .regular, design: .rounded))
-                        //         .foregroundColor(.white.opacity(0.6))
-                        //         .padding(.top, 10)
+                    } footer: {
+                        Text("\(settingsStore.settings.schedule.summary).")
+                            .font(.system(size: 12, weight: .regular, design: .rounded))
+                        // .padding(.top, 10)
                     }
 
                     TimePicker()
@@ -161,97 +156,6 @@ struct TimePicker: View {
             .tint(.parachuteOrange)
             .pickerStyle(.menu)
         }
-    }
-}
-
-struct AppsPicker: View {
-    @EnvironmentObject var settingsController: SettingsController
-    @EnvironmentObject var settingsStore: SettingsStore
-
-    var isInstagramEnabled: Binding<Bool> {
-        Binding<Bool>(
-            get: { settingsStore.settings.isAppEnabled(app: .instagram) },
-            set: { newValue in
-                settingsStore.settings.setAppEnabled(app: .instagram, value: newValue)
-                Task { @MainActor in
-                    try await settingsController.syncSettings(reason: "instagram toggle")
-                }
-            }
-        )
-    }
-
-    var isTikTokEnabled: Binding<Bool> {
-        Binding<Bool>(
-            get: { settingsStore.settings.isAppEnabled(app: .tiktok) },
-            set: { newValue in
-                settingsStore.settings.setAppEnabled(app: .tiktok, value: newValue)
-                Task { @MainActor in
-                    try await settingsController.syncSettings(reason: "tiktok toggle")
-                }
-            }
-        )
-    }
-
-    var isTwitterEnabled: Binding<Bool> {
-        Binding<Bool>(
-            get: { settingsStore.settings.isAppEnabled(app: .twitter) },
-            set: { newValue in
-                settingsStore.settings.setAppEnabled(app: .twitter, value: newValue)
-                Task { @MainActor in
-                    try await settingsController.syncSettings(reason: "twitter toggle")
-                }
-            }
-        )
-    }
-
-    var isYoutubeEnabled: Binding<Bool> {
-        Binding<Bool>(
-            get: { settingsStore.settings.isAppEnabled(app: .youtube) },
-            set: { newValue in
-                settingsStore.settings.setAppEnabled(app: .youtube, value: newValue)
-                Task { @MainActor in
-                    try await settingsController.syncSettings(reason: "youtube toggle")
-                }
-            }
-        )
-    }
-
-    var isFacebookEnabled: Binding<Bool> {
-        Binding<Bool>(
-            get: { settingsStore.settings.isAppEnabled(app: .facebook) },
-            set: { newValue in
-                settingsStore.settings.setAppEnabled(app: .facebook, value: newValue)
-                Task { @MainActor in
-                    try await settingsController.syncSettings(reason: "facebook toggle")
-                }
-            }
-        )
-    }
-
-    var body: some View {
-        Section(header: Text("Apps")) {
-            Toggle(isOn: isInstagramEnabled) {
-                Text("Instagram")
-                    .foregroundColor(.white)
-            }
-            Toggle(isOn: isTikTokEnabled) {
-                Text("TikTok")
-                    .foregroundColor(.white)
-            }
-            Toggle(isOn: isTwitterEnabled) {
-                Text("Twitter / X")
-                    .foregroundColor(.white)
-            }
-            Toggle(isOn: isYoutubeEnabled) {
-                Text("Youtube")
-                    .foregroundColor(.white)
-            }
-            Toggle(isOn: isFacebookEnabled) {
-                Text("Facebook")
-                    .foregroundColor(.white)
-            }
-        }
-        .tint(.parachuteOrange)
     }
 }
 

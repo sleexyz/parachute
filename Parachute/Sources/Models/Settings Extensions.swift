@@ -12,8 +12,30 @@ public extension String {
     static var vendorConfigurationKey = "slowdown-settings"
 }
 
-extension Proxyservice_Preset: Identifiable {
-    public typealias ID = String
+public extension Proxyservice_ScheduleSettings {
+    var summary: AttributedString {
+        if scheduleType == .everyDay {
+            return AttributedString(everyDay.detailSummary(day: nil))
+        } else {
+            var str = AttributedString()
+            let days: [Proxyservice_ScheduleDay] = (0 ..< 7).map { self.days[Int32($0)]! }
+            if days.first(where: { !$0.isAllDay }) == nil {
+                str.append(AttributedString("Quiet time on all day"))
+            } else {
+                str.append(AttributedString("Free social media use from\n"))
+            }
+            for i in 0 ..< 7 {
+                let day = days[i]
+                if !day.isAllDay {
+                    str.append(AttributedString("• \(day.durationSummary(day: i))"))
+                    if i < 6 {
+                        str.append(AttributedString("\n"))
+                    }
+                }
+            }
+            return str
+        }
+    }
 }
 
 public extension Proxyservice_ScheduleDay {
@@ -33,13 +55,13 @@ public extension Proxyservice_ScheduleDay {
     }
 
     static func partialSummary(verb: Proxyservice_RuleVerb) -> String {
-        "\(verb.verb)ing social media\(verb == .allow ? " usage" : "")"
+        "\(verb.verb) \(verb == .allow ? "social media use" : "time")"
     }
 
     func detailSummary(day: Int?) -> String {
         if isAllDay {
             return """
-            \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb)) all day
+            \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb)) on all day
             """
         }
         // return """
@@ -47,6 +69,12 @@ public extension Proxyservice_ScheduleDay {
         // \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb.opposite)) from \(from.summary)-\(to.summary).
         // """
 
+        return """
+        \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb.opposite)) from\(durationSummary(day: day))
+        """
+    }
+
+    func durationSummary(day: Int?) -> String {
         var fromDayString = ""
         var toDayString = ""
         if let day {
@@ -59,9 +87,7 @@ public extension Proxyservice_ScheduleDay {
             toDayString = " \(Proxyservice_ScheduleDay.getName(day: toDay))"
         }
 
-        return """
-        \(Proxyservice_ScheduleDay.partialSummary(verb: defaultVerb.opposite)) from\(fromDayString) \(from.summary) to\(toDayString) \(to.summary)
-        """
+        return "\(fromDayString) \(from.summary) to\(toDayString) \(to.summary)"
     }
 
     static func getName(day: Int) -> String {

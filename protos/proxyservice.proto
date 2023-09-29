@@ -31,48 +31,11 @@ enum AppType {
 }
 
 message Preset {
-    reserved 1;
-
-    // Behavior mode of the preset.
-    // TODO: switch to oneof
-    Mode mode = 2;
-
-    //
-    // "Focus mode" (Default-slow) parameters:
-    //
+    reserved 1, 2, 4,  5, 6, 7, 8, 9, 10, 11;
 
     // Base speed in "Focus mode"
     double baseRxSpeedTarget = 3;
-    // Break speed. Use Infinity to indicate no speed capping.
-    double temporaryRxSpeedTarget = 4;
-    // When a break should end.
-    // TODO: move to a State message
-    google.protobuf.Timestamp temporaryRxSpeedExpiry = 5;
-
-
-    //
-    // "Progressive mode" (Default-fast) parameters
-    //
-
-    // How fast healing should happen.
-    double usageHealRate = 6; // HP per second
-    // How long a user should be able to scroll.
-    double usageMaxHP = 7;
-    // A maximum speed to govern scrolling traffic.
-    double usageBaseRxSpeedTarget = 8;
-
-    // ID of the preset
-    string id = 10;
-
-    TrafficRules traffic_rules = 11;
 }
-
-// Rules for slowing down
-message TrafficRules {
-    bool match_all_traffic = 1;
-    // repeated string app_ids = 1;
-}
-
 
 message Overlay {
     Preset preset = 1;

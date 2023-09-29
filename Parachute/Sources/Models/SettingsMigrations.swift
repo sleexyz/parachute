@@ -13,14 +13,6 @@ public enum SettingsMigrations {
         2: { settings in
             settings.defaultPreset = .focus
         },
-        5: { settings in
-            if settings.defaultPreset.id == "supercasual" {
-                settings.defaultPreset.id = "casual"
-            }
-            if settings.defaultPreset.id == "ultracasual" {
-                settings.defaultPreset.id = "casual"
-            }
-        },
         7: { settings in
             settings.setAppEnabled(app: .instagram, value: true)
             settings.setAppEnabled(app: .tiktok, value: true)
