@@ -60,9 +60,16 @@ public class DeviceActivityController: ObservableObject {
         )
     }
 
-    public func syncSettings(settings _: Proxyservice_Settings) {}
+    // Meant to be idempotent
+    public func syncSettings(settings: Proxyservice_Settings) {
+        if settings.isInScrollSession {
+            unblock()
+        } else {
+            block()
+        }
+    }
 
-    public func initiateMonitoring(timeInterval: TimeInterval) {
+    public func startMonitoring(duration: TimeInterval) {
         let now = Date()
         let after = now.addingTimeInterval(-1)
         let schedule = DeviceActivitySchedule(
@@ -77,7 +84,7 @@ public class DeviceActivityController: ObservableObject {
         // TODO: try combinining applications
         let event = DeviceActivityEvent(
             applications: AppController.instagram.dac.selection.applicationTokens,
-            threshold: DateComponents(second: Int(timeInterval))
+            threshold: DateComponents(second: Int(duration))
         )
 
         let eventName = DeviceActivityEvent.Name("foo")

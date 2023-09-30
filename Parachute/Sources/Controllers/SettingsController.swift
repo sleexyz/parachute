@@ -7,6 +7,7 @@
 
 import DI
 import Foundation
+import OSLog
 import ProxyService
 import SwiftProtobuf
 import SwiftUI
@@ -25,6 +26,8 @@ public class SettingsController: ObservableObject {
 
     private let store: SettingsStore
     private let service: any NEConfigurationServiceProtocol
+
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SettingsController")
 
     init(store: SettingsStore, service: any NEConfigurationServiceProtocol) {
         self.store = store
@@ -47,8 +50,16 @@ public class SettingsController: ObservableObject {
             $0.reason = reason
             $0.timestamp = Google_Protobuf_Timestamp(date: Date())
         }
-        try store.save()
-        try await service.SetSettings(settings: store.settings)
+        do {
+            try store.save()
+        } catch {
+            logger.error("Failed to save settings: \(error, privacy: .public)")
+        }
+        // do {
+        //     try await service.SetSettings(settings: store.settings)
+        // } catch {
+        //     logger.error("Failed to upstream settings: \(error)")
+        // }
     }
 
     public func forceRefresh() {

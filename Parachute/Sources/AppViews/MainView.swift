@@ -14,7 +14,7 @@ public struct MainView: View {
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainView")
 
-    // @Environment(\.scenePhase) var scenePhase
+    @Environment(\.scenePhase) var scenePhase
 
     @Binding var isSettingsPresented: Bool
     @Binding var isScrollSessionPresented: Bool
@@ -66,6 +66,19 @@ public struct MainView: View {
             SettingsView()
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
+        }
+        .onChange(of: scenePhase) { phase in
+            // Reload settings when app becomes active
+            // in case they were changed in the widget
+            if phase == .active {
+                // logger.info("active")
+                do {
+                    try settingsStore.load()
+                    logger.info("loaded!")
+                } catch {
+                    logger.info("error loading settings: \(error)")
+                }
+            }
         }
     }
 }

@@ -154,8 +154,14 @@ public extension Proxyservice_Settings {
 
 public extension Proxyservice_Settings {
     var activePreset: Proxyservice_Preset {
-        if Date.now < overlay.expiry.date {
-            return overlay.preset
+        if expiryMechanism == .overlayTimer {
+            if Date.now < overlay.expiry.date {
+                return overlay.preset
+            }
+        } else {
+            if hasOverlay {
+                return overlay.preset
+            }
         }
         return defaultPreset
     }

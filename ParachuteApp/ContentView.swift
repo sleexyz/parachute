@@ -48,19 +48,6 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.background)
         .preferredColorScheme(.dark)
-        // .onChange(of: scenePhase) { phase in
-        //     // Reload settings when app becomes active
-        //     // in case they were changed in the widget
-        //     if phase == .active {
-        //         // logger.info("active")
-        //         do {
-        //             try store.load()
-        //             logger.info("loaded!")
-        //         } catch {
-        //             logger.info("error loading settings: \(error)")
-        //         }
-        //     }
-        // }
     }
 }
 

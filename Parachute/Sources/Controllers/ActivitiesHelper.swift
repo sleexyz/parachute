@@ -36,11 +36,11 @@ public class ActivitiesHelper: ObservableObject {
 
     private func ensureEnabled() -> Bool {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
-            logger.info("activities not enabled")
+            // logger.info("activities not enabled")
             return false
         }
         guard ActivityAuthorizationInfo().frequentPushesEnabled else {
-            logger.info("frequent pushes are not enabled")
+            // logger.info("frequent pushes are not enabled")
             return false
         }
         return true

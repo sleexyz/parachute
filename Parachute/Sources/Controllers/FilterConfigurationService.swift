@@ -83,7 +83,7 @@ public class FilterConfigurationService: NEConfigurationServiceProtocol {
             NEFilterManager.shared().saveToPreferences { saveError in
                 Task { @MainActor in
                     if let error = saveError {
-                        self.logger.error("Failed to save the filter configuration: \(error.localizedDescription)")
+                        self.logger.error("Failed to save the filter configuration: \(error.localizedDescription, privacy: .public)")
                         promise(.failure(error))
                     }
                     promise(.success(()))

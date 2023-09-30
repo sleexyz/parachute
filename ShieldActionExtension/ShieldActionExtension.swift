@@ -17,8 +17,9 @@ class ShieldActionExtension: ShieldActionDelegate {
         switch action {
         case .primaryButtonPressed:
             // ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "instagram")).shield.applications = []
-            AppController.instagram.dac.unblock()
-            // DeviceActivityController.shared.initiateMonitoring()
+            // AppController.instagram.dac.unblock()
+            // AppController.instagram.dac.unblock()
+            DeviceActivityController.shared.unblock()
             completionHandler(.none)
         case .secondaryButtonPressed:
             completionHandler(.defer)

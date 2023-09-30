@@ -149,6 +149,9 @@ struct TimePicker: View {
     var body: some View {
         Section {
             Picker(selection: $settingsStore.settings.quickSessionSecs, label: Text("Check duration")) {
+                #if DEBUG
+                    Text("10 seconds").tag(10 as Int32)
+                #endif
                 Text("30 seconds").tag(30 as Int32)
                 Text("45 seconds").tag(45 as Int32)
                 Text("60 seconds").tag(60 as Int32)

@@ -33,8 +33,7 @@ public class ProfileManager: ObservableObject {
         settingsController: SettingsController.shared,
         neConfigurationService: NEConfigurationService.shared,
         queueService: QueueService.shared,
-        activitiesHelper: ActivitiesHelper.shared,
-        deviceActivityController: DeviceActivityController.shared
+        activitiesHelper: ActivitiesHelper.shared
     )
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ProfileManager")
@@ -43,17 +42,15 @@ public class ProfileManager: ObservableObject {
     var neConfigurationService: NEConfigurationService
     var queueService: QueueService
     var activitiesHelper: ActivitiesHelper
-    var deviceActivityController: DeviceActivityController
 
     var bag = Set<AnyCancellable>()
 
-    init(settingsStore: SettingsStore, settingsController: SettingsController, neConfigurationService: NEConfigurationService, queueService: QueueService, activitiesHelper: ActivitiesHelper, deviceActivityController: DeviceActivityController) {
+    init(settingsStore: SettingsStore, settingsController: SettingsController, neConfigurationService: NEConfigurationService, queueService: QueueService, activitiesHelper: ActivitiesHelper) {
         self.settingsStore = settingsStore
         self.settingsController = settingsController
         self.neConfigurationService = neConfigurationService
         self.queueService = queueService
         self.activitiesHelper = activitiesHelper
-        self.deviceActivityController = deviceActivityController
         settingsStore.$settings
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
@@ -83,26 +80,34 @@ public class ProfileManager: ObservableObject {
             guard overlay.overlayDurationSecs != nil else {
                 throw UnexpectedError.unexpectedError
             }
-            settingsStore.settings.overlay = Proxyservice_Overlay.with {
-                $0.preset = overlay.presetData
-                $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!))
-            }
 
+            if settingsStore.settings.expiryMechanism == .overlayTimer {
+                settingsStore.settings.overlay = Proxyservice_Overlay.with {
+                    $0.preset = overlay.presetData
+                    $0.expiry = Google_Protobuf_Timestamp(date: Date(timeIntervalSinceNow: Double(overlay.overlayDurationSecs!)))
+                }
+            } else {
+                settingsStore.settings.overlay = Proxyservice_Overlay.with {
+                    $0.preset = overlay.presetData
+                    $0.usageSecs = overlay.overlayDurationSecs!
+                }
+            }
         } else {
             settingsStore.settings.clearOverlay()
         }
 
         try await settingsController.syncSettings()
-        deviceActivityController.syncSettings(settings: settingsStore.settings)
 
         if let overlay {
-            syncOverlayTimer()
+            if settingsStore.settings.expiryMechanism == .overlayTimer {
+                syncOverlayTimer()
 
-            if #available(iOS 16.2, *) {
-                queueService.registerActivityRefresh(
-                    activityId: settingsStore.settings.userID,
-                    refreshDate: Date(timeIntervalSinceNow: overlay.overlayDurationSecs!)
-                )
+                if #available(iOS 16.2, *) {
+                    queueService.registerActivityRefresh(
+                        activityId: settingsStore.settings.userID,
+                        refreshDate: Date(timeIntervalSinceNow: Double(overlay.overlayDurationSecs!))
+                    )
+                }
             }
         }
     }

@@ -20,6 +20,46 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+public enum Proxyservice_ExpiryMechanism: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+  case usage // = 0
+  case overlayTimer // = 1
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .usage
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .usage
+    case 1: self = .overlayTimer
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .usage: return 0
+    case .overlayTimer: return 1
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension Proxyservice_ExpiryMechanism: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [Proxyservice_ExpiryMechanism] = [
+    .usage,
+    .overlayTimer,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
 public enum Proxyservice_Algorithm: SwiftProtobuf.Enum {
   public typealias RawValue = Int
   case drop // = 0
@@ -95,46 +135,6 @@ extension Proxyservice_Usability: CaseIterable {
   public static var allCases: [Proxyservice_Usability] = [
     .unusable,
     .barely,
-  ]
-}
-
-#endif  // swift(>=4.2)
-
-public enum Proxyservice_Mode: SwiftProtobuf.Enum {
-  public typealias RawValue = Int
-  case progressive // = 0
-  case focus // = 1
-  case UNRECOGNIZED(Int)
-
-  public init() {
-    self = .progressive
-  }
-
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 0: self = .progressive
-    case 1: self = .focus
-    default: self = .UNRECOGNIZED(rawValue)
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .progressive: return 0
-    case .focus: return 1
-    case .UNRECOGNIZED(let i): return i
-    }
-  }
-
-}
-
-#if swift(>=4.2)
-
-extension Proxyservice_Mode: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proxyservice_Mode] = [
-    .progressive,
-    .focus,
   ]
 }
 
@@ -310,6 +310,8 @@ public struct Proxyservice_Overlay {
   /// Clears the value of `expiry`. Subsequent reads from it will return its default value.
   public mutating func clearExpiry() {self._expiry = nil}
 
+  public var usageSecs: Double = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -427,6 +429,11 @@ public struct Proxyservice_Settings {
   public var hasSchedule: Bool {return _storage._schedule != nil}
   /// Clears the value of `schedule`. Subsequent reads from it will return its default value.
   public mutating func clearSchedule() {_uniqueStorage()._schedule = nil}
+
+  public var expiryMechanism: Proxyservice_ExpiryMechanism {
+    get {return _storage._expiryMechanism}
+    set {_uniqueStorage()._expiryMechanism = newValue}
+  }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -656,9 +663,9 @@ public struct Proxyservice_ScheduleTime {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
+extension Proxyservice_ExpiryMechanism: @unchecked Sendable {}
 extension Proxyservice_Algorithm: @unchecked Sendable {}
 extension Proxyservice_Usability: @unchecked Sendable {}
-extension Proxyservice_Mode: @unchecked Sendable {}
 extension Proxyservice_AppType: @unchecked Sendable {}
 extension Proxyservice_ScheduleType: @unchecked Sendable {}
 extension Proxyservice_RuleVerb: @unchecked Sendable {}
@@ -682,6 +689,13 @@ extension Proxyservice_ScheduleTime: @unchecked Sendable {}
 
 fileprivate let _protobuf_package = "proxyservice"
 
+extension Proxyservice_ExpiryMechanism: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "usage"),
+    1: .same(proto: "overlay_timer"),
+  ]
+}
+
 extension Proxyservice_Algorithm: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "drop"),
@@ -693,13 +707,6 @@ extension Proxyservice_Usability: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "unusable"),
     1: .same(proto: "barely"),
-  ]
-}
-
-extension Proxyservice_Mode: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "PROGRESSIVE"),
-    1: .same(proto: "FOCUS"),
   ]
 }
 
@@ -764,6 +771,7 @@ extension Proxyservice_Overlay: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "preset"),
     2: .same(proto: "expiry"),
+    3: .same(proto: "usageSecs"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -774,6 +782,7 @@ extension Proxyservice_Overlay: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularMessageField(value: &self._preset) }()
       case 2: try { try decoder.decodeSingularMessageField(value: &self._expiry) }()
+      case 3: try { try decoder.decodeSingularDoubleField(value: &self.usageSecs) }()
       default: break
       }
     }
@@ -790,12 +799,16 @@ extension Proxyservice_Overlay: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     try { if let v = self._expiry {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     } }()
+    if self.usageSecs != 0 {
+      try visitor.visitSingularDoubleField(value: self.usageSecs, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Proxyservice_Overlay, rhs: Proxyservice_Overlay) -> Bool {
     if lhs._preset != rhs._preset {return false}
     if lhs._expiry != rhs._expiry {return false}
+    if lhs.usageSecs != rhs.usageSecs {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -818,6 +831,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     21: .standard(proto: "disabled_until"),
     22: .standard(proto: "user_id"),
     23: .same(proto: "schedule"),
+    24: .standard(proto: "expiry_mechanism"),
   ]
 
   fileprivate class _StorageClass {
@@ -835,6 +849,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _disabledUntil: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
     var _userID: String = String()
     var _schedule: Proxyservice_ScheduleSettings? = nil
+    var _expiryMechanism: Proxyservice_ExpiryMechanism = .usage
 
     static let defaultInstance = _StorageClass()
 
@@ -855,6 +870,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _disabledUntil = source._disabledUntil
       _userID = source._userID
       _schedule = source._schedule
+      _expiryMechanism = source._expiryMechanism
     }
   }
 
@@ -887,6 +903,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 21: try { try decoder.decodeSingularMessageField(value: &_storage._disabledUntil) }()
         case 22: try { try decoder.decodeSingularStringField(value: &_storage._userID) }()
         case 23: try { try decoder.decodeSingularMessageField(value: &_storage._schedule) }()
+        case 24: try { try decoder.decodeSingularEnumField(value: &_storage._expiryMechanism) }()
         default: break
         }
       }
@@ -941,6 +958,9 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       try { if let v = _storage._schedule {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 23)
       } }()
+      if _storage._expiryMechanism != .usage {
+        try visitor.visitSingularEnumField(value: _storage._expiryMechanism, fieldNumber: 24)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -964,6 +984,7 @@ extension Proxyservice_Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._disabledUntil != rhs_storage._disabledUntil {return false}
         if _storage._userID != rhs_storage._userID {return false}
         if _storage._schedule != rhs_storage._schedule {return false}
+        if _storage._expiryMechanism != rhs_storage._expiryMechanism {return false}
         return true
       }
       if !storagesAreEqual {return false}

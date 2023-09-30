@@ -48,49 +48,30 @@ public class ActionController: ObservableObject {
         self.activitiesHelper = activitiesHelper
     }
 
-    public func startQuickSession() {
-        Task { @MainActor in
-            var overlay: Preset = .quickBreak
-            let timeInterval = Double(settingsStore.settings.quickSessionSecs)
-            overlay.overlayDurationSecs = timeInterval
-
-            try await profileManager.loadPreset(
-                preset: .focus,
-                overlay: overlay
-            )
-
-            deviceActivityController.unblock()
-            deviceActivityController.initiateMonitoring(timeInterval: timeInterval)
-
-            ConnectedViewController.shared.set(state: .main)
-            if #available(iOS 16.2, *) {
-                await ActivitiesHelper.shared.startOrRestart(settings: SettingsStore.shared.settings, isConnected: neConfigurationService.isConnected)
-            }
-        }
-    }
-
-    public func endSession() {
+    public func startQuietTime() {
+        deviceActivityController.block()
         Task { @MainActor in
             try await profileManager.endSession()
-            deviceActivityController.block()
         }
     }
 
-    public func startLongSession() {
+    public func startFreeTime(duration: TimeInterval) {
         Task { @MainActor in
             do {
                 var overlay: Preset = .scrollSession
-                let timeInterval = Double(settingsStore.settings.longSessionSecs)
-                overlay.overlayDurationSecs = timeInterval
+                overlay.overlayDurationSecs = duration
 
                 try await profileManager.loadPreset(
                     preset: .focus,
                     overlay: overlay
                 )
 
+                // deviceActivityController.syncSettings(settings: settingsStore.settings)
                 deviceActivityController.unblock()
-                deviceActivityController.initiateMonitoring(timeInterval: timeInterval)
+                // deviceActivityController.initiateMonitoring(timeInterval: timeInterval)
+                deviceActivityController.startMonitoring(duration: duration)
 
+                // TODO: delete
                 if #available(iOS 16.2, *) {
                     await ActivitiesHelper.shared.startOrRestart(settings: SettingsStore.shared.settings, isConnected: neConfigurationService.isConnected)
                 }
@@ -99,5 +80,15 @@ public class ActionController: ObservableObject {
                 logger.error("Failed to load preset: \(error)")
             }
         }
+    }
+
+    public func startQuickSession() {
+        let duration = Double(settingsStore.settings.quickSessionSecs)
+        startFreeTime(duration: duration)
+    }
+
+    public func startLongSession() {
+        let duration = Double(settingsStore.settings.longSessionSecs)
+        startFreeTime(duration: duration)
     }
 }

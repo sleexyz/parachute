@@ -19,7 +19,7 @@ public struct SimpleSelector: View {
             ScrollSessionViewInner()
         } else {
             Button(action: {
-                actionController.endSession()
+                actionController.startQuietTime()
             }) {
                 HStack {
                     Image(systemName: "stop.fill")

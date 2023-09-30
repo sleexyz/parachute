@@ -51,7 +51,7 @@ public struct SlowdownWidgetView: View {
         // if settings.changeMetadata.timestamp.date.timeIntervalSinceNow.magnitude < 1 * 60 {
         //     return "Session ended"
         // }
-        "Quiet time on."
+        "Quiet time."
     }
 
     public var body: some View {
@@ -67,7 +67,7 @@ public struct SlowdownWidgetView: View {
                     .font(.subheadline.smallCaps())
                     .foregroundColor(.secondary)
             } else if case let .free(reason: reason) = settings.filterModeDecision {
-                Text("Quiet time off.")
+                Text("Scheduled free time.")
                     .font(.subheadline.smallCaps())
                     .foregroundColor(.secondary)
             } else if !settings.isInScrollSession {
@@ -75,13 +75,19 @@ public struct SlowdownWidgetView: View {
                     .font(.subheadline.smallCaps())
                     .foregroundColor(.secondary)
             } else if settings.hasOverlay {
-                let components = DateComponents(second: 0)
-                let futureDate = Calendar.current.date(byAdding: components, to: settings.overlay.expiry.date)!
-                Text(futureDate, style: .timer)
-                    .font(.system(size: 36))
-                    .monospacedDigit()
-                    .foregroundColor(.primary.opacity(0.5))
-                    .multilineTextAlignment(family == .systemSmall ? .leading : .trailing)
+                if settings.expiryMechanism == .overlayTimer {
+                    let components = DateComponents(second: 0)
+                    let futureDate = Calendar.current.date(byAdding: components, to: settings.overlay.expiry.date)!
+                    Text(futureDate, style: .timer)
+                        .font(.system(size: 36))
+                        .monospacedDigit()
+                        .foregroundColor(.primary.opacity(0.5))
+                        .multilineTextAlignment(family == .systemSmall ? .leading : .trailing)
+                } else {
+                    Text("Free time.")
+                        .font(.subheadline.smallCaps())
+                        .foregroundColor(.secondary)
+                }
             } else {
                 Text("...")
             }

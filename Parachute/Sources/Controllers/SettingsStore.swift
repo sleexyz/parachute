@@ -189,28 +189,49 @@ public class SettingsStore: ObservableObject {
         }
     }
 
+    // TODO: test this migration
     public func load() throws {
         do {
-            try loadFromFile()
-            logger.info("loaded settings from file")
+            guard let data = SettingsStore.userDefaults.data(forKey: SettingsStore.key) else {
+                throw CocoaError(.fileNoSuchFile)
+            }
+
+            let newSettings = try Proxyservice_Settings(serializedData: data)
+            migrateAndWriteSettings(settings: newSettings)
+            Task {
+                await self.setSettings(value: self.settings)
+                await self.setLoaded(value: true)
+            }
+
+            // try loadFromFile()
+            logger.info("loaded settings from userDefaults")
         } catch CocoaError.fileNoSuchFile {
-            try save()
-            try loadFromFile()
-            logger.info("created settings file")
-            return
+            do {
+                let newSettings = try read()
+                migrateAndWriteSettings(settings: newSettings)
+                Task {
+                    await self.setSettings(value: self.settings)
+                    await self.setLoaded(value: true)
+                }
+                try save() // write through
+                logger.info("loaded settings file from file")
+                return
+            } catch {
+                migrateAndWriteSettings(settings: self.settings)
+                Task {
+                    await self.setSettings(value: self.settings)
+                    await self.setLoaded(value: true)
+                }
+                try save()
+                logger.info("created settings file")
+            }
         }
     }
 
-    private func loadFromFile() throws {
-        var newSettings = try read()
-        // run migrations
+    private func migrateAndWriteSettings(settings: Proxyservice_Settings) {
+        var newSettings = settings
         SettingsMigrations.upgradeToLatestVersion(settings: &newSettings)
-
-        let upgradedNewSettings = newSettings
-        Task {
-            await self.setSettings(value: upgradedNewSettings)
-            await self.setLoaded(value: true)
-        }
+        self.settings = newSettings
     }
 
     public func read() throws -> Proxyservice_Settings {
@@ -244,10 +265,15 @@ public class SettingsStore: ObservableObject {
     }
 
     // NOTE: use SettingsController.save() instead of this method
-    func save() throws {
+    public func save() throws {
         let data = try settings.serializedData()
         let outfile = try SettingsStore.fileUrl()
         try data.write(to: outfile)
+        // Write to UserDefaults
+        SettingsStore.userDefaults.set(data, forKey: SettingsStore.key)
         savedSettings = settings
     }
+
+    static var userDefaults: UserDefaults = .init(suiteName: "group.industries.strange.slowdown")!
+    static var key = "settings"
 }

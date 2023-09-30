@@ -5,6 +5,11 @@ option go_package = "pb/proxyservice";
 
 import "google/protobuf/timestamp.proto";
 
+enum ExpiryMechanism {
+    usage = 0;
+    overlay_timer = 1;
+}
+
 enum Algorithm {
     drop = 0;
     proportional = 1;
@@ -13,11 +18,6 @@ enum Algorithm {
 enum Usability {
     unusable = 0;
     barely = 1;
-}
-
-enum Mode {
-    PROGRESSIVE = 0;
-    FOCUS = 1;
 }
 
 // NOTE: Do not change the names of the apps.
@@ -40,6 +40,7 @@ message Preset {
 message Overlay {
     Preset preset = 1;
     google.protobuf.Timestamp expiry = 2;
+    double usageSecs = 3;
 }
 
 message Settings {
@@ -88,6 +89,7 @@ message Settings {
     string user_id = 22;
 
     ScheduleSettings schedule = 23;
+    ExpiryMechanism expiry_mechanism = 24;
 }
 
 message ChangeMetadata {

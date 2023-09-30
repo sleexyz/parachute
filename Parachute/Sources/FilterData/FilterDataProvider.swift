@@ -23,15 +23,31 @@ public class FilterDataProvider: NEFilterDataProvider {
     }()
 
     var observerContext = 0
+    var settingsObserverContext = 0
     override public init() {
         super.init()
         // FirebaseApp.configure()
         addObserver(self, forKeyPath: "filterConfiguration", options: [.initial, .new], context: &observerContext)
+
+        FilterDataProvider.userDefaults.addObserver(self, forKeyPath: FilterDataProvider.key, options: [.initial, .new], context: &settingsObserverContext)
     }
+
+    static var userDefaults: UserDefaults = .init(suiteName: "group.industries.strange.slowdown")!
+    static var key = "settings"
 
     /// Observe changes to the configuration.
     override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "filterConfiguration", context == &observerContext {
+        if keyPath == "settings", context == &settingsObserverContext {
+            logger.info("settings updated from UserDefaults")
+
+            guard let data = FilterDataProvider.userDefaults.data(forKey: FilterDataProvider.key) else {
+                return
+            }
+            guard let settings = try? Proxyservice_Settings(serializedData: data) else {
+                return
+            }
+            dataFlowController.updateSettings(settings: settings)
+        } else if keyPath == "filterConfiguration", context == &observerContext {
             logger.info("configuration changed")
             guard let requestData = filterConfiguration.vendorConfiguration?[.vendorConfigurationKey] as? Data else {
                 return
