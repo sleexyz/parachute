@@ -1,4 +1,5 @@
 import FamilyControls
+import OSLog
 import SwiftUI
 
 public struct FamilyControlsView: View {
@@ -10,6 +11,8 @@ public struct FamilyControlsView: View {
     @State private var isLoading = false
     @State private var isShowingError = false
     @State private var errorMessage = ""
+
+    let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FamilyControlsView")
 
     public init() {}
 
@@ -59,11 +62,12 @@ public struct FamilyControlsView: View {
         isLoading = true
         Task { @MainActor in
             do {
-                try await center.requestAuthorization(for: .individual)
+                try await center.requestAuthorization(for: .child)
                 // try await service.install(settings: settingsStore.settings)
             } catch {
                 errorMessage = error.localizedDescription
                 isShowingError = true
+                logger.error("Failed to install family controls: \(error, privacy: .public)")
             }
             isLoading = false
         }

@@ -7,6 +7,7 @@
 
 import Controllers
 import Foundation
+import OSLog
 import SwiftUI
 
 public struct SetupView: View {
@@ -16,6 +17,8 @@ public struct SetupView: View {
     @State private var isLoading = false
     @State private var isShowingError = false
     @State private var errorMessage = ""
+
+    let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SetupView")
 
     public init() {}
 
@@ -71,6 +74,7 @@ public struct SetupView: View {
             } catch {
                 errorMessage = error.localizedDescription
                 isShowingError = true
+                logger.error("Failed to install content filter: \(error, privacy: .public)")
             }
             isLoading = false
         }
