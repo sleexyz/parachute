@@ -72,10 +72,10 @@ extension Proxyservice_Settings {
     }
 }
 
-#Preview(as: .systemLarge) {
-    SlowdownWidget()
-} timeline: {
-    SimpleEntry(date: .now, settings: .focus, isConnected: true)
-    SimpleEntry(date: .now, settings: .relax, isConnected: true)
-    SimpleEntry(date: .now, settings: .relax, isConnected: false)
-}
+// #Preview(as: .systemLarge) {
+//    SlowdownWidget()
+// } timeline: {
+//    SimpleEntry(date: .now, settings: .focus, isConnected: true)
+//    SimpleEntry(date: .now, settings: .relax, isConnected: true)
+//    SimpleEntry(date: .now, settings: .relax, isConnected: false)
+// }
