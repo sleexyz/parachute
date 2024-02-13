@@ -62,7 +62,7 @@ public struct FamilyControlsView: View {
         isLoading = true
         Task { @MainActor in
             do {
-                try await center.requestAuthorization(for: .child)
+                try await center.requestAuthorization(for: .individual)
                 // try await service.install(settings: settingsStore.settings)
             } catch {
                 errorMessage = error.localizedDescription
